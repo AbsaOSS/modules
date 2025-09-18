@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema LBCertificate:
     r"""
-    LBCertificate is the Schema for the LBCertificates API. Provides a Lightsail Load Balancer
+    LBCertificate is the Schema for the LBCertificates API. Manages a Lightsail Load Balancer Certificate.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema LightsailAwsUpboundIoV1beta1LBCertificateSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : LightsailAwsUpboundIoV1beta1LBCertificateSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : LightsailAwsUpboundIoV1beta1LBCertificateSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : LightsailAwsUpboundIoV1beta1LBCertificateSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema LightsailAwsUpboundIoV1beta1LBCertificateSpec:
 
     providerConfigRef?: LightsailAwsUpboundIoV1beta1LBCertificateSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: LightsailAwsUpboundIoV1beta1LBCertificateSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: LightsailAwsUpboundIoV1beta1LBCertificateSpecWriteConnectionSecretToRef
 
 
@@ -95,14 +91,15 @@ schema LightsailAwsUpboundIoV1beta1LBCertificateSpecForProvider:
     Attributes
     ----------
     domainName : str, default is Undefined, optional
-        The domain name (e.g., example.com) for your SSL/TLS certificate.
+        Domain name (e.g., example.com) for your SSL/TLS certificate.
     lbName : str, default is Undefined, optional
-        The load balancer name where you want to create the SSL/TLS certificate.
+        Load balancer name where you want to create the SSL/TLS certificate.
     lbNameRef : LightsailAwsUpboundIoV1beta1LBCertificateSpecForProviderLbNameRef, default is Undefined, optional
         lb name ref
     lbNameSelector : LightsailAwsUpboundIoV1beta1LBCertificateSpecForProviderLbNameSelector, default is Undefined, optional
         lb name selector
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     subjectAlternativeNames : [str], default is Undefined, optional
         Set of domains that should be SANs in the issued certificate. domain_name attribute is automatically added as a Subject Alternative Name.
@@ -227,7 +224,7 @@ schema LightsailAwsUpboundIoV1beta1LBCertificateSpecInitProvider:
     Attributes
     ----------
     domainName : str, default is Undefined, optional
-        The domain name (e.g., example.com) for your SSL/TLS certificate.
+        Domain name (e.g., example.com) for your SSL/TLS certificate.
     subjectAlternativeNames : [str], default is Undefined, optional
         Set of domains that should be SANs in the issued certificate. domain_name attribute is automatically added as a Subject Alternative Name.
     """
@@ -282,112 +279,12 @@ schema LightsailAwsUpboundIoV1beta1LBCertificateSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema LightsailAwsUpboundIoV1beta1LBCertificateSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : LightsailAwsUpboundIoV1beta1LBCertificateSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : LightsailAwsUpboundIoV1beta1LBCertificateSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: LightsailAwsUpboundIoV1beta1LBCertificateSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: LightsailAwsUpboundIoV1beta1LBCertificateSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema LightsailAwsUpboundIoV1beta1LBCertificateSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : LightsailAwsUpboundIoV1beta1LBCertificateSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: LightsailAwsUpboundIoV1beta1LBCertificateSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema LightsailAwsUpboundIoV1beta1LBCertificateSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema LightsailAwsUpboundIoV1beta1LBCertificateSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema LightsailAwsUpboundIoV1beta1LBCertificateSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -434,21 +331,24 @@ schema LightsailAwsUpboundIoV1beta1LBCertificateStatusAtProvider:
     Attributes
     ----------
     arn : str, default is Undefined, optional
-        The ARN of the lightsail certificate.
+        ARN of the lightsail certificate.
     createdAt : str, default is Undefined, optional
-        The timestamp when the instance was created.
+        Timestamp when the instance was created.
     domainName : str, default is Undefined, optional
-        The domain name (e.g., example.com) for your SSL/TLS certificate.
+        Domain name (e.g., example.com) for your SSL/TLS certificate.
     domainValidationRecords : [LightsailAwsUpboundIoV1beta1LBCertificateStatusAtProviderDomainValidationRecordsItems0], default is Undefined, optional
-        domain validation records
+        Set of domain validation objects which can be used to complete certificate validation. Can have more than one element, e.g., if SANs are defined.
     id : str, default is Undefined, optional
-        A combination of attributes to create a unique id: lb_name,name
+        Combination of attributes to create a unique id: lb_name,name
     lbName : str, default is Undefined, optional
-        The load balancer name where you want to create the SSL/TLS certificate.
+        Load balancer name where you want to create the SSL/TLS certificate.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     subjectAlternativeNames : [str], default is Undefined, optional
         Set of domains that should be SANs in the issued certificate. domain_name attribute is automatically added as a Subject Alternative Name.
     supportCode : str, default is Undefined, optional
-        support code
+        Support code for the certificate.
     """
 
 
@@ -464,6 +364,8 @@ schema LightsailAwsUpboundIoV1beta1LBCertificateStatusAtProvider:
 
     lbName?: str
 
+    region?: str
+
     subjectAlternativeNames?: [str]
 
     supportCode?: str
@@ -476,9 +378,9 @@ schema LightsailAwsUpboundIoV1beta1LBCertificateStatusAtProviderDomainValidation
     Attributes
     ----------
     domainName : str, default is Undefined, optional
-        The domain name (e.g., example.com) for your SSL/TLS certificate.
+        Domain name (e.g., example.com) for your SSL/TLS certificate.
     resourceRecordName : str, default is Undefined, optional
-        The SSL/TLS certificate name.
+        SSL/TLS certificate name.
     resourceRecordType : str, default is Undefined, optional
         resource record type
     resourceRecordValue : str, default is Undefined, optional

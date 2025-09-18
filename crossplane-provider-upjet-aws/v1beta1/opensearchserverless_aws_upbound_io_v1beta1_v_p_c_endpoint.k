@@ -66,8 +66,6 @@ schema OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpec:
 
     providerConfigRef?: OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecWriteConnectionSecretToRef
 
 
@@ -96,7 +92,9 @@ schema OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecForProvider:
     ----------
     name : str, default is Undefined, optional
         Name of the interface endpoint.
+        Name of the interface endpoint.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     securityGroupIdRefs : [OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecForProviderSecurityGroupIDRefsItems0], default is Undefined, optional
         References to SecurityGroup in ec2 to populate securityGroupIds.
@@ -104,13 +102,16 @@ schema OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecForProvider:
         security group Id selector
     securityGroupIds : [str], default is Undefined, optional
         One or more security groups that define the ports, protocols, and sources for inbound traffic that you are authorizing into your endpoint. Up to 5 security groups can be provided.
+        One or more security groups that define the ports, protocols, and sources for inbound traffic that you are authorizing into your endpoint. Up to 5 security groups can be provided.
     subnetIdRefs : [OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecForProviderSubnetIDRefsItems0], default is Undefined, optional
         References to Subnet in ec2 to populate subnetIds.
     subnetIdSelector : OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecForProviderSubnetIDSelector, default is Undefined, optional
         subnet Id selector
     subnetIds : [str], default is Undefined, optional
         One or more subnet IDs from which you'll access OpenSearch Serverless. Up to 6 subnets can be provided.
+        One or more subnet IDs from which you'll access OpenSearch Serverless. Up to 6 subnets can be provided.
     vpcId : str, default is Undefined, optional
+        ID of the VPC from which you'll access OpenSearch Serverless.
         ID of the VPC from which you'll access OpenSearch Serverless.
     vpcIdRef : OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecForProviderVpcIDRef, default is Undefined, optional
         vpc Id ref
@@ -426,11 +427,13 @@ schema OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecInitProvider:
     ----------
     name : str, default is Undefined, optional
         Name of the interface endpoint.
+        Name of the interface endpoint.
     securityGroupIdRefs : [OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecInitProviderSecurityGroupIDRefsItems0], default is Undefined, optional
         References to SecurityGroup in ec2 to populate securityGroupIds.
     securityGroupIdSelector : OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecInitProviderSecurityGroupIDSelector, default is Undefined, optional
         security group Id selector
     securityGroupIds : [str], default is Undefined, optional
+        One or more security groups that define the ports, protocols, and sources for inbound traffic that you are authorizing into your endpoint. Up to 5 security groups can be provided.
         One or more security groups that define the ports, protocols, and sources for inbound traffic that you are authorizing into your endpoint. Up to 5 security groups can be provided.
     subnetIdRefs : [OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecInitProviderSubnetIDRefsItems0], default is Undefined, optional
         References to Subnet in ec2 to populate subnetIds.
@@ -438,7 +441,9 @@ schema OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecInitProvider:
         subnet Id selector
     subnetIds : [str], default is Undefined, optional
         One or more subnet IDs from which you'll access OpenSearch Serverless. Up to 6 subnets can be provided.
+        One or more subnet IDs from which you'll access OpenSearch Serverless. Up to 6 subnets can be provided.
     vpcId : str, default is Undefined, optional
+        ID of the VPC from which you'll access OpenSearch Serverless.
         ID of the VPC from which you'll access OpenSearch Serverless.
     vpcIdRef : OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecInitProviderVpcIDRef, default is Undefined, optional
         vpc Id ref
@@ -779,112 +784,12 @@ schema OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecProviderConfigRefPo
     resolve?: "Always" | "IfNotPresent"
 
 
-schema OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -934,11 +839,18 @@ schema OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointStatusAtProvider:
         Unique identified of the Vpc Endpoint.
     name : str, default is Undefined, optional
         Name of the interface endpoint.
+        Name of the interface endpoint.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     securityGroupIds : [str], default is Undefined, optional
+        One or more security groups that define the ports, protocols, and sources for inbound traffic that you are authorizing into your endpoint. Up to 5 security groups can be provided.
         One or more security groups that define the ports, protocols, and sources for inbound traffic that you are authorizing into your endpoint. Up to 5 security groups can be provided.
     subnetIds : [str], default is Undefined, optional
         One or more subnet IDs from which you'll access OpenSearch Serverless. Up to 6 subnets can be provided.
+        One or more subnet IDs from which you'll access OpenSearch Serverless. Up to 6 subnets can be provided.
     vpcId : str, default is Undefined, optional
+        ID of the VPC from which you'll access OpenSearch Serverless.
         ID of the VPC from which you'll access OpenSearch Serverless.
     """
 
@@ -946,6 +858,8 @@ schema OpensearchserverlessAwsUpboundIoV1beta1VPCEndpointStatusAtProvider:
     id?: str
 
     name?: str
+
+    region?: str
 
     securityGroupIds?: [str]
 

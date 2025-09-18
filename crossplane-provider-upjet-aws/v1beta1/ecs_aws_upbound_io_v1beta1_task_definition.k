@@ -66,8 +66,6 @@ schema EcsAwsUpboundIoV1beta1TaskDefinitionSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : EcsAwsUpboundIoV1beta1TaskDefinitionSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : EcsAwsUpboundIoV1beta1TaskDefinitionSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : EcsAwsUpboundIoV1beta1TaskDefinitionSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema EcsAwsUpboundIoV1beta1TaskDefinitionSpec:
 
     providerConfigRef?: EcsAwsUpboundIoV1beta1TaskDefinitionSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: EcsAwsUpboundIoV1beta1TaskDefinitionSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: EcsAwsUpboundIoV1beta1TaskDefinitionSpecWriteConnectionSecretToRef
 
 
@@ -98,6 +94,8 @@ schema EcsAwsUpboundIoV1beta1TaskDefinitionSpecForProvider:
         A list of valid container definitions provided as a single valid JSON document. Please note that you should only provide values that are part of the container definition document. For a detailed description of what parameters are available, see the Task Definition Parameters section from the official Developer Guide.
     cpu : str, default is Undefined, optional
         Number of cpu units used by the task. If the requires_compatibilities is FARGATE this field is required.
+    enableFaultInjection : bool, default is Undefined, optional
+        Enables fault injection and allows for fault injection requests to be accepted from the task's containers. Default is false.
     ephemeralStorage : [EcsAwsUpboundIoV1beta1TaskDefinitionSpecForProviderEphemeralStorageItems0], default is Undefined, optional
         The amount of ephemeral storage to allocate for the task. This parameter is used to expand the total amount of ephemeral storage available, beyond the default amount, for tasks hosted on AWS Fargate. See Ephemeral Storage.
     executionRoleArn : str, default is Undefined, optional
@@ -108,8 +106,6 @@ schema EcsAwsUpboundIoV1beta1TaskDefinitionSpecForProvider:
         execution role arn selector
     family : str, default is Undefined, optional
         A unique name for your task definition.
-    inferenceAccelerator : [EcsAwsUpboundIoV1beta1TaskDefinitionSpecForProviderInferenceAcceleratorItems0], default is Undefined, optional
-        Configuration block(s) with Inference Accelerators settings. Detailed below.
     ipcMode : str, default is Undefined, optional
         IPC resource namespace to be used for the containers in the task The valid values are host, task, and none.
     memory : str, default is Undefined, optional
@@ -123,6 +119,7 @@ schema EcsAwsUpboundIoV1beta1TaskDefinitionSpecForProvider:
     proxyConfiguration : [EcsAwsUpboundIoV1beta1TaskDefinitionSpecForProviderProxyConfigurationItems0], default is Undefined, optional
         Configuration block for the App Mesh proxy. Detailed below.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     requiresCompatibilities : [str], default is Undefined, optional
         Set of launch types required by the task. The valid values are EC2 and FARGATE.
@@ -135,7 +132,7 @@ schema EcsAwsUpboundIoV1beta1TaskDefinitionSpecForProvider:
     taskRoleArn : str, default is Undefined, optional
         ARN of IAM role that allows your Amazon ECS container task to make calls to other AWS services.
     trackLatest : bool, default is Undefined, optional
-        Whether should track latest task definition or the one created with the resource. Default is false.
+        Whether should track latest ACTIVE task definition on AWS or the one created with the resource stored in state. Default is false. Useful in the event the task definition is modified outside of this resource.
     volume : [EcsAwsUpboundIoV1beta1TaskDefinitionSpecForProviderVolumeItems0], default is Undefined, optional
         Configuration block for volumes that containers in your task may use. Detailed below.
     """
@@ -144,6 +141,8 @@ schema EcsAwsUpboundIoV1beta1TaskDefinitionSpecForProvider:
     containerDefinitions?: str
 
     cpu?: str
+
+    enableFaultInjection?: bool
 
     ephemeralStorage?: [EcsAwsUpboundIoV1beta1TaskDefinitionSpecForProviderEphemeralStorageItems0]
 
@@ -154,8 +153,6 @@ schema EcsAwsUpboundIoV1beta1TaskDefinitionSpecForProvider:
     executionRoleArnSelector?: EcsAwsUpboundIoV1beta1TaskDefinitionSpecForProviderExecutionRoleArnSelector
 
     family?: str
-
-    inferenceAccelerator?: [EcsAwsUpboundIoV1beta1TaskDefinitionSpecForProviderInferenceAcceleratorItems0]
 
     ipcMode?: str
 
@@ -287,24 +284,6 @@ schema EcsAwsUpboundIoV1beta1TaskDefinitionSpecForProviderExecutionRoleArnSelect
     resolution?: "Required" | "Optional" = "Required"
 
     resolve?: "Always" | "IfNotPresent"
-
-
-schema EcsAwsUpboundIoV1beta1TaskDefinitionSpecForProviderInferenceAcceleratorItems0:
-    r"""
-    ecs aws upbound io v1beta1 task definition spec for provider inference accelerator items0
-
-    Attributes
-    ----------
-    deviceName : str, default is Undefined, optional
-        Elastic Inference accelerator device name. The deviceName must also be referenced in a container definition as a ResourceRequirement.
-    deviceType : str, default is Undefined, optional
-        Elastic Inference accelerator type to use.
-    """
-
-
-    deviceName?: str
-
-    deviceType?: str
 
 
 schema EcsAwsUpboundIoV1beta1TaskDefinitionSpecForProviderPlacementConstraintsItems0:
@@ -537,6 +516,8 @@ schema EcsAwsUpboundIoV1beta1TaskDefinitionSpecInitProvider:
         A list of valid container definitions provided as a single valid JSON document. Please note that you should only provide values that are part of the container definition document. For a detailed description of what parameters are available, see the Task Definition Parameters section from the official Developer Guide.
     cpu : str, default is Undefined, optional
         Number of cpu units used by the task. If the requires_compatibilities is FARGATE this field is required.
+    enableFaultInjection : bool, default is Undefined, optional
+        Enables fault injection and allows for fault injection requests to be accepted from the task's containers. Default is false.
     ephemeralStorage : [EcsAwsUpboundIoV1beta1TaskDefinitionSpecInitProviderEphemeralStorageItems0], default is Undefined, optional
         The amount of ephemeral storage to allocate for the task. This parameter is used to expand the total amount of ephemeral storage available, beyond the default amount, for tasks hosted on AWS Fargate. See Ephemeral Storage.
     executionRoleArn : str, default is Undefined, optional
@@ -547,8 +528,6 @@ schema EcsAwsUpboundIoV1beta1TaskDefinitionSpecInitProvider:
         execution role arn selector
     family : str, default is Undefined, optional
         A unique name for your task definition.
-    inferenceAccelerator : [EcsAwsUpboundIoV1beta1TaskDefinitionSpecInitProviderInferenceAcceleratorItems0], default is Undefined, optional
-        Configuration block(s) with Inference Accelerators settings. Detailed below.
     ipcMode : str, default is Undefined, optional
         IPC resource namespace to be used for the containers in the task The valid values are host, task, and none.
     memory : str, default is Undefined, optional
@@ -572,7 +551,7 @@ schema EcsAwsUpboundIoV1beta1TaskDefinitionSpecInitProvider:
     taskRoleArn : str, default is Undefined, optional
         ARN of IAM role that allows your Amazon ECS container task to make calls to other AWS services.
     trackLatest : bool, default is Undefined, optional
-        Whether should track latest task definition or the one created with the resource. Default is false.
+        Whether should track latest ACTIVE task definition on AWS or the one created with the resource stored in state. Default is false. Useful in the event the task definition is modified outside of this resource.
     volume : [EcsAwsUpboundIoV1beta1TaskDefinitionSpecInitProviderVolumeItems0], default is Undefined, optional
         Configuration block for volumes that containers in your task may use. Detailed below.
     """
@@ -581,6 +560,8 @@ schema EcsAwsUpboundIoV1beta1TaskDefinitionSpecInitProvider:
     containerDefinitions?: str
 
     cpu?: str
+
+    enableFaultInjection?: bool
 
     ephemeralStorage?: [EcsAwsUpboundIoV1beta1TaskDefinitionSpecInitProviderEphemeralStorageItems0]
 
@@ -591,8 +572,6 @@ schema EcsAwsUpboundIoV1beta1TaskDefinitionSpecInitProvider:
     executionRoleArnSelector?: EcsAwsUpboundIoV1beta1TaskDefinitionSpecInitProviderExecutionRoleArnSelector
 
     family?: str
-
-    inferenceAccelerator?: [EcsAwsUpboundIoV1beta1TaskDefinitionSpecInitProviderInferenceAcceleratorItems0]
 
     ipcMode?: str
 
@@ -722,24 +701,6 @@ schema EcsAwsUpboundIoV1beta1TaskDefinitionSpecInitProviderExecutionRoleArnSelec
     resolution?: "Required" | "Optional" = "Required"
 
     resolve?: "Always" | "IfNotPresent"
-
-
-schema EcsAwsUpboundIoV1beta1TaskDefinitionSpecInitProviderInferenceAcceleratorItems0:
-    r"""
-    ecs aws upbound io v1beta1 task definition spec init provider inference accelerator items0
-
-    Attributes
-    ----------
-    deviceName : str, default is Undefined, optional
-        Elastic Inference accelerator device name. The deviceName must also be referenced in a container definition as a ResourceRequirement.
-    deviceType : str, default is Undefined, optional
-        Elastic Inference accelerator type to use.
-    """
-
-
-    deviceName?: str
-
-    deviceType?: str
 
 
 schema EcsAwsUpboundIoV1beta1TaskDefinitionSpecInitProviderPlacementConstraintsItems0:
@@ -997,112 +958,12 @@ schema EcsAwsUpboundIoV1beta1TaskDefinitionSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema EcsAwsUpboundIoV1beta1TaskDefinitionSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : EcsAwsUpboundIoV1beta1TaskDefinitionSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : EcsAwsUpboundIoV1beta1TaskDefinitionSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: EcsAwsUpboundIoV1beta1TaskDefinitionSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: EcsAwsUpboundIoV1beta1TaskDefinitionSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema EcsAwsUpboundIoV1beta1TaskDefinitionSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : EcsAwsUpboundIoV1beta1TaskDefinitionSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: EcsAwsUpboundIoV1beta1TaskDefinitionSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema EcsAwsUpboundIoV1beta1TaskDefinitionSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema EcsAwsUpboundIoV1beta1TaskDefinitionSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema EcsAwsUpboundIoV1beta1TaskDefinitionSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1156,6 +1017,8 @@ schema EcsAwsUpboundIoV1beta1TaskDefinitionStatusAtProvider:
         A list of valid container definitions provided as a single valid JSON document. Please note that you should only provide values that are part of the container definition document. For a detailed description of what parameters are available, see the Task Definition Parameters section from the official Developer Guide.
     cpu : str, default is Undefined, optional
         Number of cpu units used by the task. If the requires_compatibilities is FARGATE this field is required.
+    enableFaultInjection : bool, default is Undefined, optional
+        Enables fault injection and allows for fault injection requests to be accepted from the task's containers. Default is false.
     ephemeralStorage : [EcsAwsUpboundIoV1beta1TaskDefinitionStatusAtProviderEphemeralStorageItems0], default is Undefined, optional
         The amount of ephemeral storage to allocate for the task. This parameter is used to expand the total amount of ephemeral storage available, beyond the default amount, for tasks hosted on AWS Fargate. See Ephemeral Storage.
     executionRoleArn : str, default is Undefined, optional
@@ -1164,8 +1027,6 @@ schema EcsAwsUpboundIoV1beta1TaskDefinitionStatusAtProvider:
         A unique name for your task definition.
     id : str, default is Undefined, optional
         id
-    inferenceAccelerator : [EcsAwsUpboundIoV1beta1TaskDefinitionStatusAtProviderInferenceAcceleratorItems0], default is Undefined, optional
-        Configuration block(s) with Inference Accelerators settings. Detailed below.
     ipcMode : str, default is Undefined, optional
         IPC resource namespace to be used for the containers in the task The valid values are host, task, and none.
     memory : str, default is Undefined, optional
@@ -1178,6 +1039,9 @@ schema EcsAwsUpboundIoV1beta1TaskDefinitionStatusAtProvider:
         Configuration block for rules that are taken into consideration during task placement. Maximum number of placement_constraints is 10. Detailed below.
     proxyConfiguration : [EcsAwsUpboundIoV1beta1TaskDefinitionStatusAtProviderProxyConfigurationItems0], default is Undefined, optional
         Configuration block for the App Mesh proxy. Detailed below.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     requiresCompatibilities : [str], default is Undefined, optional
         Set of launch types required by the task. The valid values are EC2 and FARGATE.
     revision : float, default is Undefined, optional
@@ -1193,7 +1057,7 @@ schema EcsAwsUpboundIoV1beta1TaskDefinitionStatusAtProvider:
     taskRoleArn : str, default is Undefined, optional
         ARN of IAM role that allows your Amazon ECS container task to make calls to other AWS services.
     trackLatest : bool, default is Undefined, optional
-        Whether should track latest task definition or the one created with the resource. Default is false.
+        Whether should track latest ACTIVE task definition on AWS or the one created with the resource stored in state. Default is false. Useful in the event the task definition is modified outside of this resource.
     volume : [EcsAwsUpboundIoV1beta1TaskDefinitionStatusAtProviderVolumeItems0], default is Undefined, optional
         Configuration block for volumes that containers in your task may use. Detailed below.
     """
@@ -1207,6 +1071,8 @@ schema EcsAwsUpboundIoV1beta1TaskDefinitionStatusAtProvider:
 
     cpu?: str
 
+    enableFaultInjection?: bool
+
     ephemeralStorage?: [EcsAwsUpboundIoV1beta1TaskDefinitionStatusAtProviderEphemeralStorageItems0]
 
     executionRoleArn?: str
@@ -1214,8 +1080,6 @@ schema EcsAwsUpboundIoV1beta1TaskDefinitionStatusAtProvider:
     family?: str
 
     id?: str
-
-    inferenceAccelerator?: [EcsAwsUpboundIoV1beta1TaskDefinitionStatusAtProviderInferenceAcceleratorItems0]
 
     ipcMode?: str
 
@@ -1228,6 +1092,8 @@ schema EcsAwsUpboundIoV1beta1TaskDefinitionStatusAtProvider:
     placementConstraints?: [EcsAwsUpboundIoV1beta1TaskDefinitionStatusAtProviderPlacementConstraintsItems0]
 
     proxyConfiguration?: [EcsAwsUpboundIoV1beta1TaskDefinitionStatusAtProviderProxyConfigurationItems0]
+
+    region?: str
 
     requiresCompatibilities?: [str]
 
@@ -1260,24 +1126,6 @@ schema EcsAwsUpboundIoV1beta1TaskDefinitionStatusAtProviderEphemeralStorageItems
 
 
     sizeInGib?: float
-
-
-schema EcsAwsUpboundIoV1beta1TaskDefinitionStatusAtProviderInferenceAcceleratorItems0:
-    r"""
-    ecs aws upbound io v1beta1 task definition status at provider inference accelerator items0
-
-    Attributes
-    ----------
-    deviceName : str, default is Undefined, optional
-        Elastic Inference accelerator device name. The deviceName must also be referenced in a container definition as a ResourceRequirement.
-    deviceType : str, default is Undefined, optional
-        Elastic Inference accelerator type to use.
-    """
-
-
-    deviceName?: str
-
-    deviceType?: str
 
 
 schema EcsAwsUpboundIoV1beta1TaskDefinitionStatusAtProviderPlacementConstraintsItems0:

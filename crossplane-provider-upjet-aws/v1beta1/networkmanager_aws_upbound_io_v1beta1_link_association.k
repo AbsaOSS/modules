@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema LinkAssociation:
     r"""
-    LinkAssociation is the Schema for the LinkAssociations API. Associates a link to a device.
+    LinkAssociation is the Schema for the LinkAssociations API. Manages a Network Manager link association.
 
     Attributes
     ----------
@@ -75,8 +75,6 @@ schema NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -92,8 +90,6 @@ schema NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpec:
 
     providerConfigRef?: NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecWriteConnectionSecretToRef
 
 
@@ -104,25 +100,23 @@ schema NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecForProvider:
     Attributes
     ----------
     deviceId : str, default is Undefined, optional
-        The ID of the device.
+        ID of the device.
     deviceIdRef : NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecForProviderDeviceIDRef, default is Undefined, optional
         device Id ref
     deviceIdSelector : NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecForProviderDeviceIDSelector, default is Undefined, optional
         device Id selector
     globalNetworkId : str, default is Undefined, optional
-        The ID of the global network.
+        ID of the global network.
     globalNetworkIdRef : NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecForProviderGlobalNetworkIDRef, default is Undefined, optional
         global network Id ref
     globalNetworkIdSelector : NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecForProviderGlobalNetworkIDSelector, default is Undefined, optional
         global network Id selector
     linkId : str, default is Undefined, optional
-        The ID of the link.
+        ID of the link.
     linkIdRef : NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecForProviderLinkIDRef, default is Undefined, optional
         link Id ref
     linkIdSelector : NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecForProviderLinkIDSelector, default is Undefined, optional
         link Id selector
-    region : str, default is Undefined, required
-        Region is the region you'd like your resource to be created in.
     """
 
 
@@ -143,8 +137,6 @@ schema NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecForProvider:
     linkIdRef?: NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecForProviderLinkIDRef
 
     linkIdSelector?: NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecForProviderLinkIDSelector
-
-    region: str
 
 
 schema NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecForProviderDeviceIDRef:
@@ -458,112 +450,12 @@ schema NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecProviderConfigRefPoli
     resolve?: "Always" | "IfNotPresent"
 
 
-schema NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema NetworkmanagerAwsUpboundIoV1beta1LinkAssociationSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -610,13 +502,13 @@ schema NetworkmanagerAwsUpboundIoV1beta1LinkAssociationStatusAtProvider:
     Attributes
     ----------
     deviceId : str, default is Undefined, optional
-        The ID of the device.
+        ID of the device.
     globalNetworkId : str, default is Undefined, optional
-        The ID of the global network.
+        ID of the global network.
     id : str, default is Undefined, optional
         id
     linkId : str, default is Undefined, optional
-        The ID of the link.
+        ID of the link.
     """
 
 

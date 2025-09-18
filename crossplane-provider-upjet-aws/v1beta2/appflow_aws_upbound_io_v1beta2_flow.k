@@ -66,8 +66,6 @@ schema AppflowAwsUpboundIoV1beta2FlowSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : AppflowAwsUpboundIoV1beta2FlowSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : AppflowAwsUpboundIoV1beta2FlowSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : AppflowAwsUpboundIoV1beta2FlowSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema AppflowAwsUpboundIoV1beta2FlowSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: AppflowAwsUpboundIoV1beta2FlowSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: AppflowAwsUpboundIoV1beta2FlowSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: AppflowAwsUpboundIoV1beta2FlowSpecWriteConnectionSecretToRef
 
@@ -103,6 +99,7 @@ schema AppflowAwsUpboundIoV1beta2FlowSpecForProvider:
     metadataCatalogConfig : AppflowAwsUpboundIoV1beta2FlowSpecForProviderMetadataCatalogConfig, default is Undefined, optional
         metadata catalog config
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     sourceFlowConfig : AppflowAwsUpboundIoV1beta2FlowSpecForProviderSourceFlowConfig, default is Undefined, optional
         source flow config
@@ -651,6 +648,8 @@ schema AppflowAwsUpboundIoV1beta2FlowSpecForProviderDestinationFlowConfigItems0D
 
     Attributes
     ----------
+    dataTransferApi : str, default is Undefined, optional
+        Specifies which Salesforce API is used by Amazon AppFlow when your flow transfers data to Salesforce.
     errorHandlingConfig : AppflowAwsUpboundIoV1beta2FlowSpecForProviderDestinationFlowConfigItems0DestinationConnectorPropertiesSalesforceErrorHandlingConfig, default is Undefined, optional
         error handling config
     idFieldNames : [str], default is Undefined, optional
@@ -661,6 +660,8 @@ schema AppflowAwsUpboundIoV1beta2FlowSpecForProviderDestinationFlowConfigItems0D
         Type of write operation to be performed in the custom connector when it's used as destination. Valid values are INSERT, UPSERT, UPDATE, and DELETE.
     """
 
+
+    dataTransferApi?: str
 
     errorHandlingConfig?: AppflowAwsUpboundIoV1beta2FlowSpecForProviderDestinationFlowConfigItems0DestinationConnectorPropertiesSalesforceErrorHandlingConfig
 
@@ -1334,6 +1335,8 @@ schema AppflowAwsUpboundIoV1beta2FlowSpecForProviderSourceFlowConfigSourceConnec
 
     Attributes
     ----------
+    dataTransferApi : str, default is Undefined, optional
+        Specifies which Salesforce API is used by Amazon AppFlow when your flow transfers data to Salesforce.
     enableDynamicFieldUpdate : bool, default is Undefined, optional
         Flag that enables dynamic fetching of new (recently added) fields in the Salesforce objects while running a flow.
     includeDeletedRecords : bool, default is Undefined, optional
@@ -1342,6 +1345,8 @@ schema AppflowAwsUpboundIoV1beta2FlowSpecForProviderSourceFlowConfigSourceConnec
         Object specified in the flow destination.
     """
 
+
+    dataTransferApi?: str
 
     enableDynamicFieldUpdate?: bool
 
@@ -2242,6 +2247,8 @@ schema AppflowAwsUpboundIoV1beta2FlowSpecInitProviderDestinationFlowConfigItems0
 
     Attributes
     ----------
+    dataTransferApi : str, default is Undefined, optional
+        Specifies which Salesforce API is used by Amazon AppFlow when your flow transfers data to Salesforce.
     errorHandlingConfig : AppflowAwsUpboundIoV1beta2FlowSpecInitProviderDestinationFlowConfigItems0DestinationConnectorPropertiesSalesforceErrorHandlingConfig, default is Undefined, optional
         error handling config
     idFieldNames : [str], default is Undefined, optional
@@ -2252,6 +2259,8 @@ schema AppflowAwsUpboundIoV1beta2FlowSpecInitProviderDestinationFlowConfigItems0
         Type of write operation to be performed in the custom connector when it's used as destination. Valid values are INSERT, UPSERT, UPDATE, and DELETE.
     """
 
+
+    dataTransferApi?: str
 
     errorHandlingConfig?: AppflowAwsUpboundIoV1beta2FlowSpecInitProviderDestinationFlowConfigItems0DestinationConnectorPropertiesSalesforceErrorHandlingConfig
 
@@ -2925,6 +2934,8 @@ schema AppflowAwsUpboundIoV1beta2FlowSpecInitProviderSourceFlowConfigSourceConne
 
     Attributes
     ----------
+    dataTransferApi : str, default is Undefined, optional
+        Specifies which Salesforce API is used by Amazon AppFlow when your flow transfers data to Salesforce.
     enableDynamicFieldUpdate : bool, default is Undefined, optional
         Flag that enables dynamic fetching of new (recently added) fields in the Salesforce objects while running a flow.
     includeDeletedRecords : bool, default is Undefined, optional
@@ -2933,6 +2944,8 @@ schema AppflowAwsUpboundIoV1beta2FlowSpecInitProviderSourceFlowConfigSourceConne
         Object specified in the flow destination.
     """
 
+
+    dataTransferApi?: str
 
     enableDynamicFieldUpdate?: bool
 
@@ -3309,112 +3322,12 @@ schema AppflowAwsUpboundIoV1beta2FlowSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema AppflowAwsUpboundIoV1beta2FlowSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : AppflowAwsUpboundIoV1beta2FlowSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : AppflowAwsUpboundIoV1beta2FlowSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: AppflowAwsUpboundIoV1beta2FlowSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: AppflowAwsUpboundIoV1beta2FlowSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema AppflowAwsUpboundIoV1beta2FlowSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : AppflowAwsUpboundIoV1beta2FlowSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: AppflowAwsUpboundIoV1beta2FlowSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema AppflowAwsUpboundIoV1beta2FlowSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema AppflowAwsUpboundIoV1beta2FlowSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema AppflowAwsUpboundIoV1beta2FlowSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -3474,6 +3387,9 @@ schema AppflowAwsUpboundIoV1beta2FlowStatusAtProvider:
         ARN (Amazon Resource Name) of the Key Management Service (KMS) key you provide for encryption. This is required if you do not want to use the Amazon AppFlow-managed KMS key. If you don't provide anything here, Amazon AppFlow uses the Amazon AppFlow-managed KMS key.
     metadataCatalogConfig : AppflowAwsUpboundIoV1beta2FlowStatusAtProviderMetadataCatalogConfig, default is Undefined, optional
         metadata catalog config
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     sourceFlowConfig : AppflowAwsUpboundIoV1beta2FlowStatusAtProviderSourceFlowConfig, default is Undefined, optional
         source flow config
     tags : {str:str}, default is Undefined, optional
@@ -3500,6 +3416,8 @@ schema AppflowAwsUpboundIoV1beta2FlowStatusAtProvider:
     kmsArn?: str
 
     metadataCatalogConfig?: AppflowAwsUpboundIoV1beta2FlowStatusAtProviderMetadataCatalogConfig
+
+    region?: str
 
     sourceFlowConfig?: AppflowAwsUpboundIoV1beta2FlowStatusAtProviderSourceFlowConfig
 
@@ -3932,6 +3850,8 @@ schema AppflowAwsUpboundIoV1beta2FlowStatusAtProviderDestinationFlowConfigItems0
 
     Attributes
     ----------
+    dataTransferApi : str, default is Undefined, optional
+        Specifies which Salesforce API is used by Amazon AppFlow when your flow transfers data to Salesforce.
     errorHandlingConfig : AppflowAwsUpboundIoV1beta2FlowStatusAtProviderDestinationFlowConfigItems0DestinationConnectorPropertiesSalesforceErrorHandlingConfig, default is Undefined, optional
         error handling config
     idFieldNames : [str], default is Undefined, optional
@@ -3942,6 +3862,8 @@ schema AppflowAwsUpboundIoV1beta2FlowStatusAtProviderDestinationFlowConfigItems0
         Type of write operation to be performed in the custom connector when it's used as destination. Valid values are INSERT, UPSERT, UPDATE, and DELETE.
     """
 
+
+    dataTransferApi?: str
 
     errorHandlingConfig?: AppflowAwsUpboundIoV1beta2FlowStatusAtProviderDestinationFlowConfigItems0DestinationConnectorPropertiesSalesforceErrorHandlingConfig
 
@@ -4518,6 +4440,8 @@ schema AppflowAwsUpboundIoV1beta2FlowStatusAtProviderSourceFlowConfigSourceConne
 
     Attributes
     ----------
+    dataTransferApi : str, default is Undefined, optional
+        Specifies which Salesforce API is used by Amazon AppFlow when your flow transfers data to Salesforce.
     enableDynamicFieldUpdate : bool, default is Undefined, optional
         Flag that enables dynamic fetching of new (recently added) fields in the Salesforce objects while running a flow.
     includeDeletedRecords : bool, default is Undefined, optional
@@ -4526,6 +4450,8 @@ schema AppflowAwsUpboundIoV1beta2FlowStatusAtProviderSourceFlowConfigSourceConne
         Object specified in the flow destination.
     """
 
+
+    dataTransferApi?: str
 
     enableDynamicFieldUpdate?: bool
 

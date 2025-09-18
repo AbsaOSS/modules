@@ -66,8 +66,6 @@ schema SignerAwsUpboundIoV1beta1SigningProfilePermissionSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : SignerAwsUpboundIoV1beta1SigningProfilePermissionSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : SignerAwsUpboundIoV1beta1SigningProfilePermissionSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : SignerAwsUpboundIoV1beta1SigningProfilePermissionSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema SignerAwsUpboundIoV1beta1SigningProfilePermissionSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: SignerAwsUpboundIoV1beta1SigningProfilePermissionSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: SignerAwsUpboundIoV1beta1SigningProfilePermissionSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: SignerAwsUpboundIoV1beta1SigningProfilePermissionSpecWriteConnectionSecretToRef
 
@@ -111,6 +107,7 @@ schema SignerAwsUpboundIoV1beta1SigningProfilePermissionSpecForProvider:
     profileVersionSelector : SignerAwsUpboundIoV1beta1SigningProfilePermissionSpecForProviderProfileVersionSelector, default is Undefined, optional
         profile version selector
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     statementId : str, default is Undefined, optional
         A unique statement identifier.
@@ -496,112 +493,12 @@ schema SignerAwsUpboundIoV1beta1SigningProfilePermissionSpecProviderConfigRefPol
     resolve?: "Always" | "IfNotPresent"
 
 
-schema SignerAwsUpboundIoV1beta1SigningProfilePermissionSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : SignerAwsUpboundIoV1beta1SigningProfilePermissionSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : SignerAwsUpboundIoV1beta1SigningProfilePermissionSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: SignerAwsUpboundIoV1beta1SigningProfilePermissionSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: SignerAwsUpboundIoV1beta1SigningProfilePermissionSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema SignerAwsUpboundIoV1beta1SigningProfilePermissionSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : SignerAwsUpboundIoV1beta1SigningProfilePermissionSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: SignerAwsUpboundIoV1beta1SigningProfilePermissionSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema SignerAwsUpboundIoV1beta1SigningProfilePermissionSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema SignerAwsUpboundIoV1beta1SigningProfilePermissionSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema SignerAwsUpboundIoV1beta1SigningProfilePermissionSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -657,6 +554,9 @@ schema SignerAwsUpboundIoV1beta1SigningProfilePermissionStatusAtProvider:
         Name of the signing profile to add the cross-account permissions.
     profileVersion : str, default is Undefined, optional
         The signing profile version that a permission applies to.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     statementId : str, default is Undefined, optional
         A unique statement identifier.
     statementIdPrefix : str, default is Undefined, optional
@@ -673,6 +573,8 @@ schema SignerAwsUpboundIoV1beta1SigningProfilePermissionStatusAtProvider:
     profileName?: str
 
     profileVersion?: str
+
+    region?: str
 
     statementId?: str
 

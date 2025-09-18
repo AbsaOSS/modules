@@ -66,8 +66,6 @@ schema GlueAwsUpboundIoV1beta1SchemaSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : GlueAwsUpboundIoV1beta1SchemaSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : GlueAwsUpboundIoV1beta1SchemaSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : GlueAwsUpboundIoV1beta1SchemaSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema GlueAwsUpboundIoV1beta1SchemaSpec:
 
     providerConfigRef?: GlueAwsUpboundIoV1beta1SchemaSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: GlueAwsUpboundIoV1beta1SchemaSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: GlueAwsUpboundIoV1beta1SchemaSpecWriteConnectionSecretToRef
 
 
@@ -99,8 +95,9 @@ schema GlueAwsUpboundIoV1beta1SchemaSpecForProvider:
     dataFormat : str, default is Undefined, optional
         The data format of the schema definition. Valid values are AVRO, JSON and PROTOBUF.
     description : str, default is Undefined, optional
-        –  A description of the schema.
+        A description of the schema.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     registryArn : str, default is Undefined, optional
         The ARN of the Glue Registry to create the schema in.
@@ -111,7 +108,7 @@ schema GlueAwsUpboundIoV1beta1SchemaSpecForProvider:
     schemaDefinition : str, default is Undefined, optional
         The schema definition using the data_format setting for schema_name.
     schemaName : str, default is Undefined, optional
-        –  The Name of the schema.
+        The Name of the schema.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     """
@@ -247,7 +244,7 @@ schema GlueAwsUpboundIoV1beta1SchemaSpecInitProvider:
     dataFormat : str, default is Undefined, optional
         The data format of the schema definition. Valid values are AVRO, JSON and PROTOBUF.
     description : str, default is Undefined, optional
-        –  A description of the schema.
+        A description of the schema.
     registryArn : str, default is Undefined, optional
         The ARN of the Glue Registry to create the schema in.
     registryArnRef : GlueAwsUpboundIoV1beta1SchemaSpecInitProviderRegistryArnRef, default is Undefined, optional
@@ -257,7 +254,7 @@ schema GlueAwsUpboundIoV1beta1SchemaSpecInitProvider:
     schemaDefinition : str, default is Undefined, optional
         The schema definition using the data_format setting for schema_name.
     schemaName : str, default is Undefined, optional
-        –  The Name of the schema.
+        The Name of the schema.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     """
@@ -415,112 +412,12 @@ schema GlueAwsUpboundIoV1beta1SchemaSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema GlueAwsUpboundIoV1beta1SchemaSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : GlueAwsUpboundIoV1beta1SchemaSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : GlueAwsUpboundIoV1beta1SchemaSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: GlueAwsUpboundIoV1beta1SchemaSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: GlueAwsUpboundIoV1beta1SchemaSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema GlueAwsUpboundIoV1beta1SchemaSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : GlueAwsUpboundIoV1beta1SchemaSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: GlueAwsUpboundIoV1beta1SchemaSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema GlueAwsUpboundIoV1beta1SchemaSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema GlueAwsUpboundIoV1beta1SchemaSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema GlueAwsUpboundIoV1beta1SchemaSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -573,13 +470,16 @@ schema GlueAwsUpboundIoV1beta1SchemaStatusAtProvider:
     dataFormat : str, default is Undefined, optional
         The data format of the schema definition. Valid values are AVRO, JSON and PROTOBUF.
     description : str, default is Undefined, optional
-        –  A description of the schema.
+        A description of the schema.
     id : str, default is Undefined, optional
         Amazon Resource Name (ARN) of the schema.
     latestSchemaVersion : float, default is Undefined, optional
         The latest version of the schema associated with the returned schema definition.
     nextSchemaVersion : float, default is Undefined, optional
         The next version of the schema associated with the returned schema definition.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     registryArn : str, default is Undefined, optional
         The ARN of the Glue Registry to create the schema in.
     registryName : str, default is Undefined, optional
@@ -589,7 +489,7 @@ schema GlueAwsUpboundIoV1beta1SchemaStatusAtProvider:
     schemaDefinition : str, default is Undefined, optional
         The schema definition using the data_format setting for schema_name.
     schemaName : str, default is Undefined, optional
-        –  The Name of the schema.
+        The Name of the schema.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
@@ -610,6 +510,8 @@ schema GlueAwsUpboundIoV1beta1SchemaStatusAtProvider:
     latestSchemaVersion?: float
 
     nextSchemaVersion?: float
+
+    region?: str
 
     registryArn?: str
 

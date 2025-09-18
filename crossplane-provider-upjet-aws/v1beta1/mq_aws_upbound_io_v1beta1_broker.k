@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema Broker:
     r"""
-    Broker is the Schema for the Brokers API. Provides an MQ Broker Resource
+    Broker is the Schema for the Brokers API. Manages an AWS MQ broker
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema MqAwsUpboundIoV1beta1BrokerSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : MqAwsUpboundIoV1beta1BrokerSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : MqAwsUpboundIoV1beta1BrokerSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : MqAwsUpboundIoV1beta1BrokerSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema MqAwsUpboundIoV1beta1BrokerSpec:
 
     providerConfigRef?: MqAwsUpboundIoV1beta1BrokerSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: MqAwsUpboundIoV1beta1BrokerSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: MqAwsUpboundIoV1beta1BrokerSpecWriteConnectionSecretToRef
 
 
@@ -95,7 +91,7 @@ schema MqAwsUpboundIoV1beta1BrokerSpecForProvider:
     Attributes
     ----------
     applyImmediately : bool, default is Undefined, optional
-        Specifies whether any broker modifications are applied immediately, or during the next maintenance window. Default is false.
+        Whether to apply broker modifications immediately. Default is false.
     authenticationStrategy : str, default is Undefined, optional
         Authentication strategy used to secure the broker. Valid values are simple and ldap. ldap is not supported for engine_type RabbitMQ.
     autoMinorVersionUpgrade : bool, default is Undefined, optional
@@ -105,9 +101,9 @@ schema MqAwsUpboundIoV1beta1BrokerSpecForProvider:
     configuration : [MqAwsUpboundIoV1beta1BrokerSpecForProviderConfigurationItems0], default is Undefined, optional
         Configuration block for broker configuration. Applies to engine_type of ActiveMQ and RabbitMQ only. Detailed below.
     dataReplicationMode : str, default is Undefined, optional
-        Defines whether this broker is a part of a data replication pair. Valid values are CRDR and NONE.
+        Whether this broker is part of a data replication pair. Valid values are CRDR and NONE.
     dataReplicationPrimaryBrokerArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the primary broker that is used to replicate data from in a data replication pair, and is applied to the replica broker. Must be set when data_replication_mode is CRDR.
+        ARN of the primary broker used to replicate data in a data replication pair. Required when data_replication_mode is CRDR.
     dataReplicationPrimaryBrokerArnRef : MqAwsUpboundIoV1beta1BrokerSpecForProviderDataReplicationPrimaryBrokerArnRef, default is Undefined, optional
         data replication primary broker arn ref
     dataReplicationPrimaryBrokerArnSelector : MqAwsUpboundIoV1beta1BrokerSpecForProviderDataReplicationPrimaryBrokerArnSelector, default is Undefined, optional
@@ -119,18 +115,19 @@ schema MqAwsUpboundIoV1beta1BrokerSpecForProvider:
     engineType : str, default is Undefined, optional
         Type of broker engine. Valid values are ActiveMQ and RabbitMQ.
     engineVersion : str, default is Undefined, optional
-        Version of the broker engine. See the AmazonMQ Broker Engine docs for supported versions. For example, 5.17.6.
+        Version of the broker engine.
     hostInstanceType : str, default is Undefined, optional
         Broker's instance type. For example, mq.t3.micro, mq.m5.large.
     ldapServerMetadata : [MqAwsUpboundIoV1beta1BrokerSpecForProviderLdapServerMetadataItems0], default is Undefined, optional
-        Configuration block for the LDAP server used to authenticate and authorize connections to the broker. Not supported for engine_type RabbitMQ. Detailed below. (Currently, AWS may not process changes to LDAP server metadata.)
+        Configuration block for the LDAP server used to authenticate and authorize connections. Not supported for engine_type RabbitMQ. Detailed below.
     logs : [MqAwsUpboundIoV1beta1BrokerSpecForProviderLogsItems0], default is Undefined, optional
-        Configuration block for the logging configuration of the broker. Detailed below.
+        Configuration block for the logging configuration. Detailed below.
     maintenanceWindowStartTime : [MqAwsUpboundIoV1beta1BrokerSpecForProviderMaintenanceWindowStartTimeItems0], default is Undefined, optional
         Configuration block for the maintenance window start time. Detailed below.
     publiclyAccessible : bool, default is Undefined, optional
         Whether to enable connections from applications outside of the VPC that hosts the broker's subnets.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     securityGroupRefs : [MqAwsUpboundIoV1beta1BrokerSpecForProviderSecurityGroupRefsItems0], default is Undefined, optional
         References to SecurityGroup in ec2 to populate securityGroups.
@@ -139,7 +136,7 @@ schema MqAwsUpboundIoV1beta1BrokerSpecForProvider:
     securityGroups : [str], default is Undefined, optional
         List of security group IDs assigned to the broker.
     storageType : str, default is Undefined, optional
-        Storage type of the broker. For engine_type ActiveMQ, the valid values are efs and ebs, and the AWS-default is efs. For engine_type RabbitMQ, only ebs is supported. When using ebs, only the mq.m5 broker instance type family is supported.
+        Storage type of the broker. For engine_type ActiveMQ, valid values are efs and ebs (AWS-default is efs). For engine_type RabbitMQ, only ebs is supported. When using ebs, only the mq.m5 broker instance type family is supported.
     subnetIdRefs : [MqAwsUpboundIoV1beta1BrokerSpecForProviderSubnetIDRefsItems0], default is Undefined, optional
         References to Subnet in ec2 to populate subnetIds.
     subnetIdSelector : MqAwsUpboundIoV1beta1BrokerSpecForProviderSubnetIDSelector, default is Undefined, optional
@@ -217,7 +214,7 @@ schema MqAwsUpboundIoV1beta1BrokerSpecForProviderConfigurationItems0:
     Attributes
     ----------
     id : str, default is Undefined, optional
-        The Configuration ID.
+        Configuration ID.
     idRef : MqAwsUpboundIoV1beta1BrokerSpecForProviderConfigurationItems0IDRef, default is Undefined, optional
         id ref
     idSelector : MqAwsUpboundIoV1beta1BrokerSpecForProviderConfigurationItems0IDSelector, default is Undefined, optional
@@ -421,9 +418,9 @@ schema MqAwsUpboundIoV1beta1BrokerSpecForProviderEncryptionOptionsItems0:
     Attributes
     ----------
     kmsKeyId : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of Key Management Service (KMS) Customer Master Key (CMK) to use for encryption at rest. Requires setting use_aws_owned_key to false. To perform drift detection when AWS-managed CMKs or customer-managed CMKs are in use, this value must be configured.
+        ARN of KMS CMK to use for encryption at rest. Requires setting use_aws_owned_key to false. To perform drift detection when AWS-managed CMKs or customer-managed CMKs are in use, this value must be configured.
     useAwsOwnedKey : bool, default is Undefined, optional
-        Whether to enable an AWS-owned KMS CMK that is not in your account. Defaults to true. Setting to false without configuring kms_key_id will create an AWS-managed CMK aliased to aws/mq in your account.
+        Whether to enable an AWS-owned KMS CMK not in your account. Defaults to true. Setting to false without configuring kms_key_id creates an AWS-managed CMK aliased to aws/mq in your account.
     """
 
 
@@ -439,11 +436,11 @@ schema MqAwsUpboundIoV1beta1BrokerSpecForProviderLdapServerMetadataItems0:
     Attributes
     ----------
     hosts : [str], default is Undefined, optional
-        List of a fully qualified domain name of the LDAP server and an optional failover server.
+        List of fully qualified domain names of the LDAP server and optional failover server.
     roleBase : str, default is Undefined, optional
-        Fully qualified name of the directory to search for a user’s groups.
+        Fully qualified name of the directory to search for a user's groups.
     roleName : str, default is Undefined, optional
-        Specifies the LDAP attribute that identifies the group name attribute in the object returned from the group membership query.
+        LDAP attribute that identifies the group name attribute in the object returned from the group membership query.
     roleSearchMatching : str, default is Undefined, optional
         Search criteria for groups.
     roleSearchSubtree : bool, default is Undefined, optional
@@ -455,7 +452,7 @@ schema MqAwsUpboundIoV1beta1BrokerSpecForProviderLdapServerMetadataItems0:
     userBase : str, default is Undefined, optional
         Fully qualified name of the directory where you want to search for users.
     userRoleName : str, default is Undefined, optional
-        Specifies the name of the LDAP attribute for the user group membership.
+        Name of the LDAP attribute for the user group membership.
     userSearchMatching : str, default is Undefined, optional
         Search criteria for users.
     userSearchSubtree : bool, default is Undefined, optional
@@ -515,9 +512,9 @@ schema MqAwsUpboundIoV1beta1BrokerSpecForProviderLogsItems0:
     Attributes
     ----------
     audit : str, default is Undefined, optional
-        Enables audit logging. Auditing is only possible for engine_type of ActiveMQ. User management action made using JMX or the ActiveMQ Web Console is logged. Defaults to false.
+        Whether to enable audit logging. Only possible for engine_type of ActiveMQ. Logs user management actions via JMX or ActiveMQ Web Console. Defaults to false.
     general : bool, default is Undefined, optional
-        Enables general logging via CloudWatch. Defaults to false.
+        Whether to enable general logging via CloudWatch. Defaults to false.
     """
 
 
@@ -739,7 +736,7 @@ schema MqAwsUpboundIoV1beta1BrokerSpecForProviderUserItems0:
     passwordSecretRef : MqAwsUpboundIoV1beta1BrokerSpecForProviderUserItems0PasswordSecretRef, default is Undefined, optional
         password secret ref
     replicationUser : bool, default is Undefined, optional
-        Whether to set set replication user. Defaults to false.
+        Whether to set replication user. Defaults to false.
     username : str, default is Undefined, optional
         Username of the user.
     """
@@ -758,7 +755,7 @@ schema MqAwsUpboundIoV1beta1BrokerSpecForProviderUserItems0:
 
 schema MqAwsUpboundIoV1beta1BrokerSpecForProviderUserItems0PasswordSecretRef:
     r"""
-    Password of the user. It must be 12 to 250 characters long, at least 4 unique characters, and must not contain commas.
+    Password of the user. Must be 12 to 250 characters long, contain at least 4 unique characters, and must not contain commas.
 
     Attributes
     ----------
@@ -794,7 +791,7 @@ schema MqAwsUpboundIoV1beta1BrokerSpecInitProvider:
     Attributes
     ----------
     applyImmediately : bool, default is Undefined, optional
-        Specifies whether any broker modifications are applied immediately, or during the next maintenance window. Default is false.
+        Whether to apply broker modifications immediately. Default is false.
     authenticationStrategy : str, default is Undefined, optional
         Authentication strategy used to secure the broker. Valid values are simple and ldap. ldap is not supported for engine_type RabbitMQ.
     autoMinorVersionUpgrade : bool, default is Undefined, optional
@@ -804,9 +801,9 @@ schema MqAwsUpboundIoV1beta1BrokerSpecInitProvider:
     configuration : [MqAwsUpboundIoV1beta1BrokerSpecInitProviderConfigurationItems0], default is Undefined, optional
         Configuration block for broker configuration. Applies to engine_type of ActiveMQ and RabbitMQ only. Detailed below.
     dataReplicationMode : str, default is Undefined, optional
-        Defines whether this broker is a part of a data replication pair. Valid values are CRDR and NONE.
+        Whether this broker is part of a data replication pair. Valid values are CRDR and NONE.
     dataReplicationPrimaryBrokerArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the primary broker that is used to replicate data from in a data replication pair, and is applied to the replica broker. Must be set when data_replication_mode is CRDR.
+        ARN of the primary broker used to replicate data in a data replication pair. Required when data_replication_mode is CRDR.
     dataReplicationPrimaryBrokerArnRef : MqAwsUpboundIoV1beta1BrokerSpecInitProviderDataReplicationPrimaryBrokerArnRef, default is Undefined, optional
         data replication primary broker arn ref
     dataReplicationPrimaryBrokerArnSelector : MqAwsUpboundIoV1beta1BrokerSpecInitProviderDataReplicationPrimaryBrokerArnSelector, default is Undefined, optional
@@ -818,13 +815,13 @@ schema MqAwsUpboundIoV1beta1BrokerSpecInitProvider:
     engineType : str, default is Undefined, optional
         Type of broker engine. Valid values are ActiveMQ and RabbitMQ.
     engineVersion : str, default is Undefined, optional
-        Version of the broker engine. See the AmazonMQ Broker Engine docs for supported versions. For example, 5.17.6.
+        Version of the broker engine.
     hostInstanceType : str, default is Undefined, optional
         Broker's instance type. For example, mq.t3.micro, mq.m5.large.
     ldapServerMetadata : [MqAwsUpboundIoV1beta1BrokerSpecInitProviderLdapServerMetadataItems0], default is Undefined, optional
-        Configuration block for the LDAP server used to authenticate and authorize connections to the broker. Not supported for engine_type RabbitMQ. Detailed below. (Currently, AWS may not process changes to LDAP server metadata.)
+        Configuration block for the LDAP server used to authenticate and authorize connections. Not supported for engine_type RabbitMQ. Detailed below.
     logs : [MqAwsUpboundIoV1beta1BrokerSpecInitProviderLogsItems0], default is Undefined, optional
-        Configuration block for the logging configuration of the broker. Detailed below.
+        Configuration block for the logging configuration. Detailed below.
     maintenanceWindowStartTime : [MqAwsUpboundIoV1beta1BrokerSpecInitProviderMaintenanceWindowStartTimeItems0], default is Undefined, optional
         Configuration block for the maintenance window start time. Detailed below.
     publiclyAccessible : bool, default is Undefined, optional
@@ -836,7 +833,7 @@ schema MqAwsUpboundIoV1beta1BrokerSpecInitProvider:
     securityGroups : [str], default is Undefined, optional
         List of security group IDs assigned to the broker.
     storageType : str, default is Undefined, optional
-        Storage type of the broker. For engine_type ActiveMQ, the valid values are efs and ebs, and the AWS-default is efs. For engine_type RabbitMQ, only ebs is supported. When using ebs, only the mq.m5 broker instance type family is supported.
+        Storage type of the broker. For engine_type ActiveMQ, valid values are efs and ebs (AWS-default is efs). For engine_type RabbitMQ, only ebs is supported. When using ebs, only the mq.m5 broker instance type family is supported.
     subnetIdRefs : [MqAwsUpboundIoV1beta1BrokerSpecInitProviderSubnetIDRefsItems0], default is Undefined, optional
         References to Subnet in ec2 to populate subnetIds.
     subnetIdSelector : MqAwsUpboundIoV1beta1BrokerSpecInitProviderSubnetIDSelector, default is Undefined, optional
@@ -912,7 +909,7 @@ schema MqAwsUpboundIoV1beta1BrokerSpecInitProviderConfigurationItems0:
     Attributes
     ----------
     id : str, default is Undefined, optional
-        The Configuration ID.
+        Configuration ID.
     idRef : MqAwsUpboundIoV1beta1BrokerSpecInitProviderConfigurationItems0IDRef, default is Undefined, optional
         id ref
     idSelector : MqAwsUpboundIoV1beta1BrokerSpecInitProviderConfigurationItems0IDSelector, default is Undefined, optional
@@ -1116,9 +1113,9 @@ schema MqAwsUpboundIoV1beta1BrokerSpecInitProviderEncryptionOptionsItems0:
     Attributes
     ----------
     kmsKeyId : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of Key Management Service (KMS) Customer Master Key (CMK) to use for encryption at rest. Requires setting use_aws_owned_key to false. To perform drift detection when AWS-managed CMKs or customer-managed CMKs are in use, this value must be configured.
+        ARN of KMS CMK to use for encryption at rest. Requires setting use_aws_owned_key to false. To perform drift detection when AWS-managed CMKs or customer-managed CMKs are in use, this value must be configured.
     useAwsOwnedKey : bool, default is Undefined, optional
-        Whether to enable an AWS-owned KMS CMK that is not in your account. Defaults to true. Setting to false without configuring kms_key_id will create an AWS-managed CMK aliased to aws/mq in your account.
+        Whether to enable an AWS-owned KMS CMK not in your account. Defaults to true. Setting to false without configuring kms_key_id creates an AWS-managed CMK aliased to aws/mq in your account.
     """
 
 
@@ -1134,11 +1131,11 @@ schema MqAwsUpboundIoV1beta1BrokerSpecInitProviderLdapServerMetadataItems0:
     Attributes
     ----------
     hosts : [str], default is Undefined, optional
-        List of a fully qualified domain name of the LDAP server and an optional failover server.
+        List of fully qualified domain names of the LDAP server and optional failover server.
     roleBase : str, default is Undefined, optional
-        Fully qualified name of the directory to search for a user’s groups.
+        Fully qualified name of the directory to search for a user's groups.
     roleName : str, default is Undefined, optional
-        Specifies the LDAP attribute that identifies the group name attribute in the object returned from the group membership query.
+        LDAP attribute that identifies the group name attribute in the object returned from the group membership query.
     roleSearchMatching : str, default is Undefined, optional
         Search criteria for groups.
     roleSearchSubtree : bool, default is Undefined, optional
@@ -1150,7 +1147,7 @@ schema MqAwsUpboundIoV1beta1BrokerSpecInitProviderLdapServerMetadataItems0:
     userBase : str, default is Undefined, optional
         Fully qualified name of the directory where you want to search for users.
     userRoleName : str, default is Undefined, optional
-        Specifies the name of the LDAP attribute for the user group membership.
+        Name of the LDAP attribute for the user group membership.
     userSearchMatching : str, default is Undefined, optional
         Search criteria for users.
     userSearchSubtree : bool, default is Undefined, optional
@@ -1210,9 +1207,9 @@ schema MqAwsUpboundIoV1beta1BrokerSpecInitProviderLogsItems0:
     Attributes
     ----------
     audit : str, default is Undefined, optional
-        Enables audit logging. Auditing is only possible for engine_type of ActiveMQ. User management action made using JMX or the ActiveMQ Web Console is logged. Defaults to false.
+        Whether to enable audit logging. Only possible for engine_type of ActiveMQ. Logs user management actions via JMX or ActiveMQ Web Console. Defaults to false.
     general : bool, default is Undefined, optional
-        Enables general logging via CloudWatch. Defaults to false.
+        Whether to enable general logging via CloudWatch. Defaults to false.
     """
 
 
@@ -1434,7 +1431,7 @@ schema MqAwsUpboundIoV1beta1BrokerSpecInitProviderUserItems0:
     passwordSecretRef : MqAwsUpboundIoV1beta1BrokerSpecInitProviderUserItems0PasswordSecretRef, default is Undefined, required
         password secret ref
     replicationUser : bool, default is Undefined, optional
-        Whether to set set replication user. Defaults to false.
+        Whether to set replication user. Defaults to false.
     username : str, default is Undefined, optional
         Username of the user.
     """
@@ -1453,7 +1450,7 @@ schema MqAwsUpboundIoV1beta1BrokerSpecInitProviderUserItems0:
 
 schema MqAwsUpboundIoV1beta1BrokerSpecInitProviderUserItems0PasswordSecretRef:
     r"""
-    Password of the user. It must be 12 to 250 characters long, at least 4 unique characters, and must not contain commas.
+    Password of the user. Must be 12 to 250 characters long, contain at least 4 unique characters, and must not contain commas.
 
     Attributes
     ----------
@@ -1517,112 +1514,12 @@ schema MqAwsUpboundIoV1beta1BrokerSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema MqAwsUpboundIoV1beta1BrokerSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : MqAwsUpboundIoV1beta1BrokerSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : MqAwsUpboundIoV1beta1BrokerSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: MqAwsUpboundIoV1beta1BrokerSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: MqAwsUpboundIoV1beta1BrokerSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema MqAwsUpboundIoV1beta1BrokerSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : MqAwsUpboundIoV1beta1BrokerSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: MqAwsUpboundIoV1beta1BrokerSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema MqAwsUpboundIoV1beta1BrokerSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema MqAwsUpboundIoV1beta1BrokerSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema MqAwsUpboundIoV1beta1BrokerSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1669,7 +1566,7 @@ schema MqAwsUpboundIoV1beta1BrokerStatusAtProvider:
     Attributes
     ----------
     applyImmediately : bool, default is Undefined, optional
-        Specifies whether any broker modifications are applied immediately, or during the next maintenance window. Default is false.
+        Whether to apply broker modifications immediately. Default is false.
     arn : str, default is Undefined, optional
         ARN of the broker.
     authenticationStrategy : str, default is Undefined, optional
@@ -1681,9 +1578,9 @@ schema MqAwsUpboundIoV1beta1BrokerStatusAtProvider:
     configuration : [MqAwsUpboundIoV1beta1BrokerStatusAtProviderConfigurationItems0], default is Undefined, optional
         Configuration block for broker configuration. Applies to engine_type of ActiveMQ and RabbitMQ only. Detailed below.
     dataReplicationMode : str, default is Undefined, optional
-        Defines whether this broker is a part of a data replication pair. Valid values are CRDR and NONE.
+        Whether this broker is part of a data replication pair. Valid values are CRDR and NONE.
     dataReplicationPrimaryBrokerArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the primary broker that is used to replicate data from in a data replication pair, and is applied to the replica broker. Must be set when data_replication_mode is CRDR.
+        ARN of the primary broker used to replicate data in a data replication pair. Required when data_replication_mode is CRDR.
     deploymentMode : str, default is Undefined, optional
         Deployment mode of the broker. Valid values are SINGLE_INSTANCE, ACTIVE_STANDBY_MULTI_AZ, and CLUSTER_MULTI_AZ. Default is SINGLE_INSTANCE.
     encryptionOptions : [MqAwsUpboundIoV1beta1BrokerStatusAtProviderEncryptionOptionsItems0], default is Undefined, optional
@@ -1691,7 +1588,7 @@ schema MqAwsUpboundIoV1beta1BrokerStatusAtProvider:
     engineType : str, default is Undefined, optional
         Type of broker engine. Valid values are ActiveMQ and RabbitMQ.
     engineVersion : str, default is Undefined, optional
-        Version of the broker engine. See the AmazonMQ Broker Engine docs for supported versions. For example, 5.17.6.
+        Version of the broker engine.
     hostInstanceType : str, default is Undefined, optional
         Broker's instance type. For example, mq.t3.micro, mq.m5.large.
     id : str, default is Undefined, optional
@@ -1699,25 +1596,28 @@ schema MqAwsUpboundIoV1beta1BrokerStatusAtProvider:
     instances : [MqAwsUpboundIoV1beta1BrokerStatusAtProviderInstancesItems0], default is Undefined, optional
         List of information about allocated brokers (both active & standby).
     ldapServerMetadata : [MqAwsUpboundIoV1beta1BrokerStatusAtProviderLdapServerMetadataItems0], default is Undefined, optional
-        Configuration block for the LDAP server used to authenticate and authorize connections to the broker. Not supported for engine_type RabbitMQ. Detailed below. (Currently, AWS may not process changes to LDAP server metadata.)
+        Configuration block for the LDAP server used to authenticate and authorize connections. Not supported for engine_type RabbitMQ. Detailed below.
     logs : [MqAwsUpboundIoV1beta1BrokerStatusAtProviderLogsItems0], default is Undefined, optional
-        Configuration block for the logging configuration of the broker. Detailed below.
+        Configuration block for the logging configuration. Detailed below.
     maintenanceWindowStartTime : [MqAwsUpboundIoV1beta1BrokerStatusAtProviderMaintenanceWindowStartTimeItems0], default is Undefined, optional
         Configuration block for the maintenance window start time. Detailed below.
     pendingDataReplicationMode : str, default is Undefined, optional
-        The data replication mode that will be applied after reboot.
+        Data replication mode that will be applied after reboot.
     publiclyAccessible : bool, default is Undefined, optional
         Whether to enable connections from applications outside of the VPC that hosts the broker's subnets.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     securityGroups : [str], default is Undefined, optional
         List of security group IDs assigned to the broker.
     storageType : str, default is Undefined, optional
-        Storage type of the broker. For engine_type ActiveMQ, the valid values are efs and ebs, and the AWS-default is efs. For engine_type RabbitMQ, only ebs is supported. When using ebs, only the mq.m5 broker instance type family is supported.
+        Storage type of the broker. For engine_type ActiveMQ, valid values are efs and ebs (AWS-default is efs). For engine_type RabbitMQ, only ebs is supported. When using ebs, only the mq.m5 broker instance type family is supported.
     subnetIds : [str], default is Undefined, optional
         List of subnet IDs in which to launch the broker. A SINGLE_INSTANCE deployment requires one subnet. An ACTIVE_STANDBY_MULTI_AZ deployment requires multiple subnets.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
-        A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
+        Map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     user : [MqAwsUpboundIoV1beta1BrokerStatusAtProviderUserItems0], default is Undefined, optional
         Configuration block for broker users. For engine_type of RabbitMQ, Amazon MQ does not return broker users preventing this resource from making user updates and drift detection. Detailed below.
     """
@@ -1763,6 +1663,8 @@ schema MqAwsUpboundIoV1beta1BrokerStatusAtProvider:
 
     publiclyAccessible?: bool
 
+    region?: str
+
     securityGroups?: [str]
 
     storageType?: str
@@ -1783,7 +1685,7 @@ schema MqAwsUpboundIoV1beta1BrokerStatusAtProviderConfigurationItems0:
     Attributes
     ----------
     id : str, default is Undefined, optional
-        The Configuration ID.
+        Configuration ID.
     revision : float, default is Undefined, optional
         Revision of the Configuration.
     """
@@ -1801,9 +1703,9 @@ schema MqAwsUpboundIoV1beta1BrokerStatusAtProviderEncryptionOptionsItems0:
     Attributes
     ----------
     kmsKeyId : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of Key Management Service (KMS) Customer Master Key (CMK) to use for encryption at rest. Requires setting use_aws_owned_key to false. To perform drift detection when AWS-managed CMKs or customer-managed CMKs are in use, this value must be configured.
+        ARN of KMS CMK to use for encryption at rest. Requires setting use_aws_owned_key to false. To perform drift detection when AWS-managed CMKs or customer-managed CMKs are in use, this value must be configured.
     useAwsOwnedKey : bool, default is Undefined, optional
-        Whether to enable an AWS-owned KMS CMK that is not in your account. Defaults to true. Setting to false without configuring kms_key_id will create an AWS-managed CMK aliased to aws/mq in your account.
+        Whether to enable an AWS-owned KMS CMK not in your account. Defaults to true. Setting to false without configuring kms_key_id creates an AWS-managed CMK aliased to aws/mq in your account.
     """
 
 
@@ -1819,7 +1721,7 @@ schema MqAwsUpboundIoV1beta1BrokerStatusAtProviderInstancesItems0:
     Attributes
     ----------
     consoleUrl : str, default is Undefined, optional
-        The URL of the ActiveMQ Web Console or the RabbitMQ Management UI depending on engine_type.
+        URL of the ActiveMQ Web Console or the RabbitMQ Management UI depending on engine_type.
     endpoints : [str], default is Undefined, optional
         Broker's wire-level protocol endpoints in the following order & format referenceable e.g., as instances.0.endpoints.0 (SSL):
     ipAddress : str, default is Undefined, optional
@@ -1841,11 +1743,11 @@ schema MqAwsUpboundIoV1beta1BrokerStatusAtProviderLdapServerMetadataItems0:
     Attributes
     ----------
     hosts : [str], default is Undefined, optional
-        List of a fully qualified domain name of the LDAP server and an optional failover server.
+        List of fully qualified domain names of the LDAP server and optional failover server.
     roleBase : str, default is Undefined, optional
-        Fully qualified name of the directory to search for a user’s groups.
+        Fully qualified name of the directory to search for a user's groups.
     roleName : str, default is Undefined, optional
-        Specifies the LDAP attribute that identifies the group name attribute in the object returned from the group membership query.
+        LDAP attribute that identifies the group name attribute in the object returned from the group membership query.
     roleSearchMatching : str, default is Undefined, optional
         Search criteria for groups.
     roleSearchSubtree : bool, default is Undefined, optional
@@ -1855,7 +1757,7 @@ schema MqAwsUpboundIoV1beta1BrokerStatusAtProviderLdapServerMetadataItems0:
     userBase : str, default is Undefined, optional
         Fully qualified name of the directory where you want to search for users.
     userRoleName : str, default is Undefined, optional
-        Specifies the name of the LDAP attribute for the user group membership.
+        Name of the LDAP attribute for the user group membership.
     userSearchMatching : str, default is Undefined, optional
         Search criteria for users.
     userSearchSubtree : bool, default is Undefined, optional
@@ -1891,9 +1793,9 @@ schema MqAwsUpboundIoV1beta1BrokerStatusAtProviderLogsItems0:
     Attributes
     ----------
     audit : str, default is Undefined, optional
-        Enables audit logging. Auditing is only possible for engine_type of ActiveMQ. User management action made using JMX or the ActiveMQ Web Console is logged. Defaults to false.
+        Whether to enable audit logging. Only possible for engine_type of ActiveMQ. Logs user management actions via JMX or ActiveMQ Web Console. Defaults to false.
     general : bool, default is Undefined, optional
-        Enables general logging via CloudWatch. Defaults to false.
+        Whether to enable general logging via CloudWatch. Defaults to false.
     """
 
 
@@ -1935,7 +1837,7 @@ schema MqAwsUpboundIoV1beta1BrokerStatusAtProviderUserItems0:
     groups : [str], default is Undefined, optional
         List of groups (20 maximum) to which the ActiveMQ user belongs. Applies to engine_type of ActiveMQ only.
     replicationUser : bool, default is Undefined, optional
-        Whether to set set replication user. Defaults to false.
+        Whether to set replication user. Defaults to false.
     username : str, default is Undefined, optional
         Username of the user.
     """

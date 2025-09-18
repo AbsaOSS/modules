@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema FunctionURL:
     r"""
-    FunctionURL is the Schema for the FunctionURLs API. Provides a Lambda function URL resource.
+    FunctionURL is the Schema for the FunctionURLs API. Manages a Lambda function URL.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema LambdaAwsUpboundIoV1beta2FunctionURLSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : LambdaAwsUpboundIoV1beta2FunctionURLSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : LambdaAwsUpboundIoV1beta2FunctionURLSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : LambdaAwsUpboundIoV1beta2FunctionURLSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema LambdaAwsUpboundIoV1beta2FunctionURLSpec:
 
     providerConfigRef?: LambdaAwsUpboundIoV1beta2FunctionURLSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: LambdaAwsUpboundIoV1beta2FunctionURLSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: LambdaAwsUpboundIoV1beta2FunctionURLSpecWriteConnectionSecretToRef
 
 
@@ -95,20 +91,21 @@ schema LambdaAwsUpboundIoV1beta2FunctionURLSpecForProvider:
     Attributes
     ----------
     authorizationType : str, default is Undefined, optional
-        The type of authentication that the function URL uses. Set to "AWS_IAM" to restrict access to authenticated IAM users only. Set to "NONE" to bypass IAM authentication and create a public endpoint. See the AWS documentation for more details.
+        Type of authentication that the function URL uses. Valid values are AWS_IAM and NONE.
     cors : LambdaAwsUpboundIoV1beta2FunctionURLSpecForProviderCors, default is Undefined, optional
         cors
     functionName : str, default is Undefined, optional
-        The name (or ARN) of the Lambda function.
+        Name or ARN of the Lambda function.
     functionNameRef : LambdaAwsUpboundIoV1beta2FunctionURLSpecForProviderFunctionNameRef, default is Undefined, optional
         function name ref
     functionNameSelector : LambdaAwsUpboundIoV1beta2FunctionURLSpecForProviderFunctionNameSelector, default is Undefined, optional
         function name selector
     invokeMode : str, default is Undefined, optional
-        Determines how the Lambda function responds to an invocation. Valid values are BUFFERED (default) and RESPONSE_STREAM. See more in Configuring a Lambda function to stream responses.
+        How the Lambda function responds to an invocation. Valid values are BUFFERED (default) and RESPONSE_STREAM.
     qualifier : str, default is Undefined, optional
-        The alias name or "$LATEST".
+        Alias name or $LATEST.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     """
 
@@ -132,22 +129,22 @@ schema LambdaAwsUpboundIoV1beta2FunctionURLSpecForProvider:
 
 schema LambdaAwsUpboundIoV1beta2FunctionURLSpecForProviderCors:
     r"""
-    The cross-origin resource sharing (CORS) settings for the function URL. Documented below.
+    Cross-origin resource sharing (CORS) settings for the function URL. See below.
 
     Attributes
     ----------
     allowCredentials : bool, default is Undefined, optional
-        Whether to allow cookies or other credentials in requests to the function URL. The default is false.
+        Whether to allow cookies or other credentials in requests to the function URL.
     allowHeaders : [str], default is Undefined, optional
-        The HTTP headers that origins can include in requests to the function URL. For example: ["date", "keep-alive", "x-custom-header"].
+        HTTP headers that origins can include in requests to the function URL.
     allowMethods : [str], default is Undefined, optional
-        The HTTP methods that are allowed when calling the function URL. For example: ["GET", "POST", "DELETE"], or the wildcard character (["*"]).
+        HTTP methods that are allowed when calling the function URL.
     allowOrigins : [str], default is Undefined, optional
-        The origins that can access the function URL. You can list any number of specific origins (or the wildcard character ("*")), separated by a comma. For example: ["https://www.example.com", "http://localhost:60905"].
+        Origins that can access the function URL.
     exposeHeaders : [str], default is Undefined, optional
-        The HTTP headers in your function response that you want to expose to origins that call the function URL.
+        HTTP headers in your function response that you want to expose to origins that call the function URL.
     maxAge : float, default is Undefined, optional
-        The maximum amount of time, in seconds, that web browsers can cache results of a preflight request. By default, this is set to 0, which means that the browser doesn't cache results. The maximum value is 86400.
+        Maximum amount of time, in seconds, that web browsers can cache results of a preflight request. Maximum value is 86400.
     """
 
 
@@ -269,19 +266,19 @@ schema LambdaAwsUpboundIoV1beta2FunctionURLSpecInitProvider:
     Attributes
     ----------
     authorizationType : str, default is Undefined, optional
-        The type of authentication that the function URL uses. Set to "AWS_IAM" to restrict access to authenticated IAM users only. Set to "NONE" to bypass IAM authentication and create a public endpoint. See the AWS documentation for more details.
+        Type of authentication that the function URL uses. Valid values are AWS_IAM and NONE.
     cors : LambdaAwsUpboundIoV1beta2FunctionURLSpecInitProviderCors, default is Undefined, optional
         cors
     functionName : str, default is Undefined, optional
-        The name (or ARN) of the Lambda function.
+        Name or ARN of the Lambda function.
     functionNameRef : LambdaAwsUpboundIoV1beta2FunctionURLSpecInitProviderFunctionNameRef, default is Undefined, optional
         function name ref
     functionNameSelector : LambdaAwsUpboundIoV1beta2FunctionURLSpecInitProviderFunctionNameSelector, default is Undefined, optional
         function name selector
     invokeMode : str, default is Undefined, optional
-        Determines how the Lambda function responds to an invocation. Valid values are BUFFERED (default) and RESPONSE_STREAM. See more in Configuring a Lambda function to stream responses.
+        How the Lambda function responds to an invocation. Valid values are BUFFERED (default) and RESPONSE_STREAM.
     qualifier : str, default is Undefined, optional
-        The alias name or "$LATEST".
+        Alias name or $LATEST.
     """
 
 
@@ -302,22 +299,22 @@ schema LambdaAwsUpboundIoV1beta2FunctionURLSpecInitProvider:
 
 schema LambdaAwsUpboundIoV1beta2FunctionURLSpecInitProviderCors:
     r"""
-    The cross-origin resource sharing (CORS) settings for the function URL. Documented below.
+    Cross-origin resource sharing (CORS) settings for the function URL. See below.
 
     Attributes
     ----------
     allowCredentials : bool, default is Undefined, optional
-        Whether to allow cookies or other credentials in requests to the function URL. The default is false.
+        Whether to allow cookies or other credentials in requests to the function URL.
     allowHeaders : [str], default is Undefined, optional
-        The HTTP headers that origins can include in requests to the function URL. For example: ["date", "keep-alive", "x-custom-header"].
+        HTTP headers that origins can include in requests to the function URL.
     allowMethods : [str], default is Undefined, optional
-        The HTTP methods that are allowed when calling the function URL. For example: ["GET", "POST", "DELETE"], or the wildcard character (["*"]).
+        HTTP methods that are allowed when calling the function URL.
     allowOrigins : [str], default is Undefined, optional
-        The origins that can access the function URL. You can list any number of specific origins (or the wildcard character ("*")), separated by a comma. For example: ["https://www.example.com", "http://localhost:60905"].
+        Origins that can access the function URL.
     exposeHeaders : [str], default is Undefined, optional
-        The HTTP headers in your function response that you want to expose to origins that call the function URL.
+        HTTP headers in your function response that you want to expose to origins that call the function URL.
     maxAge : float, default is Undefined, optional
-        The maximum amount of time, in seconds, that web browsers can cache results of a preflight request. By default, this is set to 0, which means that the browser doesn't cache results. The maximum value is 86400.
+        Maximum amount of time, in seconds, that web browsers can cache results of a preflight request. Maximum value is 86400.
     """
 
 
@@ -467,112 +464,12 @@ schema LambdaAwsUpboundIoV1beta2FunctionURLSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema LambdaAwsUpboundIoV1beta2FunctionURLSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : LambdaAwsUpboundIoV1beta2FunctionURLSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : LambdaAwsUpboundIoV1beta2FunctionURLSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: LambdaAwsUpboundIoV1beta2FunctionURLSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: LambdaAwsUpboundIoV1beta2FunctionURLSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema LambdaAwsUpboundIoV1beta2FunctionURLSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : LambdaAwsUpboundIoV1beta2FunctionURLSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: LambdaAwsUpboundIoV1beta2FunctionURLSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema LambdaAwsUpboundIoV1beta2FunctionURLSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema LambdaAwsUpboundIoV1beta2FunctionURLSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema LambdaAwsUpboundIoV1beta2FunctionURLSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -619,23 +516,26 @@ schema LambdaAwsUpboundIoV1beta2FunctionURLStatusAtProvider:
     Attributes
     ----------
     authorizationType : str, default is Undefined, optional
-        The type of authentication that the function URL uses. Set to "AWS_IAM" to restrict access to authenticated IAM users only. Set to "NONE" to bypass IAM authentication and create a public endpoint. See the AWS documentation for more details.
+        Type of authentication that the function URL uses. Valid values are AWS_IAM and NONE.
     cors : LambdaAwsUpboundIoV1beta2FunctionURLStatusAtProviderCors, default is Undefined, optional
         cors
     functionArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the function.
+        ARN of the Lambda function.
     functionName : str, default is Undefined, optional
-        The name (or ARN) of the Lambda function.
+        Name or ARN of the Lambda function.
     functionUrl : str, default is Undefined, optional
-        The HTTP URL endpoint for the function in the format https://<url_id>.lambda-url.<region>.on.aws/.
+        HTTP URL endpoint for the function in the format https://<url_id>.lambda-url.<region>.on.aws/.
     id : str, default is Undefined, optional
         id
     invokeMode : str, default is Undefined, optional
-        Determines how the Lambda function responds to an invocation. Valid values are BUFFERED (default) and RESPONSE_STREAM. See more in Configuring a Lambda function to stream responses.
+        How the Lambda function responds to an invocation. Valid values are BUFFERED (default) and RESPONSE_STREAM.
     qualifier : str, default is Undefined, optional
-        The alias name or "$LATEST".
+        Alias name or $LATEST.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     urlId : str, default is Undefined, optional
-        A generated ID for the endpoint.
+        Generated ID for the endpoint.
     """
 
 
@@ -655,27 +555,29 @@ schema LambdaAwsUpboundIoV1beta2FunctionURLStatusAtProvider:
 
     qualifier?: str
 
+    region?: str
+
     urlId?: str
 
 
 schema LambdaAwsUpboundIoV1beta2FunctionURLStatusAtProviderCors:
     r"""
-    The cross-origin resource sharing (CORS) settings for the function URL. Documented below.
+    Cross-origin resource sharing (CORS) settings for the function URL. See below.
 
     Attributes
     ----------
     allowCredentials : bool, default is Undefined, optional
-        Whether to allow cookies or other credentials in requests to the function URL. The default is false.
+        Whether to allow cookies or other credentials in requests to the function URL.
     allowHeaders : [str], default is Undefined, optional
-        The HTTP headers that origins can include in requests to the function URL. For example: ["date", "keep-alive", "x-custom-header"].
+        HTTP headers that origins can include in requests to the function URL.
     allowMethods : [str], default is Undefined, optional
-        The HTTP methods that are allowed when calling the function URL. For example: ["GET", "POST", "DELETE"], or the wildcard character (["*"]).
+        HTTP methods that are allowed when calling the function URL.
     allowOrigins : [str], default is Undefined, optional
-        The origins that can access the function URL. You can list any number of specific origins (or the wildcard character ("*")), separated by a comma. For example: ["https://www.example.com", "http://localhost:60905"].
+        Origins that can access the function URL.
     exposeHeaders : [str], default is Undefined, optional
-        The HTTP headers in your function response that you want to expose to origins that call the function URL.
+        HTTP headers in your function response that you want to expose to origins that call the function URL.
     maxAge : float, default is Undefined, optional
-        The maximum amount of time, in seconds, that web browsers can cache results of a preflight request. By default, this is set to 0, which means that the browser doesn't cache results. The maximum value is 86400.
+        Maximum amount of time, in seconds, that web browsers can cache results of a preflight request. Maximum value is 86400.
     """
 
 

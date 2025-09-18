@@ -66,8 +66,6 @@ schema GlueAwsUpboundIoV1beta2JobSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : GlueAwsUpboundIoV1beta2JobSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : GlueAwsUpboundIoV1beta2JobSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : GlueAwsUpboundIoV1beta2JobSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema GlueAwsUpboundIoV1beta2JobSpec:
 
     providerConfigRef?: GlueAwsUpboundIoV1beta2JobSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: GlueAwsUpboundIoV1beta2JobSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: GlueAwsUpboundIoV1beta2JobSpecWriteConnectionSecretToRef
 
 
@@ -97,45 +93,54 @@ schema GlueAwsUpboundIoV1beta2JobSpecForProvider:
     command : GlueAwsUpboundIoV1beta2JobSpecForProviderCommand, default is Undefined, optional
         command
     connections : [str], default is Undefined, optional
-        –  The list of connections used for this job.
+        The list of connections used for this job.
+    connectionsRefs : [GlueAwsUpboundIoV1beta2JobSpecForProviderConnectionsRefsItems0], default is Undefined, optional
+        References to Connection in glue to populate connections.
+    connectionsSelector : GlueAwsUpboundIoV1beta2JobSpecForProviderConnectionsSelector, default is Undefined, optional
+        connections selector
     defaultArguments : {str:str}, default is Undefined, optional
-        execution script consumes, as well as arguments that AWS Glue itself consumes. For information about how to specify and consume your own Job arguments, see the Calling AWS Glue APIs in Python topic in the developer guide. For information about the key-value pairs that AWS Glue consumes to set up your job, see the Special Parameters Used by AWS Glue topic in the developer guide.
+        The map of default arguments for this job. You can specify arguments here that your own job-execution script consumes, as well as arguments that AWS Glue itself consumes. For information about how to specify and consume your own Job arguments, see the Calling AWS Glue APIs in Python topic in the developer guide. For information about the key-value pairs that AWS Glue consumes to set up your job, see the Special Parameters Used by AWS Glue topic in the developer guide.
     description : str, default is Undefined, optional
-        –  Description of the job.
+        Description of the job.
     executionClass : str, default is Undefined, optional
         Indicates whether the job is run with a standard or flexible execution class. The standard execution class is ideal for time-sensitive workloads that require fast job startup and dedicated resources. Valid value: FLEX, STANDARD.
     executionProperty : GlueAwsUpboundIoV1beta2JobSpecForProviderExecutionProperty, default is Undefined, optional
         execution property
     glueVersion : str, default is Undefined, optional
         The version of glue to use, for example "1.0". Ray jobs should set this to 4.0 or greater. For information about available versions, see the AWS Glue Release Notes.
+    jobMode : str, default is Undefined, optional
+        Describes how a job was created. Valid values are SCRIPT, NOTEBOOK and VISUAL.
     jobRunQueuingEnabled : bool, default is Undefined, optional
         Specifies whether job run queuing is enabled for the job runs for this job. A value of true means job run queuing is enabled for the job runs. If false or not populated, the job runs will not be considered for queueing.
     maintenanceWindow : str, default is Undefined, optional
-        –  Specifies the day of the week and hour for the maintenance window for streaming jobs.
+        Specifies the day of the week and hour for the maintenance window for streaming jobs.
     maxCapacity : float, default is Undefined, optional
-        –  The maximum number of AWS Glue data processing units (DPUs) that can be allocated when this job runs. Required when pythonshell is set, accept either 0.0625 or 1.0. Use number_of_workers and worker_type arguments instead with glue_version 2.0 and above.
+        The maximum number of AWS Glue data processing units (DPUs) that can be allocated when this job runs. Required when pythonshell is set, accept either 0.0625 or 1.0. Use number_of_workers and worker_type arguments instead with glue_version 2.0 and above.
     maxRetries : float, default is Undefined, optional
-        –  The maximum number of times to retry this job if it fails.
+        The maximum number of times to retry this job if it fails.
     nonOverridableArguments : {str:str}, default is Undefined, optional
-        overridable arguments for this job, specified as name-value pairs.
+        Non-overridable arguments for this job, specified as name-value pairs.
     notificationProperty : GlueAwsUpboundIoV1beta2JobSpecForProviderNotificationProperty, default is Undefined, optional
         notification property
     numberOfWorkers : float, default is Undefined, optional
         The number of workers of a defined workerType that are allocated when a job runs.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     roleArn : str, default is Undefined, optional
-        –  The ARN of the IAM role associated with this job.
+        The ARN of the IAM role associated with this job.
     roleArnRef : GlueAwsUpboundIoV1beta2JobSpecForProviderRoleArnRef, default is Undefined, optional
         role arn ref
     roleArnSelector : GlueAwsUpboundIoV1beta2JobSpecForProviderRoleArnSelector, default is Undefined, optional
         role arn selector
     securityConfiguration : str, default is Undefined, optional
         The name of the Security Configuration to be associated with the job.
+    sourceControlDetails : GlueAwsUpboundIoV1beta2JobSpecForProviderSourceControlDetails, default is Undefined, optional
+        source control details
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     timeout : float, default is Undefined, optional
-        –  The job timeout in minutes. The default is 2880 minutes (48 hours) for glueetl and pythonshell jobs, and null (unlimited) for gluestreaming jobs.
+        The job timeout in minutes. The default is 2880 minutes (48 hours) for glueetl and pythonshell jobs, and null (unlimited) for gluestreaming jobs.
     workerType : str, default is Undefined, optional
         The type of predefined worker that is allocated when a job runs. Accepts a value of Standard, G.1X, G.2X, or G.025X for Spark jobs. Accepts the value Z.2X for Ray jobs.
     """
@@ -144,6 +149,10 @@ schema GlueAwsUpboundIoV1beta2JobSpecForProvider:
     command?: GlueAwsUpboundIoV1beta2JobSpecForProviderCommand
 
     connections?: [str]
+
+    connectionsRefs?: [GlueAwsUpboundIoV1beta2JobSpecForProviderConnectionsRefsItems0]
+
+    connectionsSelector?: GlueAwsUpboundIoV1beta2JobSpecForProviderConnectionsSelector
 
     defaultArguments?: {str:str}
 
@@ -154,6 +163,8 @@ schema GlueAwsUpboundIoV1beta2JobSpecForProvider:
     executionProperty?: GlueAwsUpboundIoV1beta2JobSpecForProviderExecutionProperty
 
     glueVersion?: str
+
+    jobMode?: str
 
     jobRunQueuingEnabled?: bool
 
@@ -179,6 +190,8 @@ schema GlueAwsUpboundIoV1beta2JobSpecForProvider:
 
     securityConfiguration?: str
 
+    sourceControlDetails?: GlueAwsUpboundIoV1beta2JobSpecForProviderSourceControlDetails
+
     tags?: {str:str}
 
     timeout?: float
@@ -188,14 +201,14 @@ schema GlueAwsUpboundIoV1beta2JobSpecForProvider:
 
 schema GlueAwsUpboundIoV1beta2JobSpecForProviderCommand:
     r"""
-    –  The command of the job. Defined below.
+    The command of the job. Defined below.
 
     Attributes
     ----------
     name : str, default is Undefined, optional
-        –  The name you assign to this job. It must be unique in your account.
+        The name you assign to this job. It must be unique in your account.
     pythonVersion : str, default is Undefined, optional
-        The Python version being used to execute a Python shell job. Allowed values are 2, 3 or 3.9. Version 3 refers to Python 3.6.
+        The Python version being used to execute a Python shell job. Allowed values are 2, 3 or 3.9. Version 3 refers to Python 3.11 when glue_version is set to 5.0.
     runtime : str, default is Undefined, optional
         In Ray jobs, runtime is used to specify the versions of Ray, Python and additional libraries available in your environment. This field is not used in other job types. For supported runtime environment values, see Working with Ray jobs in the Glue Developer Guide.
     scriptLocation : str, default is Undefined, optional
@@ -212,9 +225,98 @@ schema GlueAwsUpboundIoV1beta2JobSpecForProviderCommand:
     scriptLocation?: str
 
 
+schema GlueAwsUpboundIoV1beta2JobSpecForProviderConnectionsRefsItems0:
+    r"""
+    A Reference to a named object.
+
+    Attributes
+    ----------
+    name : str, default is Undefined, required
+        Name of the referenced object.
+    policy : GlueAwsUpboundIoV1beta2JobSpecForProviderConnectionsRefsItems0Policy, default is Undefined, optional
+        policy
+    """
+
+
+    name: str
+
+    policy?: GlueAwsUpboundIoV1beta2JobSpecForProviderConnectionsRefsItems0Policy
+
+
+schema GlueAwsUpboundIoV1beta2JobSpecForProviderConnectionsRefsItems0Policy:
+    r"""
+    Policies for referencing.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema GlueAwsUpboundIoV1beta2JobSpecForProviderConnectionsSelector:
+    r"""
+    Selector for a list of Connection in glue to populate connections.
+
+    Attributes
+    ----------
+    matchControllerRef : bool, default is Undefined, optional
+        MatchControllerRef ensures an object with the same controller reference
+        as the selecting object is selected.
+    matchLabels : {str:str}, default is Undefined, optional
+        MatchLabels ensures an object with matching labels is selected.
+    policy : GlueAwsUpboundIoV1beta2JobSpecForProviderConnectionsSelectorPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    matchControllerRef?: bool
+
+    matchLabels?: {str:str}
+
+    policy?: GlueAwsUpboundIoV1beta2JobSpecForProviderConnectionsSelectorPolicy
+
+
+schema GlueAwsUpboundIoV1beta2JobSpecForProviderConnectionsSelectorPolicy:
+    r"""
+    Policies for selection.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
 schema GlueAwsUpboundIoV1beta2JobSpecForProviderExecutionProperty:
     r"""
-    –  Execution property of the job. Defined below.
+    Execution property of the job. Defined below.
 
     Attributes
     ----------
@@ -329,6 +431,70 @@ schema GlueAwsUpboundIoV1beta2JobSpecForProviderRoleArnSelectorPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
+schema GlueAwsUpboundIoV1beta2JobSpecForProviderSourceControlDetails:
+    r"""
+    The details for a source control configuration for a job, allowing synchronization of job artifacts to or from a remote repository. Defined below.
+
+    Attributes
+    ----------
+    authStrategy : str, default is Undefined, optional
+        The type of authentication, which can be an authentication token stored in Amazon Web Services Secrets Manager, or a personal access token. Valid values are: PERSONAL_ACCESS_TOKEN and AWS_SECRETS_MANAGER.
+    authTokenSecretRef : GlueAwsUpboundIoV1beta2JobSpecForProviderSourceControlDetailsAuthTokenSecretRef, default is Undefined, optional
+        auth token secret ref
+    branch : str, default is Undefined, optional
+        A branch in the remote repository.
+    folder : str, default is Undefined, optional
+        A folder in the remote repository.
+    lastCommitId : str, default is Undefined, optional
+        The last commit ID for a commit in the remote repository.
+    owner : str, default is Undefined, optional
+        The owner of the remote repository that contains the job artifacts.
+    provider : str, default is Undefined, optional
+        The provider for the remote repository. Valid values are: GITHUB, GITLAB, BITBUCKET, and AWS_CODE_COMMIT.
+    repository : str, default is Undefined, optional
+        The name of the remote repository that contains the job artifacts.
+    """
+
+
+    authStrategy?: str
+
+    authTokenSecretRef?: GlueAwsUpboundIoV1beta2JobSpecForProviderSourceControlDetailsAuthTokenSecretRef
+
+    branch?: str
+
+    folder?: str
+
+    lastCommitId?: str
+
+    owner?: str
+
+    provider?: str
+
+    repository?: str
+
+
+schema GlueAwsUpboundIoV1beta2JobSpecForProviderSourceControlDetailsAuthTokenSecretRef:
+    r"""
+    The value of an authorization token.
+
+    Attributes
+    ----------
+    key : str, default is Undefined, required
+        The key to select.
+    name : str, default is Undefined, required
+        Name of the secret.
+    namespace : str, default is Undefined, required
+        Namespace of the secret.
+    """
+
+
+    key: str
+
+    name: str
+
+    namespace: str
+
+
 schema GlueAwsUpboundIoV1beta2JobSpecInitProvider:
     r"""
     THIS IS A BETA FIELD. It will be honored
@@ -347,43 +513,51 @@ schema GlueAwsUpboundIoV1beta2JobSpecInitProvider:
     command : GlueAwsUpboundIoV1beta2JobSpecInitProviderCommand, default is Undefined, optional
         command
     connections : [str], default is Undefined, optional
-        –  The list of connections used for this job.
+        The list of connections used for this job.
+    connectionsRefs : [GlueAwsUpboundIoV1beta2JobSpecInitProviderConnectionsRefsItems0], default is Undefined, optional
+        References to Connection in glue to populate connections.
+    connectionsSelector : GlueAwsUpboundIoV1beta2JobSpecInitProviderConnectionsSelector, default is Undefined, optional
+        connections selector
     defaultArguments : {str:str}, default is Undefined, optional
-        execution script consumes, as well as arguments that AWS Glue itself consumes. For information about how to specify and consume your own Job arguments, see the Calling AWS Glue APIs in Python topic in the developer guide. For information about the key-value pairs that AWS Glue consumes to set up your job, see the Special Parameters Used by AWS Glue topic in the developer guide.
+        The map of default arguments for this job. You can specify arguments here that your own job-execution script consumes, as well as arguments that AWS Glue itself consumes. For information about how to specify and consume your own Job arguments, see the Calling AWS Glue APIs in Python topic in the developer guide. For information about the key-value pairs that AWS Glue consumes to set up your job, see the Special Parameters Used by AWS Glue topic in the developer guide.
     description : str, default is Undefined, optional
-        –  Description of the job.
+        Description of the job.
     executionClass : str, default is Undefined, optional
         Indicates whether the job is run with a standard or flexible execution class. The standard execution class is ideal for time-sensitive workloads that require fast job startup and dedicated resources. Valid value: FLEX, STANDARD.
     executionProperty : GlueAwsUpboundIoV1beta2JobSpecInitProviderExecutionProperty, default is Undefined, optional
         execution property
     glueVersion : str, default is Undefined, optional
         The version of glue to use, for example "1.0". Ray jobs should set this to 4.0 or greater. For information about available versions, see the AWS Glue Release Notes.
+    jobMode : str, default is Undefined, optional
+        Describes how a job was created. Valid values are SCRIPT, NOTEBOOK and VISUAL.
     jobRunQueuingEnabled : bool, default is Undefined, optional
         Specifies whether job run queuing is enabled for the job runs for this job. A value of true means job run queuing is enabled for the job runs. If false or not populated, the job runs will not be considered for queueing.
     maintenanceWindow : str, default is Undefined, optional
-        –  Specifies the day of the week and hour for the maintenance window for streaming jobs.
+        Specifies the day of the week and hour for the maintenance window for streaming jobs.
     maxCapacity : float, default is Undefined, optional
-        –  The maximum number of AWS Glue data processing units (DPUs) that can be allocated when this job runs. Required when pythonshell is set, accept either 0.0625 or 1.0. Use number_of_workers and worker_type arguments instead with glue_version 2.0 and above.
+        The maximum number of AWS Glue data processing units (DPUs) that can be allocated when this job runs. Required when pythonshell is set, accept either 0.0625 or 1.0. Use number_of_workers and worker_type arguments instead with glue_version 2.0 and above.
     maxRetries : float, default is Undefined, optional
-        –  The maximum number of times to retry this job if it fails.
+        The maximum number of times to retry this job if it fails.
     nonOverridableArguments : {str:str}, default is Undefined, optional
-        overridable arguments for this job, specified as name-value pairs.
+        Non-overridable arguments for this job, specified as name-value pairs.
     notificationProperty : GlueAwsUpboundIoV1beta2JobSpecInitProviderNotificationProperty, default is Undefined, optional
         notification property
     numberOfWorkers : float, default is Undefined, optional
         The number of workers of a defined workerType that are allocated when a job runs.
     roleArn : str, default is Undefined, optional
-        –  The ARN of the IAM role associated with this job.
+        The ARN of the IAM role associated with this job.
     roleArnRef : GlueAwsUpboundIoV1beta2JobSpecInitProviderRoleArnRef, default is Undefined, optional
         role arn ref
     roleArnSelector : GlueAwsUpboundIoV1beta2JobSpecInitProviderRoleArnSelector, default is Undefined, optional
         role arn selector
     securityConfiguration : str, default is Undefined, optional
         The name of the Security Configuration to be associated with the job.
+    sourceControlDetails : GlueAwsUpboundIoV1beta2JobSpecInitProviderSourceControlDetails, default is Undefined, optional
+        source control details
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     timeout : float, default is Undefined, optional
-        –  The job timeout in minutes. The default is 2880 minutes (48 hours) for glueetl and pythonshell jobs, and null (unlimited) for gluestreaming jobs.
+        The job timeout in minutes. The default is 2880 minutes (48 hours) for glueetl and pythonshell jobs, and null (unlimited) for gluestreaming jobs.
     workerType : str, default is Undefined, optional
         The type of predefined worker that is allocated when a job runs. Accepts a value of Standard, G.1X, G.2X, or G.025X for Spark jobs. Accepts the value Z.2X for Ray jobs.
     """
@@ -392,6 +566,10 @@ schema GlueAwsUpboundIoV1beta2JobSpecInitProvider:
     command?: GlueAwsUpboundIoV1beta2JobSpecInitProviderCommand
 
     connections?: [str]
+
+    connectionsRefs?: [GlueAwsUpboundIoV1beta2JobSpecInitProviderConnectionsRefsItems0]
+
+    connectionsSelector?: GlueAwsUpboundIoV1beta2JobSpecInitProviderConnectionsSelector
 
     defaultArguments?: {str:str}
 
@@ -402,6 +580,8 @@ schema GlueAwsUpboundIoV1beta2JobSpecInitProvider:
     executionProperty?: GlueAwsUpboundIoV1beta2JobSpecInitProviderExecutionProperty
 
     glueVersion?: str
+
+    jobMode?: str
 
     jobRunQueuingEnabled?: bool
 
@@ -425,6 +605,8 @@ schema GlueAwsUpboundIoV1beta2JobSpecInitProvider:
 
     securityConfiguration?: str
 
+    sourceControlDetails?: GlueAwsUpboundIoV1beta2JobSpecInitProviderSourceControlDetails
+
     tags?: {str:str}
 
     timeout?: float
@@ -434,14 +616,14 @@ schema GlueAwsUpboundIoV1beta2JobSpecInitProvider:
 
 schema GlueAwsUpboundIoV1beta2JobSpecInitProviderCommand:
     r"""
-    –  The command of the job. Defined below.
+    The command of the job. Defined below.
 
     Attributes
     ----------
     name : str, default is Undefined, optional
-        –  The name you assign to this job. It must be unique in your account.
+        The name you assign to this job. It must be unique in your account.
     pythonVersion : str, default is Undefined, optional
-        The Python version being used to execute a Python shell job. Allowed values are 2, 3 or 3.9. Version 3 refers to Python 3.6.
+        The Python version being used to execute a Python shell job. Allowed values are 2, 3 or 3.9. Version 3 refers to Python 3.11 when glue_version is set to 5.0.
     runtime : str, default is Undefined, optional
         In Ray jobs, runtime is used to specify the versions of Ray, Python and additional libraries available in your environment. This field is not used in other job types. For supported runtime environment values, see Working with Ray jobs in the Glue Developer Guide.
     scriptLocation : str, default is Undefined, optional
@@ -458,9 +640,98 @@ schema GlueAwsUpboundIoV1beta2JobSpecInitProviderCommand:
     scriptLocation?: str
 
 
+schema GlueAwsUpboundIoV1beta2JobSpecInitProviderConnectionsRefsItems0:
+    r"""
+    A Reference to a named object.
+
+    Attributes
+    ----------
+    name : str, default is Undefined, required
+        Name of the referenced object.
+    policy : GlueAwsUpboundIoV1beta2JobSpecInitProviderConnectionsRefsItems0Policy, default is Undefined, optional
+        policy
+    """
+
+
+    name: str
+
+    policy?: GlueAwsUpboundIoV1beta2JobSpecInitProviderConnectionsRefsItems0Policy
+
+
+schema GlueAwsUpboundIoV1beta2JobSpecInitProviderConnectionsRefsItems0Policy:
+    r"""
+    Policies for referencing.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema GlueAwsUpboundIoV1beta2JobSpecInitProviderConnectionsSelector:
+    r"""
+    Selector for a list of Connection in glue to populate connections.
+
+    Attributes
+    ----------
+    matchControllerRef : bool, default is Undefined, optional
+        MatchControllerRef ensures an object with the same controller reference
+        as the selecting object is selected.
+    matchLabels : {str:str}, default is Undefined, optional
+        MatchLabels ensures an object with matching labels is selected.
+    policy : GlueAwsUpboundIoV1beta2JobSpecInitProviderConnectionsSelectorPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    matchControllerRef?: bool
+
+    matchLabels?: {str:str}
+
+    policy?: GlueAwsUpboundIoV1beta2JobSpecInitProviderConnectionsSelectorPolicy
+
+
+schema GlueAwsUpboundIoV1beta2JobSpecInitProviderConnectionsSelectorPolicy:
+    r"""
+    Policies for selection.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
 schema GlueAwsUpboundIoV1beta2JobSpecInitProviderExecutionProperty:
     r"""
-    –  Execution property of the job. Defined below.
+    Execution property of the job. Defined below.
 
     Attributes
     ----------
@@ -575,6 +846,70 @@ schema GlueAwsUpboundIoV1beta2JobSpecInitProviderRoleArnSelectorPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
+schema GlueAwsUpboundIoV1beta2JobSpecInitProviderSourceControlDetails:
+    r"""
+    The details for a source control configuration for a job, allowing synchronization of job artifacts to or from a remote repository. Defined below.
+
+    Attributes
+    ----------
+    authStrategy : str, default is Undefined, optional
+        The type of authentication, which can be an authentication token stored in Amazon Web Services Secrets Manager, or a personal access token. Valid values are: PERSONAL_ACCESS_TOKEN and AWS_SECRETS_MANAGER.
+    authTokenSecretRef : GlueAwsUpboundIoV1beta2JobSpecInitProviderSourceControlDetailsAuthTokenSecretRef, default is Undefined, optional
+        auth token secret ref
+    branch : str, default is Undefined, optional
+        A branch in the remote repository.
+    folder : str, default is Undefined, optional
+        A folder in the remote repository.
+    lastCommitId : str, default is Undefined, optional
+        The last commit ID for a commit in the remote repository.
+    owner : str, default is Undefined, optional
+        The owner of the remote repository that contains the job artifacts.
+    provider : str, default is Undefined, optional
+        The provider for the remote repository. Valid values are: GITHUB, GITLAB, BITBUCKET, and AWS_CODE_COMMIT.
+    repository : str, default is Undefined, optional
+        The name of the remote repository that contains the job artifacts.
+    """
+
+
+    authStrategy?: str
+
+    authTokenSecretRef?: GlueAwsUpboundIoV1beta2JobSpecInitProviderSourceControlDetailsAuthTokenSecretRef
+
+    branch?: str
+
+    folder?: str
+
+    lastCommitId?: str
+
+    owner?: str
+
+    provider?: str
+
+    repository?: str
+
+
+schema GlueAwsUpboundIoV1beta2JobSpecInitProviderSourceControlDetailsAuthTokenSecretRef:
+    r"""
+    The value of an authorization token.
+
+    Attributes
+    ----------
+    key : str, default is Undefined, required
+        The key to select.
+    name : str, default is Undefined, required
+        Name of the secret.
+    namespace : str, default is Undefined, required
+        Namespace of the secret.
+    """
+
+
+    key: str
+
+    name: str
+
+    namespace: str
+
+
 schema GlueAwsUpboundIoV1beta2JobSpecProviderConfigRef:
     r"""
     ProviderConfigReference specifies how the provider that will be used to
@@ -619,112 +954,12 @@ schema GlueAwsUpboundIoV1beta2JobSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema GlueAwsUpboundIoV1beta2JobSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : GlueAwsUpboundIoV1beta2JobSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : GlueAwsUpboundIoV1beta2JobSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: GlueAwsUpboundIoV1beta2JobSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: GlueAwsUpboundIoV1beta2JobSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema GlueAwsUpboundIoV1beta2JobSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : GlueAwsUpboundIoV1beta2JobSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: GlueAwsUpboundIoV1beta2JobSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema GlueAwsUpboundIoV1beta2JobSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema GlueAwsUpboundIoV1beta2JobSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema GlueAwsUpboundIoV1beta2JobSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -775,11 +1010,11 @@ schema GlueAwsUpboundIoV1beta2JobStatusAtProvider:
     command : GlueAwsUpboundIoV1beta2JobStatusAtProviderCommand, default is Undefined, optional
         command
     connections : [str], default is Undefined, optional
-        –  The list of connections used for this job.
+        The list of connections used for this job.
     defaultArguments : {str:str}, default is Undefined, optional
-        execution script consumes, as well as arguments that AWS Glue itself consumes. For information about how to specify and consume your own Job arguments, see the Calling AWS Glue APIs in Python topic in the developer guide. For information about the key-value pairs that AWS Glue consumes to set up your job, see the Special Parameters Used by AWS Glue topic in the developer guide.
+        The map of default arguments for this job. You can specify arguments here that your own job-execution script consumes, as well as arguments that AWS Glue itself consumes. For information about how to specify and consume your own Job arguments, see the Calling AWS Glue APIs in Python topic in the developer guide. For information about the key-value pairs that AWS Glue consumes to set up your job, see the Special Parameters Used by AWS Glue topic in the developer guide.
     description : str, default is Undefined, optional
-        –  Description of the job.
+        Description of the job.
     executionClass : str, default is Undefined, optional
         Indicates whether the job is run with a standard or flexible execution class. The standard execution class is ideal for time-sensitive workloads that require fast job startup and dedicated resources. Valid value: FLEX, STANDARD.
     executionProperty : GlueAwsUpboundIoV1beta2JobStatusAtProviderExecutionProperty, default is Undefined, optional
@@ -788,30 +1023,37 @@ schema GlueAwsUpboundIoV1beta2JobStatusAtProvider:
         The version of glue to use, for example "1.0". Ray jobs should set this to 4.0 or greater. For information about available versions, see the AWS Glue Release Notes.
     id : str, default is Undefined, optional
         Job name
+    jobMode : str, default is Undefined, optional
+        Describes how a job was created. Valid values are SCRIPT, NOTEBOOK and VISUAL.
     jobRunQueuingEnabled : bool, default is Undefined, optional
         Specifies whether job run queuing is enabled for the job runs for this job. A value of true means job run queuing is enabled for the job runs. If false or not populated, the job runs will not be considered for queueing.
     maintenanceWindow : str, default is Undefined, optional
-        –  Specifies the day of the week and hour for the maintenance window for streaming jobs.
+        Specifies the day of the week and hour for the maintenance window for streaming jobs.
     maxCapacity : float, default is Undefined, optional
-        –  The maximum number of AWS Glue data processing units (DPUs) that can be allocated when this job runs. Required when pythonshell is set, accept either 0.0625 or 1.0. Use number_of_workers and worker_type arguments instead with glue_version 2.0 and above.
+        The maximum number of AWS Glue data processing units (DPUs) that can be allocated when this job runs. Required when pythonshell is set, accept either 0.0625 or 1.0. Use number_of_workers and worker_type arguments instead with glue_version 2.0 and above.
     maxRetries : float, default is Undefined, optional
-        –  The maximum number of times to retry this job if it fails.
+        The maximum number of times to retry this job if it fails.
     nonOverridableArguments : {str:str}, default is Undefined, optional
-        overridable arguments for this job, specified as name-value pairs.
+        Non-overridable arguments for this job, specified as name-value pairs.
     notificationProperty : GlueAwsUpboundIoV1beta2JobStatusAtProviderNotificationProperty, default is Undefined, optional
         notification property
     numberOfWorkers : float, default is Undefined, optional
         The number of workers of a defined workerType that are allocated when a job runs.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     roleArn : str, default is Undefined, optional
-        –  The ARN of the IAM role associated with this job.
+        The ARN of the IAM role associated with this job.
     securityConfiguration : str, default is Undefined, optional
         The name of the Security Configuration to be associated with the job.
+    sourceControlDetails : GlueAwsUpboundIoV1beta2JobStatusAtProviderSourceControlDetails, default is Undefined, optional
+        source control details
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
         A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     timeout : float, default is Undefined, optional
-        –  The job timeout in minutes. The default is 2880 minutes (48 hours) for glueetl and pythonshell jobs, and null (unlimited) for gluestreaming jobs.
+        The job timeout in minutes. The default is 2880 minutes (48 hours) for glueetl and pythonshell jobs, and null (unlimited) for gluestreaming jobs.
     workerType : str, default is Undefined, optional
         The type of predefined worker that is allocated when a job runs. Accepts a value of Standard, G.1X, G.2X, or G.025X for Spark jobs. Accepts the value Z.2X for Ray jobs.
     """
@@ -835,6 +1077,8 @@ schema GlueAwsUpboundIoV1beta2JobStatusAtProvider:
 
     id?: str
 
+    jobMode?: str
+
     jobRunQueuingEnabled?: bool
 
     maintenanceWindow?: str
@@ -849,9 +1093,13 @@ schema GlueAwsUpboundIoV1beta2JobStatusAtProvider:
 
     numberOfWorkers?: float
 
+    region?: str
+
     roleArn?: str
 
     securityConfiguration?: str
+
+    sourceControlDetails?: GlueAwsUpboundIoV1beta2JobStatusAtProviderSourceControlDetails
 
     tags?: {str:str}
 
@@ -864,14 +1112,14 @@ schema GlueAwsUpboundIoV1beta2JobStatusAtProvider:
 
 schema GlueAwsUpboundIoV1beta2JobStatusAtProviderCommand:
     r"""
-    –  The command of the job. Defined below.
+    The command of the job. Defined below.
 
     Attributes
     ----------
     name : str, default is Undefined, optional
-        –  The name you assign to this job. It must be unique in your account.
+        The name you assign to this job. It must be unique in your account.
     pythonVersion : str, default is Undefined, optional
-        The Python version being used to execute a Python shell job. Allowed values are 2, 3 or 3.9. Version 3 refers to Python 3.6.
+        The Python version being used to execute a Python shell job. Allowed values are 2, 3 or 3.9. Version 3 refers to Python 3.11 when glue_version is set to 5.0.
     runtime : str, default is Undefined, optional
         In Ray jobs, runtime is used to specify the versions of Ray, Python and additional libraries available in your environment. This field is not used in other job types. For supported runtime environment values, see Working with Ray jobs in the Glue Developer Guide.
     scriptLocation : str, default is Undefined, optional
@@ -890,7 +1138,7 @@ schema GlueAwsUpboundIoV1beta2JobStatusAtProviderCommand:
 
 schema GlueAwsUpboundIoV1beta2JobStatusAtProviderExecutionProperty:
     r"""
-    –  Execution property of the job. Defined below.
+    Execution property of the job. Defined below.
 
     Attributes
     ----------
@@ -914,6 +1162,44 @@ schema GlueAwsUpboundIoV1beta2JobStatusAtProviderNotificationProperty:
 
 
     notifyDelayAfter?: float
+
+
+schema GlueAwsUpboundIoV1beta2JobStatusAtProviderSourceControlDetails:
+    r"""
+    The details for a source control configuration for a job, allowing synchronization of job artifacts to or from a remote repository. Defined below.
+
+    Attributes
+    ----------
+    authStrategy : str, default is Undefined, optional
+        The type of authentication, which can be an authentication token stored in Amazon Web Services Secrets Manager, or a personal access token. Valid values are: PERSONAL_ACCESS_TOKEN and AWS_SECRETS_MANAGER.
+    branch : str, default is Undefined, optional
+        A branch in the remote repository.
+    folder : str, default is Undefined, optional
+        A folder in the remote repository.
+    lastCommitId : str, default is Undefined, optional
+        The last commit ID for a commit in the remote repository.
+    owner : str, default is Undefined, optional
+        The owner of the remote repository that contains the job artifacts.
+    provider : str, default is Undefined, optional
+        The provider for the remote repository. Valid values are: GITHUB, GITLAB, BITBUCKET, and AWS_CODE_COMMIT.
+    repository : str, default is Undefined, optional
+        The name of the remote repository that contains the job artifacts.
+    """
+
+
+    authStrategy?: str
+
+    branch?: str
+
+    folder?: str
+
+    lastCommitId?: str
+
+    owner?: str
+
+    provider?: str
+
+    repository?: str
 
 
 schema GlueAwsUpboundIoV1beta2JobStatusConditionsItems0:

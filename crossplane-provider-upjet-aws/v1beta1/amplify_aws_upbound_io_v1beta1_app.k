@@ -66,8 +66,6 @@ schema AmplifyAwsUpboundIoV1beta1AppSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : AmplifyAwsUpboundIoV1beta1AppSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : AmplifyAwsUpboundIoV1beta1AppSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : AmplifyAwsUpboundIoV1beta1AppSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema AmplifyAwsUpboundIoV1beta1AppSpec:
 
     providerConfigRef?: AmplifyAwsUpboundIoV1beta1AppSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: AmplifyAwsUpboundIoV1beta1AppSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: AmplifyAwsUpboundIoV1beta1AppSpecWriteConnectionSecretToRef
 
 
@@ -97,7 +93,7 @@ schema AmplifyAwsUpboundIoV1beta1AppSpecForProvider:
     accessTokenSecretRef : AmplifyAwsUpboundIoV1beta1AppSpecForProviderAccessTokenSecretRef, default is Undefined, optional
         access token secret ref
     autoBranchCreationConfig : [AmplifyAwsUpboundIoV1beta1AppSpecForProviderAutoBranchCreationConfigItems0], default is Undefined, optional
-        Automated branch creation configuration for an Amplify app. An auto_branch_creation_config block is documented below.
+        Automated branch creation configuration for an Amplify app. See auto_branch_creation_config Block for details.
     autoBranchCreationPatterns : [str], default is Undefined, optional
         Automated branch creation glob patterns for an Amplify app.
     basicAuthCredentialsSecretRef : AmplifyAwsUpboundIoV1beta1AppSpecForProviderBasicAuthCredentialsSecretRef, default is Undefined, optional
@@ -106,10 +102,16 @@ schema AmplifyAwsUpboundIoV1beta1AppSpecForProvider:
         The build specification (build spec) for an Amplify app.
     cacheConfig : [AmplifyAwsUpboundIoV1beta1AppSpecForProviderCacheConfigItems0], default is Undefined, optional
         Cache configuration for the Amplify app. See cache_config Block for details.
+    computeRoleArn : str, default is Undefined, optional
+        AWS Identity and Access Management (IAM) SSR compute role for an Amplify app.
+    computeRoleArnRef : AmplifyAwsUpboundIoV1beta1AppSpecForProviderComputeRoleArnRef, default is Undefined, optional
+        compute role arn ref
+    computeRoleArnSelector : AmplifyAwsUpboundIoV1beta1AppSpecForProviderComputeRoleArnSelector, default is Undefined, optional
+        compute role arn selector
     customHeaders : str, default is Undefined, optional
         The custom HTTP headers for an Amplify app.
     customRule : [AmplifyAwsUpboundIoV1beta1AppSpecForProviderCustomRuleItems0], default is Undefined, optional
-        Custom rewrite and redirect rules for an Amplify app. A custom_rule block is documented below.
+        Custom rewrite and redirect rules for an Amplify app. See custom_rule Block for details.
     description : str, default is Undefined, optional
         Description for an Amplify app.
     enableAutoBranchCreation : bool, default is Undefined, optional
@@ -128,6 +130,8 @@ schema AmplifyAwsUpboundIoV1beta1AppSpecForProvider:
         iam service role arn ref
     iamServiceRoleArnSelector : AmplifyAwsUpboundIoV1beta1AppSpecForProviderIamServiceRoleArnSelector, default is Undefined, optional
         iam service role arn selector
+    jobConfig : [AmplifyAwsUpboundIoV1beta1AppSpecForProviderJobConfigItems0], default is Undefined, optional
+        Used to configure the Amplify Application build settings. See job_config Block for details.
     name : str, default is Undefined, optional
         Name for an Amplify app.
     oauthTokenSecretRef : AmplifyAwsUpboundIoV1beta1AppSpecForProviderOauthTokenSecretRef, default is Undefined, optional
@@ -135,6 +139,7 @@ schema AmplifyAwsUpboundIoV1beta1AppSpecForProvider:
     platform : str, default is Undefined, optional
         Platform or framework for an Amplify app. Valid values: WEB, WEB_COMPUTE. Default value: WEB.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     repository : str, default is Undefined, optional
         Repository for an Amplify app.
@@ -154,6 +159,12 @@ schema AmplifyAwsUpboundIoV1beta1AppSpecForProvider:
     buildSpec?: str
 
     cacheConfig?: [AmplifyAwsUpboundIoV1beta1AppSpecForProviderCacheConfigItems0]
+
+    computeRoleArn?: str
+
+    computeRoleArnRef?: AmplifyAwsUpboundIoV1beta1AppSpecForProviderComputeRoleArnRef
+
+    computeRoleArnSelector?: AmplifyAwsUpboundIoV1beta1AppSpecForProviderComputeRoleArnSelector
 
     customHeaders?: str
 
@@ -176,6 +187,8 @@ schema AmplifyAwsUpboundIoV1beta1AppSpecForProvider:
     iamServiceRoleArnRef?: AmplifyAwsUpboundIoV1beta1AppSpecForProviderIamServiceRoleArnRef
 
     iamServiceRoleArnSelector?: AmplifyAwsUpboundIoV1beta1AppSpecForProviderIamServiceRoleArnSelector
+
+    jobConfig?: [AmplifyAwsUpboundIoV1beta1AppSpecForProviderJobConfigItems0]
 
     name?: str
 
@@ -320,6 +333,95 @@ schema AmplifyAwsUpboundIoV1beta1AppSpecForProviderCacheConfigItems0:
     $type?: str
 
 
+schema AmplifyAwsUpboundIoV1beta1AppSpecForProviderComputeRoleArnRef:
+    r"""
+    Reference to a Role in iam to populate computeRoleArn.
+
+    Attributes
+    ----------
+    name : str, default is Undefined, required
+        Name of the referenced object.
+    policy : AmplifyAwsUpboundIoV1beta1AppSpecForProviderComputeRoleArnRefPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    name: str
+
+    policy?: AmplifyAwsUpboundIoV1beta1AppSpecForProviderComputeRoleArnRefPolicy
+
+
+schema AmplifyAwsUpboundIoV1beta1AppSpecForProviderComputeRoleArnRefPolicy:
+    r"""
+    Policies for referencing.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema AmplifyAwsUpboundIoV1beta1AppSpecForProviderComputeRoleArnSelector:
+    r"""
+    Selector for a Role in iam to populate computeRoleArn.
+
+    Attributes
+    ----------
+    matchControllerRef : bool, default is Undefined, optional
+        MatchControllerRef ensures an object with the same controller reference
+        as the selecting object is selected.
+    matchLabels : {str:str}, default is Undefined, optional
+        MatchLabels ensures an object with matching labels is selected.
+    policy : AmplifyAwsUpboundIoV1beta1AppSpecForProviderComputeRoleArnSelectorPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    matchControllerRef?: bool
+
+    matchLabels?: {str:str}
+
+    policy?: AmplifyAwsUpboundIoV1beta1AppSpecForProviderComputeRoleArnSelectorPolicy
+
+
+schema AmplifyAwsUpboundIoV1beta1AppSpecForProviderComputeRoleArnSelectorPolicy:
+    r"""
+    Policies for selection.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
 schema AmplifyAwsUpboundIoV1beta1AppSpecForProviderCustomRuleItems0:
     r"""
     amplify aws upbound io v1beta1 app spec for provider custom rule items0
@@ -435,6 +537,20 @@ schema AmplifyAwsUpboundIoV1beta1AppSpecForProviderIamServiceRoleArnSelectorPoli
     resolve?: "Always" | "IfNotPresent"
 
 
+schema AmplifyAwsUpboundIoV1beta1AppSpecForProviderJobConfigItems0:
+    r"""
+    amplify aws upbound io v1beta1 app spec for provider job config items0
+
+    Attributes
+    ----------
+    buildComputeType : str, default is Undefined, optional
+        Size of the build instance. Valid values: STANDARD_8GB, LARGE_16GB, and XLARGE_72GB. Default: STANDARD_8GB.
+    """
+
+
+    buildComputeType?: str
+
+
 schema AmplifyAwsUpboundIoV1beta1AppSpecForProviderOauthTokenSecretRef:
     r"""
     OAuth token for a third-party source control system for an Amplify app. The OAuth token is used to create a webhook and a read-only deploy key. The OAuth token is not stored.
@@ -475,7 +591,7 @@ schema AmplifyAwsUpboundIoV1beta1AppSpecInitProvider:
     accessTokenSecretRef : AmplifyAwsUpboundIoV1beta1AppSpecInitProviderAccessTokenSecretRef, default is Undefined, optional
         access token secret ref
     autoBranchCreationConfig : [AmplifyAwsUpboundIoV1beta1AppSpecInitProviderAutoBranchCreationConfigItems0], default is Undefined, optional
-        Automated branch creation configuration for an Amplify app. An auto_branch_creation_config block is documented below.
+        Automated branch creation configuration for an Amplify app. See auto_branch_creation_config Block for details.
     autoBranchCreationPatterns : [str], default is Undefined, optional
         Automated branch creation glob patterns for an Amplify app.
     basicAuthCredentialsSecretRef : AmplifyAwsUpboundIoV1beta1AppSpecInitProviderBasicAuthCredentialsSecretRef, default is Undefined, optional
@@ -484,10 +600,16 @@ schema AmplifyAwsUpboundIoV1beta1AppSpecInitProvider:
         The build specification (build spec) for an Amplify app.
     cacheConfig : [AmplifyAwsUpboundIoV1beta1AppSpecInitProviderCacheConfigItems0], default is Undefined, optional
         Cache configuration for the Amplify app. See cache_config Block for details.
+    computeRoleArn : str, default is Undefined, optional
+        AWS Identity and Access Management (IAM) SSR compute role for an Amplify app.
+    computeRoleArnRef : AmplifyAwsUpboundIoV1beta1AppSpecInitProviderComputeRoleArnRef, default is Undefined, optional
+        compute role arn ref
+    computeRoleArnSelector : AmplifyAwsUpboundIoV1beta1AppSpecInitProviderComputeRoleArnSelector, default is Undefined, optional
+        compute role arn selector
     customHeaders : str, default is Undefined, optional
         The custom HTTP headers for an Amplify app.
     customRule : [AmplifyAwsUpboundIoV1beta1AppSpecInitProviderCustomRuleItems0], default is Undefined, optional
-        Custom rewrite and redirect rules for an Amplify app. A custom_rule block is documented below.
+        Custom rewrite and redirect rules for an Amplify app. See custom_rule Block for details.
     description : str, default is Undefined, optional
         Description for an Amplify app.
     enableAutoBranchCreation : bool, default is Undefined, optional
@@ -506,6 +628,8 @@ schema AmplifyAwsUpboundIoV1beta1AppSpecInitProvider:
         iam service role arn ref
     iamServiceRoleArnSelector : AmplifyAwsUpboundIoV1beta1AppSpecInitProviderIamServiceRoleArnSelector, default is Undefined, optional
         iam service role arn selector
+    jobConfig : [AmplifyAwsUpboundIoV1beta1AppSpecInitProviderJobConfigItems0], default is Undefined, optional
+        Used to configure the Amplify Application build settings. See job_config Block for details.
     name : str, default is Undefined, optional
         Name for an Amplify app.
     oauthTokenSecretRef : AmplifyAwsUpboundIoV1beta1AppSpecInitProviderOauthTokenSecretRef, default is Undefined, optional
@@ -531,6 +655,12 @@ schema AmplifyAwsUpboundIoV1beta1AppSpecInitProvider:
 
     cacheConfig?: [AmplifyAwsUpboundIoV1beta1AppSpecInitProviderCacheConfigItems0]
 
+    computeRoleArn?: str
+
+    computeRoleArnRef?: AmplifyAwsUpboundIoV1beta1AppSpecInitProviderComputeRoleArnRef
+
+    computeRoleArnSelector?: AmplifyAwsUpboundIoV1beta1AppSpecInitProviderComputeRoleArnSelector
+
     customHeaders?: str
 
     customRule?: [AmplifyAwsUpboundIoV1beta1AppSpecInitProviderCustomRuleItems0]
@@ -552,6 +682,8 @@ schema AmplifyAwsUpboundIoV1beta1AppSpecInitProvider:
     iamServiceRoleArnRef?: AmplifyAwsUpboundIoV1beta1AppSpecInitProviderIamServiceRoleArnRef
 
     iamServiceRoleArnSelector?: AmplifyAwsUpboundIoV1beta1AppSpecInitProviderIamServiceRoleArnSelector
+
+    jobConfig?: [AmplifyAwsUpboundIoV1beta1AppSpecInitProviderJobConfigItems0]
 
     name?: str
 
@@ -694,6 +826,95 @@ schema AmplifyAwsUpboundIoV1beta1AppSpecInitProviderCacheConfigItems0:
     $type?: str
 
 
+schema AmplifyAwsUpboundIoV1beta1AppSpecInitProviderComputeRoleArnRef:
+    r"""
+    Reference to a Role in iam to populate computeRoleArn.
+
+    Attributes
+    ----------
+    name : str, default is Undefined, required
+        Name of the referenced object.
+    policy : AmplifyAwsUpboundIoV1beta1AppSpecInitProviderComputeRoleArnRefPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    name: str
+
+    policy?: AmplifyAwsUpboundIoV1beta1AppSpecInitProviderComputeRoleArnRefPolicy
+
+
+schema AmplifyAwsUpboundIoV1beta1AppSpecInitProviderComputeRoleArnRefPolicy:
+    r"""
+    Policies for referencing.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema AmplifyAwsUpboundIoV1beta1AppSpecInitProviderComputeRoleArnSelector:
+    r"""
+    Selector for a Role in iam to populate computeRoleArn.
+
+    Attributes
+    ----------
+    matchControllerRef : bool, default is Undefined, optional
+        MatchControllerRef ensures an object with the same controller reference
+        as the selecting object is selected.
+    matchLabels : {str:str}, default is Undefined, optional
+        MatchLabels ensures an object with matching labels is selected.
+    policy : AmplifyAwsUpboundIoV1beta1AppSpecInitProviderComputeRoleArnSelectorPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    matchControllerRef?: bool
+
+    matchLabels?: {str:str}
+
+    policy?: AmplifyAwsUpboundIoV1beta1AppSpecInitProviderComputeRoleArnSelectorPolicy
+
+
+schema AmplifyAwsUpboundIoV1beta1AppSpecInitProviderComputeRoleArnSelectorPolicy:
+    r"""
+    Policies for selection.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
 schema AmplifyAwsUpboundIoV1beta1AppSpecInitProviderCustomRuleItems0:
     r"""
     amplify aws upbound io v1beta1 app spec init provider custom rule items0
@@ -809,6 +1030,20 @@ schema AmplifyAwsUpboundIoV1beta1AppSpecInitProviderIamServiceRoleArnSelectorPol
     resolve?: "Always" | "IfNotPresent"
 
 
+schema AmplifyAwsUpboundIoV1beta1AppSpecInitProviderJobConfigItems0:
+    r"""
+    amplify aws upbound io v1beta1 app spec init provider job config items0
+
+    Attributes
+    ----------
+    buildComputeType : str, default is Undefined, optional
+        Size of the build instance. Valid values: STANDARD_8GB, LARGE_16GB, and XLARGE_72GB. Default: STANDARD_8GB.
+    """
+
+
+    buildComputeType?: str
+
+
 schema AmplifyAwsUpboundIoV1beta1AppSpecInitProviderOauthTokenSecretRef:
     r"""
     OAuth token for a third-party source control system for an Amplify app. The OAuth token is used to create a webhook and a read-only deploy key. The OAuth token is not stored.
@@ -875,112 +1110,12 @@ schema AmplifyAwsUpboundIoV1beta1AppSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema AmplifyAwsUpboundIoV1beta1AppSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : AmplifyAwsUpboundIoV1beta1AppSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : AmplifyAwsUpboundIoV1beta1AppSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: AmplifyAwsUpboundIoV1beta1AppSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: AmplifyAwsUpboundIoV1beta1AppSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema AmplifyAwsUpboundIoV1beta1AppSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : AmplifyAwsUpboundIoV1beta1AppSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: AmplifyAwsUpboundIoV1beta1AppSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema AmplifyAwsUpboundIoV1beta1AppSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema AmplifyAwsUpboundIoV1beta1AppSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema AmplifyAwsUpboundIoV1beta1AppSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1029,17 +1164,19 @@ schema AmplifyAwsUpboundIoV1beta1AppStatusAtProvider:
     arn : str, default is Undefined, optional
         ARN of the Amplify app.
     autoBranchCreationConfig : [AmplifyAwsUpboundIoV1beta1AppStatusAtProviderAutoBranchCreationConfigItems0], default is Undefined, optional
-        Automated branch creation configuration for an Amplify app. An auto_branch_creation_config block is documented below.
+        Automated branch creation configuration for an Amplify app. See auto_branch_creation_config Block for details.
     autoBranchCreationPatterns : [str], default is Undefined, optional
         Automated branch creation glob patterns for an Amplify app.
     buildSpec : str, default is Undefined, optional
         The build specification (build spec) for an Amplify app.
     cacheConfig : [AmplifyAwsUpboundIoV1beta1AppStatusAtProviderCacheConfigItems0], default is Undefined, optional
         Cache configuration for the Amplify app. See cache_config Block for details.
+    computeRoleArn : str, default is Undefined, optional
+        AWS Identity and Access Management (IAM) SSR compute role for an Amplify app.
     customHeaders : str, default is Undefined, optional
         The custom HTTP headers for an Amplify app.
     customRule : [AmplifyAwsUpboundIoV1beta1AppStatusAtProviderCustomRuleItems0], default is Undefined, optional
-        Custom rewrite and redirect rules for an Amplify app. A custom_rule block is documented below.
+        Custom rewrite and redirect rules for an Amplify app. See custom_rule Block for details.
     defaultDomain : str, default is Undefined, optional
         Default domain for the Amplify app.
     description : str, default is Undefined, optional
@@ -1058,12 +1195,17 @@ schema AmplifyAwsUpboundIoV1beta1AppStatusAtProvider:
         AWS Identity and Access Management (IAM) service role for an Amplify app.
     id : str, default is Undefined, optional
         Unique ID of the Amplify app.
+    jobConfig : [AmplifyAwsUpboundIoV1beta1AppStatusAtProviderJobConfigItems0], default is Undefined, optional
+        Used to configure the Amplify Application build settings. See job_config Block for details.
     name : str, default is Undefined, optional
         Name for an Amplify app.
     platform : str, default is Undefined, optional
         Platform or framework for an Amplify app. Valid values: WEB, WEB_COMPUTE. Default value: WEB.
     productionBranch : [AmplifyAwsUpboundIoV1beta1AppStatusAtProviderProductionBranchItems0], default is Undefined, optional
         Describes the information about a production branch for an Amplify app. A production_branch block is documented below.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     repository : str, default is Undefined, optional
         Repository for an Amplify app.
     tags : {str:str}, default is Undefined, optional
@@ -1082,6 +1224,8 @@ schema AmplifyAwsUpboundIoV1beta1AppStatusAtProvider:
     buildSpec?: str
 
     cacheConfig?: [AmplifyAwsUpboundIoV1beta1AppStatusAtProviderCacheConfigItems0]
+
+    computeRoleArn?: str
 
     customHeaders?: str
 
@@ -1105,11 +1249,15 @@ schema AmplifyAwsUpboundIoV1beta1AppStatusAtProvider:
 
     id?: str
 
+    jobConfig?: [AmplifyAwsUpboundIoV1beta1AppStatusAtProviderJobConfigItems0]
+
     name?: str
 
     platform?: str
 
     productionBranch?: [AmplifyAwsUpboundIoV1beta1AppStatusAtProviderProductionBranchItems0]
+
+    region?: str
 
     repository?: str
 
@@ -1202,6 +1350,20 @@ schema AmplifyAwsUpboundIoV1beta1AppStatusAtProviderCustomRuleItems0:
     status?: str
 
     target?: str
+
+
+schema AmplifyAwsUpboundIoV1beta1AppStatusAtProviderJobConfigItems0:
+    r"""
+    amplify aws upbound io v1beta1 app status at provider job config items0
+
+    Attributes
+    ----------
+    buildComputeType : str, default is Undefined, optional
+        Size of the build instance. Valid values: STANDARD_8GB, LARGE_16GB, and XLARGE_72GB. Default: STANDARD_8GB.
+    """
+
+
+    buildComputeType?: str
 
 
 schema AmplifyAwsUpboundIoV1beta1AppStatusAtProviderProductionBranchItems0:

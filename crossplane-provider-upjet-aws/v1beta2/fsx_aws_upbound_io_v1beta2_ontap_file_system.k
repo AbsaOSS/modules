@@ -66,8 +66,6 @@ schema FsxAwsUpboundIoV1beta2OntapFileSystemSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : FsxAwsUpboundIoV1beta2OntapFileSystemSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : FsxAwsUpboundIoV1beta2OntapFileSystemSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : FsxAwsUpboundIoV1beta2OntapFileSystemSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema FsxAwsUpboundIoV1beta2OntapFileSystemSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: FsxAwsUpboundIoV1beta2OntapFileSystemSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: FsxAwsUpboundIoV1beta2OntapFileSystemSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: FsxAwsUpboundIoV1beta2OntapFileSystemSpecWriteConnectionSecretToRef
 
@@ -121,6 +117,7 @@ schema FsxAwsUpboundIoV1beta2OntapFileSystemSpecForProvider:
     preferredSubnetIdSelector : FsxAwsUpboundIoV1beta2OntapFileSystemSpecForProviderPreferredSubnetIDSelector, default is Undefined, optional
         preferred subnet Id selector
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     routeTableIds : [str], default is Undefined, optional
         Specifies the VPC route tables in which your file system's endpoints will be created. You should specify all VPC route tables associated with the subnets in which your clients are located. By default, Amazon FSx selects your VPC's default route table.
@@ -1165,112 +1162,12 @@ schema FsxAwsUpboundIoV1beta2OntapFileSystemSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema FsxAwsUpboundIoV1beta2OntapFileSystemSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : FsxAwsUpboundIoV1beta2OntapFileSystemSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : FsxAwsUpboundIoV1beta2OntapFileSystemSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: FsxAwsUpboundIoV1beta2OntapFileSystemSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: FsxAwsUpboundIoV1beta2OntapFileSystemSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema FsxAwsUpboundIoV1beta2OntapFileSystemSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : FsxAwsUpboundIoV1beta2OntapFileSystemSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: FsxAwsUpboundIoV1beta2OntapFileSystemSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema FsxAwsUpboundIoV1beta2OntapFileSystemSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema FsxAwsUpboundIoV1beta2OntapFileSystemSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema FsxAwsUpboundIoV1beta2OntapFileSystemSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1344,6 +1241,9 @@ schema FsxAwsUpboundIoV1beta2OntapFileSystemStatusAtProvider:
         AWS account identifier that created the file system.
     preferredSubnetId : str, default is Undefined, optional
         The ID for a subnet. A subnet is a range of IP addresses in your virtual private cloud (VPC).
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     routeTableIds : [str], default is Undefined, optional
         Specifies the VPC route tables in which your file system's endpoints will be created. You should specify all VPC route tables associated with the subnets in which your clients are located. By default, Amazon FSx selects your VPC's default route table.
     securityGroupIds : [str], default is Undefined, optional
@@ -1396,6 +1296,8 @@ schema FsxAwsUpboundIoV1beta2OntapFileSystemStatusAtProvider:
     ownerId?: str
 
     preferredSubnetId?: str
+
+    region?: str
 
     routeTableIds?: [str]
 

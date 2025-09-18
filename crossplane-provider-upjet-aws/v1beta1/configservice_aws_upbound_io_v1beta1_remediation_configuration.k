@@ -66,8 +66,6 @@ schema ConfigserviceAwsUpboundIoV1beta1RemediationConfigurationSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : ConfigserviceAwsUpboundIoV1beta1RemediationConfigurationSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : ConfigserviceAwsUpboundIoV1beta1RemediationConfigurationSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : ConfigserviceAwsUpboundIoV1beta1RemediationConfigurationSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema ConfigserviceAwsUpboundIoV1beta1RemediationConfigurationSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: ConfigserviceAwsUpboundIoV1beta1RemediationConfigurationSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: ConfigserviceAwsUpboundIoV1beta1RemediationConfigurationSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: ConfigserviceAwsUpboundIoV1beta1RemediationConfigurationSpecWriteConnectionSecretToRef
 
@@ -103,6 +99,7 @@ schema ConfigserviceAwsUpboundIoV1beta1RemediationConfigurationSpecForProvider:
     parameter : [ConfigserviceAwsUpboundIoV1beta1RemediationConfigurationSpecForProviderParameterItems0], default is Undefined, optional
         Can be specified multiple times for each parameter. Each parameter block supports arguments below.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     resourceType : str, default is Undefined, optional
         Type of resource.
@@ -353,112 +350,12 @@ schema ConfigserviceAwsUpboundIoV1beta1RemediationConfigurationSpecProviderConfi
     resolve?: "Always" | "IfNotPresent"
 
 
-schema ConfigserviceAwsUpboundIoV1beta1RemediationConfigurationSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : ConfigserviceAwsUpboundIoV1beta1RemediationConfigurationSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : ConfigserviceAwsUpboundIoV1beta1RemediationConfigurationSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: ConfigserviceAwsUpboundIoV1beta1RemediationConfigurationSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: ConfigserviceAwsUpboundIoV1beta1RemediationConfigurationSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema ConfigserviceAwsUpboundIoV1beta1RemediationConfigurationSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : ConfigserviceAwsUpboundIoV1beta1RemediationConfigurationSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: ConfigserviceAwsUpboundIoV1beta1RemediationConfigurationSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema ConfigserviceAwsUpboundIoV1beta1RemediationConfigurationSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema ConfigserviceAwsUpboundIoV1beta1RemediationConfigurationSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema ConfigserviceAwsUpboundIoV1beta1RemediationConfigurationSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -516,6 +413,9 @@ schema ConfigserviceAwsUpboundIoV1beta1RemediationConfigurationStatusAtProvider:
         Maximum number of failed attempts for auto-remediation. If you do not select a number, the default is 5.
     parameter : [ConfigserviceAwsUpboundIoV1beta1RemediationConfigurationStatusAtProviderParameterItems0], default is Undefined, optional
         Can be specified multiple times for each parameter. Each parameter block supports arguments below.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     resourceType : str, default is Undefined, optional
         Type of resource.
     retryAttemptSeconds : float, default is Undefined, optional
@@ -540,6 +440,8 @@ schema ConfigserviceAwsUpboundIoV1beta1RemediationConfigurationStatusAtProvider:
     maximumAutomaticAttempts?: float
 
     parameter?: [ConfigserviceAwsUpboundIoV1beta1RemediationConfigurationStatusAtProviderParameterItems0]
+
+    region?: str
 
     resourceType?: str
 

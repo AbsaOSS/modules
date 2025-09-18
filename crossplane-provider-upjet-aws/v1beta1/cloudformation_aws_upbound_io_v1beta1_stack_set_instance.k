@@ -66,8 +66,6 @@ schema CloudformationAwsUpboundIoV1beta1StackSetInstanceSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema CloudformationAwsUpboundIoV1beta1StackSetInstanceSpec:
 
     providerConfigRef?: CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecWriteConnectionSecretToRef
 
 
@@ -99,16 +95,18 @@ schema CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecForProvider:
     callAs : str, default is Undefined, optional
         Specifies whether you are acting as an account administrator in the organization's management account or as a delegated administrator in a member account. Valid values: SELF (default), DELEGATED_ADMIN.
     deploymentTargets : [CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecForProviderDeploymentTargetsItems0], default is Undefined, optional
-        The AWS Organizations accounts to which StackSets deploys. StackSets doesn't deploy stack instances to the organization management account, even if the organization management account is in your organization or in an OU in your organization. Drift detection is not possible for this argument. See deployment_targets below.
+        AWS Organizations accounts to which StackSets deploys. StackSets doesn't deploy stack instances to the organization management account, even if the organization management account is in your organization or in an OU in your organization. Drift detection is not possible for this argument. See deployment_targets below.
     operationPreferences : [CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecForProviderOperationPreferencesItems0], default is Undefined, optional
         Preferences for how AWS CloudFormation performs a stack set operation.
     parameterOverrides : {str:str}, default is Undefined, optional
         Key-value map of input parameters to override from the StackSet for this Instance.
     region : str, default is Undefined, required
-        Target AWS Region to create a Stack based on the StackSet. Defaults to current region.
+        Target AWS Region to create a Stack based on the StackSet. Defaults to current region. Use stack_set_instance_region instead.
         Region is the region you'd like your resource to be created in.
     retainStack : bool, default is Undefined, optional
         You cannot reassociate a retained Stack or add an existing, saved Stack to a new StackSet. Defaults to false.
+    stackSetInstanceRegion : str, default is Undefined, optional
+        Target AWS Region to create a Stack based on the StackSet. Defaults to current region.
     stackSetName : str, default is Undefined, optional
         Name of the StackSet.
     stackSetNameRef : CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecForProviderStackSetNameRef, default is Undefined, optional
@@ -132,6 +130,8 @@ schema CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecForProvider:
 
     retainStack?: bool
 
+    stackSetInstanceRegion?: str
+
     stackSetName?: str
 
     stackSetNameRef?: CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecForProviderStackSetNameRef
@@ -152,7 +152,7 @@ schema CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecForProviderDeploymen
     accountsUrl : str, default is Undefined, optional
         S3 URL of the file containing the list of accounts.
     organizationalUnitIds : [str], default is Undefined, optional
-        The organization root ID or organizational unit (OU) IDs to which StackSets deploys.
+        Organization root ID or organizational unit (OU) IDs to which StackSets deploys.
     """
 
 
@@ -174,17 +174,17 @@ schema CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecForProviderOperation
     concurrencyMode : str, default is Undefined, optional
         Specifies how the concurrency level behaves during the operation execution. Valid values are STRICT_FAILURE_TOLERANCE and SOFT_FAILURE_TOLERANCE.
     failureToleranceCount : float, default is Undefined, optional
-        The number of accounts, per Region, for which this operation can fail before AWS CloudFormation stops the operation in that Region.
+        Number of accounts, per Region, for which this operation can fail before AWS CloudFormation stops the operation in that Region.
     failureTolerancePercentage : float, default is Undefined, optional
-        The percentage of accounts, per Region, for which this stack operation can fail before AWS CloudFormation stops the operation in that Region.
+        Percentage of accounts, per Region, for which this stack operation can fail before AWS CloudFormation stops the operation in that Region.
     maxConcurrentCount : float, default is Undefined, optional
-        The maximum number of accounts in which to perform this operation at one time.
+        Maximum number of accounts in which to perform this operation at one time.
     maxConcurrentPercentage : float, default is Undefined, optional
-        The maximum percentage of accounts in which to perform this operation at one time.
+        Maximum percentage of accounts in which to perform this operation at one time.
     regionConcurrencyType : str, default is Undefined, optional
-        The concurrency type of deploying StackSets operations in Regions, could be in parallel or one Region at a time. Valid values are SEQUENTIAL and PARALLEL.
+        Concurrency type of deploying StackSets operations in Regions, could be in parallel or one Region at a time. Valid values are SEQUENTIAL and PARALLEL.
     regionOrder : [str], default is Undefined, optional
-        The order of the Regions in where you want to perform the stack operation.
+        Order of the Regions in where you want to perform the stack operation.
     """
 
 
@@ -312,13 +312,15 @@ schema CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecInitProvider:
     callAs : str, default is Undefined, optional
         Specifies whether you are acting as an account administrator in the organization's management account or as a delegated administrator in a member account. Valid values: SELF (default), DELEGATED_ADMIN.
     deploymentTargets : [CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecInitProviderDeploymentTargetsItems0], default is Undefined, optional
-        The AWS Organizations accounts to which StackSets deploys. StackSets doesn't deploy stack instances to the organization management account, even if the organization management account is in your organization or in an OU in your organization. Drift detection is not possible for this argument. See deployment_targets below.
+        AWS Organizations accounts to which StackSets deploys. StackSets doesn't deploy stack instances to the organization management account, even if the organization management account is in your organization or in an OU in your organization. Drift detection is not possible for this argument. See deployment_targets below.
     operationPreferences : [CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecInitProviderOperationPreferencesItems0], default is Undefined, optional
         Preferences for how AWS CloudFormation performs a stack set operation.
     parameterOverrides : {str:str}, default is Undefined, optional
         Key-value map of input parameters to override from the StackSet for this Instance.
     retainStack : bool, default is Undefined, optional
         You cannot reassociate a retained Stack or add an existing, saved Stack to a new StackSet. Defaults to false.
+    stackSetInstanceRegion : str, default is Undefined, optional
+        Target AWS Region to create a Stack based on the StackSet. Defaults to current region.
     stackSetName : str, default is Undefined, optional
         Name of the StackSet.
     stackSetNameRef : CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecInitProviderStackSetNameRef, default is Undefined, optional
@@ -340,6 +342,8 @@ schema CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecInitProvider:
 
     retainStack?: bool
 
+    stackSetInstanceRegion?: str
+
     stackSetName?: str
 
     stackSetNameRef?: CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecInitProviderStackSetNameRef
@@ -360,7 +364,7 @@ schema CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecInitProviderDeployme
     accountsUrl : str, default is Undefined, optional
         S3 URL of the file containing the list of accounts.
     organizationalUnitIds : [str], default is Undefined, optional
-        The organization root ID or organizational unit (OU) IDs to which StackSets deploys.
+        Organization root ID or organizational unit (OU) IDs to which StackSets deploys.
     """
 
 
@@ -382,17 +386,17 @@ schema CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecInitProviderOperatio
     concurrencyMode : str, default is Undefined, optional
         Specifies how the concurrency level behaves during the operation execution. Valid values are STRICT_FAILURE_TOLERANCE and SOFT_FAILURE_TOLERANCE.
     failureToleranceCount : float, default is Undefined, optional
-        The number of accounts, per Region, for which this operation can fail before AWS CloudFormation stops the operation in that Region.
+        Number of accounts, per Region, for which this operation can fail before AWS CloudFormation stops the operation in that Region.
     failureTolerancePercentage : float, default is Undefined, optional
-        The percentage of accounts, per Region, for which this stack operation can fail before AWS CloudFormation stops the operation in that Region.
+        Percentage of accounts, per Region, for which this stack operation can fail before AWS CloudFormation stops the operation in that Region.
     maxConcurrentCount : float, default is Undefined, optional
-        The maximum number of accounts in which to perform this operation at one time.
+        Maximum number of accounts in which to perform this operation at one time.
     maxConcurrentPercentage : float, default is Undefined, optional
-        The maximum percentage of accounts in which to perform this operation at one time.
+        Maximum percentage of accounts in which to perform this operation at one time.
     regionConcurrencyType : str, default is Undefined, optional
-        The concurrency type of deploying StackSets operations in Regions, could be in parallel or one Region at a time. Valid values are SEQUENTIAL and PARALLEL.
+        Concurrency type of deploying StackSets operations in Regions, could be in parallel or one Region at a time. Valid values are SEQUENTIAL and PARALLEL.
     regionOrder : [str], default is Undefined, optional
-        The order of the Regions in where you want to perform the stack operation.
+        Order of the Regions in where you want to perform the stack operation.
     """
 
 
@@ -544,112 +548,12 @@ schema CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecProviderConfigRefPol
     resolve?: "Always" | "IfNotPresent"
 
 
-schema CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema CloudformationAwsUpboundIoV1beta1StackSetInstanceSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -700,15 +604,18 @@ schema CloudformationAwsUpboundIoV1beta1StackSetInstanceStatusAtProvider:
     callAs : str, default is Undefined, optional
         Specifies whether you are acting as an account administrator in the organization's management account or as a delegated administrator in a member account. Valid values: SELF (default), DELEGATED_ADMIN.
     deploymentTargets : [CloudformationAwsUpboundIoV1beta1StackSetInstanceStatusAtProviderDeploymentTargetsItems0], default is Undefined, optional
-        The AWS Organizations accounts to which StackSets deploys. StackSets doesn't deploy stack instances to the organization management account, even if the organization management account is in your organization or in an OU in your organization. Drift detection is not possible for this argument. See deployment_targets below.
+        AWS Organizations accounts to which StackSets deploys. StackSets doesn't deploy stack instances to the organization management account, even if the organization management account is in your organization or in an OU in your organization. Drift detection is not possible for this argument. See deployment_targets below.
     id : str, default is Undefined, optional
         Unique identifier for the resource. If deployment_targets is set, this is a comma-delimited string combining stack set name, organizational unit IDs (/-delimited), and region (ie. mystack,ou-123/ou-456,us-east-1). Otherwise, this is a comma-delimited string combining stack set name, AWS account ID, and region (ie. mystack,123456789012,us-east-1).
     operationPreferences : [CloudformationAwsUpboundIoV1beta1StackSetInstanceStatusAtProviderOperationPreferencesItems0], default is Undefined, optional
         Preferences for how AWS CloudFormation performs a stack set operation.
     organizationalUnitId : str, default is Undefined, optional
-        The organization root ID or organizational unit (OU) ID in which the stack is deployed.
+        Organization root ID or organizational unit (OU) ID in which the stack is deployed.
     parameterOverrides : {str:str}, default is Undefined, optional
         Key-value map of input parameters to override from the StackSet for this Instance.
+    region : str, default is Undefined, optional
+        Target AWS Region to create a Stack based on the StackSet. Defaults to current region. Use stack_set_instance_region instead.
+        Region is the region you'd like your resource to be created in.
     retainStack : bool, default is Undefined, optional
         You cannot reassociate a retained Stack or add an existing, saved Stack to a new StackSet. Defaults to false.
     stackId : str, default is Undefined, optional
@@ -716,6 +623,8 @@ schema CloudformationAwsUpboundIoV1beta1StackSetInstanceStatusAtProvider:
     stackInstanceSummaries : [CloudformationAwsUpboundIoV1beta1StackSetInstanceStatusAtProviderStackInstanceSummariesItems0], default is Undefined, optional
         List of stack instances created from an organizational unit deployment target. This will only be populated when deployment_targets is set. See stack_instance_summaries.
         List of stack instances created from an organizational unit deployment target. This will only be populated when `deployment_targets` is set.
+    stackSetInstanceRegion : str, default is Undefined, optional
+        Target AWS Region to create a Stack based on the StackSet. Defaults to current region.
     stackSetName : str, default is Undefined, optional
         Name of the StackSet.
     """
@@ -735,11 +644,15 @@ schema CloudformationAwsUpboundIoV1beta1StackSetInstanceStatusAtProvider:
 
     parameterOverrides?: {str:str}
 
+    region?: str
+
     retainStack?: bool
 
     stackId?: str
 
     stackInstanceSummaries?: [CloudformationAwsUpboundIoV1beta1StackSetInstanceStatusAtProviderStackInstanceSummariesItems0]
+
+    stackSetInstanceRegion?: str
 
     stackSetName?: str
 
@@ -757,7 +670,7 @@ schema CloudformationAwsUpboundIoV1beta1StackSetInstanceStatusAtProviderDeployme
     accountsUrl : str, default is Undefined, optional
         S3 URL of the file containing the list of accounts.
     organizationalUnitIds : [str], default is Undefined, optional
-        The organization root ID or organizational unit (OU) IDs to which StackSets deploys.
+        Organization root ID or organizational unit (OU) IDs to which StackSets deploys.
     """
 
 
@@ -779,17 +692,17 @@ schema CloudformationAwsUpboundIoV1beta1StackSetInstanceStatusAtProviderOperatio
     concurrencyMode : str, default is Undefined, optional
         Specifies how the concurrency level behaves during the operation execution. Valid values are STRICT_FAILURE_TOLERANCE and SOFT_FAILURE_TOLERANCE.
     failureToleranceCount : float, default is Undefined, optional
-        The number of accounts, per Region, for which this operation can fail before AWS CloudFormation stops the operation in that Region.
+        Number of accounts, per Region, for which this operation can fail before AWS CloudFormation stops the operation in that Region.
     failureTolerancePercentage : float, default is Undefined, optional
-        The percentage of accounts, per Region, for which this stack operation can fail before AWS CloudFormation stops the operation in that Region.
+        Percentage of accounts, per Region, for which this stack operation can fail before AWS CloudFormation stops the operation in that Region.
     maxConcurrentCount : float, default is Undefined, optional
-        The maximum number of accounts in which to perform this operation at one time.
+        Maximum number of accounts in which to perform this operation at one time.
     maxConcurrentPercentage : float, default is Undefined, optional
-        The maximum percentage of accounts in which to perform this operation at one time.
+        Maximum percentage of accounts in which to perform this operation at one time.
     regionConcurrencyType : str, default is Undefined, optional
-        The concurrency type of deploying StackSets operations in Regions, could be in parallel or one Region at a time. Valid values are SEQUENTIAL and PARALLEL.
+        Concurrency type of deploying StackSets operations in Regions, could be in parallel or one Region at a time. Valid values are SEQUENTIAL and PARALLEL.
     regionOrder : [str], default is Undefined, optional
-        The order of the Regions in where you want to perform the stack operation.
+        Order of the Regions in where you want to perform the stack operation.
     """
 
 
@@ -817,7 +730,7 @@ schema CloudformationAwsUpboundIoV1beta1StackSetInstanceStatusAtProviderStackIns
     accountId : str, default is Undefined, optional
         Target AWS Account ID to create a Stack based on the StackSet. Defaults to current account.
     organizationalUnitId : str, default is Undefined, optional
-        The organization root ID or organizational unit (OU) ID in which the stack is deployed.
+        Organization root ID or organizational unit (OU) ID in which the stack is deployed.
     stackId : str, default is Undefined, optional
         Stack identifier.
     """

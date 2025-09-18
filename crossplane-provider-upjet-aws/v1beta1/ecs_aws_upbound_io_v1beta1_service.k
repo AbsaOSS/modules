@@ -66,8 +66,6 @@ schema EcsAwsUpboundIoV1beta1ServiceSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : EcsAwsUpboundIoV1beta1ServiceSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : EcsAwsUpboundIoV1beta1ServiceSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : EcsAwsUpboundIoV1beta1ServiceSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema EcsAwsUpboundIoV1beta1ServiceSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: EcsAwsUpboundIoV1beta1ServiceSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: EcsAwsUpboundIoV1beta1ServiceSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: EcsAwsUpboundIoV1beta1ServiceSpecWriteConnectionSecretToRef
 
@@ -117,9 +113,9 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecForProvider:
     desiredCount : float, default is Undefined, optional
         Number of instances of the task definition to place and keep running. Defaults to 0. Do not specify if using the DAEMON scheduling strategy.
     enableEcsManagedTags : bool, default is Undefined, optional
-        Specifies whether to enable Amazon ECS managed tags for the tasks within the service.
+        Whether to enable Amazon ECS managed tags for the tasks within the service.
     enableExecuteCommand : bool, default is Undefined, optional
-        Specifies whether to enable Amazon ECS Exec for the tasks within the service.
+        Whether to enable Amazon ECS Exec for the tasks within the service.
     forceDelete : bool, default is Undefined, optional
         Enable to delete a service even if it wasn't scaled down to zero tasks. It's only necessary to use this if the service uses the REPLICA scheduling strategy.
     forceNewDeployment : bool, default is Undefined, optional
@@ -145,13 +141,14 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecForProvider:
     platformVersion : str, default is Undefined, optional
         Platform version on which to run your service. Only applicable for launch_type set to FARGATE. Defaults to LATEST. More information about Fargate platform versions can be found in the AWS ECS User Guide.
     propagateTags : str, default is Undefined, optional
-        Specifies whether to propagate the tags from the task definition or the service to the tasks. The valid values are SERVICE and TASK_DEFINITION.
+        Whether to propagate the tags from the task definition or the service to the tasks. The valid values are SERVICE and TASK_DEFINITION.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     schedulingStrategy : str, default is Undefined, optional
         Scheduling strategy to use for the service. The valid values are REPLICA and DAEMON. Defaults to REPLICA. Note that Tasks using the Fargate launch type or the .
     serviceConnectConfiguration : [EcsAwsUpboundIoV1beta1ServiceSpecForProviderServiceConnectConfigurationItems0], default is Undefined, optional
-        The ECS Service Connect configuration for this service to discover and connect to services, and be discovered by, and connected from, other services within a namespace. See below.
+        ECS Service Connect configuration for this service to discover and connect to services, and be discovered by, and connected from, other services within a namespace. See below.
     serviceRegistries : [EcsAwsUpboundIoV1beta1ServiceSpecForProviderServiceRegistriesItems0], default is Undefined, optional
         Service discovery registries for the service. The maximum number of service_registries blocks is 1. See below.
     tags : {str:str}, default is Undefined, optional
@@ -164,8 +161,8 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecForProvider:
         task definition selector
     triggers : {str:str}, default is Undefined, optional
         Map of arbitrary keys and values that, when changed, will trigger an in-place update (redeployment). Useful with plantimestamp(). See example above.
-    volumeConfiguration : EcsAwsUpboundIoV1beta1ServiceSpecForProviderVolumeConfiguration, default is Undefined, optional
-        volume configuration
+    volumeConfiguration : [EcsAwsUpboundIoV1beta1ServiceSpecForProviderVolumeConfigurationItems0], default is Undefined, optional
+        Configuration for a volume specified in the task definition as a volume that is configured at launch time. Currently, the only supported volume type is an Amazon EBS volume. See below.
     vpcLatticeConfigurations : [EcsAwsUpboundIoV1beta1ServiceSpecForProviderVpcLatticeConfigurationsItems0], default is Undefined, optional
         The VPC Lattice configuration for your service that allows Lattice to connect, secure, and monitor your service across multiple accounts and VPCs. See below.
     waitForSteadyState : bool, default is Undefined, optional
@@ -243,7 +240,7 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecForProvider:
 
     triggers?: {str:str}
 
-    volumeConfiguration?: EcsAwsUpboundIoV1beta1ServiceSpecForProviderVolumeConfiguration
+    volumeConfiguration?: [EcsAwsUpboundIoV1beta1ServiceSpecForProviderVolumeConfigurationItems0]
 
     vpcLatticeConfigurations?: [EcsAwsUpboundIoV1beta1ServiceSpecForProviderVpcLatticeConfigurationsItems0]
 
@@ -259,9 +256,9 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecForProviderAlarmsItems0:
     alarmNames : [str], default is Undefined, optional
         One or more CloudWatch alarm names.
     enable : bool, default is Undefined, optional
-        Determines whether to use the CloudWatch alarm option in the service deployment process.
+        Whether to use the CloudWatch alarm option in the service deployment process.
     rollback : bool, default is Undefined, optional
-        Determines whether to configure Amazon ECS to roll back the service if a service deployment fails. If rollback is used, when a service deployment fails, the service is rolled back to the last deployment that completed successfully.
+        Whether to configure Amazon ECS to roll back the service if a service deployment fails. If rollback is used, when a service deployment fails, the service is rolled back to the last deployment that completed successfully.
     """
 
 
@@ -889,13 +886,13 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecForProviderServiceConnectConfigurationIt
     Attributes
     ----------
     enabled : bool, default is Undefined, optional
-        Specifies whether to use Service Connect with this service.
+        Whether to use Service Connect with this service.
     logConfiguration : [EcsAwsUpboundIoV1beta1ServiceSpecForProviderServiceConnectConfigurationItems0LogConfigurationItems0], default is Undefined, optional
-        The log configuration for the container. See below.
+        Log configuration for the container. See below.
     namespace : str, default is Undefined, optional
-        The namespace name or ARN of the aws_service_discovery_http_namespace for use with Service Connect.
+        Namespace name or ARN of the aws_service_discovery_http_namespace for use with Service Connect.
     service : [EcsAwsUpboundIoV1beta1ServiceSpecForProviderServiceConnectConfigurationItems0ServiceItems0], default is Undefined, optional
-        The list of Service Connect service objects. See below.
+        List of Service Connect service objects. See below.
     """
 
 
@@ -915,11 +912,11 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecForProviderServiceConnectConfigurationIt
     Attributes
     ----------
     logDriver : str, default is Undefined, optional
-        The log driver to use for the container.
+        Log driver to use for the container.
     options : {str:str}, default is Undefined, optional
-        The configuration options to send to the log driver.
+        Configuration options to send to the log driver.
     secretOption : [EcsAwsUpboundIoV1beta1ServiceSpecForProviderServiceConnectConfigurationItems0LogConfigurationItems0SecretOptionItems0], default is Undefined, optional
-        The secrets to pass to the log configuration. See below.
+        Secrets to pass to the log configuration. See below.
     """
 
 
@@ -937,9 +934,9 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecForProviderServiceConnectConfigurationIt
     Attributes
     ----------
     name : str, default is Undefined, optional
-        The name of the secret.
+        Name of the secret.
     valueFrom : str, default is Undefined, optional
-        The secret to expose to the container. The supported values are either the full ARN of the AWS Secrets Manager secret or the full ARN of the parameter in the SSM Parameter Store.
+        Secret to expose to the container. The supported values are either the full ARN of the AWS Secrets Manager secret or the full ARN of the parameter in the SSM Parameter Store.
     """
 
 
@@ -955,17 +952,17 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecForProviderServiceConnectConfigurationIt
     Attributes
     ----------
     clientAlias : [EcsAwsUpboundIoV1beta1ServiceSpecForProviderServiceConnectConfigurationItems0ServiceItems0ClientAliasItems0], default is Undefined, optional
-        The list of client aliases for this Service Connect service. You use these to assign names that can be used by client applications. The maximum number of client aliases that you can have in this list is 1. See below.
+        List of client aliases for this Service Connect service. You use these to assign names that can be used by client applications. The maximum number of client aliases that you can have in this list is 1. See below.
     discoveryName : str, default is Undefined, optional
-        The name of the new AWS Cloud Map service that Amazon ECS creates for this Amazon ECS service.
+        Name of the new AWS Cloud Map service that Amazon ECS creates for this Amazon ECS service.
     ingressPortOverride : float, default is Undefined, optional
-        The port number for the Service Connect proxy to listen on.
+        Port number for the Service Connect proxy to listen on.
     portName : str, default is Undefined, optional
-        The name of one of the portMappings from all the containers in the task definition of this Amazon ECS service.
+        Name of one of the portMappings from all the containers in the task definition of this Amazon ECS service.
     timeout : [EcsAwsUpboundIoV1beta1ServiceSpecForProviderServiceConnectConfigurationItems0ServiceItems0TimeoutItems0], default is Undefined, optional
         Configuration timeouts for Service Connect
     tls : [EcsAwsUpboundIoV1beta1ServiceSpecForProviderServiceConnectConfigurationItems0ServiceItems0TLSItems0], default is Undefined, optional
-        The configuration for enabling Transport Layer Security (TLS)
+        Configuration for enabling Transport Layer Security (TLS)
     """
 
 
@@ -989,9 +986,9 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecForProviderServiceConnectConfigurationIt
     Attributes
     ----------
     dnsName : str, default is Undefined, optional
-        The name that you use in the applications of client tasks to connect to this service.
+        Name that you use in the applications of client tasks to connect to this service.
     port : float, default is Undefined, optional
-        The listening port number for the Service Connect proxy. This port is available inside of all of the tasks within the same namespace.
+        Listening port number for the Service Connect proxy. This port is available inside of all of the tasks within the same namespace.
     """
 
 
@@ -1007,11 +1004,11 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecForProviderServiceConnectConfigurationIt
     Attributes
     ----------
     issuerCertAuthority : [EcsAwsUpboundIoV1beta1ServiceSpecForProviderServiceConnectConfigurationItems0ServiceItems0TLSItems0IssuerCertAuthorityItems0], default is Undefined, optional
-        The details of the certificate authority which will issue the certificate.
+        Details of the certificate authority which will issue the certificate.
     kmsKey : str, default is Undefined, optional
-        The KMS key used to encrypt the private key in Secrets Manager.
+        KMS key used to encrypt the private key in Secrets Manager.
     roleArn : str, default is Undefined, optional
-        The ARN of the IAM Role that's associated with the Service Connect TLS.
+        ARN of the IAM Role that's associated with the Service Connect TLS.
     """
 
 
@@ -1029,7 +1026,7 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecForProviderServiceConnectConfigurationIt
     Attributes
     ----------
     awsPcaAuthorityArn : str, default is Undefined, optional
-        The ARN of the aws_acmpca_certificate_authority used to create the TLS Certificates.
+        ARN of the aws_acmpca_certificate_authority used to create the TLS Certificates.
     """
 
 
@@ -1043,9 +1040,9 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecForProviderServiceConnectConfigurationIt
     Attributes
     ----------
     idleTimeoutSeconds : float, default is Undefined, optional
-        The amount of time in seconds a connection will stay active while idle. A value of 0 can be set to disable idleTimeout.
+        Amount of time in seconds a connection will stay active while idle. A value of 0 can be set to disable idleTimeout.
     perRequestTimeoutSeconds : float, default is Undefined, optional
-        The amount of time in seconds for the upstream to respond with a complete response per request. A value of 0 can be set to disable perRequestTimeout. Can only be set when appProtocol isn't TCP.
+        Amount of time in seconds for the upstream to respond with a complete response per request. A value of 0 can be set to disable perRequestTimeout. Can only be set when appProtocol isn't TCP.
     """
 
 
@@ -1169,27 +1166,27 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecForProviderTaskDefinitionSelectorPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema EcsAwsUpboundIoV1beta1ServiceSpecForProviderVolumeConfiguration:
+schema EcsAwsUpboundIoV1beta1ServiceSpecForProviderVolumeConfigurationItems0:
     r"""
-    Configuration for a volume specified in the task definition as a volume that is configured at launch time. Currently, the only supported volume type is an Amazon EBS volume. See below.
+    ecs aws upbound io v1beta1 service spec for provider volume configuration items0
 
     Attributes
     ----------
-    managedEbsVolume : EcsAwsUpboundIoV1beta1ServiceSpecForProviderVolumeConfigurationManagedEbsVolume, default is Undefined, optional
-        managed ebs volume
+    managedEbsVolume : [EcsAwsUpboundIoV1beta1ServiceSpecForProviderVolumeConfigurationItems0ManagedEbsVolumeItems0], default is Undefined, optional
+        Configuration for the Amazon EBS volume that Amazon ECS creates and manages on your behalf. See below.
     name : str, default is Undefined, optional
         Name of the volume.
     """
 
 
-    managedEbsVolume?: EcsAwsUpboundIoV1beta1ServiceSpecForProviderVolumeConfigurationManagedEbsVolume
+    managedEbsVolume?: [EcsAwsUpboundIoV1beta1ServiceSpecForProviderVolumeConfigurationItems0ManagedEbsVolumeItems0]
 
     name?: str
 
 
-schema EcsAwsUpboundIoV1beta1ServiceSpecForProviderVolumeConfigurationManagedEbsVolume:
+schema EcsAwsUpboundIoV1beta1ServiceSpecForProviderVolumeConfigurationItems0ManagedEbsVolumeItems0:
     r"""
-    Configuration for the Amazon EBS volume that Amazon ECS creates and manages on your behalf. See below.
+    ecs aws upbound io v1beta1 service spec for provider volume configuration items0 managed ebs volume items0
 
     Attributes
     ----------
@@ -1202,15 +1199,17 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecForProviderVolumeConfigurationManagedEbs
     kmsKeyId : str, default is Undefined, optional
         Amazon Resource Name (ARN) identifier of the Amazon Web Services Key Management Service key to use for Amazon EBS encryption.
     roleArn : str, default is Undefined, optional
-        Amazon ECS infrastructure IAM role that is used to manage your Amazon Web Services infrastructure. Recommended using the Amazon ECS-managed AmazonECSInfrastructureRolePolicyForVolumes IAM policy with this role.
+        The ARN of the IAM role to associate with this volume. This is the Amazon ECS infrastructure IAM role that is used to manage your AWS infrastructure.
     sizeInGb : float, default is Undefined, optional
         Size of the volume in GiB. You must specify either a size_in_gb or a snapshot_id. You can optionally specify a volume size greater than or equal to the snapshot size.
     snapshotId : str, default is Undefined, optional
         Snapshot that Amazon ECS uses to create the volume. You must specify either a size_in_gb or a snapshot_id.
-    tagSpecifications : [EcsAwsUpboundIoV1beta1ServiceSpecForProviderVolumeConfigurationManagedEbsVolumeTagSpecificationsItems0], default is Undefined, optional
+    tagSpecifications : [EcsAwsUpboundIoV1beta1ServiceSpecForProviderVolumeConfigurationItems0ManagedEbsVolumeItems0TagSpecificationsItems0], default is Undefined, optional
         The tags to apply to the volume. See below.
-    throughput : str, default is Undefined, optional
+    throughput : float, default is Undefined, optional
         Throughput to provision for a volume, in MiB/s, with a maximum of 1,000 MiB/s.
+    volumeInitializationRate : float, default is Undefined, optional
+        Volume Initialization Rate in MiB/s. You must also specify a snapshot_id.
     volumeType : str, default is Undefined, optional
         Volume type.
     """
@@ -1230,25 +1229,27 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecForProviderVolumeConfigurationManagedEbs
 
     snapshotId?: str
 
-    tagSpecifications?: [EcsAwsUpboundIoV1beta1ServiceSpecForProviderVolumeConfigurationManagedEbsVolumeTagSpecificationsItems0]
+    tagSpecifications?: [EcsAwsUpboundIoV1beta1ServiceSpecForProviderVolumeConfigurationItems0ManagedEbsVolumeItems0TagSpecificationsItems0]
 
-    throughput?: str
+    throughput?: float
+
+    volumeInitializationRate?: float
 
     volumeType?: str
 
 
-schema EcsAwsUpboundIoV1beta1ServiceSpecForProviderVolumeConfigurationManagedEbsVolumeTagSpecificationsItems0:
+schema EcsAwsUpboundIoV1beta1ServiceSpecForProviderVolumeConfigurationItems0ManagedEbsVolumeItems0TagSpecificationsItems0:
     r"""
-    ecs aws upbound io v1beta1 service spec for provider volume configuration managed ebs volume tag specifications items0
+    ecs aws upbound io v1beta1 service spec for provider volume configuration items0 managed ebs volume items0 tag specifications items0
 
     Attributes
     ----------
     propagateTags : str, default is Undefined, optional
-        Determines whether to propagate the tags from the task definition to the Amazon EBS volume.
+        Whether to propagate the tags from the task definition or the service to the tasks. The valid values are SERVICE and TASK_DEFINITION.
     resourceType : str, default is Undefined, optional
         The type of volume resource. Valid values, volume.
     tags : {str:str}, default is Undefined, optional
-        The tags applied to this Amazon EBS volume. AmazonECSCreated and AmazonECSManaged are reserved tags that can't be used.
+        Key-value map of resource tags.
     """
 
 
@@ -1319,9 +1320,9 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecInitProvider:
     desiredCount : float, default is Undefined, optional
         Number of instances of the task definition to place and keep running. Defaults to 0. Do not specify if using the DAEMON scheduling strategy.
     enableEcsManagedTags : bool, default is Undefined, optional
-        Specifies whether to enable Amazon ECS managed tags for the tasks within the service.
+        Whether to enable Amazon ECS managed tags for the tasks within the service.
     enableExecuteCommand : bool, default is Undefined, optional
-        Specifies whether to enable Amazon ECS Exec for the tasks within the service.
+        Whether to enable Amazon ECS Exec for the tasks within the service.
     forceDelete : bool, default is Undefined, optional
         Enable to delete a service even if it wasn't scaled down to zero tasks. It's only necessary to use this if the service uses the REPLICA scheduling strategy.
     forceNewDeployment : bool, default is Undefined, optional
@@ -1347,11 +1348,11 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecInitProvider:
     platformVersion : str, default is Undefined, optional
         Platform version on which to run your service. Only applicable for launch_type set to FARGATE. Defaults to LATEST. More information about Fargate platform versions can be found in the AWS ECS User Guide.
     propagateTags : str, default is Undefined, optional
-        Specifies whether to propagate the tags from the task definition or the service to the tasks. The valid values are SERVICE and TASK_DEFINITION.
+        Whether to propagate the tags from the task definition or the service to the tasks. The valid values are SERVICE and TASK_DEFINITION.
     schedulingStrategy : str, default is Undefined, optional
         Scheduling strategy to use for the service. The valid values are REPLICA and DAEMON. Defaults to REPLICA. Note that Tasks using the Fargate launch type or the .
     serviceConnectConfiguration : [EcsAwsUpboundIoV1beta1ServiceSpecInitProviderServiceConnectConfigurationItems0], default is Undefined, optional
-        The ECS Service Connect configuration for this service to discover and connect to services, and be discovered by, and connected from, other services within a namespace. See below.
+        ECS Service Connect configuration for this service to discover and connect to services, and be discovered by, and connected from, other services within a namespace. See below.
     serviceRegistries : [EcsAwsUpboundIoV1beta1ServiceSpecInitProviderServiceRegistriesItems0], default is Undefined, optional
         Service discovery registries for the service. The maximum number of service_registries blocks is 1. See below.
     tags : {str:str}, default is Undefined, optional
@@ -1364,8 +1365,8 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecInitProvider:
         task definition selector
     triggers : {str:str}, default is Undefined, optional
         Map of arbitrary keys and values that, when changed, will trigger an in-place update (redeployment). Useful with plantimestamp(). See example above.
-    volumeConfiguration : EcsAwsUpboundIoV1beta1ServiceSpecInitProviderVolumeConfiguration, default is Undefined, optional
-        volume configuration
+    volumeConfiguration : [EcsAwsUpboundIoV1beta1ServiceSpecInitProviderVolumeConfigurationItems0], default is Undefined, optional
+        Configuration for a volume specified in the task definition as a volume that is configured at launch time. Currently, the only supported volume type is an Amazon EBS volume. See below.
     vpcLatticeConfigurations : [EcsAwsUpboundIoV1beta1ServiceSpecInitProviderVpcLatticeConfigurationsItems0], default is Undefined, optional
         The VPC Lattice configuration for your service that allows Lattice to connect, secure, and monitor your service across multiple accounts and VPCs. See below.
     waitForSteadyState : bool, default is Undefined, optional
@@ -1441,7 +1442,7 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecInitProvider:
 
     triggers?: {str:str}
 
-    volumeConfiguration?: EcsAwsUpboundIoV1beta1ServiceSpecInitProviderVolumeConfiguration
+    volumeConfiguration?: [EcsAwsUpboundIoV1beta1ServiceSpecInitProviderVolumeConfigurationItems0]
 
     vpcLatticeConfigurations?: [EcsAwsUpboundIoV1beta1ServiceSpecInitProviderVpcLatticeConfigurationsItems0]
 
@@ -1457,9 +1458,9 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecInitProviderAlarmsItems0:
     alarmNames : [str], default is Undefined, optional
         One or more CloudWatch alarm names.
     enable : bool, default is Undefined, optional
-        Determines whether to use the CloudWatch alarm option in the service deployment process.
+        Whether to use the CloudWatch alarm option in the service deployment process.
     rollback : bool, default is Undefined, optional
-        Determines whether to configure Amazon ECS to roll back the service if a service deployment fails. If rollback is used, when a service deployment fails, the service is rolled back to the last deployment that completed successfully.
+        Whether to configure Amazon ECS to roll back the service if a service deployment fails. If rollback is used, when a service deployment fails, the service is rolled back to the last deployment that completed successfully.
     """
 
 
@@ -2087,13 +2088,13 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecInitProviderServiceConnectConfigurationI
     Attributes
     ----------
     enabled : bool, default is Undefined, optional
-        Specifies whether to use Service Connect with this service.
+        Whether to use Service Connect with this service.
     logConfiguration : [EcsAwsUpboundIoV1beta1ServiceSpecInitProviderServiceConnectConfigurationItems0LogConfigurationItems0], default is Undefined, optional
-        The log configuration for the container. See below.
+        Log configuration for the container. See below.
     namespace : str, default is Undefined, optional
-        The namespace name or ARN of the aws_service_discovery_http_namespace for use with Service Connect.
+        Namespace name or ARN of the aws_service_discovery_http_namespace for use with Service Connect.
     service : [EcsAwsUpboundIoV1beta1ServiceSpecInitProviderServiceConnectConfigurationItems0ServiceItems0], default is Undefined, optional
-        The list of Service Connect service objects. See below.
+        List of Service Connect service objects. See below.
     """
 
 
@@ -2113,11 +2114,11 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecInitProviderServiceConnectConfigurationI
     Attributes
     ----------
     logDriver : str, default is Undefined, optional
-        The log driver to use for the container.
+        Log driver to use for the container.
     options : {str:str}, default is Undefined, optional
-        The configuration options to send to the log driver.
+        Configuration options to send to the log driver.
     secretOption : [EcsAwsUpboundIoV1beta1ServiceSpecInitProviderServiceConnectConfigurationItems0LogConfigurationItems0SecretOptionItems0], default is Undefined, optional
-        The secrets to pass to the log configuration. See below.
+        Secrets to pass to the log configuration. See below.
     """
 
 
@@ -2135,9 +2136,9 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecInitProviderServiceConnectConfigurationI
     Attributes
     ----------
     name : str, default is Undefined, optional
-        The name of the secret.
+        Name of the secret.
     valueFrom : str, default is Undefined, optional
-        The secret to expose to the container. The supported values are either the full ARN of the AWS Secrets Manager secret or the full ARN of the parameter in the SSM Parameter Store.
+        Secret to expose to the container. The supported values are either the full ARN of the AWS Secrets Manager secret or the full ARN of the parameter in the SSM Parameter Store.
     """
 
 
@@ -2153,17 +2154,17 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecInitProviderServiceConnectConfigurationI
     Attributes
     ----------
     clientAlias : [EcsAwsUpboundIoV1beta1ServiceSpecInitProviderServiceConnectConfigurationItems0ServiceItems0ClientAliasItems0], default is Undefined, optional
-        The list of client aliases for this Service Connect service. You use these to assign names that can be used by client applications. The maximum number of client aliases that you can have in this list is 1. See below.
+        List of client aliases for this Service Connect service. You use these to assign names that can be used by client applications. The maximum number of client aliases that you can have in this list is 1. See below.
     discoveryName : str, default is Undefined, optional
-        The name of the new AWS Cloud Map service that Amazon ECS creates for this Amazon ECS service.
+        Name of the new AWS Cloud Map service that Amazon ECS creates for this Amazon ECS service.
     ingressPortOverride : float, default is Undefined, optional
-        The port number for the Service Connect proxy to listen on.
+        Port number for the Service Connect proxy to listen on.
     portName : str, default is Undefined, optional
-        The name of one of the portMappings from all the containers in the task definition of this Amazon ECS service.
+        Name of one of the portMappings from all the containers in the task definition of this Amazon ECS service.
     timeout : [EcsAwsUpboundIoV1beta1ServiceSpecInitProviderServiceConnectConfigurationItems0ServiceItems0TimeoutItems0], default is Undefined, optional
         Configuration timeouts for Service Connect
     tls : [EcsAwsUpboundIoV1beta1ServiceSpecInitProviderServiceConnectConfigurationItems0ServiceItems0TLSItems0], default is Undefined, optional
-        The configuration for enabling Transport Layer Security (TLS)
+        Configuration for enabling Transport Layer Security (TLS)
     """
 
 
@@ -2187,9 +2188,9 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecInitProviderServiceConnectConfigurationI
     Attributes
     ----------
     dnsName : str, default is Undefined, optional
-        The name that you use in the applications of client tasks to connect to this service.
+        Name that you use in the applications of client tasks to connect to this service.
     port : float, default is Undefined, optional
-        The listening port number for the Service Connect proxy. This port is available inside of all of the tasks within the same namespace.
+        Listening port number for the Service Connect proxy. This port is available inside of all of the tasks within the same namespace.
     """
 
 
@@ -2205,11 +2206,11 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecInitProviderServiceConnectConfigurationI
     Attributes
     ----------
     issuerCertAuthority : [EcsAwsUpboundIoV1beta1ServiceSpecInitProviderServiceConnectConfigurationItems0ServiceItems0TLSItems0IssuerCertAuthorityItems0], default is Undefined, optional
-        The details of the certificate authority which will issue the certificate.
+        Details of the certificate authority which will issue the certificate.
     kmsKey : str, default is Undefined, optional
-        The KMS key used to encrypt the private key in Secrets Manager.
+        KMS key used to encrypt the private key in Secrets Manager.
     roleArn : str, default is Undefined, optional
-        The ARN of the IAM Role that's associated with the Service Connect TLS.
+        ARN of the IAM Role that's associated with the Service Connect TLS.
     """
 
 
@@ -2227,7 +2228,7 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecInitProviderServiceConnectConfigurationI
     Attributes
     ----------
     awsPcaAuthorityArn : str, default is Undefined, optional
-        The ARN of the aws_acmpca_certificate_authority used to create the TLS Certificates.
+        ARN of the aws_acmpca_certificate_authority used to create the TLS Certificates.
     """
 
 
@@ -2241,9 +2242,9 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecInitProviderServiceConnectConfigurationI
     Attributes
     ----------
     idleTimeoutSeconds : float, default is Undefined, optional
-        The amount of time in seconds a connection will stay active while idle. A value of 0 can be set to disable idleTimeout.
+        Amount of time in seconds a connection will stay active while idle. A value of 0 can be set to disable idleTimeout.
     perRequestTimeoutSeconds : float, default is Undefined, optional
-        The amount of time in seconds for the upstream to respond with a complete response per request. A value of 0 can be set to disable perRequestTimeout. Can only be set when appProtocol isn't TCP.
+        Amount of time in seconds for the upstream to respond with a complete response per request. A value of 0 can be set to disable perRequestTimeout. Can only be set when appProtocol isn't TCP.
     """
 
 
@@ -2367,27 +2368,27 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecInitProviderTaskDefinitionSelectorPolicy
     resolve?: "Always" | "IfNotPresent"
 
 
-schema EcsAwsUpboundIoV1beta1ServiceSpecInitProviderVolumeConfiguration:
+schema EcsAwsUpboundIoV1beta1ServiceSpecInitProviderVolumeConfigurationItems0:
     r"""
-    Configuration for a volume specified in the task definition as a volume that is configured at launch time. Currently, the only supported volume type is an Amazon EBS volume. See below.
+    ecs aws upbound io v1beta1 service spec init provider volume configuration items0
 
     Attributes
     ----------
-    managedEbsVolume : EcsAwsUpboundIoV1beta1ServiceSpecInitProviderVolumeConfigurationManagedEbsVolume, default is Undefined, optional
-        managed ebs volume
+    managedEbsVolume : [EcsAwsUpboundIoV1beta1ServiceSpecInitProviderVolumeConfigurationItems0ManagedEbsVolumeItems0], default is Undefined, optional
+        Configuration for the Amazon EBS volume that Amazon ECS creates and manages on your behalf. See below.
     name : str, default is Undefined, optional
         Name of the volume.
     """
 
 
-    managedEbsVolume?: EcsAwsUpboundIoV1beta1ServiceSpecInitProviderVolumeConfigurationManagedEbsVolume
+    managedEbsVolume?: [EcsAwsUpboundIoV1beta1ServiceSpecInitProviderVolumeConfigurationItems0ManagedEbsVolumeItems0]
 
     name?: str
 
 
-schema EcsAwsUpboundIoV1beta1ServiceSpecInitProviderVolumeConfigurationManagedEbsVolume:
+schema EcsAwsUpboundIoV1beta1ServiceSpecInitProviderVolumeConfigurationItems0ManagedEbsVolumeItems0:
     r"""
-    Configuration for the Amazon EBS volume that Amazon ECS creates and manages on your behalf. See below.
+    ecs aws upbound io v1beta1 service spec init provider volume configuration items0 managed ebs volume items0
 
     Attributes
     ----------
@@ -2400,15 +2401,17 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecInitProviderVolumeConfigurationManagedEb
     kmsKeyId : str, default is Undefined, optional
         Amazon Resource Name (ARN) identifier of the Amazon Web Services Key Management Service key to use for Amazon EBS encryption.
     roleArn : str, default is Undefined, optional
-        Amazon ECS infrastructure IAM role that is used to manage your Amazon Web Services infrastructure. Recommended using the Amazon ECS-managed AmazonECSInfrastructureRolePolicyForVolumes IAM policy with this role.
+        The ARN of the IAM role to associate with this volume. This is the Amazon ECS infrastructure IAM role that is used to manage your AWS infrastructure.
     sizeInGb : float, default is Undefined, optional
         Size of the volume in GiB. You must specify either a size_in_gb or a snapshot_id. You can optionally specify a volume size greater than or equal to the snapshot size.
     snapshotId : str, default is Undefined, optional
         Snapshot that Amazon ECS uses to create the volume. You must specify either a size_in_gb or a snapshot_id.
-    tagSpecifications : [EcsAwsUpboundIoV1beta1ServiceSpecInitProviderVolumeConfigurationManagedEbsVolumeTagSpecificationsItems0], default is Undefined, optional
+    tagSpecifications : [EcsAwsUpboundIoV1beta1ServiceSpecInitProviderVolumeConfigurationItems0ManagedEbsVolumeItems0TagSpecificationsItems0], default is Undefined, optional
         The tags to apply to the volume. See below.
-    throughput : str, default is Undefined, optional
+    throughput : float, default is Undefined, optional
         Throughput to provision for a volume, in MiB/s, with a maximum of 1,000 MiB/s.
+    volumeInitializationRate : float, default is Undefined, optional
+        Volume Initialization Rate in MiB/s. You must also specify a snapshot_id.
     volumeType : str, default is Undefined, optional
         Volume type.
     """
@@ -2428,25 +2431,27 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecInitProviderVolumeConfigurationManagedEb
 
     snapshotId?: str
 
-    tagSpecifications?: [EcsAwsUpboundIoV1beta1ServiceSpecInitProviderVolumeConfigurationManagedEbsVolumeTagSpecificationsItems0]
+    tagSpecifications?: [EcsAwsUpboundIoV1beta1ServiceSpecInitProviderVolumeConfigurationItems0ManagedEbsVolumeItems0TagSpecificationsItems0]
 
-    throughput?: str
+    throughput?: float
+
+    volumeInitializationRate?: float
 
     volumeType?: str
 
 
-schema EcsAwsUpboundIoV1beta1ServiceSpecInitProviderVolumeConfigurationManagedEbsVolumeTagSpecificationsItems0:
+schema EcsAwsUpboundIoV1beta1ServiceSpecInitProviderVolumeConfigurationItems0ManagedEbsVolumeItems0TagSpecificationsItems0:
     r"""
-    ecs aws upbound io v1beta1 service spec init provider volume configuration managed ebs volume tag specifications items0
+    ecs aws upbound io v1beta1 service spec init provider volume configuration items0 managed ebs volume items0 tag specifications items0
 
     Attributes
     ----------
     propagateTags : str, default is Undefined, optional
-        Determines whether to propagate the tags from the task definition to the Amazon EBS volume.
+        Whether to propagate the tags from the task definition or the service to the tasks. The valid values are SERVICE and TASK_DEFINITION.
     resourceType : str, default is Undefined, optional
         The type of volume resource. Valid values, volume.
     tags : {str:str}, default is Undefined, optional
-        The tags applied to this Amazon EBS volume. AmazonECSCreated and AmazonECSManaged are reserved tags that can't be used.
+        Key-value map of resource tags.
     """
 
 
@@ -2523,112 +2528,12 @@ schema EcsAwsUpboundIoV1beta1ServiceSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema EcsAwsUpboundIoV1beta1ServiceSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : EcsAwsUpboundIoV1beta1ServiceSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : EcsAwsUpboundIoV1beta1ServiceSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: EcsAwsUpboundIoV1beta1ServiceSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: EcsAwsUpboundIoV1beta1ServiceSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema EcsAwsUpboundIoV1beta1ServiceSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : EcsAwsUpboundIoV1beta1ServiceSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: EcsAwsUpboundIoV1beta1ServiceSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema EcsAwsUpboundIoV1beta1ServiceSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema EcsAwsUpboundIoV1beta1ServiceSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema EcsAwsUpboundIoV1beta1ServiceSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -2676,6 +2581,8 @@ schema EcsAwsUpboundIoV1beta1ServiceStatusAtProvider:
     ----------
     alarms : [EcsAwsUpboundIoV1beta1ServiceStatusAtProviderAlarmsItems0], default is Undefined, optional
         Information about the CloudWatch alarms. See below.
+    arn : str, default is Undefined, optional
+        ARN that identifies the service.
     availabilityZoneRebalancing : str, default is Undefined, optional
         ECS automatically redistributes tasks within a service across Availability Zones (AZs) to mitigate the risk of impaired application availability due to underlying infrastructure failures and task lifecycle activities. The valid values are ENABLED and DISABLED. Defaults to DISABLED.
     capacityProviderStrategy : [EcsAwsUpboundIoV1beta1ServiceStatusAtProviderCapacityProviderStrategyItems0], default is Undefined, optional
@@ -2693,9 +2600,9 @@ schema EcsAwsUpboundIoV1beta1ServiceStatusAtProvider:
     desiredCount : float, default is Undefined, optional
         Number of instances of the task definition to place and keep running. Defaults to 0. Do not specify if using the DAEMON scheduling strategy.
     enableEcsManagedTags : bool, default is Undefined, optional
-        Specifies whether to enable Amazon ECS managed tags for the tasks within the service.
+        Whether to enable Amazon ECS managed tags for the tasks within the service.
     enableExecuteCommand : bool, default is Undefined, optional
-        Specifies whether to enable Amazon ECS Exec for the tasks within the service.
+        Whether to enable Amazon ECS Exec for the tasks within the service.
     forceDelete : bool, default is Undefined, optional
         Enable to delete a service even if it wasn't scaled down to zero tasks. It's only necessary to use this if the service uses the REPLICA scheduling strategy.
     forceNewDeployment : bool, default is Undefined, optional
@@ -2705,7 +2612,7 @@ schema EcsAwsUpboundIoV1beta1ServiceStatusAtProvider:
     iamRole : str, default is Undefined, optional
         ARN of the IAM role that allows Amazon ECS to make calls to your load balancer on your behalf. This parameter is required if you are using a load balancer with your service, but only if your task definition does not use the awsvpc network mode. If using awsvpc network mode, do not specify this role. If your account has already created the Amazon ECS service-linked role, that role is used by default for your service unless you specify a role here.
     id : str, default is Undefined, optional
-        ARN that identifies the service.
+        id
     launchType : str, default is Undefined, optional
         Launch type on which to run your service. The valid values are EC2, FARGATE, and EXTERNAL. Defaults to EC2. Conflicts with capacity_provider_strategy.
     loadBalancer : [EcsAwsUpboundIoV1beta1ServiceStatusAtProviderLoadBalancerItems0], default is Undefined, optional
@@ -2719,11 +2626,14 @@ schema EcsAwsUpboundIoV1beta1ServiceStatusAtProvider:
     platformVersion : str, default is Undefined, optional
         Platform version on which to run your service. Only applicable for launch_type set to FARGATE. Defaults to LATEST. More information about Fargate platform versions can be found in the AWS ECS User Guide.
     propagateTags : str, default is Undefined, optional
-        Specifies whether to propagate the tags from the task definition or the service to the tasks. The valid values are SERVICE and TASK_DEFINITION.
+        Whether to propagate the tags from the task definition or the service to the tasks. The valid values are SERVICE and TASK_DEFINITION.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     schedulingStrategy : str, default is Undefined, optional
         Scheduling strategy to use for the service. The valid values are REPLICA and DAEMON. Defaults to REPLICA. Note that Tasks using the Fargate launch type or the .
     serviceConnectConfiguration : [EcsAwsUpboundIoV1beta1ServiceStatusAtProviderServiceConnectConfigurationItems0], default is Undefined, optional
-        The ECS Service Connect configuration for this service to discover and connect to services, and be discovered by, and connected from, other services within a namespace. See below.
+        ECS Service Connect configuration for this service to discover and connect to services, and be discovered by, and connected from, other services within a namespace. See below.
     serviceRegistries : [EcsAwsUpboundIoV1beta1ServiceStatusAtProviderServiceRegistriesItems0], default is Undefined, optional
         Service discovery registries for the service. The maximum number of service_registries blocks is 1. See below.
     tags : {str:str}, default is Undefined, optional
@@ -2734,8 +2644,8 @@ schema EcsAwsUpboundIoV1beta1ServiceStatusAtProvider:
         Family and revision (family:revision) or full ARN of the task definition that you want to run in your service. Required unless using the EXTERNAL deployment controller. If a revision is not specified, the latest ACTIVE revision is used.
     triggers : {str:str}, default is Undefined, optional
         Map of arbitrary keys and values that, when changed, will trigger an in-place update (redeployment). Useful with plantimestamp(). See example above.
-    volumeConfiguration : EcsAwsUpboundIoV1beta1ServiceStatusAtProviderVolumeConfiguration, default is Undefined, optional
-        volume configuration
+    volumeConfiguration : [EcsAwsUpboundIoV1beta1ServiceStatusAtProviderVolumeConfigurationItems0], default is Undefined, optional
+        Configuration for a volume specified in the task definition as a volume that is configured at launch time. Currently, the only supported volume type is an Amazon EBS volume. See below.
     vpcLatticeConfigurations : [EcsAwsUpboundIoV1beta1ServiceStatusAtProviderVpcLatticeConfigurationsItems0], default is Undefined, optional
         The VPC Lattice configuration for your service that allows Lattice to connect, secure, and monitor your service across multiple accounts and VPCs. See below.
     waitForSteadyState : bool, default is Undefined, optional
@@ -2744,6 +2654,8 @@ schema EcsAwsUpboundIoV1beta1ServiceStatusAtProvider:
 
 
     alarms?: [EcsAwsUpboundIoV1beta1ServiceStatusAtProviderAlarmsItems0]
+
+    arn?: str
 
     availabilityZoneRebalancing?: str
 
@@ -2789,6 +2701,8 @@ schema EcsAwsUpboundIoV1beta1ServiceStatusAtProvider:
 
     propagateTags?: str
 
+    region?: str
+
     schedulingStrategy?: str
 
     serviceConnectConfiguration?: [EcsAwsUpboundIoV1beta1ServiceStatusAtProviderServiceConnectConfigurationItems0]
@@ -2803,7 +2717,7 @@ schema EcsAwsUpboundIoV1beta1ServiceStatusAtProvider:
 
     triggers?: {str:str}
 
-    volumeConfiguration?: EcsAwsUpboundIoV1beta1ServiceStatusAtProviderVolumeConfiguration
+    volumeConfiguration?: [EcsAwsUpboundIoV1beta1ServiceStatusAtProviderVolumeConfigurationItems0]
 
     vpcLatticeConfigurations?: [EcsAwsUpboundIoV1beta1ServiceStatusAtProviderVpcLatticeConfigurationsItems0]
 
@@ -2819,9 +2733,9 @@ schema EcsAwsUpboundIoV1beta1ServiceStatusAtProviderAlarmsItems0:
     alarmNames : [str], default is Undefined, optional
         One or more CloudWatch alarm names.
     enable : bool, default is Undefined, optional
-        Determines whether to use the CloudWatch alarm option in the service deployment process.
+        Whether to use the CloudWatch alarm option in the service deployment process.
     rollback : bool, default is Undefined, optional
-        Determines whether to configure Amazon ECS to roll back the service if a service deployment fails. If rollback is used, when a service deployment fails, the service is rolled back to the last deployment that completed successfully.
+        Whether to configure Amazon ECS to roll back the service if a service deployment fails. If rollback is used, when a service deployment fails, the service is rolled back to the last deployment that completed successfully.
     """
 
 
@@ -2980,13 +2894,13 @@ schema EcsAwsUpboundIoV1beta1ServiceStatusAtProviderServiceConnectConfigurationI
     Attributes
     ----------
     enabled : bool, default is Undefined, optional
-        Specifies whether to use Service Connect with this service.
+        Whether to use Service Connect with this service.
     logConfiguration : [EcsAwsUpboundIoV1beta1ServiceStatusAtProviderServiceConnectConfigurationItems0LogConfigurationItems0], default is Undefined, optional
-        The log configuration for the container. See below.
+        Log configuration for the container. See below.
     namespace : str, default is Undefined, optional
-        The namespace name or ARN of the aws_service_discovery_http_namespace for use with Service Connect.
+        Namespace name or ARN of the aws_service_discovery_http_namespace for use with Service Connect.
     service : [EcsAwsUpboundIoV1beta1ServiceStatusAtProviderServiceConnectConfigurationItems0ServiceItems0], default is Undefined, optional
-        The list of Service Connect service objects. See below.
+        List of Service Connect service objects. See below.
     """
 
 
@@ -3006,11 +2920,11 @@ schema EcsAwsUpboundIoV1beta1ServiceStatusAtProviderServiceConnectConfigurationI
     Attributes
     ----------
     logDriver : str, default is Undefined, optional
-        The log driver to use for the container.
+        Log driver to use for the container.
     options : {str:str}, default is Undefined, optional
-        The configuration options to send to the log driver.
+        Configuration options to send to the log driver.
     secretOption : [EcsAwsUpboundIoV1beta1ServiceStatusAtProviderServiceConnectConfigurationItems0LogConfigurationItems0SecretOptionItems0], default is Undefined, optional
-        The secrets to pass to the log configuration. See below.
+        Secrets to pass to the log configuration. See below.
     """
 
 
@@ -3028,9 +2942,9 @@ schema EcsAwsUpboundIoV1beta1ServiceStatusAtProviderServiceConnectConfigurationI
     Attributes
     ----------
     name : str, default is Undefined, optional
-        The name of the secret.
+        Name of the secret.
     valueFrom : str, default is Undefined, optional
-        The secret to expose to the container. The supported values are either the full ARN of the AWS Secrets Manager secret or the full ARN of the parameter in the SSM Parameter Store.
+        Secret to expose to the container. The supported values are either the full ARN of the AWS Secrets Manager secret or the full ARN of the parameter in the SSM Parameter Store.
     """
 
 
@@ -3046,17 +2960,17 @@ schema EcsAwsUpboundIoV1beta1ServiceStatusAtProviderServiceConnectConfigurationI
     Attributes
     ----------
     clientAlias : [EcsAwsUpboundIoV1beta1ServiceStatusAtProviderServiceConnectConfigurationItems0ServiceItems0ClientAliasItems0], default is Undefined, optional
-        The list of client aliases for this Service Connect service. You use these to assign names that can be used by client applications. The maximum number of client aliases that you can have in this list is 1. See below.
+        List of client aliases for this Service Connect service. You use these to assign names that can be used by client applications. The maximum number of client aliases that you can have in this list is 1. See below.
     discoveryName : str, default is Undefined, optional
-        The name of the new AWS Cloud Map service that Amazon ECS creates for this Amazon ECS service.
+        Name of the new AWS Cloud Map service that Amazon ECS creates for this Amazon ECS service.
     ingressPortOverride : float, default is Undefined, optional
-        The port number for the Service Connect proxy to listen on.
+        Port number for the Service Connect proxy to listen on.
     portName : str, default is Undefined, optional
-        The name of one of the portMappings from all the containers in the task definition of this Amazon ECS service.
+        Name of one of the portMappings from all the containers in the task definition of this Amazon ECS service.
     timeout : [EcsAwsUpboundIoV1beta1ServiceStatusAtProviderServiceConnectConfigurationItems0ServiceItems0TimeoutItems0], default is Undefined, optional
         Configuration timeouts for Service Connect
     tls : [EcsAwsUpboundIoV1beta1ServiceStatusAtProviderServiceConnectConfigurationItems0ServiceItems0TLSItems0], default is Undefined, optional
-        The configuration for enabling Transport Layer Security (TLS)
+        Configuration for enabling Transport Layer Security (TLS)
     """
 
 
@@ -3080,9 +2994,9 @@ schema EcsAwsUpboundIoV1beta1ServiceStatusAtProviderServiceConnectConfigurationI
     Attributes
     ----------
     dnsName : str, default is Undefined, optional
-        The name that you use in the applications of client tasks to connect to this service.
+        Name that you use in the applications of client tasks to connect to this service.
     port : float, default is Undefined, optional
-        The listening port number for the Service Connect proxy. This port is available inside of all of the tasks within the same namespace.
+        Listening port number for the Service Connect proxy. This port is available inside of all of the tasks within the same namespace.
     """
 
 
@@ -3098,11 +3012,11 @@ schema EcsAwsUpboundIoV1beta1ServiceStatusAtProviderServiceConnectConfigurationI
     Attributes
     ----------
     issuerCertAuthority : [EcsAwsUpboundIoV1beta1ServiceStatusAtProviderServiceConnectConfigurationItems0ServiceItems0TLSItems0IssuerCertAuthorityItems0], default is Undefined, optional
-        The details of the certificate authority which will issue the certificate.
+        Details of the certificate authority which will issue the certificate.
     kmsKey : str, default is Undefined, optional
-        The KMS key used to encrypt the private key in Secrets Manager.
+        KMS key used to encrypt the private key in Secrets Manager.
     roleArn : str, default is Undefined, optional
-        The ARN of the IAM Role that's associated with the Service Connect TLS.
+        ARN of the IAM Role that's associated with the Service Connect TLS.
     """
 
 
@@ -3120,7 +3034,7 @@ schema EcsAwsUpboundIoV1beta1ServiceStatusAtProviderServiceConnectConfigurationI
     Attributes
     ----------
     awsPcaAuthorityArn : str, default is Undefined, optional
-        The ARN of the aws_acmpca_certificate_authority used to create the TLS Certificates.
+        ARN of the aws_acmpca_certificate_authority used to create the TLS Certificates.
     """
 
 
@@ -3134,9 +3048,9 @@ schema EcsAwsUpboundIoV1beta1ServiceStatusAtProviderServiceConnectConfigurationI
     Attributes
     ----------
     idleTimeoutSeconds : float, default is Undefined, optional
-        The amount of time in seconds a connection will stay active while idle. A value of 0 can be set to disable idleTimeout.
+        Amount of time in seconds a connection will stay active while idle. A value of 0 can be set to disable idleTimeout.
     perRequestTimeoutSeconds : float, default is Undefined, optional
-        The amount of time in seconds for the upstream to respond with a complete response per request. A value of 0 can be set to disable perRequestTimeout. Can only be set when appProtocol isn't TCP.
+        Amount of time in seconds for the upstream to respond with a complete response per request. A value of 0 can be set to disable perRequestTimeout. Can only be set when appProtocol isn't TCP.
     """
 
 
@@ -3171,27 +3085,27 @@ schema EcsAwsUpboundIoV1beta1ServiceStatusAtProviderServiceRegistriesItems0:
     registryArn?: str
 
 
-schema EcsAwsUpboundIoV1beta1ServiceStatusAtProviderVolumeConfiguration:
+schema EcsAwsUpboundIoV1beta1ServiceStatusAtProviderVolumeConfigurationItems0:
     r"""
-    Configuration for a volume specified in the task definition as a volume that is configured at launch time. Currently, the only supported volume type is an Amazon EBS volume. See below.
+    ecs aws upbound io v1beta1 service status at provider volume configuration items0
 
     Attributes
     ----------
-    managedEbsVolume : EcsAwsUpboundIoV1beta1ServiceStatusAtProviderVolumeConfigurationManagedEbsVolume, default is Undefined, optional
-        managed ebs volume
+    managedEbsVolume : [EcsAwsUpboundIoV1beta1ServiceStatusAtProviderVolumeConfigurationItems0ManagedEbsVolumeItems0], default is Undefined, optional
+        Configuration for the Amazon EBS volume that Amazon ECS creates and manages on your behalf. See below.
     name : str, default is Undefined, optional
         Name of the volume.
     """
 
 
-    managedEbsVolume?: EcsAwsUpboundIoV1beta1ServiceStatusAtProviderVolumeConfigurationManagedEbsVolume
+    managedEbsVolume?: [EcsAwsUpboundIoV1beta1ServiceStatusAtProviderVolumeConfigurationItems0ManagedEbsVolumeItems0]
 
     name?: str
 
 
-schema EcsAwsUpboundIoV1beta1ServiceStatusAtProviderVolumeConfigurationManagedEbsVolume:
+schema EcsAwsUpboundIoV1beta1ServiceStatusAtProviderVolumeConfigurationItems0ManagedEbsVolumeItems0:
     r"""
-    Configuration for the Amazon EBS volume that Amazon ECS creates and manages on your behalf. See below.
+    ecs aws upbound io v1beta1 service status at provider volume configuration items0 managed ebs volume items0
 
     Attributes
     ----------
@@ -3204,15 +3118,17 @@ schema EcsAwsUpboundIoV1beta1ServiceStatusAtProviderVolumeConfigurationManagedEb
     kmsKeyId : str, default is Undefined, optional
         Amazon Resource Name (ARN) identifier of the Amazon Web Services Key Management Service key to use for Amazon EBS encryption.
     roleArn : str, default is Undefined, optional
-        Amazon ECS infrastructure IAM role that is used to manage your Amazon Web Services infrastructure. Recommended using the Amazon ECS-managed AmazonECSInfrastructureRolePolicyForVolumes IAM policy with this role.
+        The ARN of the IAM role to associate with this volume. This is the Amazon ECS infrastructure IAM role that is used to manage your AWS infrastructure.
     sizeInGb : float, default is Undefined, optional
         Size of the volume in GiB. You must specify either a size_in_gb or a snapshot_id. You can optionally specify a volume size greater than or equal to the snapshot size.
     snapshotId : str, default is Undefined, optional
         Snapshot that Amazon ECS uses to create the volume. You must specify either a size_in_gb or a snapshot_id.
-    tagSpecifications : [EcsAwsUpboundIoV1beta1ServiceStatusAtProviderVolumeConfigurationManagedEbsVolumeTagSpecificationsItems0], default is Undefined, optional
+    tagSpecifications : [EcsAwsUpboundIoV1beta1ServiceStatusAtProviderVolumeConfigurationItems0ManagedEbsVolumeItems0TagSpecificationsItems0], default is Undefined, optional
         The tags to apply to the volume. See below.
-    throughput : str, default is Undefined, optional
+    throughput : float, default is Undefined, optional
         Throughput to provision for a volume, in MiB/s, with a maximum of 1,000 MiB/s.
+    volumeInitializationRate : float, default is Undefined, optional
+        Volume Initialization Rate in MiB/s. You must also specify a snapshot_id.
     volumeType : str, default is Undefined, optional
         Volume type.
     """
@@ -3232,25 +3148,27 @@ schema EcsAwsUpboundIoV1beta1ServiceStatusAtProviderVolumeConfigurationManagedEb
 
     snapshotId?: str
 
-    tagSpecifications?: [EcsAwsUpboundIoV1beta1ServiceStatusAtProviderVolumeConfigurationManagedEbsVolumeTagSpecificationsItems0]
+    tagSpecifications?: [EcsAwsUpboundIoV1beta1ServiceStatusAtProviderVolumeConfigurationItems0ManagedEbsVolumeItems0TagSpecificationsItems0]
 
-    throughput?: str
+    throughput?: float
+
+    volumeInitializationRate?: float
 
     volumeType?: str
 
 
-schema EcsAwsUpboundIoV1beta1ServiceStatusAtProviderVolumeConfigurationManagedEbsVolumeTagSpecificationsItems0:
+schema EcsAwsUpboundIoV1beta1ServiceStatusAtProviderVolumeConfigurationItems0ManagedEbsVolumeItems0TagSpecificationsItems0:
     r"""
-    ecs aws upbound io v1beta1 service status at provider volume configuration managed ebs volume tag specifications items0
+    ecs aws upbound io v1beta1 service status at provider volume configuration items0 managed ebs volume items0 tag specifications items0
 
     Attributes
     ----------
     propagateTags : str, default is Undefined, optional
-        Determines whether to propagate the tags from the task definition to the Amazon EBS volume.
+        Whether to propagate the tags from the task definition or the service to the tasks. The valid values are SERVICE and TASK_DEFINITION.
     resourceType : str, default is Undefined, optional
         The type of volume resource. Valid values, volume.
     tags : {str:str}, default is Undefined, optional
-        The tags applied to this Amazon EBS volume. AmazonECSCreated and AmazonECSManaged are reserved tags that can't be used.
+        Key-value map of resource tags.
     """
 
 

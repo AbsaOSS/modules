@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema ContainerService:
     r"""
-    ContainerService is the Schema for the ContainerServices API. Provides a resource to manage Lightsail container service
+    ContainerService is the Schema for the ContainerServices API. Manages a Lightsail container service for running containerized applications.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema LightsailAwsUpboundIoV1beta1ContainerServiceSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : LightsailAwsUpboundIoV1beta1ContainerServiceSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : LightsailAwsUpboundIoV1beta1ContainerServiceSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : LightsailAwsUpboundIoV1beta1ContainerServiceSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema LightsailAwsUpboundIoV1beta1ContainerServiceSpec:
 
     providerConfigRef?: LightsailAwsUpboundIoV1beta1ContainerServiceSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: LightsailAwsUpboundIoV1beta1ContainerServiceSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: LightsailAwsUpboundIoV1beta1ContainerServiceSpecWriteConnectionSecretToRef
 
 
@@ -95,24 +91,18 @@ schema LightsailAwsUpboundIoV1beta1ContainerServiceSpecForProvider:
     Attributes
     ----------
     isDisabled : bool, default is Undefined, optional
-        A Boolean value indicating whether the container service is disabled. Defaults to false.
+        Whether to disable the container service. Defaults to false.
     power : str, default is Undefined, optional
-        The power specification for the container service. The power specifies the amount of memory,
-        the number of vCPUs, and the monthly price of each node of the container service.
-        Possible values: nano, micro, small, medium, large, xlarge.
+        Power specification for the container service. The power specifies the amount of memory, the number of vCPUs, and the monthly price of each node of the container service. Possible values: nano, micro, small, medium, large, xlarge.
     privateRegistryAccess : [LightsailAwsUpboundIoV1beta1ContainerServiceSpecForProviderPrivateRegistryAccessItems0], default is Undefined, optional
-        An object to describe the configuration for the container service to access private container image repositories, such as Amazon Elastic Container Registry (Amazon ECR) private repositories. See Private Registry Access below for more details.
+        Configuration for the container service to access private container image repositories, such as Amazon Elastic Container Registry (Amazon ECR) private repositories. See below.
     publicDomainNames : [LightsailAwsUpboundIoV1beta1ContainerServiceSpecForProviderPublicDomainNamesItems0], default is Undefined, optional
-        The public domain names to use with the container service, such as example.com
-        and www.example.com. You can specify up to four public domain names for a container service. The domain names that you
-        specify are used when you create a deployment with a container configured as the public endpoint of your container
-        service. If you don't specify public domain names, then you can use the default domain of the container service.
-        Defined below.
+        Public domain names to use with the container service, such as example.com and www.example.com. You can specify up to four public domain names for a container service. The domain names that you specify are used when you create a deployment with a container configured as the public endpoint of your container service. If you don't specify public domain names, then you can use the default domain of the container service. See below.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     scale : float, default is Undefined, optional
-        The scale specification for the container service. The scale specifies the allocated compute
-        nodes of the container service.
+        Scale specification for the container service. The scale specifies the allocated compute nodes of the container service.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     """
@@ -140,7 +130,7 @@ schema LightsailAwsUpboundIoV1beta1ContainerServiceSpecForProviderPrivateRegistr
     Attributes
     ----------
     ecrImagePullerRole : [LightsailAwsUpboundIoV1beta1ContainerServiceSpecForProviderPrivateRegistryAccessItems0EcrImagePullerRoleItems0], default is Undefined, optional
-        Describes a request to configure an Amazon Lightsail container service to access private container image repositories, such as Amazon Elastic Container Registry (Amazon ECR) private repositories. See ECR Image Puller Role below for more details.
+        Configuration to access private container image repositories, such as Amazon Elastic Container Registry (Amazon ECR) private repositories. See below.
     """
 
 
@@ -154,7 +144,7 @@ schema LightsailAwsUpboundIoV1beta1ContainerServiceSpecForProviderPrivateRegistr
     Attributes
     ----------
     isActive : bool, default is Undefined, optional
-        A Boolean value that indicates whether to activate the role. The default is false.
+        Whether to activate the role. Defaults to false.
     """
 
 
@@ -168,7 +158,7 @@ schema LightsailAwsUpboundIoV1beta1ContainerServiceSpecForProviderPublicDomainNa
     Attributes
     ----------
     certificate : [LightsailAwsUpboundIoV1beta1ContainerServiceSpecForProviderPublicDomainNamesItems0CertificateItems0], default is Undefined, optional
-        certificate
+        Set of certificate configurations for the public domain names. Each element contains the following attributes:
     """
 
 
@@ -182,10 +172,9 @@ schema LightsailAwsUpboundIoV1beta1ContainerServiceSpecForProviderPublicDomainNa
     Attributes
     ----------
     certificateName : str, default is Undefined, optional
-        The name for the container service. Names must be of length 1 to 63, and be
-        unique within each AWS Region in your Lightsail account.
+        Name of the certificate.
     domainNames : [str], default is Undefined, optional
-        domain names
+        List of domain names for the certificate.
     """
 
 
@@ -210,22 +199,15 @@ schema LightsailAwsUpboundIoV1beta1ContainerServiceSpecInitProvider:
     Attributes
     ----------
     isDisabled : bool, default is Undefined, optional
-        A Boolean value indicating whether the container service is disabled. Defaults to false.
+        Whether to disable the container service. Defaults to false.
     power : str, default is Undefined, optional
-        The power specification for the container service. The power specifies the amount of memory,
-        the number of vCPUs, and the monthly price of each node of the container service.
-        Possible values: nano, micro, small, medium, large, xlarge.
+        Power specification for the container service. The power specifies the amount of memory, the number of vCPUs, and the monthly price of each node of the container service. Possible values: nano, micro, small, medium, large, xlarge.
     privateRegistryAccess : [LightsailAwsUpboundIoV1beta1ContainerServiceSpecInitProviderPrivateRegistryAccessItems0], default is Undefined, optional
-        An object to describe the configuration for the container service to access private container image repositories, such as Amazon Elastic Container Registry (Amazon ECR) private repositories. See Private Registry Access below for more details.
+        Configuration for the container service to access private container image repositories, such as Amazon Elastic Container Registry (Amazon ECR) private repositories. See below.
     publicDomainNames : [LightsailAwsUpboundIoV1beta1ContainerServiceSpecInitProviderPublicDomainNamesItems0], default is Undefined, optional
-        The public domain names to use with the container service, such as example.com
-        and www.example.com. You can specify up to four public domain names for a container service. The domain names that you
-        specify are used when you create a deployment with a container configured as the public endpoint of your container
-        service. If you don't specify public domain names, then you can use the default domain of the container service.
-        Defined below.
+        Public domain names to use with the container service, such as example.com and www.example.com. You can specify up to four public domain names for a container service. The domain names that you specify are used when you create a deployment with a container configured as the public endpoint of your container service. If you don't specify public domain names, then you can use the default domain of the container service. See below.
     scale : float, default is Undefined, optional
-        The scale specification for the container service. The scale specifies the allocated compute
-        nodes of the container service.
+        Scale specification for the container service. The scale specifies the allocated compute nodes of the container service.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     """
@@ -251,7 +233,7 @@ schema LightsailAwsUpboundIoV1beta1ContainerServiceSpecInitProviderPrivateRegist
     Attributes
     ----------
     ecrImagePullerRole : [LightsailAwsUpboundIoV1beta1ContainerServiceSpecInitProviderPrivateRegistryAccessItems0EcrImagePullerRoleItems0], default is Undefined, optional
-        Describes a request to configure an Amazon Lightsail container service to access private container image repositories, such as Amazon Elastic Container Registry (Amazon ECR) private repositories. See ECR Image Puller Role below for more details.
+        Configuration to access private container image repositories, such as Amazon Elastic Container Registry (Amazon ECR) private repositories. See below.
     """
 
 
@@ -265,7 +247,7 @@ schema LightsailAwsUpboundIoV1beta1ContainerServiceSpecInitProviderPrivateRegist
     Attributes
     ----------
     isActive : bool, default is Undefined, optional
-        A Boolean value that indicates whether to activate the role. The default is false.
+        Whether to activate the role. Defaults to false.
     """
 
 
@@ -279,7 +261,7 @@ schema LightsailAwsUpboundIoV1beta1ContainerServiceSpecInitProviderPublicDomainN
     Attributes
     ----------
     certificate : [LightsailAwsUpboundIoV1beta1ContainerServiceSpecInitProviderPublicDomainNamesItems0CertificateItems0], default is Undefined, optional
-        certificate
+        Set of certificate configurations for the public domain names. Each element contains the following attributes:
     """
 
 
@@ -293,10 +275,9 @@ schema LightsailAwsUpboundIoV1beta1ContainerServiceSpecInitProviderPublicDomainN
     Attributes
     ----------
     certificateName : str, default is Undefined, optional
-        The name for the container service. Names must be of length 1 to 63, and be
-        unique within each AWS Region in your Lightsail account.
+        Name of the certificate.
     domainNames : [str], default is Undefined, optional
-        domain names
+        List of domain names for the certificate.
     """
 
 
@@ -349,112 +330,12 @@ schema LightsailAwsUpboundIoV1beta1ContainerServiceSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema LightsailAwsUpboundIoV1beta1ContainerServiceSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : LightsailAwsUpboundIoV1beta1ContainerServiceSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : LightsailAwsUpboundIoV1beta1ContainerServiceSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: LightsailAwsUpboundIoV1beta1ContainerServiceSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: LightsailAwsUpboundIoV1beta1ContainerServiceSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema LightsailAwsUpboundIoV1beta1ContainerServiceSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : LightsailAwsUpboundIoV1beta1ContainerServiceSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: LightsailAwsUpboundIoV1beta1ContainerServiceSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema LightsailAwsUpboundIoV1beta1ContainerServiceSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema LightsailAwsUpboundIoV1beta1ContainerServiceSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema LightsailAwsUpboundIoV1beta1ContainerServiceSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -501,51 +382,42 @@ schema LightsailAwsUpboundIoV1beta1ContainerServiceStatusAtProvider:
     Attributes
     ----------
     arn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the container service.
+        ARN of the container service.
     availabilityZone : str, default is Undefined, optional
-        The Availability Zone. Follows the format us-east-2a (case-sensitive).
+        Availability Zone. Follows the format us-east-2a (case-sensitive).
     createdAt : str, default is Undefined, optional
-        created at
+        Date and time when the container service was created.
     id : str, default is Undefined, optional
         Same as name.
     isDisabled : bool, default is Undefined, optional
-        A Boolean value indicating whether the container service is disabled. Defaults to false.
+        Whether to disable the container service. Defaults to false.
     power : str, default is Undefined, optional
-        The power specification for the container service. The power specifies the amount of memory,
-        the number of vCPUs, and the monthly price of each node of the container service.
-        Possible values: nano, micro, small, medium, large, xlarge.
+        Power specification for the container service. The power specifies the amount of memory, the number of vCPUs, and the monthly price of each node of the container service. Possible values: nano, micro, small, medium, large, xlarge.
     powerId : str, default is Undefined, optional
-        The ID of the power of the container service.
+        Power ID of the container service.
     principalArn : str, default is Undefined, optional
-        The principal ARN of the container service. The principal ARN can be used to create a trust
-        relationship between your standard AWS account and your Lightsail container service. This allows you to give your
-        service permission to access resources in your standard AWS account.
+        Principal ARN of the container service. The principal ARN can be used to create a trust relationship between your standard AWS account and your Lightsail container service. This allows you to give your service permission to access resources in your standard AWS account.
     privateDomainName : str, default is Undefined, optional
-        The private domain name of the container service. The private domain name is accessible only
-        by other resources within the default virtual private cloud (VPC) of your Lightsail account.
+        Private domain name of the container service. The private domain name is accessible only by other resources within the default virtual private cloud (VPC) of your Lightsail account.
     privateRegistryAccess : [LightsailAwsUpboundIoV1beta1ContainerServiceStatusAtProviderPrivateRegistryAccessItems0], default is Undefined, optional
-        An object to describe the configuration for the container service to access private container image repositories, such as Amazon Elastic Container Registry (Amazon ECR) private repositories. See Private Registry Access below for more details.
+        Configuration for the container service to access private container image repositories, such as Amazon Elastic Container Registry (Amazon ECR) private repositories. See below.
     publicDomainNames : [LightsailAwsUpboundIoV1beta1ContainerServiceStatusAtProviderPublicDomainNamesItems0], default is Undefined, optional
-        The public domain names to use with the container service, such as example.com
-        and www.example.com. You can specify up to four public domain names for a container service. The domain names that you
-        specify are used when you create a deployment with a container configured as the public endpoint of your container
-        service. If you don't specify public domain names, then you can use the default domain of the container service.
-        Defined below.
+        Public domain names to use with the container service, such as example.com and www.example.com. You can specify up to four public domain names for a container service. The domain names that you specify are used when you create a deployment with a container configured as the public endpoint of your container service. If you don't specify public domain names, then you can use the default domain of the container service. See below.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     resourceType : str, default is Undefined, optional
-        The Lightsail resource type of the container service (i.e., ContainerService).
+        Lightsail resource type of the container service (i.e., ContainerService).
     scale : float, default is Undefined, optional
-        The scale specification for the container service. The scale specifies the allocated compute
-        nodes of the container service.
+        Scale specification for the container service. The scale specifies the allocated compute nodes of the container service.
     state : str, default is Undefined, optional
-        The current state of the container service.
+        Current state of the container service.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
-        A map of tags assigned to the resource, including those inherited from the provider
-        default_tags configuration block.
+        Map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     url : str, default is Undefined, optional
-        The publicly accessible URL of the container service. If no public endpoint is specified in the
-        currentDeployment, this URL returns a 404 response.
+        Publicly accessible URL of the container service. If no public endpoint is specified in the currentDeployment, this URL returns a 404 response.
     """
 
 
@@ -571,6 +443,8 @@ schema LightsailAwsUpboundIoV1beta1ContainerServiceStatusAtProvider:
 
     publicDomainNames?: [LightsailAwsUpboundIoV1beta1ContainerServiceStatusAtProviderPublicDomainNamesItems0]
 
+    region?: str
+
     resourceType?: str
 
     scale?: float
@@ -591,7 +465,7 @@ schema LightsailAwsUpboundIoV1beta1ContainerServiceStatusAtProviderPrivateRegist
     Attributes
     ----------
     ecrImagePullerRole : [LightsailAwsUpboundIoV1beta1ContainerServiceStatusAtProviderPrivateRegistryAccessItems0EcrImagePullerRoleItems0], default is Undefined, optional
-        Describes a request to configure an Amazon Lightsail container service to access private container image repositories, such as Amazon Elastic Container Registry (Amazon ECR) private repositories. See ECR Image Puller Role below for more details.
+        Configuration to access private container image repositories, such as Amazon Elastic Container Registry (Amazon ECR) private repositories. See below.
     """
 
 
@@ -605,11 +479,9 @@ schema LightsailAwsUpboundIoV1beta1ContainerServiceStatusAtProviderPrivateRegist
     Attributes
     ----------
     isActive : bool, default is Undefined, optional
-        A Boolean value that indicates whether to activate the role. The default is false.
+        Whether to activate the role. Defaults to false.
     principalArn : str, default is Undefined, optional
-        The principal ARN of the container service. The principal ARN can be used to create a trust
-        relationship between your standard AWS account and your Lightsail container service. This allows you to give your
-        service permission to access resources in your standard AWS account.
+        Principal ARN of the container service. The principal ARN can be used to create a trust relationship between your standard AWS account and your Lightsail container service. This allows you to give your service permission to access resources in your standard AWS account.
     """
 
 
@@ -625,7 +497,7 @@ schema LightsailAwsUpboundIoV1beta1ContainerServiceStatusAtProviderPublicDomainN
     Attributes
     ----------
     certificate : [LightsailAwsUpboundIoV1beta1ContainerServiceStatusAtProviderPublicDomainNamesItems0CertificateItems0], default is Undefined, optional
-        certificate
+        Set of certificate configurations for the public domain names. Each element contains the following attributes:
     """
 
 
@@ -639,10 +511,9 @@ schema LightsailAwsUpboundIoV1beta1ContainerServiceStatusAtProviderPublicDomainN
     Attributes
     ----------
     certificateName : str, default is Undefined, optional
-        The name for the container service. Names must be of length 1 to 63, and be
-        unique within each AWS Region in your Lightsail account.
+        Name of the certificate.
     domainNames : [str], default is Undefined, optional
-        domain names
+        List of domain names for the certificate.
     """
 
 

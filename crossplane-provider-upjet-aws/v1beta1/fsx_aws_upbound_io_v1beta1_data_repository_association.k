@@ -66,8 +66,6 @@ schema FsxAwsUpboundIoV1beta1DataRepositoryAssociationSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : FsxAwsUpboundIoV1beta1DataRepositoryAssociationSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : FsxAwsUpboundIoV1beta1DataRepositoryAssociationSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : FsxAwsUpboundIoV1beta1DataRepositoryAssociationSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema FsxAwsUpboundIoV1beta1DataRepositoryAssociationSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: FsxAwsUpboundIoV1beta1DataRepositoryAssociationSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: FsxAwsUpboundIoV1beta1DataRepositoryAssociationSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: FsxAwsUpboundIoV1beta1DataRepositoryAssociationSpecWriteConnectionSecretToRef
 
@@ -111,6 +107,7 @@ schema FsxAwsUpboundIoV1beta1DataRepositoryAssociationSpecForProvider:
     importedFileChunkSize : float, default is Undefined, optional
         For files imported from a data repository, this value determines the stripe count and maximum amount of data per file (in MiB) stored on a single physical disk. The maximum number of disks that a single file can be striped across is limited by the total number of disks that make up the file system.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     s3 : [FsxAwsUpboundIoV1beta1DataRepositoryAssociationSpecForProviderS3Items0], default is Undefined, optional
         See the s3 configuration block. Max of 1.
@@ -517,112 +514,12 @@ schema FsxAwsUpboundIoV1beta1DataRepositoryAssociationSpecProviderConfigRefPolic
     resolve?: "Always" | "IfNotPresent"
 
 
-schema FsxAwsUpboundIoV1beta1DataRepositoryAssociationSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : FsxAwsUpboundIoV1beta1DataRepositoryAssociationSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : FsxAwsUpboundIoV1beta1DataRepositoryAssociationSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: FsxAwsUpboundIoV1beta1DataRepositoryAssociationSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: FsxAwsUpboundIoV1beta1DataRepositoryAssociationSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema FsxAwsUpboundIoV1beta1DataRepositoryAssociationSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : FsxAwsUpboundIoV1beta1DataRepositoryAssociationSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: FsxAwsUpboundIoV1beta1DataRepositoryAssociationSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema FsxAwsUpboundIoV1beta1DataRepositoryAssociationSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema FsxAwsUpboundIoV1beta1DataRepositoryAssociationSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema FsxAwsUpboundIoV1beta1DataRepositoryAssociationSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -686,6 +583,9 @@ schema FsxAwsUpboundIoV1beta1DataRepositoryAssociationStatusAtProvider:
         Identifier of the data repository association, e.g., dra-12345678
     importedFileChunkSize : float, default is Undefined, optional
         For files imported from a data repository, this value determines the stripe count and maximum amount of data per file (in MiB) stored on a single physical disk. The maximum number of disks that a single file can be striped across is limited by the total number of disks that make up the file system.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     s3 : [FsxAwsUpboundIoV1beta1DataRepositoryAssociationStatusAtProviderS3Items0], default is Undefined, optional
         See the s3 configuration block. Max of 1.
         The configuration for an Amazon S3 data repository linked to an Amazon FSx Lustre file system with a data repository association. The configuration defines which file events (new, changed, or deleted files or directories) are automatically imported from the linked data repository to the file system or automatically exported from the file system to the data repository.
@@ -713,6 +613,8 @@ schema FsxAwsUpboundIoV1beta1DataRepositoryAssociationStatusAtProvider:
     id?: str
 
     importedFileChunkSize?: float
+
+    region?: str
 
     s3?: [FsxAwsUpboundIoV1beta1DataRepositoryAssociationStatusAtProviderS3Items0]
 

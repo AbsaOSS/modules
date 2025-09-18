@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema CodeSigningConfig:
     r"""
-    CodeSigningConfig is the Schema for the CodeSigningConfigs API. Provides a Lambda Code Signing Config resource.
+    CodeSigningConfig is the Schema for the CodeSigningConfigs API. Manages an AWS Lambda Code Signing Config.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema LambdaAwsUpboundIoV1beta2CodeSigningConfigSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema LambdaAwsUpboundIoV1beta2CodeSigningConfigSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecWriteConnectionSecretToRef
 
@@ -101,6 +97,7 @@ schema LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecForProvider:
     policies : LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecForProviderPolicies, default is Undefined, optional
         policies
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
@@ -120,12 +117,12 @@ schema LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecForProvider:
 
 schema LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecForProviderAllowedPublishers:
     r"""
-    A configuration block of allowed publishers as signing profiles for this code signing configuration. Detailed below.
+    Configuration block of allowed publishers as signing profiles for this code signing configuration. See below.
 
     Attributes
     ----------
     signingProfileVersionArns : [str], default is Undefined, optional
-        The Amazon Resource Name (ARN) for each of the signing profiles. A signing profile defines a trusted user who can sign a code package.
+        Set of ARNs for each of the signing profiles. A signing profile defines a trusted user who can sign a code package. Maximum of 20 signing profiles.
     signingProfileVersionArnsRefs : [LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecForProviderAllowedPublishersSigningProfileVersionArnsRefsItems0], default is Undefined, optional
         References to SigningProfile in signer to populate signingProfileVersionArns.
     signingProfileVersionArnsSelector : LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecForProviderAllowedPublishersSigningProfileVersionArnsSelector, default is Undefined, optional
@@ -231,7 +228,7 @@ schema LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecForProviderAllowedPublisher
 
 schema LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecForProviderPolicies:
     r"""
-    A configuration block of code signing policies that define the actions to take if the validation checks fail. Detailed below.
+    Configuration block of code signing policies that define the actions to take if the validation checks fail. See below.
 
     Attributes
     ----------
@@ -280,12 +277,12 @@ schema LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecInitProvider:
 
 schema LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecInitProviderAllowedPublishers:
     r"""
-    A configuration block of allowed publishers as signing profiles for this code signing configuration. Detailed below.
+    Configuration block of allowed publishers as signing profiles for this code signing configuration. See below.
 
     Attributes
     ----------
     signingProfileVersionArns : [str], default is Undefined, optional
-        The Amazon Resource Name (ARN) for each of the signing profiles. A signing profile defines a trusted user who can sign a code package.
+        Set of ARNs for each of the signing profiles. A signing profile defines a trusted user who can sign a code package. Maximum of 20 signing profiles.
     signingProfileVersionArnsRefs : [LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecInitProviderAllowedPublishersSigningProfileVersionArnsRefsItems0], default is Undefined, optional
         References to SigningProfile in signer to populate signingProfileVersionArns.
     signingProfileVersionArnsSelector : LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecInitProviderAllowedPublishersSigningProfileVersionArnsSelector, default is Undefined, optional
@@ -391,7 +388,7 @@ schema LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecInitProviderAllowedPublishe
 
 schema LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecInitProviderPolicies:
     r"""
-    A configuration block of code signing policies that define the actions to take if the validation checks fail. Detailed below.
+    Configuration block of code signing policies that define the actions to take if the validation checks fail. See below.
 
     Attributes
     ----------
@@ -447,112 +444,12 @@ schema LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema LambdaAwsUpboundIoV1beta2CodeSigningConfigSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -601,7 +498,7 @@ schema LambdaAwsUpboundIoV1beta2CodeSigningConfigStatusAtProvider:
     allowedPublishers : LambdaAwsUpboundIoV1beta2CodeSigningConfigStatusAtProviderAllowedPublishers, default is Undefined, optional
         allowed publishers
     arn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the code signing configuration.
+        ARN of the code signing configuration.
     configId : str, default is Undefined, optional
         Unique identifier for the code signing configuration.
     description : str, default is Undefined, optional
@@ -609,13 +506,16 @@ schema LambdaAwsUpboundIoV1beta2CodeSigningConfigStatusAtProvider:
     id : str, default is Undefined, optional
         id
     lastModified : str, default is Undefined, optional
-        The date and time that the code signing configuration was last modified.
+        Date and time that the code signing configuration was last modified.
     policies : LambdaAwsUpboundIoV1beta2CodeSigningConfigStatusAtProviderPolicies, default is Undefined, optional
         policies
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
-        A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
+        Map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     """
 
 
@@ -633,6 +533,8 @@ schema LambdaAwsUpboundIoV1beta2CodeSigningConfigStatusAtProvider:
 
     policies?: LambdaAwsUpboundIoV1beta2CodeSigningConfigStatusAtProviderPolicies
 
+    region?: str
+
     tags?: {str:str}
 
     tagsAll?: {str:str}
@@ -640,12 +542,12 @@ schema LambdaAwsUpboundIoV1beta2CodeSigningConfigStatusAtProvider:
 
 schema LambdaAwsUpboundIoV1beta2CodeSigningConfigStatusAtProviderAllowedPublishers:
     r"""
-    A configuration block of allowed publishers as signing profiles for this code signing configuration. Detailed below.
+    Configuration block of allowed publishers as signing profiles for this code signing configuration. See below.
 
     Attributes
     ----------
     signingProfileVersionArns : [str], default is Undefined, optional
-        The Amazon Resource Name (ARN) for each of the signing profiles. A signing profile defines a trusted user who can sign a code package.
+        Set of ARNs for each of the signing profiles. A signing profile defines a trusted user who can sign a code package. Maximum of 20 signing profiles.
     """
 
 
@@ -654,7 +556,7 @@ schema LambdaAwsUpboundIoV1beta2CodeSigningConfigStatusAtProviderAllowedPublishe
 
 schema LambdaAwsUpboundIoV1beta2CodeSigningConfigStatusAtProviderPolicies:
     r"""
-    A configuration block of code signing policies that define the actions to take if the validation checks fail. Detailed below.
+    Configuration block of code signing policies that define the actions to take if the validation checks fail. See below.
 
     Attributes
     ----------

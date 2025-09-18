@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema AppImageConfig:
     r"""
-    AppImageConfig is the Schema for the AppImageConfigs API. Provides a SageMaker App Image Config resource.
+    AppImageConfig is the Schema for the AppImageConfigs API. Provides a SageMaker AI App Image Config resource.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema SagemakerAwsUpboundIoV1beta1AppImageConfigSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : SagemakerAwsUpboundIoV1beta1AppImageConfigSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : SagemakerAwsUpboundIoV1beta1AppImageConfigSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : SagemakerAwsUpboundIoV1beta1AppImageConfigSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema SagemakerAwsUpboundIoV1beta1AppImageConfigSpec:
 
     providerConfigRef?: SagemakerAwsUpboundIoV1beta1AppImageConfigSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: SagemakerAwsUpboundIoV1beta1AppImageConfigSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: SagemakerAwsUpboundIoV1beta1AppImageConfigSpecWriteConnectionSecretToRef
 
 
@@ -95,12 +91,13 @@ schema SagemakerAwsUpboundIoV1beta1AppImageConfigSpecForProvider:
     Attributes
     ----------
     codeEditorAppImageConfig : [SagemakerAwsUpboundIoV1beta1AppImageConfigSpecForProviderCodeEditorAppImageConfigItems0], default is Undefined, optional
-        The CodeEditorAppImageConfig. You can only specify one image kernel in the AppImageConfig API. This kernel is shown to users before the image starts. After the image runs, all kernels are visible in Code Editor. See Code Editor App Image Config details below.
+        The CodeEditorAppImageConfig. See Code Editor App Image Config details below.
     jupyterLabImageConfig : [SagemakerAwsUpboundIoV1beta1AppImageConfigSpecForProviderJupyterLabImageConfigItems0], default is Undefined, optional
-        The JupyterLabAppImageConfig. You can only specify one image kernel in the AppImageConfig API. This kernel is shown to users before the image starts. After the image runs, all kernels are visible in JupyterLab. See Jupyter Lab Image Config details below.
+        The JupyterLabAppImageConfig. See Jupyter Lab Image Config details below.
     kernelGatewayImageConfig : [SagemakerAwsUpboundIoV1beta1AppImageConfigSpecForProviderKernelGatewayImageConfigItems0], default is Undefined, optional
-        The configuration for the file system and kernels in a SageMaker image running as a KernelGateway app. See Kernel Gateway Image Config details below.
+        The configuration for the file system and kernels in a SageMaker AI image running as a KernelGateway app. See Kernel Gateway Image Config details below.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
@@ -316,11 +313,11 @@ schema SagemakerAwsUpboundIoV1beta1AppImageConfigSpecInitProvider:
     Attributes
     ----------
     codeEditorAppImageConfig : [SagemakerAwsUpboundIoV1beta1AppImageConfigSpecInitProviderCodeEditorAppImageConfigItems0], default is Undefined, optional
-        The CodeEditorAppImageConfig. You can only specify one image kernel in the AppImageConfig API. This kernel is shown to users before the image starts. After the image runs, all kernels are visible in Code Editor. See Code Editor App Image Config details below.
+        The CodeEditorAppImageConfig. See Code Editor App Image Config details below.
     jupyterLabImageConfig : [SagemakerAwsUpboundIoV1beta1AppImageConfigSpecInitProviderJupyterLabImageConfigItems0], default is Undefined, optional
-        The JupyterLabAppImageConfig. You can only specify one image kernel in the AppImageConfig API. This kernel is shown to users before the image starts. After the image runs, all kernels are visible in JupyterLab. See Jupyter Lab Image Config details below.
+        The JupyterLabAppImageConfig. See Jupyter Lab Image Config details below.
     kernelGatewayImageConfig : [SagemakerAwsUpboundIoV1beta1AppImageConfigSpecInitProviderKernelGatewayImageConfigItems0], default is Undefined, optional
-        The configuration for the file system and kernels in a SageMaker image running as a KernelGateway app. See Kernel Gateway Image Config details below.
+        The configuration for the file system and kernels in a SageMaker AI image running as a KernelGateway app. See Kernel Gateway Image Config details below.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     """
@@ -561,112 +558,12 @@ schema SagemakerAwsUpboundIoV1beta1AppImageConfigSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema SagemakerAwsUpboundIoV1beta1AppImageConfigSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : SagemakerAwsUpboundIoV1beta1AppImageConfigSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : SagemakerAwsUpboundIoV1beta1AppImageConfigSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: SagemakerAwsUpboundIoV1beta1AppImageConfigSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: SagemakerAwsUpboundIoV1beta1AppImageConfigSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema SagemakerAwsUpboundIoV1beta1AppImageConfigSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : SagemakerAwsUpboundIoV1beta1AppImageConfigSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: SagemakerAwsUpboundIoV1beta1AppImageConfigSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema SagemakerAwsUpboundIoV1beta1AppImageConfigSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema SagemakerAwsUpboundIoV1beta1AppImageConfigSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema SagemakerAwsUpboundIoV1beta1AppImageConfigSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -715,13 +612,16 @@ schema SagemakerAwsUpboundIoV1beta1AppImageConfigStatusAtProvider:
     arn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) assigned by AWS to this App Image Config.
     codeEditorAppImageConfig : [SagemakerAwsUpboundIoV1beta1AppImageConfigStatusAtProviderCodeEditorAppImageConfigItems0], default is Undefined, optional
-        The CodeEditorAppImageConfig. You can only specify one image kernel in the AppImageConfig API. This kernel is shown to users before the image starts. After the image runs, all kernels are visible in Code Editor. See Code Editor App Image Config details below.
+        The CodeEditorAppImageConfig. See Code Editor App Image Config details below.
     id : str, default is Undefined, optional
         The name of the App Image Config.
     jupyterLabImageConfig : [SagemakerAwsUpboundIoV1beta1AppImageConfigStatusAtProviderJupyterLabImageConfigItems0], default is Undefined, optional
-        The JupyterLabAppImageConfig. You can only specify one image kernel in the AppImageConfig API. This kernel is shown to users before the image starts. After the image runs, all kernels are visible in JupyterLab. See Jupyter Lab Image Config details below.
+        The JupyterLabAppImageConfig. See Jupyter Lab Image Config details below.
     kernelGatewayImageConfig : [SagemakerAwsUpboundIoV1beta1AppImageConfigStatusAtProviderKernelGatewayImageConfigItems0], default is Undefined, optional
-        The configuration for the file system and kernels in a SageMaker image running as a KernelGateway app. See Kernel Gateway Image Config details below.
+        The configuration for the file system and kernels in a SageMaker AI image running as a KernelGateway app. See Kernel Gateway Image Config details below.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
@@ -738,6 +638,8 @@ schema SagemakerAwsUpboundIoV1beta1AppImageConfigStatusAtProvider:
     jupyterLabImageConfig?: [SagemakerAwsUpboundIoV1beta1AppImageConfigStatusAtProviderJupyterLabImageConfigItems0]
 
     kernelGatewayImageConfig?: [SagemakerAwsUpboundIoV1beta1AppImageConfigStatusAtProviderKernelGatewayImageConfigItems0]
+
+    region?: str
 
     tags?: {str:str}
 

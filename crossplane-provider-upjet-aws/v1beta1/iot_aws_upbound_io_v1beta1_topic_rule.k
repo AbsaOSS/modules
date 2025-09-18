@@ -66,8 +66,6 @@ schema IotAwsUpboundIoV1beta1TopicRuleSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : IotAwsUpboundIoV1beta1TopicRuleSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : IotAwsUpboundIoV1beta1TopicRuleSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : IotAwsUpboundIoV1beta1TopicRuleSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema IotAwsUpboundIoV1beta1TopicRuleSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: IotAwsUpboundIoV1beta1TopicRuleSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: IotAwsUpboundIoV1beta1TopicRuleSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: IotAwsUpboundIoV1beta1TopicRuleSpecWriteConnectionSecretToRef
 
@@ -127,6 +123,7 @@ schema IotAwsUpboundIoV1beta1TopicRuleSpecForProvider:
     $lambda : [IotAwsUpboundIoV1beta1TopicRuleSpecForProviderLambdaItems0], default is Undefined, optional
         lambda
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     republish : [IotAwsUpboundIoV1beta1TopicRuleSpecForProviderRepublishItems0], default is Undefined, optional
         republish
@@ -683,7 +680,7 @@ schema IotAwsUpboundIoV1beta1TopicRuleSpecForProviderErrorActionItems0FirehoseIt
     Attributes
     ----------
     batchMode : bool, default is Undefined, optional
-        The payload that contains a JSON array of records will be sent to Kinesis Firehose via a batch call.
+        The payload that contains a JSON array of records will be sent to CloudWatch via a batch call.
     deliveryStreamName : str, default is Undefined, optional
         The delivery stream name.
     roleArn : str, default is Undefined, optional
@@ -749,7 +746,7 @@ schema IotAwsUpboundIoV1beta1TopicRuleSpecForProviderErrorActionItems0IotAnalyti
     Attributes
     ----------
     batchMode : bool, default is Undefined, optional
-        The payload that contains a JSON array of records will be sent to Kinesis Firehose via a batch call.
+        The payload that contains a JSON array of records will be sent to CloudWatch via a batch call.
     channelName : str, default is Undefined, optional
         Name of AWS IOT Analytics channel.
     roleArn : str, default is Undefined, optional
@@ -771,7 +768,7 @@ schema IotAwsUpboundIoV1beta1TopicRuleSpecForProviderErrorActionItems0IotEventsI
     Attributes
     ----------
     batchMode : bool, default is Undefined, optional
-        The payload that contains a JSON array of records will be sent to Kinesis Firehose via a batch call.
+        The payload that contains a JSON array of records will be sent to CloudWatch via a batch call.
     inputName : str, default is Undefined, optional
         The name of the AWS IoT Events input.
     messageId : str, default is Undefined, optional
@@ -1259,7 +1256,7 @@ schema IotAwsUpboundIoV1beta1TopicRuleSpecForProviderFirehoseItems0:
     Attributes
     ----------
     batchMode : bool, default is Undefined, optional
-        The payload that contains a JSON array of records will be sent to Kinesis Firehose via a batch call.
+        The payload that contains a JSON array of records will be sent to CloudWatch via a batch call.
     deliveryStreamName : str, default is Undefined, optional
         The delivery stream name.
     roleArn : str, default is Undefined, optional
@@ -1325,7 +1322,7 @@ schema IotAwsUpboundIoV1beta1TopicRuleSpecForProviderIotAnalyticsItems0:
     Attributes
     ----------
     batchMode : bool, default is Undefined, optional
-        The payload that contains a JSON array of records will be sent to Kinesis Firehose via a batch call.
+        The payload that contains a JSON array of records will be sent to CloudWatch via a batch call.
     channelName : str, default is Undefined, optional
         Name of AWS IOT Analytics channel.
     roleArn : str, default is Undefined, optional
@@ -1347,7 +1344,7 @@ schema IotAwsUpboundIoV1beta1TopicRuleSpecForProviderIotEventsItems0:
     Attributes
     ----------
     batchMode : bool, default is Undefined, optional
-        The payload that contains a JSON array of records will be sent to Kinesis Firehose via a batch call.
+        The payload that contains a JSON array of records will be sent to CloudWatch via a batch call.
     inputName : str, default is Undefined, optional
         The name of the AWS IoT Events input.
     messageId : str, default is Undefined, optional
@@ -2428,7 +2425,7 @@ schema IotAwsUpboundIoV1beta1TopicRuleSpecInitProviderErrorActionItems0FirehoseI
     Attributes
     ----------
     batchMode : bool, default is Undefined, optional
-        The payload that contains a JSON array of records will be sent to Kinesis Firehose via a batch call.
+        The payload that contains a JSON array of records will be sent to CloudWatch via a batch call.
     deliveryStreamName : str, default is Undefined, optional
         The delivery stream name.
     roleArn : str, default is Undefined, optional
@@ -2494,7 +2491,7 @@ schema IotAwsUpboundIoV1beta1TopicRuleSpecInitProviderErrorActionItems0IotAnalyt
     Attributes
     ----------
     batchMode : bool, default is Undefined, optional
-        The payload that contains a JSON array of records will be sent to Kinesis Firehose via a batch call.
+        The payload that contains a JSON array of records will be sent to CloudWatch via a batch call.
     channelName : str, default is Undefined, optional
         Name of AWS IOT Analytics channel.
     roleArn : str, default is Undefined, optional
@@ -2516,7 +2513,7 @@ schema IotAwsUpboundIoV1beta1TopicRuleSpecInitProviderErrorActionItems0IotEvents
     Attributes
     ----------
     batchMode : bool, default is Undefined, optional
-        The payload that contains a JSON array of records will be sent to Kinesis Firehose via a batch call.
+        The payload that contains a JSON array of records will be sent to CloudWatch via a batch call.
     inputName : str, default is Undefined, optional
         The name of the AWS IoT Events input.
     messageId : str, default is Undefined, optional
@@ -3004,7 +3001,7 @@ schema IotAwsUpboundIoV1beta1TopicRuleSpecInitProviderFirehoseItems0:
     Attributes
     ----------
     batchMode : bool, default is Undefined, optional
-        The payload that contains a JSON array of records will be sent to Kinesis Firehose via a batch call.
+        The payload that contains a JSON array of records will be sent to CloudWatch via a batch call.
     deliveryStreamName : str, default is Undefined, optional
         The delivery stream name.
     roleArn : str, default is Undefined, optional
@@ -3070,7 +3067,7 @@ schema IotAwsUpboundIoV1beta1TopicRuleSpecInitProviderIotAnalyticsItems0:
     Attributes
     ----------
     batchMode : bool, default is Undefined, optional
-        The payload that contains a JSON array of records will be sent to Kinesis Firehose via a batch call.
+        The payload that contains a JSON array of records will be sent to CloudWatch via a batch call.
     channelName : str, default is Undefined, optional
         Name of AWS IOT Analytics channel.
     roleArn : str, default is Undefined, optional
@@ -3092,7 +3089,7 @@ schema IotAwsUpboundIoV1beta1TopicRuleSpecInitProviderIotEventsItems0:
     Attributes
     ----------
     batchMode : bool, default is Undefined, optional
-        The payload that contains a JSON array of records will be sent to Kinesis Firehose via a batch call.
+        The payload that contains a JSON array of records will be sent to CloudWatch via a batch call.
     inputName : str, default is Undefined, optional
         The name of the AWS IoT Events input.
     messageId : str, default is Undefined, optional
@@ -3617,112 +3614,12 @@ schema IotAwsUpboundIoV1beta1TopicRuleSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema IotAwsUpboundIoV1beta1TopicRuleSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : IotAwsUpboundIoV1beta1TopicRuleSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : IotAwsUpboundIoV1beta1TopicRuleSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: IotAwsUpboundIoV1beta1TopicRuleSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: IotAwsUpboundIoV1beta1TopicRuleSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema IotAwsUpboundIoV1beta1TopicRuleSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : IotAwsUpboundIoV1beta1TopicRuleSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: IotAwsUpboundIoV1beta1TopicRuleSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema IotAwsUpboundIoV1beta1TopicRuleSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema IotAwsUpboundIoV1beta1TopicRuleSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema IotAwsUpboundIoV1beta1TopicRuleSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -3804,6 +3701,9 @@ schema IotAwsUpboundIoV1beta1TopicRuleStatusAtProvider:
         kinesis
     $lambda : [IotAwsUpboundIoV1beta1TopicRuleStatusAtProviderLambdaItems0], default is Undefined, optional
         lambda
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     republish : [IotAwsUpboundIoV1beta1TopicRuleStatusAtProviderRepublishItems0], default is Undefined, optional
         republish
     s3 : [IotAwsUpboundIoV1beta1TopicRuleStatusAtProviderS3Items0], default is Undefined, optional
@@ -3862,6 +3762,8 @@ schema IotAwsUpboundIoV1beta1TopicRuleStatusAtProvider:
     kinesis?: [IotAwsUpboundIoV1beta1TopicRuleStatusAtProviderKinesisItems0]
 
     $lambda?: [IotAwsUpboundIoV1beta1TopicRuleStatusAtProviderLambdaItems0]
+
+    region?: str
 
     republish?: [IotAwsUpboundIoV1beta1TopicRuleStatusAtProviderRepublishItems0]
 
@@ -4365,7 +4267,7 @@ schema IotAwsUpboundIoV1beta1TopicRuleStatusAtProviderErrorActionItems0FirehoseI
     Attributes
     ----------
     batchMode : bool, default is Undefined, optional
-        The payload that contains a JSON array of records will be sent to Kinesis Firehose via a batch call.
+        The payload that contains a JSON array of records will be sent to CloudWatch via a batch call.
     deliveryStreamName : str, default is Undefined, optional
         The delivery stream name.
     roleArn : str, default is Undefined, optional
@@ -4431,7 +4333,7 @@ schema IotAwsUpboundIoV1beta1TopicRuleStatusAtProviderErrorActionItems0IotAnalyt
     Attributes
     ----------
     batchMode : bool, default is Undefined, optional
-        The payload that contains a JSON array of records will be sent to Kinesis Firehose via a batch call.
+        The payload that contains a JSON array of records will be sent to CloudWatch via a batch call.
     channelName : str, default is Undefined, optional
         Name of AWS IOT Analytics channel.
     roleArn : str, default is Undefined, optional
@@ -4453,7 +4355,7 @@ schema IotAwsUpboundIoV1beta1TopicRuleStatusAtProviderErrorActionItems0IotEvents
     Attributes
     ----------
     batchMode : bool, default is Undefined, optional
-        The payload that contains a JSON array of records will be sent to Kinesis Firehose via a batch call.
+        The payload that contains a JSON array of records will be sent to CloudWatch via a batch call.
     inputName : str, default is Undefined, optional
         The name of the AWS IoT Events input.
     messageId : str, default is Undefined, optional
@@ -4747,7 +4649,7 @@ schema IotAwsUpboundIoV1beta1TopicRuleStatusAtProviderFirehoseItems0:
     Attributes
     ----------
     batchMode : bool, default is Undefined, optional
-        The payload that contains a JSON array of records will be sent to Kinesis Firehose via a batch call.
+        The payload that contains a JSON array of records will be sent to CloudWatch via a batch call.
     deliveryStreamName : str, default is Undefined, optional
         The delivery stream name.
     roleArn : str, default is Undefined, optional
@@ -4813,7 +4715,7 @@ schema IotAwsUpboundIoV1beta1TopicRuleStatusAtProviderIotAnalyticsItems0:
     Attributes
     ----------
     batchMode : bool, default is Undefined, optional
-        The payload that contains a JSON array of records will be sent to Kinesis Firehose via a batch call.
+        The payload that contains a JSON array of records will be sent to CloudWatch via a batch call.
     channelName : str, default is Undefined, optional
         Name of AWS IOT Analytics channel.
     roleArn : str, default is Undefined, optional
@@ -4835,7 +4737,7 @@ schema IotAwsUpboundIoV1beta1TopicRuleStatusAtProviderIotEventsItems0:
     Attributes
     ----------
     batchMode : bool, default is Undefined, optional
-        The payload that contains a JSON array of records will be sent to Kinesis Firehose via a batch call.
+        The payload that contains a JSON array of records will be sent to CloudWatch via a batch call.
     inputName : str, default is Undefined, optional
         The name of the AWS IoT Events input.
     messageId : str, default is Undefined, optional

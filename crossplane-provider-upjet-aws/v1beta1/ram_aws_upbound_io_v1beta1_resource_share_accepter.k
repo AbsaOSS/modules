@@ -66,8 +66,6 @@ schema RAMAwsUpboundIoV1beta1ResourceShareAccepterSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : RAMAwsUpboundIoV1beta1ResourceShareAccepterSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : RAMAwsUpboundIoV1beta1ResourceShareAccepterSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : RAMAwsUpboundIoV1beta1ResourceShareAccepterSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema RAMAwsUpboundIoV1beta1ResourceShareAccepterSpec:
 
     providerConfigRef?: RAMAwsUpboundIoV1beta1ResourceShareAccepterSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: RAMAwsUpboundIoV1beta1ResourceShareAccepterSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: RAMAwsUpboundIoV1beta1ResourceShareAccepterSpecWriteConnectionSecretToRef
 
 
@@ -95,6 +91,7 @@ schema RAMAwsUpboundIoV1beta1ResourceShareAccepterSpecForProvider:
     Attributes
     ----------
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     shareArn : str, default is Undefined, optional
         The ARN of the resource share.
@@ -367,112 +364,12 @@ schema RAMAwsUpboundIoV1beta1ResourceShareAccepterSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema RAMAwsUpboundIoV1beta1ResourceShareAccepterSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : RAMAwsUpboundIoV1beta1ResourceShareAccepterSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : RAMAwsUpboundIoV1beta1ResourceShareAccepterSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: RAMAwsUpboundIoV1beta1ResourceShareAccepterSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: RAMAwsUpboundIoV1beta1ResourceShareAccepterSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema RAMAwsUpboundIoV1beta1ResourceShareAccepterSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : RAMAwsUpboundIoV1beta1ResourceShareAccepterSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: RAMAwsUpboundIoV1beta1ResourceShareAccepterSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema RAMAwsUpboundIoV1beta1ResourceShareAccepterSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema RAMAwsUpboundIoV1beta1ResourceShareAccepterSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema RAMAwsUpboundIoV1beta1ResourceShareAccepterSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -524,6 +421,9 @@ schema RAMAwsUpboundIoV1beta1ResourceShareAccepterStatusAtProvider:
         The ARN of the resource share invitation.
     receiverAccountId : str, default is Undefined, optional
         The account ID of the receiver account which accepts the invitation.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     resources : [str], default is Undefined, optional
         A list of the resource ARNs shared via the resource share.
     senderAccountId : str, default is Undefined, optional
@@ -544,6 +444,8 @@ schema RAMAwsUpboundIoV1beta1ResourceShareAccepterStatusAtProvider:
     invitationArn?: str
 
     receiverAccountId?: str
+
+    region?: str
 
     resources?: [str]
 

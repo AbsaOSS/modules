@@ -66,8 +66,6 @@ schema CognitoidpAwsUpboundIoV1beta1UserInGroupSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : CognitoidpAwsUpboundIoV1beta1UserInGroupSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : CognitoidpAwsUpboundIoV1beta1UserInGroupSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : CognitoidpAwsUpboundIoV1beta1UserInGroupSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema CognitoidpAwsUpboundIoV1beta1UserInGroupSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: CognitoidpAwsUpboundIoV1beta1UserInGroupSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: CognitoidpAwsUpboundIoV1beta1UserInGroupSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: CognitoidpAwsUpboundIoV1beta1UserInGroupSpecWriteConnectionSecretToRef
 
@@ -101,6 +97,7 @@ schema CognitoidpAwsUpboundIoV1beta1UserInGroupSpecForProvider:
     groupNameSelector : CognitoidpAwsUpboundIoV1beta1UserInGroupSpecForProviderGroupNameSelector, default is Undefined, optional
         group name selector
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     userPoolId : str, default is Undefined, optional
         The user pool ID of the user and group.
@@ -771,112 +768,12 @@ schema CognitoidpAwsUpboundIoV1beta1UserInGroupSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema CognitoidpAwsUpboundIoV1beta1UserInGroupSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : CognitoidpAwsUpboundIoV1beta1UserInGroupSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : CognitoidpAwsUpboundIoV1beta1UserInGroupSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: CognitoidpAwsUpboundIoV1beta1UserInGroupSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: CognitoidpAwsUpboundIoV1beta1UserInGroupSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema CognitoidpAwsUpboundIoV1beta1UserInGroupSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : CognitoidpAwsUpboundIoV1beta1UserInGroupSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: CognitoidpAwsUpboundIoV1beta1UserInGroupSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema CognitoidpAwsUpboundIoV1beta1UserInGroupSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema CognitoidpAwsUpboundIoV1beta1UserInGroupSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema CognitoidpAwsUpboundIoV1beta1UserInGroupSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -926,6 +823,9 @@ schema CognitoidpAwsUpboundIoV1beta1UserInGroupStatusAtProvider:
         The name of the group to which the user is to be added.
     id : str, default is Undefined, optional
         id
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     userPoolId : str, default is Undefined, optional
         The user pool ID of the user and group.
     username : str, default is Undefined, optional
@@ -936,6 +836,8 @@ schema CognitoidpAwsUpboundIoV1beta1UserInGroupStatusAtProvider:
     groupName?: str
 
     id?: str
+
+    region?: str
 
     userPoolId?: str
 

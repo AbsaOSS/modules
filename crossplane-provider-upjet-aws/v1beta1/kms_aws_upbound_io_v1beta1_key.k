@@ -66,8 +66,6 @@ schema KmsAwsUpboundIoV1beta1KeySpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : KmsAwsUpboundIoV1beta1KeySpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : KmsAwsUpboundIoV1beta1KeySpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : KmsAwsUpboundIoV1beta1KeySpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema KmsAwsUpboundIoV1beta1KeySpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: KmsAwsUpboundIoV1beta1KeySpecProviderConfigRef
-
-    publishConnectionDetailsTo?: KmsAwsUpboundIoV1beta1KeySpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: KmsAwsUpboundIoV1beta1KeySpecWriteConnectionSecretToRef
 
@@ -103,7 +99,7 @@ schema KmsAwsUpboundIoV1beta1KeySpecForProvider:
         ID of the KMS Custom Key Store where the key will be stored instead of KMS (eg CloudHSM).
     customerMasterKeySpec : str, default is Undefined, optional
         Specifies whether the key contains a symmetric key or an asymmetric key pair and the encryption algorithms or signing algorithms that the key supports.
-        Valid values: SYMMETRIC_DEFAULT,  RSA_2048, RSA_3072, RSA_4096, HMAC_256, ECC_NIST_P256, ECC_NIST_P384, ECC_NIST_P521, or ECC_SECG_P256K1. Defaults to SYMMETRIC_DEFAULT. For help with choosing a key spec, see the AWS KMS Developer Guide.
+        Valid values: SYMMETRIC_DEFAULT, RSA_2048, RSA_3072, RSA_4096, HMAC_224, HMAC_256, HMAC_384, HMAC_512, ECC_NIST_P256, ECC_NIST_P384, ECC_NIST_P521, ECC_SECG_P256K1, ML_DSA_44, ML_DSA_65, ML_DSA_87, or SM2 (China Regions only). Defaults to SYMMETRIC_DEFAULT. For help with choosing a key spec, see the AWS KMS Developer Guide.
     deletionWindowInDays : float, default is Undefined, optional
         The waiting period, specified in number of days. After the waiting period ends, AWS KMS deletes the KMS key.
         If you specify a value, it must be between 7 and 30, inclusive. If you do not specify a value, it defaults to 30.
@@ -122,6 +118,7 @@ schema KmsAwsUpboundIoV1beta1KeySpecForProvider:
     policy : str, default is Undefined, optional
         A valid policy JSON document. Although this is a key policy, not an IAM policy, an aws_iam_policy_document, in the form that designates a principal, can be used.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     rotationPeriodInDays : float, default is Undefined, optional
         Custom period of time between each rotation date. Must be a number between 90 and 2560 (inclusive).
@@ -185,7 +182,7 @@ schema KmsAwsUpboundIoV1beta1KeySpecInitProvider:
         ID of the KMS Custom Key Store where the key will be stored instead of KMS (eg CloudHSM).
     customerMasterKeySpec : str, default is Undefined, optional
         Specifies whether the key contains a symmetric key or an asymmetric key pair and the encryption algorithms or signing algorithms that the key supports.
-        Valid values: SYMMETRIC_DEFAULT,  RSA_2048, RSA_3072, RSA_4096, HMAC_256, ECC_NIST_P256, ECC_NIST_P384, ECC_NIST_P521, or ECC_SECG_P256K1. Defaults to SYMMETRIC_DEFAULT. For help with choosing a key spec, see the AWS KMS Developer Guide.
+        Valid values: SYMMETRIC_DEFAULT, RSA_2048, RSA_3072, RSA_4096, HMAC_224, HMAC_256, HMAC_384, HMAC_512, ECC_NIST_P256, ECC_NIST_P384, ECC_NIST_P521, ECC_SECG_P256K1, ML_DSA_44, ML_DSA_65, ML_DSA_87, or SM2 (China Regions only). Defaults to SYMMETRIC_DEFAULT. For help with choosing a key spec, see the AWS KMS Developer Guide.
     deletionWindowInDays : float, default is Undefined, optional
         The waiting period, specified in number of days. After the waiting period ends, AWS KMS deletes the KMS key.
         If you specify a value, it must be between 7 and 30, inclusive. If you do not specify a value, it defaults to 30.
@@ -283,112 +280,12 @@ schema KmsAwsUpboundIoV1beta1KeySpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema KmsAwsUpboundIoV1beta1KeySpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : KmsAwsUpboundIoV1beta1KeySpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : KmsAwsUpboundIoV1beta1KeySpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: KmsAwsUpboundIoV1beta1KeySpecPublishConnectionDetailsToConfigRef
-
-    metadata?: KmsAwsUpboundIoV1beta1KeySpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema KmsAwsUpboundIoV1beta1KeySpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : KmsAwsUpboundIoV1beta1KeySpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: KmsAwsUpboundIoV1beta1KeySpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema KmsAwsUpboundIoV1beta1KeySpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema KmsAwsUpboundIoV1beta1KeySpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema KmsAwsUpboundIoV1beta1KeySpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -445,7 +342,7 @@ schema KmsAwsUpboundIoV1beta1KeyStatusAtProvider:
         ID of the KMS Custom Key Store where the key will be stored instead of KMS (eg CloudHSM).
     customerMasterKeySpec : str, default is Undefined, optional
         Specifies whether the key contains a symmetric key or an asymmetric key pair and the encryption algorithms or signing algorithms that the key supports.
-        Valid values: SYMMETRIC_DEFAULT,  RSA_2048, RSA_3072, RSA_4096, HMAC_256, ECC_NIST_P256, ECC_NIST_P384, ECC_NIST_P521, or ECC_SECG_P256K1. Defaults to SYMMETRIC_DEFAULT. For help with choosing a key spec, see the AWS KMS Developer Guide.
+        Valid values: SYMMETRIC_DEFAULT, RSA_2048, RSA_3072, RSA_4096, HMAC_224, HMAC_256, HMAC_384, HMAC_512, ECC_NIST_P256, ECC_NIST_P384, ECC_NIST_P521, ECC_SECG_P256K1, ML_DSA_44, ML_DSA_65, ML_DSA_87, or SM2 (China Regions only). Defaults to SYMMETRIC_DEFAULT. For help with choosing a key spec, see the AWS KMS Developer Guide.
     deletionWindowInDays : float, default is Undefined, optional
         The waiting period, specified in number of days. After the waiting period ends, AWS KMS deletes the KMS key.
         If you specify a value, it must be between 7 and 30, inclusive. If you do not specify a value, it defaults to 30.
@@ -467,6 +364,9 @@ schema KmsAwsUpboundIoV1beta1KeyStatusAtProvider:
         Indicates whether the KMS key is a multi-Region (true) or regional (false) key. Defaults to false.
     policy : str, default is Undefined, optional
         A valid policy JSON document. Although this is a key policy, not an IAM policy, an aws_iam_policy_document, in the form that designates a principal, can be used.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     rotationPeriodInDays : float, default is Undefined, optional
         Custom period of time between each rotation date. Must be a number between 90 and 2560 (inclusive).
     tags : {str:str}, default is Undefined, optional
@@ -503,6 +403,8 @@ schema KmsAwsUpboundIoV1beta1KeyStatusAtProvider:
     multiRegion?: bool
 
     policy?: str
+
+    region?: str
 
     rotationPeriodInDays?: float
 

@@ -66,8 +66,6 @@ schema ElasticacheAwsUpboundIoV1beta1UserSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : ElasticacheAwsUpboundIoV1beta1UserSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : ElasticacheAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : ElasticacheAwsUpboundIoV1beta1UserSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema ElasticacheAwsUpboundIoV1beta1UserSpec:
 
     providerConfigRef?: ElasticacheAwsUpboundIoV1beta1UserSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: ElasticacheAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: ElasticacheAwsUpboundIoV1beta1UserSpecWriteConnectionSecretToRef
 
 
@@ -99,12 +95,13 @@ schema ElasticacheAwsUpboundIoV1beta1UserSpecForProvider:
     authenticationMode : [ElasticacheAwsUpboundIoV1beta1UserSpecForProviderAuthenticationModeItems0], default is Undefined, optional
         Denotes the user's authentication properties. Detailed below.
     engine : str, default is Undefined, optional
-        The current supported value is REDIS.
+        The current supported values are redis, valkey (case insensitive).
     noPasswordRequired : bool, default is Undefined, optional
         Indicates a password is not required for this user.
     passwordsSecretRef : [ElasticacheAwsUpboundIoV1beta1UserSpecForProviderPasswordsSecretRefItems0], default is Undefined, optional
         Passwords used for this user. You can create up to two passwords for each user.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
@@ -212,7 +209,7 @@ schema ElasticacheAwsUpboundIoV1beta1UserSpecInitProvider:
     authenticationMode : [ElasticacheAwsUpboundIoV1beta1UserSpecInitProviderAuthenticationModeItems0], default is Undefined, optional
         Denotes the user's authentication properties. Detailed below.
     engine : str, default is Undefined, optional
-        The current supported value is REDIS.
+        The current supported values are redis, valkey (case insensitive).
     noPasswordRequired : bool, default is Undefined, optional
         Indicates a password is not required for this user.
     passwordsSecretRef : [str], default is Undefined, optional
@@ -301,112 +298,12 @@ schema ElasticacheAwsUpboundIoV1beta1UserSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema ElasticacheAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : ElasticacheAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : ElasticacheAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: ElasticacheAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: ElasticacheAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema ElasticacheAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : ElasticacheAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: ElasticacheAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema ElasticacheAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema ElasticacheAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema ElasticacheAwsUpboundIoV1beta1UserSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -459,11 +356,14 @@ schema ElasticacheAwsUpboundIoV1beta1UserStatusAtProvider:
     authenticationMode : [ElasticacheAwsUpboundIoV1beta1UserStatusAtProviderAuthenticationModeItems0], default is Undefined, optional
         Denotes the user's authentication properties. Detailed below.
     engine : str, default is Undefined, optional
-        The current supported value is REDIS.
+        The current supported values are redis, valkey (case insensitive).
     id : str, default is Undefined, optional
         id
     noPasswordRequired : bool, default is Undefined, optional
         Indicates a password is not required for this user.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
@@ -484,6 +384,8 @@ schema ElasticacheAwsUpboundIoV1beta1UserStatusAtProvider:
     id?: str
 
     noPasswordRequired?: bool
+
+    region?: str
 
     tags?: {str:str}
 

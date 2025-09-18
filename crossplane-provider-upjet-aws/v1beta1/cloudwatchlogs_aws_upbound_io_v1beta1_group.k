@@ -66,8 +66,6 @@ schema CloudwatchlogsAwsUpboundIoV1beta1GroupSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : CloudwatchlogsAwsUpboundIoV1beta1GroupSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : CloudwatchlogsAwsUpboundIoV1beta1GroupSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : CloudwatchlogsAwsUpboundIoV1beta1GroupSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema CloudwatchlogsAwsUpboundIoV1beta1GroupSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: CloudwatchlogsAwsUpboundIoV1beta1GroupSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: CloudwatchlogsAwsUpboundIoV1beta1GroupSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: CloudwatchlogsAwsUpboundIoV1beta1GroupSpecWriteConnectionSecretToRef
 
@@ -103,13 +99,14 @@ schema CloudwatchlogsAwsUpboundIoV1beta1GroupSpecForProvider:
     kmsKeyIdSelector : CloudwatchlogsAwsUpboundIoV1beta1GroupSpecForProviderKmsKeyIDSelector, default is Undefined, optional
         kms key Id selector
     logGroupClass : str, default is Undefined, optional
-        Specified the log class of the log group. Possible values are: STANDARD or INFREQUENT_ACCESS.
+        Specified the log class of the log group. Possible values are: STANDARD, INFREQUENT_ACCESS, or DELIVERY.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     retentionInDays : float, default is Undefined, optional
         Specifies the number of days
         you want to retain log events in the specified log group.  Possible values are: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1096, 1827, 2192, 2557, 2922, 3288, 3653, and 0.
-        If you select 0, the events in the log group are always retained and never expire.
+        If you select 0, the events in the log group are always retained and never expire. If log_group_class is set to DELIVERY, this argument is ignored and retention_in_days is forcibly set to 2.
     skipDestroy : bool, default is Undefined, optional
         skip destroy
     tags : {str:str}, default is Undefined, optional
@@ -247,11 +244,11 @@ schema CloudwatchlogsAwsUpboundIoV1beta1GroupSpecInitProvider:
     kmsKeyIdSelector : CloudwatchlogsAwsUpboundIoV1beta1GroupSpecInitProviderKmsKeyIDSelector, default is Undefined, optional
         kms key Id selector
     logGroupClass : str, default is Undefined, optional
-        Specified the log class of the log group. Possible values are: STANDARD or INFREQUENT_ACCESS.
+        Specified the log class of the log group. Possible values are: STANDARD, INFREQUENT_ACCESS, or DELIVERY.
     retentionInDays : float, default is Undefined, optional
         Specifies the number of days
         you want to retain log events in the specified log group.  Possible values are: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1096, 1827, 2192, 2557, 2922, 3288, 3653, and 0.
-        If you select 0, the events in the log group are always retained and never expire.
+        If you select 0, the events in the log group are always retained and never expire. If log_group_class is set to DELIVERY, this argument is ignored and retention_in_days is forcibly set to 2.
     skipDestroy : bool, default is Undefined, optional
         skip destroy
     tags : {str:str}, default is Undefined, optional
@@ -407,112 +404,12 @@ schema CloudwatchlogsAwsUpboundIoV1beta1GroupSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema CloudwatchlogsAwsUpboundIoV1beta1GroupSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : CloudwatchlogsAwsUpboundIoV1beta1GroupSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : CloudwatchlogsAwsUpboundIoV1beta1GroupSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: CloudwatchlogsAwsUpboundIoV1beta1GroupSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: CloudwatchlogsAwsUpboundIoV1beta1GroupSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema CloudwatchlogsAwsUpboundIoV1beta1GroupSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : CloudwatchlogsAwsUpboundIoV1beta1GroupSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: CloudwatchlogsAwsUpboundIoV1beta1GroupSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema CloudwatchlogsAwsUpboundIoV1beta1GroupSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema CloudwatchlogsAwsUpboundIoV1beta1GroupSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema CloudwatchlogsAwsUpboundIoV1beta1GroupSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -567,11 +464,14 @@ schema CloudwatchlogsAwsUpboundIoV1beta1GroupStatusAtProvider:
         AWS CloudWatch Logs stops encrypting newly ingested data for the log group. All previously ingested data remains encrypted, and AWS CloudWatch Logs requires
         permissions for the CMK whenever the encrypted data is requested.
     logGroupClass : str, default is Undefined, optional
-        Specified the log class of the log group. Possible values are: STANDARD or INFREQUENT_ACCESS.
+        Specified the log class of the log group. Possible values are: STANDARD, INFREQUENT_ACCESS, or DELIVERY.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     retentionInDays : float, default is Undefined, optional
         Specifies the number of days
         you want to retain log events in the specified log group.  Possible values are: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1096, 1827, 2192, 2557, 2922, 3288, 3653, and 0.
-        If you select 0, the events in the log group are always retained and never expire.
+        If you select 0, the events in the log group are always retained and never expire. If log_group_class is set to DELIVERY, this argument is ignored and retention_in_days is forcibly set to 2.
     skipDestroy : bool, default is Undefined, optional
         skip destroy
     tags : {str:str}, default is Undefined, optional
@@ -588,6 +488,8 @@ schema CloudwatchlogsAwsUpboundIoV1beta1GroupStatusAtProvider:
     kmsKeyId?: str
 
     logGroupClass?: str
+
+    region?: str
 
     retentionInDays?: float
 

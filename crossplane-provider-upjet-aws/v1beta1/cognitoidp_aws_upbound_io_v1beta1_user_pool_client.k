@@ -66,8 +66,6 @@ schema CognitoidpAwsUpboundIoV1beta1UserPoolClientSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema CognitoidpAwsUpboundIoV1beta1UserPoolClientSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecWriteConnectionSecretToRef
 
@@ -115,7 +111,7 @@ schema CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecForProvider:
     enableTokenRevocation : bool, default is Undefined, optional
         Enables or disables token revocation.
     explicitAuthFlows : [str], default is Undefined, optional
-        List of authentication flows. The available options include ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_PASSWORD_AUTH, ALLOW_ADMIN_USER_PASSWORD_AUTH, ALLOW_CUSTOM_AUTH, ALLOW_USER_PASSWORD_AUTH, ALLOW_USER_SRP_AUTH, and ALLOW_REFRESH_TOKEN_AUTH.
+        List of authentication flows. The available options include ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_PASSWORD_AUTH, ALLOW_ADMIN_USER_PASSWORD_AUTH, ALLOW_CUSTOM_AUTH, ALLOW_USER_PASSWORD_AUTH, ALLOW_USER_SRP_AUTH, ALLOW_REFRESH_TOKEN_AUTH, and ALLOW_USER_AUTH.
     generateSecret : bool, default is Undefined, optional
         Boolean flag indicating whether an application secret should be generated.
     idTokenValidity : float, default is Undefined, optional
@@ -128,9 +124,12 @@ schema CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecForProvider:
         Setting determines the errors and responses returned by Cognito APIs when a user does not exist in the user pool during authentication, account confirmation, and password recovery.
     readAttributes : [str], default is Undefined, optional
         List of user pool attributes that the application client can read from.
+    refreshTokenRotation : [CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecForProviderRefreshTokenRotationItems0], default is Undefined, optional
+        A block that specifies the configuration of refresh token rotation. Detailed below.
     refreshTokenValidity : float, default is Undefined, optional
         Time limit, between 60 minutes and 10 years, after which the refresh token is no longer valid and cannot be used. By default, the unit is days. The unit can be overridden by a value in token_validity_units.refresh_token.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     supportedIdentityProviders : [str], default is Undefined, optional
         List of provider names for the identity providers that are supported on this client. It uses the provider_name attribute of the aws_cognito_identity_provider resource(s), or the equivalent string(s).
@@ -180,6 +179,8 @@ schema CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecForProvider:
     preventUserExistenceErrors?: str
 
     readAttributes?: [str]
+
+    refreshTokenRotation?: [CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecForProviderRefreshTokenRotationItems0]
 
     refreshTokenValidity?: float
 
@@ -422,6 +423,24 @@ schema CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecForProviderAnalyticsConfig
     resolve?: "Always" | "IfNotPresent"
 
 
+schema CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecForProviderRefreshTokenRotationItems0:
+    r"""
+    cognitoidp aws upbound io v1beta1 user pool client spec for provider refresh token rotation items0
+
+    Attributes
+    ----------
+    feature : str, default is Undefined, optional
+        The state of refresh token rotation for the current app client. Valid values are ENABLED or DISABLED.
+    retryGracePeriodSeconds : float, default is Undefined, optional
+        A period of time in seconds that the user has to use the old refresh token before it is invalidated. Valid values are between 0 and 60.
+    """
+
+
+    feature?: str
+
+    retryGracePeriodSeconds?: float
+
+
 schema CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecForProviderTokenValidityUnitsItems0:
     r"""
     cognitoidp aws upbound io v1beta1 user pool client spec for provider token validity units items0
@@ -569,7 +588,7 @@ schema CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecInitProvider:
     enableTokenRevocation : bool, default is Undefined, optional
         Enables or disables token revocation.
     explicitAuthFlows : [str], default is Undefined, optional
-        List of authentication flows. The available options include ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_PASSWORD_AUTH, ALLOW_ADMIN_USER_PASSWORD_AUTH, ALLOW_CUSTOM_AUTH, ALLOW_USER_PASSWORD_AUTH, ALLOW_USER_SRP_AUTH, and ALLOW_REFRESH_TOKEN_AUTH.
+        List of authentication flows. The available options include ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_PASSWORD_AUTH, ALLOW_ADMIN_USER_PASSWORD_AUTH, ALLOW_CUSTOM_AUTH, ALLOW_USER_PASSWORD_AUTH, ALLOW_USER_SRP_AUTH, ALLOW_REFRESH_TOKEN_AUTH, and ALLOW_USER_AUTH.
     generateSecret : bool, default is Undefined, optional
         Boolean flag indicating whether an application secret should be generated.
     idTokenValidity : float, default is Undefined, optional
@@ -582,6 +601,8 @@ schema CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecInitProvider:
         Setting determines the errors and responses returned by Cognito APIs when a user does not exist in the user pool during authentication, account confirmation, and password recovery.
     readAttributes : [str], default is Undefined, optional
         List of user pool attributes that the application client can read from.
+    refreshTokenRotation : [CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecInitProviderRefreshTokenRotationItems0], default is Undefined, optional
+        A block that specifies the configuration of refresh token rotation. Detailed below.
     refreshTokenValidity : float, default is Undefined, optional
         Time limit, between 60 minutes and 10 years, after which the refresh token is no longer valid and cannot be used. By default, the unit is days. The unit can be overridden by a value in token_validity_units.refresh_token.
     supportedIdentityProviders : [str], default is Undefined, optional
@@ -632,6 +653,8 @@ schema CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecInitProvider:
     preventUserExistenceErrors?: str
 
     readAttributes?: [str]
+
+    refreshTokenRotation?: [CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecInitProviderRefreshTokenRotationItems0]
 
     refreshTokenValidity?: float
 
@@ -872,6 +895,24 @@ schema CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecInitProviderAnalyticsConfi
     resolve?: "Always" | "IfNotPresent"
 
 
+schema CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecInitProviderRefreshTokenRotationItems0:
+    r"""
+    cognitoidp aws upbound io v1beta1 user pool client spec init provider refresh token rotation items0
+
+    Attributes
+    ----------
+    feature : str, default is Undefined, optional
+        The state of refresh token rotation for the current app client. Valid values are ENABLED or DISABLED.
+    retryGracePeriodSeconds : float, default is Undefined, optional
+        A period of time in seconds that the user has to use the old refresh token before it is invalidated. Valid values are between 0 and 60.
+    """
+
+
+    feature?: str
+
+    retryGracePeriodSeconds?: float
+
+
 schema CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecInitProviderTokenValidityUnitsItems0:
     r"""
     cognitoidp aws upbound io v1beta1 user pool client spec init provider token validity units items0
@@ -1027,112 +1068,12 @@ schema CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema CognitoidpAwsUpboundIoV1beta1UserPoolClientSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1199,7 +1140,7 @@ schema CognitoidpAwsUpboundIoV1beta1UserPoolClientStatusAtProvider:
     enableTokenRevocation : bool, default is Undefined, optional
         Enables or disables token revocation.
     explicitAuthFlows : [str], default is Undefined, optional
-        List of authentication flows. The available options include ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_PASSWORD_AUTH, ALLOW_ADMIN_USER_PASSWORD_AUTH, ALLOW_CUSTOM_AUTH, ALLOW_USER_PASSWORD_AUTH, ALLOW_USER_SRP_AUTH, and ALLOW_REFRESH_TOKEN_AUTH.
+        List of authentication flows. The available options include ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_PASSWORD_AUTH, ALLOW_ADMIN_USER_PASSWORD_AUTH, ALLOW_CUSTOM_AUTH, ALLOW_USER_PASSWORD_AUTH, ALLOW_USER_SRP_AUTH, ALLOW_REFRESH_TOKEN_AUTH, and ALLOW_USER_AUTH.
     generateSecret : bool, default is Undefined, optional
         Boolean flag indicating whether an application secret should be generated.
     id : str, default is Undefined, optional
@@ -1214,8 +1155,13 @@ schema CognitoidpAwsUpboundIoV1beta1UserPoolClientStatusAtProvider:
         Setting determines the errors and responses returned by Cognito APIs when a user does not exist in the user pool during authentication, account confirmation, and password recovery.
     readAttributes : [str], default is Undefined, optional
         List of user pool attributes that the application client can read from.
+    refreshTokenRotation : [CognitoidpAwsUpboundIoV1beta1UserPoolClientStatusAtProviderRefreshTokenRotationItems0], default is Undefined, optional
+        A block that specifies the configuration of refresh token rotation. Detailed below.
     refreshTokenValidity : float, default is Undefined, optional
         Time limit, between 60 minutes and 10 years, after which the refresh token is no longer valid and cannot be used. By default, the unit is days. The unit can be overridden by a value in token_validity_units.refresh_token.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     supportedIdentityProviders : [str], default is Undefined, optional
         List of provider names for the identity providers that are supported on this client. It uses the provider_name attribute of the aws_cognito_identity_provider resource(s), or the equivalent string(s).
     tokenValidityUnits : [CognitoidpAwsUpboundIoV1beta1UserPoolClientStatusAtProviderTokenValidityUnitsItems0], default is Undefined, optional
@@ -1263,7 +1209,11 @@ schema CognitoidpAwsUpboundIoV1beta1UserPoolClientStatusAtProvider:
 
     readAttributes?: [str]
 
+    refreshTokenRotation?: [CognitoidpAwsUpboundIoV1beta1UserPoolClientStatusAtProviderRefreshTokenRotationItems0]
+
     refreshTokenValidity?: float
+
+    region?: str
 
     supportedIdentityProviders?: [str]
 
@@ -1302,6 +1252,24 @@ schema CognitoidpAwsUpboundIoV1beta1UserPoolClientStatusAtProviderAnalyticsConfi
     roleArn?: str
 
     userDataShared?: bool
+
+
+schema CognitoidpAwsUpboundIoV1beta1UserPoolClientStatusAtProviderRefreshTokenRotationItems0:
+    r"""
+    cognitoidp aws upbound io v1beta1 user pool client status at provider refresh token rotation items0
+
+    Attributes
+    ----------
+    feature : str, default is Undefined, optional
+        The state of refresh token rotation for the current app client. Valid values are ENABLED or DISABLED.
+    retryGracePeriodSeconds : float, default is Undefined, optional
+        A period of time in seconds that the user has to use the old refresh token before it is invalidated. Valid values are between 0 and 60.
+    """
+
+
+    feature?: str
+
+    retryGracePeriodSeconds?: float
 
 
 schema CognitoidpAwsUpboundIoV1beta1UserPoolClientStatusAtProviderTokenValidityUnitsItems0:

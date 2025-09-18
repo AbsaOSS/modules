@@ -66,8 +66,6 @@ schema ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecWriteConnectionSecretToRef
 
@@ -116,7 +112,10 @@ schema ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecForProvider
         Configuration block with logging settings. Detailed below.
     name : str, default is Undefined, optional
         Name for the configuration.
+    placement : [ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecForProviderPlacementItems0], default is Undefined, optional
+        Configuration block with placement settings that define where the instances that are launched from your image will run. Detailed below.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     resourceTags : {str:str}, default is Undefined, optional
         Key-value map of resource tags to assign to infrastructure created by the configuration.
@@ -166,6 +165,8 @@ schema ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecForProvider
     logging?: [ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecForProviderLoggingItems0]
 
     name?: str
+
+    placement?: [ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecForProviderPlacementItems0]
 
     region: str
 
@@ -519,6 +520,32 @@ schema ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecForProvider
     resolve?: "Always" | "IfNotPresent"
 
 
+schema ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecForProviderPlacementItems0:
+    r"""
+    imagebuilder aws upbound io v1beta1 infrastructure configuration spec for provider placement items0
+
+    Attributes
+    ----------
+    availabilityZone : str, default is Undefined, optional
+        Availability Zone where your build and test instances will launch.
+    hostId : str, default is Undefined, optional
+        ID of the Dedicated Host on which build and test instances run. Conflicts with host_resource_group_arn.
+    hostResourceGroupArn : str, default is Undefined, optional
+        ARN of the host resource group in which to launch build and test instances. Conflicts with host_id.
+    tenancy : str, default is Undefined, optional
+        Placement tenancy of the instance. Valid values: default, dedicated and host.
+    """
+
+
+    availabilityZone?: str
+
+    hostId?: str
+
+    hostResourceGroupArn?: str
+
+    tenancy?: str
+
+
 schema ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecForProviderSecurityGroupIDRefsItems0:
     r"""
     A Reference to a named object.
@@ -823,6 +850,8 @@ schema ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecInitProvide
         Configuration block with logging settings. Detailed below.
     name : str, default is Undefined, optional
         Name for the configuration.
+    placement : [ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecInitProviderPlacementItems0], default is Undefined, optional
+        Configuration block with placement settings that define where the instances that are launched from your image will run. Detailed below.
     resourceTags : {str:str}, default is Undefined, optional
         Key-value map of resource tags to assign to infrastructure created by the configuration.
     securityGroupIdRefs : [ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecInitProviderSecurityGroupIDRefsItems0], default is Undefined, optional
@@ -871,6 +900,8 @@ schema ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecInitProvide
     logging?: [ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecInitProviderLoggingItems0]
 
     name?: str
+
+    placement?: [ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecInitProviderPlacementItems0]
 
     resourceTags?: {str:str}
 
@@ -1222,6 +1253,32 @@ schema ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecInitProvide
     resolve?: "Always" | "IfNotPresent"
 
 
+schema ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecInitProviderPlacementItems0:
+    r"""
+    imagebuilder aws upbound io v1beta1 infrastructure configuration spec init provider placement items0
+
+    Attributes
+    ----------
+    availabilityZone : str, default is Undefined, optional
+        Availability Zone where your build and test instances will launch.
+    hostId : str, default is Undefined, optional
+        ID of the Dedicated Host on which build and test instances run. Conflicts with host_resource_group_arn.
+    hostResourceGroupArn : str, default is Undefined, optional
+        ARN of the host resource group in which to launch build and test instances. Conflicts with host_id.
+    tenancy : str, default is Undefined, optional
+        Placement tenancy of the instance. Valid values: default, dedicated and host.
+    """
+
+
+    availabilityZone?: str
+
+    hostId?: str
+
+    hostResourceGroupArn?: str
+
+    tenancy?: str
+
+
 schema ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecInitProviderSecurityGroupIDRefsItems0:
     r"""
     A Reference to a named object.
@@ -1533,112 +1590,12 @@ schema ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecProviderCon
     resolve?: "Always" | "IfNotPresent"
 
 
-schema ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1706,6 +1663,11 @@ schema ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationStatusAtProvide
         Configuration block with logging settings. Detailed below.
     name : str, default is Undefined, optional
         Name for the configuration.
+    placement : [ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationStatusAtProviderPlacementItems0], default is Undefined, optional
+        Configuration block with placement settings that define where the instances that are launched from your image will run. Detailed below.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     resourceTags : {str:str}, default is Undefined, optional
         Key-value map of resource tags to assign to infrastructure created by the configuration.
     securityGroupIds : [str], default is Undefined, optional
@@ -1744,6 +1706,10 @@ schema ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationStatusAtProvide
     logging?: [ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationStatusAtProviderLoggingItems0]
 
     name?: str
+
+    placement?: [ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationStatusAtProviderPlacementItems0]
+
+    region?: str
 
     resourceTags?: {str:str}
 
@@ -1808,6 +1774,32 @@ schema ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationStatusAtProvide
     s3BucketName?: str
 
     s3KeyPrefix?: str
+
+
+schema ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationStatusAtProviderPlacementItems0:
+    r"""
+    imagebuilder aws upbound io v1beta1 infrastructure configuration status at provider placement items0
+
+    Attributes
+    ----------
+    availabilityZone : str, default is Undefined, optional
+        Availability Zone where your build and test instances will launch.
+    hostId : str, default is Undefined, optional
+        ID of the Dedicated Host on which build and test instances run. Conflicts with host_resource_group_arn.
+    hostResourceGroupArn : str, default is Undefined, optional
+        ARN of the host resource group in which to launch build and test instances. Conflicts with host_id.
+    tenancy : str, default is Undefined, optional
+        Placement tenancy of the instance. Valid values: default, dedicated and host.
+    """
+
+
+    availabilityZone?: str
+
+    hostId?: str
+
+    hostResourceGroupArn?: str
+
+    tenancy?: str
 
 
 schema ImagebuilderAwsUpboundIoV1beta1InfrastructureConfigurationStatusConditionsItems0:

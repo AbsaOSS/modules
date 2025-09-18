@@ -66,8 +66,6 @@ schema RdsAwsUpboundIoV1beta1InstanceRoleAssociationSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : RdsAwsUpboundIoV1beta1InstanceRoleAssociationSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : RdsAwsUpboundIoV1beta1InstanceRoleAssociationSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : RdsAwsUpboundIoV1beta1InstanceRoleAssociationSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema RdsAwsUpboundIoV1beta1InstanceRoleAssociationSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: RdsAwsUpboundIoV1beta1InstanceRoleAssociationSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: RdsAwsUpboundIoV1beta1InstanceRoleAssociationSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: RdsAwsUpboundIoV1beta1InstanceRoleAssociationSpecWriteConnectionSecretToRef
 
@@ -103,6 +99,7 @@ schema RdsAwsUpboundIoV1beta1InstanceRoleAssociationSpecForProvider:
     featureName : str, default is Undefined, optional
         Name of the feature for association. This can be found in the AWS documentation relevant to the integration or a full list is available in the SupportedFeatureNames list returned by AWS CLI rds describe-db-engine-versions.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     roleArn : str, default is Undefined, optional
         Amazon Resource Name (ARN) of the IAM Role to associate with the DB Instance.
@@ -577,112 +574,12 @@ schema RdsAwsUpboundIoV1beta1InstanceRoleAssociationSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema RdsAwsUpboundIoV1beta1InstanceRoleAssociationSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : RdsAwsUpboundIoV1beta1InstanceRoleAssociationSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : RdsAwsUpboundIoV1beta1InstanceRoleAssociationSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: RdsAwsUpboundIoV1beta1InstanceRoleAssociationSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: RdsAwsUpboundIoV1beta1InstanceRoleAssociationSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema RdsAwsUpboundIoV1beta1InstanceRoleAssociationSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : RdsAwsUpboundIoV1beta1InstanceRoleAssociationSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: RdsAwsUpboundIoV1beta1InstanceRoleAssociationSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema RdsAwsUpboundIoV1beta1InstanceRoleAssociationSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema RdsAwsUpboundIoV1beta1InstanceRoleAssociationSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema RdsAwsUpboundIoV1beta1InstanceRoleAssociationSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -734,6 +631,9 @@ schema RdsAwsUpboundIoV1beta1InstanceRoleAssociationStatusAtProvider:
         Name of the feature for association. This can be found in the AWS documentation relevant to the integration or a full list is available in the SupportedFeatureNames list returned by AWS CLI rds describe-db-engine-versions.
     id : str, default is Undefined, optional
         DB Instance Identifier and IAM Role ARN separated by a comma (,)
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     roleArn : str, default is Undefined, optional
         Amazon Resource Name (ARN) of the IAM Role to associate with the DB Instance.
     """
@@ -744,6 +644,8 @@ schema RdsAwsUpboundIoV1beta1InstanceRoleAssociationStatusAtProvider:
     featureName?: str
 
     id?: str
+
+    region?: str
 
     roleArn?: str
 

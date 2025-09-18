@@ -66,8 +66,6 @@ schema ConnectAwsUpboundIoV1beta2InstanceStorageConfigSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : ConnectAwsUpboundIoV1beta2InstanceStorageConfigSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : ConnectAwsUpboundIoV1beta2InstanceStorageConfigSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : ConnectAwsUpboundIoV1beta2InstanceStorageConfigSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema ConnectAwsUpboundIoV1beta2InstanceStorageConfigSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: ConnectAwsUpboundIoV1beta2InstanceStorageConfigSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: ConnectAwsUpboundIoV1beta2InstanceStorageConfigSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: ConnectAwsUpboundIoV1beta2InstanceStorageConfigSpecWriteConnectionSecretToRef
 
@@ -101,9 +97,10 @@ schema ConnectAwsUpboundIoV1beta2InstanceStorageConfigSpecForProvider:
     instanceIdSelector : ConnectAwsUpboundIoV1beta2InstanceStorageConfigSpecForProviderInstanceIDSelector, default is Undefined, optional
         instance Id selector
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     resourceType : str, default is Undefined, optional
-        A valid resource type. Valid Values: AGENT_EVENTS | ATTACHMENTS | CALL_RECORDINGS | CHAT_TRANSCRIPTS | CONTACT_EVALUATIONS | CONTACT_TRACE_RECORDS | MEDIA_STREAMS | REAL_TIME_CONTACT_ANALYSIS_SEGMENTS | SCHEDULED_REPORTS | SCREEN_RECORDINGS.
+        A valid resource type. Valid Values: AGENT_EVENTS | ATTACHMENTS | CALL_RECORDINGS | CHAT_TRANSCRIPTS | CONTACT_EVALUATIONS | CONTACT_TRACE_RECORDS | EMAIL_MESSAGES | MEDIA_STREAMS | REAL_TIME_CONTACT_ANALYSIS_CHAT_SEGMENTS | REAL_TIME_CONTACT_ANALYSIS_SEGMENTS | REAL_TIME_CONTACT_ANALYSIS_VOICE_SEGMENTS | SCHEDULED_REPORTS | SCREEN_RECORDINGS.
     storageConfig : ConnectAwsUpboundIoV1beta2InstanceStorageConfigSpecForProviderStorageConfig, default is Undefined, optional
         storage config
     """
@@ -856,7 +853,7 @@ schema ConnectAwsUpboundIoV1beta2InstanceStorageConfigSpecInitProvider:
     instanceIdSelector : ConnectAwsUpboundIoV1beta2InstanceStorageConfigSpecInitProviderInstanceIDSelector, default is Undefined, optional
         instance Id selector
     resourceType : str, default is Undefined, optional
-        A valid resource type. Valid Values: AGENT_EVENTS | ATTACHMENTS | CALL_RECORDINGS | CHAT_TRANSCRIPTS | CONTACT_EVALUATIONS | CONTACT_TRACE_RECORDS | MEDIA_STREAMS | REAL_TIME_CONTACT_ANALYSIS_SEGMENTS | SCHEDULED_REPORTS | SCREEN_RECORDINGS.
+        A valid resource type. Valid Values: AGENT_EVENTS | ATTACHMENTS | CALL_RECORDINGS | CHAT_TRANSCRIPTS | CONTACT_EVALUATIONS | CONTACT_TRACE_RECORDS | EMAIL_MESSAGES | MEDIA_STREAMS | REAL_TIME_CONTACT_ANALYSIS_CHAT_SEGMENTS | REAL_TIME_CONTACT_ANALYSIS_SEGMENTS | REAL_TIME_CONTACT_ANALYSIS_VOICE_SEGMENTS | SCHEDULED_REPORTS | SCREEN_RECORDINGS.
     storageConfig : ConnectAwsUpboundIoV1beta2InstanceStorageConfigSpecInitProviderStorageConfig, default is Undefined, optional
         storage config
     """
@@ -1629,112 +1626,12 @@ schema ConnectAwsUpboundIoV1beta2InstanceStorageConfigSpecProviderConfigRefPolic
     resolve?: "Always" | "IfNotPresent"
 
 
-schema ConnectAwsUpboundIoV1beta2InstanceStorageConfigSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : ConnectAwsUpboundIoV1beta2InstanceStorageConfigSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : ConnectAwsUpboundIoV1beta2InstanceStorageConfigSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: ConnectAwsUpboundIoV1beta2InstanceStorageConfigSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: ConnectAwsUpboundIoV1beta2InstanceStorageConfigSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema ConnectAwsUpboundIoV1beta2InstanceStorageConfigSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : ConnectAwsUpboundIoV1beta2InstanceStorageConfigSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: ConnectAwsUpboundIoV1beta2InstanceStorageConfigSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema ConnectAwsUpboundIoV1beta2InstanceStorageConfigSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema ConnectAwsUpboundIoV1beta2InstanceStorageConfigSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema ConnectAwsUpboundIoV1beta2InstanceStorageConfigSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1786,8 +1683,11 @@ schema ConnectAwsUpboundIoV1beta2InstanceStorageConfigStatusAtProvider:
         The identifier of the hosting Amazon Connect Instance, association_id, and resource_type separated by a colon (:).
     instanceId : str, default is Undefined, optional
         Specifies the identifier of the hosting Amazon Connect Instance.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     resourceType : str, default is Undefined, optional
-        A valid resource type. Valid Values: AGENT_EVENTS | ATTACHMENTS | CALL_RECORDINGS | CHAT_TRANSCRIPTS | CONTACT_EVALUATIONS | CONTACT_TRACE_RECORDS | MEDIA_STREAMS | REAL_TIME_CONTACT_ANALYSIS_SEGMENTS | SCHEDULED_REPORTS | SCREEN_RECORDINGS.
+        A valid resource type. Valid Values: AGENT_EVENTS | ATTACHMENTS | CALL_RECORDINGS | CHAT_TRANSCRIPTS | CONTACT_EVALUATIONS | CONTACT_TRACE_RECORDS | EMAIL_MESSAGES | MEDIA_STREAMS | REAL_TIME_CONTACT_ANALYSIS_CHAT_SEGMENTS | REAL_TIME_CONTACT_ANALYSIS_SEGMENTS | REAL_TIME_CONTACT_ANALYSIS_VOICE_SEGMENTS | SCHEDULED_REPORTS | SCREEN_RECORDINGS.
     storageConfig : ConnectAwsUpboundIoV1beta2InstanceStorageConfigStatusAtProviderStorageConfig, default is Undefined, optional
         storage config
     """
@@ -1798,6 +1698,8 @@ schema ConnectAwsUpboundIoV1beta2InstanceStorageConfigStatusAtProvider:
     id?: str
 
     instanceId?: str
+
+    region?: str
 
     resourceType?: str
 

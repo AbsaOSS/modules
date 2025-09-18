@@ -66,8 +66,6 @@ schema SchedulerAwsUpboundIoV1beta2ScheduleSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : SchedulerAwsUpboundIoV1beta2ScheduleSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : SchedulerAwsUpboundIoV1beta2ScheduleSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : SchedulerAwsUpboundIoV1beta2ScheduleSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema SchedulerAwsUpboundIoV1beta2ScheduleSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: SchedulerAwsUpboundIoV1beta2ScheduleSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: SchedulerAwsUpboundIoV1beta2ScheduleSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: SchedulerAwsUpboundIoV1beta2ScheduleSpecWriteConnectionSecretToRef
 
@@ -111,6 +107,7 @@ schema SchedulerAwsUpboundIoV1beta2ScheduleSpecForProvider:
     name : str, default is Undefined, optional
         Name of the schedule. Conflicts with name_prefix.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     scheduleExpression : str, default is Undefined, optional
         Defines when the schedule runs. Read more in Schedule types on EventBridge Scheduler.
@@ -717,12 +714,12 @@ schema SchedulerAwsUpboundIoV1beta2ScheduleSpecForProviderTargetRoleArnSelectorP
 
 schema SchedulerAwsUpboundIoV1beta2ScheduleSpecForProviderTargetSagemakerPipelineParameters:
     r"""
-    Templated target type for the Amazon SageMaker StartPipelineExecution API operation. Detailed below.
+    Templated target type for the Amazon SageMaker AI StartPipelineExecution API operation. Detailed below.
 
     Attributes
     ----------
     pipelineParameter : [SchedulerAwsUpboundIoV1beta2ScheduleSpecForProviderTargetSagemakerPipelineParametersPipelineParameterItems0], default is Undefined, optional
-        Set of up to 200 parameter names and values to use when executing the SageMaker Model Building Pipeline. Detailed below.
+        Set of up to 200 parameter names and values to use when executing the SageMaker AI Model Building Pipeline. Detailed below.
     """
 
 
@@ -736,9 +733,9 @@ schema SchedulerAwsUpboundIoV1beta2ScheduleSpecForProviderTargetSagemakerPipelin
     Attributes
     ----------
     name : str, default is Undefined, optional
-        Name of parameter to start execution of a SageMaker Model Building Pipeline.
+        Name of parameter to start execution of a SageMaker AI Model Building Pipeline.
     value : str, default is Undefined, optional
-        Value of parameter to start execution of a SageMaker Model Building Pipeline.
+        Value of parameter to start execution of a SageMaker AI Model Building Pipeline.
     """
 
 
@@ -1395,12 +1392,12 @@ schema SchedulerAwsUpboundIoV1beta2ScheduleSpecInitProviderTargetRoleArnSelector
 
 schema SchedulerAwsUpboundIoV1beta2ScheduleSpecInitProviderTargetSagemakerPipelineParameters:
     r"""
-    Templated target type for the Amazon SageMaker StartPipelineExecution API operation. Detailed below.
+    Templated target type for the Amazon SageMaker AI StartPipelineExecution API operation. Detailed below.
 
     Attributes
     ----------
     pipelineParameter : [SchedulerAwsUpboundIoV1beta2ScheduleSpecInitProviderTargetSagemakerPipelineParametersPipelineParameterItems0], default is Undefined, optional
-        Set of up to 200 parameter names and values to use when executing the SageMaker Model Building Pipeline. Detailed below.
+        Set of up to 200 parameter names and values to use when executing the SageMaker AI Model Building Pipeline. Detailed below.
     """
 
 
@@ -1414,9 +1411,9 @@ schema SchedulerAwsUpboundIoV1beta2ScheduleSpecInitProviderTargetSagemakerPipeli
     Attributes
     ----------
     name : str, default is Undefined, optional
-        Name of parameter to start execution of a SageMaker Model Building Pipeline.
+        Name of parameter to start execution of a SageMaker AI Model Building Pipeline.
     value : str, default is Undefined, optional
-        Value of parameter to start execution of a SageMaker Model Building Pipeline.
+        Value of parameter to start execution of a SageMaker AI Model Building Pipeline.
     """
 
 
@@ -1483,112 +1480,12 @@ schema SchedulerAwsUpboundIoV1beta2ScheduleSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema SchedulerAwsUpboundIoV1beta2ScheduleSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : SchedulerAwsUpboundIoV1beta2ScheduleSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : SchedulerAwsUpboundIoV1beta2ScheduleSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: SchedulerAwsUpboundIoV1beta2ScheduleSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: SchedulerAwsUpboundIoV1beta2ScheduleSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema SchedulerAwsUpboundIoV1beta2ScheduleSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : SchedulerAwsUpboundIoV1beta2ScheduleSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: SchedulerAwsUpboundIoV1beta2ScheduleSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema SchedulerAwsUpboundIoV1beta2ScheduleSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema SchedulerAwsUpboundIoV1beta2ScheduleSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema SchedulerAwsUpboundIoV1beta2ScheduleSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1650,6 +1547,9 @@ schema SchedulerAwsUpboundIoV1beta2ScheduleStatusAtProvider:
         ARN for the customer managed KMS key that EventBridge Scheduler will use to encrypt and decrypt your data.
     name : str, default is Undefined, optional
         Name of the schedule. Conflicts with name_prefix.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     scheduleExpression : str, default is Undefined, optional
         Defines when the schedule runs. Read more in Schedule types on EventBridge Scheduler.
     scheduleExpressionTimezone : str, default is Undefined, optional
@@ -1678,6 +1578,8 @@ schema SchedulerAwsUpboundIoV1beta2ScheduleStatusAtProvider:
     kmsKeyArn?: str
 
     name?: str
+
+    region?: str
 
     scheduleExpression?: str
 
@@ -1970,12 +1872,12 @@ schema SchedulerAwsUpboundIoV1beta2ScheduleStatusAtProviderTargetRetryPolicy:
 
 schema SchedulerAwsUpboundIoV1beta2ScheduleStatusAtProviderTargetSagemakerPipelineParameters:
     r"""
-    Templated target type for the Amazon SageMaker StartPipelineExecution API operation. Detailed below.
+    Templated target type for the Amazon SageMaker AI StartPipelineExecution API operation. Detailed below.
 
     Attributes
     ----------
     pipelineParameter : [SchedulerAwsUpboundIoV1beta2ScheduleStatusAtProviderTargetSagemakerPipelineParametersPipelineParameterItems0], default is Undefined, optional
-        Set of up to 200 parameter names and values to use when executing the SageMaker Model Building Pipeline. Detailed below.
+        Set of up to 200 parameter names and values to use when executing the SageMaker AI Model Building Pipeline. Detailed below.
     """
 
 
@@ -1989,9 +1891,9 @@ schema SchedulerAwsUpboundIoV1beta2ScheduleStatusAtProviderTargetSagemakerPipeli
     Attributes
     ----------
     name : str, default is Undefined, optional
-        Name of parameter to start execution of a SageMaker Model Building Pipeline.
+        Name of parameter to start execution of a SageMaker AI Model Building Pipeline.
     value : str, default is Undefined, optional
-        Value of parameter to start execution of a SageMaker Model Building Pipeline.
+        Value of parameter to start execution of a SageMaker AI Model Building Pipeline.
     """
 
 

@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema CustomerGatewayAssociation:
     r"""
-    CustomerGatewayAssociation is the Schema for the CustomerGatewayAssociations API. Associates a customer gateway with a device and optionally, with a link.
+    CustomerGatewayAssociation is the Schema for the CustomerGatewayAssociations API. Manages a Network Manager Customer Gateway Association.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpec:
 
     providerConfigRef?: NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecWriteConnectionSecretToRef
 
 
@@ -95,27 +91,25 @@ schema NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecForProvide
     Attributes
     ----------
     customerGatewayArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the customer gateway.
+        ARN of the customer gateway.
     customerGatewayArnRef : NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecForProviderCustomerGatewayArnRef, default is Undefined, optional
         customer gateway arn ref
     customerGatewayArnSelector : NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecForProviderCustomerGatewayArnSelector, default is Undefined, optional
         customer gateway arn selector
     deviceId : str, default is Undefined, optional
-        The ID of the device.
+        ID of the device.
     deviceIdRef : NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecForProviderDeviceIDRef, default is Undefined, optional
         device Id ref
     deviceIdSelector : NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecForProviderDeviceIDSelector, default is Undefined, optional
         device Id selector
     globalNetworkId : str, default is Undefined, optional
-        The ID of the global network.
+        ID of the global network.
     globalNetworkIdRef : NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecForProviderGlobalNetworkIDRef, default is Undefined, optional
         global network Id ref
     globalNetworkIdSelector : NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecForProviderGlobalNetworkIDSelector, default is Undefined, optional
         global network Id selector
     linkId : str, default is Undefined, optional
-        The ID of the link.
-    region : str, default is Undefined, required
-        Region is the region you'd like your resource to be created in.
+        ID of the link.
     """
 
 
@@ -138,8 +132,6 @@ schema NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecForProvide
     globalNetworkIdSelector?: NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecForProviderGlobalNetworkIDSelector
 
     linkId?: str
-
-    region: str
 
 
 schema NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecForProviderCustomerGatewayArnRef:
@@ -425,13 +417,13 @@ schema NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecInitProvid
     Attributes
     ----------
     deviceId : str, default is Undefined, optional
-        The ID of the device.
+        ID of the device.
     deviceIdRef : NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecInitProviderDeviceIDRef, default is Undefined, optional
         device Id ref
     deviceIdSelector : NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecInitProviderDeviceIDSelector, default is Undefined, optional
         device Id selector
     linkId : str, default is Undefined, optional
-        The ID of the link.
+        ID of the link.
     """
 
 
@@ -577,112 +569,12 @@ schema NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecProviderCo
     resolve?: "Always" | "IfNotPresent"
 
 
-schema NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -729,15 +621,15 @@ schema NetworkmanagerAwsUpboundIoV1beta1CustomerGatewayAssociationStatusAtProvid
     Attributes
     ----------
     customerGatewayArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the customer gateway.
+        ARN of the customer gateway.
     deviceId : str, default is Undefined, optional
-        The ID of the device.
+        ID of the device.
     globalNetworkId : str, default is Undefined, optional
-        The ID of the global network.
+        ID of the global network.
     id : str, default is Undefined, optional
         id
     linkId : str, default is Undefined, optional
-        The ID of the link.
+        ID of the link.
     """
 
 

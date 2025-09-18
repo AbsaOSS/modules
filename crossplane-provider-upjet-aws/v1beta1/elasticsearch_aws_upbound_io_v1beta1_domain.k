@@ -66,8 +66,6 @@ schema ElasticsearchAwsUpboundIoV1beta1DomainSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : ElasticsearchAwsUpboundIoV1beta1DomainSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : ElasticsearchAwsUpboundIoV1beta1DomainSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : ElasticsearchAwsUpboundIoV1beta1DomainSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema ElasticsearchAwsUpboundIoV1beta1DomainSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: ElasticsearchAwsUpboundIoV1beta1DomainSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: ElasticsearchAwsUpboundIoV1beta1DomainSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: ElasticsearchAwsUpboundIoV1beta1DomainSpecWriteConnectionSecretToRef
 
@@ -119,6 +115,7 @@ schema ElasticsearchAwsUpboundIoV1beta1DomainSpecForProvider:
     nodeToNodeEncryption : [ElasticsearchAwsUpboundIoV1beta1DomainSpecForProviderNodeToNodeEncryptionItems0], default is Undefined, optional
         Configuration block for node-to-node encryption options. Detailed below.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     snapshotOptions : [ElasticsearchAwsUpboundIoV1beta1DomainSpecForProviderSnapshotOptionsItems0], default is Undefined, optional
         Configuration block for snapshot related options. Detailed below. DEPRECATED. For domains running Elasticsearch 5.3 and later, Amazon ES takes hourly automated snapshots, making this setting irrelevant. For domains running earlier versions of Elasticsearch, Amazon ES takes daily automated snapshots.
@@ -413,7 +410,7 @@ schema ElasticsearchAwsUpboundIoV1beta1DomainSpecForProviderDomainEndpointOption
     enforceHttps : bool, default is Undefined, optional
         Whether or not to require HTTPS. Defaults to true.
     tlsSecurityPolicy : str, default is Undefined, optional
-        Name of the TLS security policy that needs to be applied to the HTTPS endpoint. Valid values:  Policy-Min-TLS-1-0-2019-07 and Policy-Min-TLS-1-2-2019-07.
+        Name of the TLS security policy that needs to be applied to the HTTPS endpoint. Valid values:  Policy-Min-TLS-1-0-2019-07, Policy-Min-TLS-1-2-2019-07, and Policy-Min-TLS-1-2-PFS-2023-10.
     """
 
 
@@ -1068,7 +1065,7 @@ schema ElasticsearchAwsUpboundIoV1beta1DomainSpecInitProviderDomainEndpointOptio
     enforceHttps : bool, default is Undefined, optional
         Whether or not to require HTTPS. Defaults to true.
     tlsSecurityPolicy : str, default is Undefined, optional
-        Name of the TLS security policy that needs to be applied to the HTTPS endpoint. Valid values:  Policy-Min-TLS-1-0-2019-07 and Policy-Min-TLS-1-2-2019-07.
+        Name of the TLS security policy that needs to be applied to the HTTPS endpoint. Valid values:  Policy-Min-TLS-1-0-2019-07, Policy-Min-TLS-1-2-2019-07, and Policy-Min-TLS-1-2-PFS-2023-10.
     """
 
 
@@ -1437,112 +1434,12 @@ schema ElasticsearchAwsUpboundIoV1beta1DomainSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema ElasticsearchAwsUpboundIoV1beta1DomainSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : ElasticsearchAwsUpboundIoV1beta1DomainSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : ElasticsearchAwsUpboundIoV1beta1DomainSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: ElasticsearchAwsUpboundIoV1beta1DomainSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: ElasticsearchAwsUpboundIoV1beta1DomainSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema ElasticsearchAwsUpboundIoV1beta1DomainSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : ElasticsearchAwsUpboundIoV1beta1DomainSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: ElasticsearchAwsUpboundIoV1beta1DomainSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema ElasticsearchAwsUpboundIoV1beta1DomainSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema ElasticsearchAwsUpboundIoV1beta1DomainSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema ElasticsearchAwsUpboundIoV1beta1DomainSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1622,6 +1519,9 @@ schema ElasticsearchAwsUpboundIoV1beta1DomainStatusAtProvider:
         Configuration block for publishing slow and application logs to CloudWatch Logs. This block can be declared multiple times, for each log_type, within the same resource. Detailed below.
     nodeToNodeEncryption : [ElasticsearchAwsUpboundIoV1beta1DomainStatusAtProviderNodeToNodeEncryptionItems0], default is Undefined, optional
         Configuration block for node-to-node encryption options. Detailed below.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     snapshotOptions : [ElasticsearchAwsUpboundIoV1beta1DomainStatusAtProviderSnapshotOptionsItems0], default is Undefined, optional
         Configuration block for snapshot related options. Detailed below. DEPRECATED. For domains running Elasticsearch 5.3 and later, Amazon ES takes hourly automated snapshots, making this setting irrelevant. For domains running earlier versions of Elasticsearch, Amazon ES takes daily automated snapshots.
     tags : {str:str}, default is Undefined, optional
@@ -1666,6 +1566,8 @@ schema ElasticsearchAwsUpboundIoV1beta1DomainStatusAtProvider:
     logPublishingOptions?: [ElasticsearchAwsUpboundIoV1beta1DomainStatusAtProviderLogPublishingOptionsItems0]
 
     nodeToNodeEncryption?: [ElasticsearchAwsUpboundIoV1beta1DomainStatusAtProviderNodeToNodeEncryptionItems0]
+
+    region?: str
 
     snapshotOptions?: [ElasticsearchAwsUpboundIoV1beta1DomainStatusAtProviderSnapshotOptionsItems0]
 
@@ -1901,7 +1803,7 @@ schema ElasticsearchAwsUpboundIoV1beta1DomainStatusAtProviderDomainEndpointOptio
     enforceHttps : bool, default is Undefined, optional
         Whether or not to require HTTPS. Defaults to true.
     tlsSecurityPolicy : str, default is Undefined, optional
-        Name of the TLS security policy that needs to be applied to the HTTPS endpoint. Valid values:  Policy-Min-TLS-1-0-2019-07 and Policy-Min-TLS-1-2-2019-07.
+        Name of the TLS security policy that needs to be applied to the HTTPS endpoint. Valid values:  Policy-Min-TLS-1-0-2019-07, Policy-Min-TLS-1-2-2019-07, and Policy-Min-TLS-1-2-PFS-2023-10.
     """
 
 

@@ -66,8 +66,6 @@ schema S3controlAwsUpboundIoV1beta1AccessPointSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : S3controlAwsUpboundIoV1beta1AccessPointSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : S3controlAwsUpboundIoV1beta1AccessPointSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : S3controlAwsUpboundIoV1beta1AccessPointSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema S3controlAwsUpboundIoV1beta1AccessPointSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: S3controlAwsUpboundIoV1beta1AccessPointSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: S3controlAwsUpboundIoV1beta1AccessPointSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: S3controlAwsUpboundIoV1beta1AccessPointSpecWriteConnectionSecretToRef
 
@@ -105,12 +101,13 @@ schema S3controlAwsUpboundIoV1beta1AccessPointSpecForProvider:
     bucketSelector : S3controlAwsUpboundIoV1beta1AccessPointSpecForProviderBucketSelector, default is Undefined, optional
         bucket selector
     name : str, default is Undefined, optional
-        Name you want to assign to this access point.
+        Name you want to assign to this access point. See the AWS documentation for naming conditions.
     policy : str, default is Undefined, optional
         Valid JSON document that specifies the policy that you want to apply to this access point. Removing policy from your configuration or setting policy to null or an empty string (i.e., policy = "") will not delete the policy since it could have been set by aws_s3control_access_point_policy. To remove the policy, set it to "{}" (an empty JSON document).
     publicAccessBlockConfiguration : [S3controlAwsUpboundIoV1beta1AccessPointSpecForProviderPublicAccessBlockConfigurationItems0], default is Undefined, optional
         Configuration block to manage the PublicAccessBlock configuration that you want to apply to this Amazon S3 bucket. You can enable the configuration options in any combination. Detailed below.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     vpcConfiguration : [S3controlAwsUpboundIoV1beta1AccessPointSpecForProviderVpcConfigurationItems0], default is Undefined, optional
         Configuration block to restrict access to this access point to requests from the specified Virtual Private Cloud (VPC). Required for S3 on Outposts. Detailed below.
@@ -390,7 +387,7 @@ schema S3controlAwsUpboundIoV1beta1AccessPointSpecInitProvider:
     bucketSelector : S3controlAwsUpboundIoV1beta1AccessPointSpecInitProviderBucketSelector, default is Undefined, optional
         bucket selector
     name : str, default is Undefined, optional
-        Name you want to assign to this access point.
+        Name you want to assign to this access point. See the AWS documentation for naming conditions.
     policy : str, default is Undefined, optional
         Valid JSON document that specifies the policy that you want to apply to this access point. Removing policy from your configuration or setting policy to null or an empty string (i.e., policy = "") will not delete the policy since it could have been set by aws_s3control_access_point_policy. To remove the policy, set it to "{}" (an empty JSON document).
     publicAccessBlockConfiguration : [S3controlAwsUpboundIoV1beta1AccessPointSpecInitProviderPublicAccessBlockConfigurationItems0], default is Undefined, optional
@@ -689,112 +686,12 @@ schema S3controlAwsUpboundIoV1beta1AccessPointSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema S3controlAwsUpboundIoV1beta1AccessPointSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : S3controlAwsUpboundIoV1beta1AccessPointSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : S3controlAwsUpboundIoV1beta1AccessPointSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: S3controlAwsUpboundIoV1beta1AccessPointSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: S3controlAwsUpboundIoV1beta1AccessPointSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema S3controlAwsUpboundIoV1beta1AccessPointSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : S3controlAwsUpboundIoV1beta1AccessPointSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: S3controlAwsUpboundIoV1beta1AccessPointSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema S3controlAwsUpboundIoV1beta1AccessPointSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema S3controlAwsUpboundIoV1beta1AccessPointSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema S3controlAwsUpboundIoV1beta1AccessPointSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -860,13 +757,16 @@ schema S3controlAwsUpboundIoV1beta1AccessPointStatusAtProvider:
     id : str, default is Undefined, optional
         For Access Point of an AWS Partition S3 Bucket, the AWS account ID and access point name separated by a colon (:). For S3 on Outposts Bucket, the ARN of the Access Point.
     name : str, default is Undefined, optional
-        Name you want to assign to this access point.
+        Name you want to assign to this access point. See the AWS documentation for naming conditions.
     networkOrigin : str, default is Undefined, optional
         Indicates whether this access point allows access from the public Internet. Values are VPC (the access point doesn't allow access from the public Internet) and Internet (the access point allows access from the public Internet, subject to the access point and bucket access policies).
     policy : str, default is Undefined, optional
         Valid JSON document that specifies the policy that you want to apply to this access point. Removing policy from your configuration or setting policy to null or an empty string (i.e., policy = "") will not delete the policy since it could have been set by aws_s3control_access_point_policy. To remove the policy, set it to "{}" (an empty JSON document).
     publicAccessBlockConfiguration : [S3controlAwsUpboundIoV1beta1AccessPointStatusAtProviderPublicAccessBlockConfigurationItems0], default is Undefined, optional
         Configuration block to manage the PublicAccessBlock configuration that you want to apply to this Amazon S3 bucket. You can enable the configuration options in any combination. Detailed below.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     vpcConfiguration : [S3controlAwsUpboundIoV1beta1AccessPointStatusAtProviderVpcConfigurationItems0], default is Undefined, optional
         Configuration block to restrict access to this access point to requests from the specified Virtual Private Cloud (VPC). Required for S3 on Outposts. Detailed below.
     """
@@ -897,6 +797,8 @@ schema S3controlAwsUpboundIoV1beta1AccessPointStatusAtProvider:
     policy?: str
 
     publicAccessBlockConfiguration?: [S3controlAwsUpboundIoV1beta1AccessPointStatusAtProviderPublicAccessBlockConfigurationItems0]
+
+    region?: str
 
     vpcConfiguration?: [S3controlAwsUpboundIoV1beta1AccessPointStatusAtProviderVpcConfigurationItems0]
 

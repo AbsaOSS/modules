@@ -66,8 +66,6 @@ schema WorkspacesAwsUpboundIoV1beta2DirectorySpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : WorkspacesAwsUpboundIoV1beta2DirectorySpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : WorkspacesAwsUpboundIoV1beta2DirectorySpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : WorkspacesAwsUpboundIoV1beta2DirectorySpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema WorkspacesAwsUpboundIoV1beta2DirectorySpec:
 
     providerConfigRef?: WorkspacesAwsUpboundIoV1beta2DirectorySpecProviderConfigRef
 
-    publishConnectionDetailsTo?: WorkspacesAwsUpboundIoV1beta2DirectorySpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: WorkspacesAwsUpboundIoV1beta2DirectorySpecWriteConnectionSecretToRef
 
 
@@ -94,6 +90,10 @@ schema WorkspacesAwsUpboundIoV1beta2DirectorySpecForProvider:
 
     Attributes
     ----------
+    activeDirectoryConfig : WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderActiveDirectoryConfig, default is Undefined, optional
+        active directory config
+    certificateBasedAuthProperties : WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderCertificateBasedAuthProperties, default is Undefined, optional
+        certificate based auth properties
     directoryId : str, default is Undefined, optional
         The directory identifier for registration in WorkSpaces service.
     directoryIdRef : WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderDirectoryIDRef, default is Undefined, optional
@@ -101,12 +101,13 @@ schema WorkspacesAwsUpboundIoV1beta2DirectorySpecForProvider:
     directoryIdSelector : WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderDirectoryIDSelector, default is Undefined, optional
         directory Id selector
     ipGroupIds : [str], default is Undefined, optional
-        –  The identifiers of the IP access control groups associated with the directory.
+        The identifiers of the IP access control groups associated with the directory.
     ipGroupIdsRefs : [WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderIPGroupIdsRefsItems0], default is Undefined, optional
         References to IPGroup in workspaces to populate ipGroupIds.
     ipGroupIdsSelector : WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderIPGroupIdsSelector, default is Undefined, optional
         ip group ids selector
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     samlProperties : WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderSamlProperties, default is Undefined, optional
         saml properties
@@ -120,12 +121,24 @@ schema WorkspacesAwsUpboundIoV1beta2DirectorySpecForProvider:
         The identifiers of the subnets where the directory resides.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
+    userIdentityType : str, default is Undefined, optional
+        Specifies the user identity type for the WorkSpaces directory. Valid values are CUSTOMER_MANAGED, AWS_DIRECTORY_SERVICE, AWS_IAM_IDENTITY_CENTER.
     workspaceAccessProperties : WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderWorkspaceAccessProperties, default is Undefined, optional
         workspace access properties
     workspaceCreationProperties : WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderWorkspaceCreationProperties, default is Undefined, optional
         workspace creation properties
+    workspaceDirectoryDescription : str, default is Undefined, optional
+        The description of the WorkSpaces directory when workspace_type is set to POOLS.
+    workspaceDirectoryName : str, default is Undefined, optional
+        The name of the WorkSpaces directory when workspace_type is set to POOLS.
+    workspaceType : str, default is Undefined, optional
+        Specifies the type of WorkSpaces directory. Valid values are PERSONAL and POOLS. Default is PERSONAL.
     """
 
+
+    activeDirectoryConfig?: WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderActiveDirectoryConfig
+
+    certificateBasedAuthProperties?: WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderCertificateBasedAuthProperties
 
     directoryId?: str
 
@@ -153,9 +166,150 @@ schema WorkspacesAwsUpboundIoV1beta2DirectorySpecForProvider:
 
     tags?: {str:str}
 
+    userIdentityType?: str
+
     workspaceAccessProperties?: WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderWorkspaceAccessProperties
 
     workspaceCreationProperties?: WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderWorkspaceCreationProperties
+
+    workspaceDirectoryDescription?: str
+
+    workspaceDirectoryName?: str
+
+    workspaceType?: str
+
+
+schema WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderActiveDirectoryConfig:
+    r"""
+    Configuration for Active Directory integration when workspace_type is set to POOLS. Defined below.
+
+    Attributes
+    ----------
+    domainName : str, default is Undefined, optional
+        Fully qualified domain name of the AWS Directory Service directory.
+    serviceAccountSecretArn : str, default is Undefined, optional
+        ARN of the Secrets Manager secret that contains the credentials for the service account. For more information, see Service Account Details.
+    serviceAccountSecretArnRef : WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderActiveDirectoryConfigServiceAccountSecretArnRef, default is Undefined, optional
+        service account secret arn ref
+    serviceAccountSecretArnSelector : WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderActiveDirectoryConfigServiceAccountSecretArnSelector, default is Undefined, optional
+        service account secret arn selector
+    """
+
+
+    domainName?: str
+
+    serviceAccountSecretArn?: str
+
+    serviceAccountSecretArnRef?: WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderActiveDirectoryConfigServiceAccountSecretArnRef
+
+    serviceAccountSecretArnSelector?: WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderActiveDirectoryConfigServiceAccountSecretArnSelector
+
+
+schema WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderActiveDirectoryConfigServiceAccountSecretArnRef:
+    r"""
+    Reference to a Secret in secretsmanager to populate serviceAccountSecretArn.
+
+    Attributes
+    ----------
+    name : str, default is Undefined, required
+        Name of the referenced object.
+    policy : WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderActiveDirectoryConfigServiceAccountSecretArnRefPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    name: str
+
+    policy?: WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderActiveDirectoryConfigServiceAccountSecretArnRefPolicy
+
+
+schema WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderActiveDirectoryConfigServiceAccountSecretArnRefPolicy:
+    r"""
+    Policies for referencing.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderActiveDirectoryConfigServiceAccountSecretArnSelector:
+    r"""
+    Selector for a Secret in secretsmanager to populate serviceAccountSecretArn.
+
+    Attributes
+    ----------
+    matchControllerRef : bool, default is Undefined, optional
+        MatchControllerRef ensures an object with the same controller reference
+        as the selecting object is selected.
+    matchLabels : {str:str}, default is Undefined, optional
+        MatchLabels ensures an object with matching labels is selected.
+    policy : WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderActiveDirectoryConfigServiceAccountSecretArnSelectorPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    matchControllerRef?: bool
+
+    matchLabels?: {str:str}
+
+    policy?: WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderActiveDirectoryConfigServiceAccountSecretArnSelectorPolicy
+
+
+schema WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderActiveDirectoryConfigServiceAccountSecretArnSelectorPolicy:
+    r"""
+    Policies for selection.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderCertificateBasedAuthProperties:
+    r"""
+    Configuration of certificate-based authentication (CBA) integration. Requires SAML authentication to be enabled. Defined below.
+
+    Attributes
+    ----------
+    certificateAuthorityArn : str, default is Undefined, optional
+        The Amazon Resource Name (ARN) of the certificate manager private certificate authority (ACM-PCA) that is used for certificate-based authentication.
+    status : str, default is Undefined, optional
+        Status of certificate-based authentication. Default DISABLED.
+    """
+
+
+    certificateAuthorityArn?: str
+
+    status?: str
 
 
 schema WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderDirectoryIDRef:
@@ -338,7 +492,7 @@ schema WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderIPGroupIdsSelectorPo
 
 schema WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderSamlProperties:
     r"""
-    –  Configuration of SAML authentication integration. Defined below.
+    Configuration of SAML authentication integration. Defined below.
 
     Attributes
     ----------
@@ -360,20 +514,20 @@ schema WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderSamlProperties:
 
 schema WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderSelfServicePermissions:
     r"""
-    service capabilities. Defined below.
+    Permissions to enable or disable self-service capabilities when workspace_type is set to PERSONAL.. Defined below.
 
     Attributes
     ----------
     changeComputeType : bool, default is Undefined, optional
-        –  Whether WorkSpaces directory users can change the compute type (bundle) for their workspace. Default false.
+        Whether WorkSpaces directory users can change the compute type (bundle) for their workspace. Default false.
     increaseVolumeSize : bool, default is Undefined, optional
-        –  Whether WorkSpaces directory users can increase the volume size of the drives on their workspace. Default false.
+        Whether WorkSpaces directory users can increase the volume size of the drives on their workspace. Default false.
     rebuildWorkspace : bool, default is Undefined, optional
-        –  Whether WorkSpaces directory users can rebuild the operating system of a workspace to its original state. Default false.
+        Whether WorkSpaces directory users can rebuild the operating system of a workspace to its original state. Default false.
     restartWorkspace : bool, default is Undefined, optional
-        –  Whether WorkSpaces directory users can restart their workspace. Default true.
+        Whether WorkSpaces directory users can restart their workspace. Default true.
     switchRunningMode : bool, default is Undefined, optional
-        –  Whether WorkSpaces directory users can switch the running mode of their workspace. Default false.
+        Whether WorkSpaces directory users can switch the running mode of their workspace. Default false.
     """
 
 
@@ -479,26 +633,26 @@ schema WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderSubnetIDSelectorPoli
 
 schema WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderWorkspaceAccessProperties:
     r"""
-    –  Specifies which devices and operating systems users can use to access their WorkSpaces. Defined below.
+    Specifies which devices and operating systems users can use to access their WorkSpaces. Defined below.
 
     Attributes
     ----------
     deviceTypeAndroid : str, default is Undefined, optional
-        –  Indicates whether users can use Android devices to access their WorkSpaces.
+        Indicates whether users can use Android devices to access their WorkSpaces.
     deviceTypeChromeos : str, default is Undefined, optional
-        –  Indicates whether users can use Chromebooks to access their WorkSpaces.
+        Indicates whether users can use Chromebooks to access their WorkSpaces.
     deviceTypeIos : str, default is Undefined, optional
-        –  Indicates whether users can use iOS devices to access their WorkSpaces.
+        Indicates whether users can use iOS devices to access their WorkSpaces.
     deviceTypeLinux : str, default is Undefined, optional
-        –  Indicates whether users can use Linux clients to access their WorkSpaces.
+        Indicates whether users can use Linux clients to access their WorkSpaces.
     deviceTypeOsx : str, default is Undefined, optional
-        –  Indicates whether users can use macOS clients to access their WorkSpaces.
+        Indicates whether users can use macOS clients to access their WorkSpaces.
     deviceTypeWeb : str, default is Undefined, optional
-        –  Indicates whether users can access their WorkSpaces through a web browser.
+        Indicates whether users can access their WorkSpaces through a web browser.
     deviceTypeWindows : str, default is Undefined, optional
-        –  Indicates whether users can use Windows clients to access their WorkSpaces.
+        Indicates whether users can use Windows clients to access their WorkSpaces.
     deviceTypeZeroclient : str, default is Undefined, optional
-        –  Indicates whether users can use zero client devices to access their WorkSpaces.
+        Indicates whether users can use zero client devices to access their WorkSpaces.
     """
 
 
@@ -521,24 +675,24 @@ schema WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderWorkspaceAccessPrope
 
 schema WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderWorkspaceCreationProperties:
     r"""
-    –  Default properties that are used for creating WorkSpaces. Defined below.
+    Default properties that are used for creating WorkSpaces. Defined below.
 
     Attributes
     ----------
     customSecurityGroupId : str, default is Undefined, optional
-        –  The identifier of your custom security group. Should relate to the same VPC, where workspaces reside in.
+        The identifier of your custom security group. Should relate to the same VPC, where workspaces reside in.
     customSecurityGroupIdRef : WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderWorkspaceCreationPropertiesCustomSecurityGroupIDRef, default is Undefined, optional
         custom security group Id ref
     customSecurityGroupIdSelector : WorkspacesAwsUpboundIoV1beta2DirectorySpecForProviderWorkspaceCreationPropertiesCustomSecurityGroupIDSelector, default is Undefined, optional
         custom security group Id selector
     defaultOu : str, default is Undefined, optional
-        –  The default organizational unit (OU) for your WorkSpace directories. Should conform "OU=<value>,DC=<value>,...,DC=<value>" pattern.
+        The default organizational unit (OU) for your WorkSpace directories. Should conform "OU=<value>,DC=<value>,...,DC=<value>" pattern.
     enableInternetAccess : bool, default is Undefined, optional
-        –  Indicates whether internet access is enabled for your WorkSpaces.
+        Indicates whether internet access is enabled for your WorkSpaces.
     enableMaintenanceMode : bool, default is Undefined, optional
-        –  Indicates whether maintenance mode is enabled for your WorkSpaces. For more information, see WorkSpace Maintenance..
+        Indicates whether maintenance mode is enabled for your WorkSpaces. Valid only if workspace_type is set to PERSONAL.
     userEnabledAsLocalAdministrator : bool, default is Undefined, optional
-        –  Indicates whether users are local administrators of their WorkSpaces.
+        Indicates whether users are local administrators of their WorkSpaces. Valid only if workspace_type is set to PERSONAL.
     """
 
 
@@ -661,6 +815,10 @@ schema WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProvider:
 
     Attributes
     ----------
+    activeDirectoryConfig : WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderActiveDirectoryConfig, default is Undefined, optional
+        active directory config
+    certificateBasedAuthProperties : WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderCertificateBasedAuthProperties, default is Undefined, optional
+        certificate based auth properties
     directoryId : str, default is Undefined, optional
         The directory identifier for registration in WorkSpaces service.
     directoryIdRef : WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderDirectoryIDRef, default is Undefined, optional
@@ -668,7 +826,7 @@ schema WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProvider:
     directoryIdSelector : WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderDirectoryIDSelector, default is Undefined, optional
         directory Id selector
     ipGroupIds : [str], default is Undefined, optional
-        –  The identifiers of the IP access control groups associated with the directory.
+        The identifiers of the IP access control groups associated with the directory.
     ipGroupIdsRefs : [WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderIPGroupIdsRefsItems0], default is Undefined, optional
         References to IPGroup in workspaces to populate ipGroupIds.
     ipGroupIdsSelector : WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderIPGroupIdsSelector, default is Undefined, optional
@@ -685,12 +843,24 @@ schema WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProvider:
         The identifiers of the subnets where the directory resides.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
+    userIdentityType : str, default is Undefined, optional
+        Specifies the user identity type for the WorkSpaces directory. Valid values are CUSTOMER_MANAGED, AWS_DIRECTORY_SERVICE, AWS_IAM_IDENTITY_CENTER.
     workspaceAccessProperties : WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderWorkspaceAccessProperties, default is Undefined, optional
         workspace access properties
     workspaceCreationProperties : WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderWorkspaceCreationProperties, default is Undefined, optional
         workspace creation properties
+    workspaceDirectoryDescription : str, default is Undefined, optional
+        The description of the WorkSpaces directory when workspace_type is set to POOLS.
+    workspaceDirectoryName : str, default is Undefined, optional
+        The name of the WorkSpaces directory when workspace_type is set to POOLS.
+    workspaceType : str, default is Undefined, optional
+        Specifies the type of WorkSpaces directory. Valid values are PERSONAL and POOLS. Default is PERSONAL.
     """
 
+
+    activeDirectoryConfig?: WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderActiveDirectoryConfig
+
+    certificateBasedAuthProperties?: WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderCertificateBasedAuthProperties
 
     directoryId?: str
 
@@ -716,9 +886,150 @@ schema WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProvider:
 
     tags?: {str:str}
 
+    userIdentityType?: str
+
     workspaceAccessProperties?: WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderWorkspaceAccessProperties
 
     workspaceCreationProperties?: WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderWorkspaceCreationProperties
+
+    workspaceDirectoryDescription?: str
+
+    workspaceDirectoryName?: str
+
+    workspaceType?: str
+
+
+schema WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderActiveDirectoryConfig:
+    r"""
+    Configuration for Active Directory integration when workspace_type is set to POOLS. Defined below.
+
+    Attributes
+    ----------
+    domainName : str, default is Undefined, optional
+        Fully qualified domain name of the AWS Directory Service directory.
+    serviceAccountSecretArn : str, default is Undefined, optional
+        ARN of the Secrets Manager secret that contains the credentials for the service account. For more information, see Service Account Details.
+    serviceAccountSecretArnRef : WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderActiveDirectoryConfigServiceAccountSecretArnRef, default is Undefined, optional
+        service account secret arn ref
+    serviceAccountSecretArnSelector : WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderActiveDirectoryConfigServiceAccountSecretArnSelector, default is Undefined, optional
+        service account secret arn selector
+    """
+
+
+    domainName?: str
+
+    serviceAccountSecretArn?: str
+
+    serviceAccountSecretArnRef?: WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderActiveDirectoryConfigServiceAccountSecretArnRef
+
+    serviceAccountSecretArnSelector?: WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderActiveDirectoryConfigServiceAccountSecretArnSelector
+
+
+schema WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderActiveDirectoryConfigServiceAccountSecretArnRef:
+    r"""
+    Reference to a Secret in secretsmanager to populate serviceAccountSecretArn.
+
+    Attributes
+    ----------
+    name : str, default is Undefined, required
+        Name of the referenced object.
+    policy : WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderActiveDirectoryConfigServiceAccountSecretArnRefPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    name: str
+
+    policy?: WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderActiveDirectoryConfigServiceAccountSecretArnRefPolicy
+
+
+schema WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderActiveDirectoryConfigServiceAccountSecretArnRefPolicy:
+    r"""
+    Policies for referencing.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderActiveDirectoryConfigServiceAccountSecretArnSelector:
+    r"""
+    Selector for a Secret in secretsmanager to populate serviceAccountSecretArn.
+
+    Attributes
+    ----------
+    matchControllerRef : bool, default is Undefined, optional
+        MatchControllerRef ensures an object with the same controller reference
+        as the selecting object is selected.
+    matchLabels : {str:str}, default is Undefined, optional
+        MatchLabels ensures an object with matching labels is selected.
+    policy : WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderActiveDirectoryConfigServiceAccountSecretArnSelectorPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    matchControllerRef?: bool
+
+    matchLabels?: {str:str}
+
+    policy?: WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderActiveDirectoryConfigServiceAccountSecretArnSelectorPolicy
+
+
+schema WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderActiveDirectoryConfigServiceAccountSecretArnSelectorPolicy:
+    r"""
+    Policies for selection.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderCertificateBasedAuthProperties:
+    r"""
+    Configuration of certificate-based authentication (CBA) integration. Requires SAML authentication to be enabled. Defined below.
+
+    Attributes
+    ----------
+    certificateAuthorityArn : str, default is Undefined, optional
+        The Amazon Resource Name (ARN) of the certificate manager private certificate authority (ACM-PCA) that is used for certificate-based authentication.
+    status : str, default is Undefined, optional
+        Status of certificate-based authentication. Default DISABLED.
+    """
+
+
+    certificateAuthorityArn?: str
+
+    status?: str
 
 
 schema WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderDirectoryIDRef:
@@ -901,7 +1212,7 @@ schema WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderIPGroupIdsSelectorP
 
 schema WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderSamlProperties:
     r"""
-    –  Configuration of SAML authentication integration. Defined below.
+    Configuration of SAML authentication integration. Defined below.
 
     Attributes
     ----------
@@ -923,20 +1234,20 @@ schema WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderSamlProperties:
 
 schema WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderSelfServicePermissions:
     r"""
-    service capabilities. Defined below.
+    Permissions to enable or disable self-service capabilities when workspace_type is set to PERSONAL.. Defined below.
 
     Attributes
     ----------
     changeComputeType : bool, default is Undefined, optional
-        –  Whether WorkSpaces directory users can change the compute type (bundle) for their workspace. Default false.
+        Whether WorkSpaces directory users can change the compute type (bundle) for their workspace. Default false.
     increaseVolumeSize : bool, default is Undefined, optional
-        –  Whether WorkSpaces directory users can increase the volume size of the drives on their workspace. Default false.
+        Whether WorkSpaces directory users can increase the volume size of the drives on their workspace. Default false.
     rebuildWorkspace : bool, default is Undefined, optional
-        –  Whether WorkSpaces directory users can rebuild the operating system of a workspace to its original state. Default false.
+        Whether WorkSpaces directory users can rebuild the operating system of a workspace to its original state. Default false.
     restartWorkspace : bool, default is Undefined, optional
-        –  Whether WorkSpaces directory users can restart their workspace. Default true.
+        Whether WorkSpaces directory users can restart their workspace. Default true.
     switchRunningMode : bool, default is Undefined, optional
-        –  Whether WorkSpaces directory users can switch the running mode of their workspace. Default false.
+        Whether WorkSpaces directory users can switch the running mode of their workspace. Default false.
     """
 
 
@@ -1042,26 +1353,26 @@ schema WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderSubnetIDSelectorPol
 
 schema WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderWorkspaceAccessProperties:
     r"""
-    –  Specifies which devices and operating systems users can use to access their WorkSpaces. Defined below.
+    Specifies which devices and operating systems users can use to access their WorkSpaces. Defined below.
 
     Attributes
     ----------
     deviceTypeAndroid : str, default is Undefined, optional
-        –  Indicates whether users can use Android devices to access their WorkSpaces.
+        Indicates whether users can use Android devices to access their WorkSpaces.
     deviceTypeChromeos : str, default is Undefined, optional
-        –  Indicates whether users can use Chromebooks to access their WorkSpaces.
+        Indicates whether users can use Chromebooks to access their WorkSpaces.
     deviceTypeIos : str, default is Undefined, optional
-        –  Indicates whether users can use iOS devices to access their WorkSpaces.
+        Indicates whether users can use iOS devices to access their WorkSpaces.
     deviceTypeLinux : str, default is Undefined, optional
-        –  Indicates whether users can use Linux clients to access their WorkSpaces.
+        Indicates whether users can use Linux clients to access their WorkSpaces.
     deviceTypeOsx : str, default is Undefined, optional
-        –  Indicates whether users can use macOS clients to access their WorkSpaces.
+        Indicates whether users can use macOS clients to access their WorkSpaces.
     deviceTypeWeb : str, default is Undefined, optional
-        –  Indicates whether users can access their WorkSpaces through a web browser.
+        Indicates whether users can access their WorkSpaces through a web browser.
     deviceTypeWindows : str, default is Undefined, optional
-        –  Indicates whether users can use Windows clients to access their WorkSpaces.
+        Indicates whether users can use Windows clients to access their WorkSpaces.
     deviceTypeZeroclient : str, default is Undefined, optional
-        –  Indicates whether users can use zero client devices to access their WorkSpaces.
+        Indicates whether users can use zero client devices to access their WorkSpaces.
     """
 
 
@@ -1084,24 +1395,24 @@ schema WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderWorkspaceAccessProp
 
 schema WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderWorkspaceCreationProperties:
     r"""
-    –  Default properties that are used for creating WorkSpaces. Defined below.
+    Default properties that are used for creating WorkSpaces. Defined below.
 
     Attributes
     ----------
     customSecurityGroupId : str, default is Undefined, optional
-        –  The identifier of your custom security group. Should relate to the same VPC, where workspaces reside in.
+        The identifier of your custom security group. Should relate to the same VPC, where workspaces reside in.
     customSecurityGroupIdRef : WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderWorkspaceCreationPropertiesCustomSecurityGroupIDRef, default is Undefined, optional
         custom security group Id ref
     customSecurityGroupIdSelector : WorkspacesAwsUpboundIoV1beta2DirectorySpecInitProviderWorkspaceCreationPropertiesCustomSecurityGroupIDSelector, default is Undefined, optional
         custom security group Id selector
     defaultOu : str, default is Undefined, optional
-        –  The default organizational unit (OU) for your WorkSpace directories. Should conform "OU=<value>,DC=<value>,...,DC=<value>" pattern.
+        The default organizational unit (OU) for your WorkSpace directories. Should conform "OU=<value>,DC=<value>,...,DC=<value>" pattern.
     enableInternetAccess : bool, default is Undefined, optional
-        –  Indicates whether internet access is enabled for your WorkSpaces.
+        Indicates whether internet access is enabled for your WorkSpaces.
     enableMaintenanceMode : bool, default is Undefined, optional
-        –  Indicates whether maintenance mode is enabled for your WorkSpaces. For more information, see WorkSpace Maintenance..
+        Indicates whether maintenance mode is enabled for your WorkSpaces. Valid only if workspace_type is set to PERSONAL.
     userEnabledAsLocalAdministrator : bool, default is Undefined, optional
-        –  Indicates whether users are local administrators of their WorkSpaces.
+        Indicates whether users are local administrators of their WorkSpaces. Valid only if workspace_type is set to PERSONAL.
     """
 
 
@@ -1253,112 +1564,12 @@ schema WorkspacesAwsUpboundIoV1beta2DirectorySpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema WorkspacesAwsUpboundIoV1beta2DirectorySpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : WorkspacesAwsUpboundIoV1beta2DirectorySpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : WorkspacesAwsUpboundIoV1beta2DirectorySpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: WorkspacesAwsUpboundIoV1beta2DirectorySpecPublishConnectionDetailsToConfigRef
-
-    metadata?: WorkspacesAwsUpboundIoV1beta2DirectorySpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema WorkspacesAwsUpboundIoV1beta2DirectorySpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : WorkspacesAwsUpboundIoV1beta2DirectorySpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: WorkspacesAwsUpboundIoV1beta2DirectorySpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema WorkspacesAwsUpboundIoV1beta2DirectorySpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema WorkspacesAwsUpboundIoV1beta2DirectorySpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema WorkspacesAwsUpboundIoV1beta2DirectorySpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1404,8 +1615,12 @@ schema WorkspacesAwsUpboundIoV1beta2DirectoryStatusAtProvider:
 
     Attributes
     ----------
+    activeDirectoryConfig : WorkspacesAwsUpboundIoV1beta2DirectoryStatusAtProviderActiveDirectoryConfig, default is Undefined, optional
+        active directory config
     alias : str, default is Undefined, optional
         The directory alias.
+    certificateBasedAuthProperties : WorkspacesAwsUpboundIoV1beta2DirectoryStatusAtProviderCertificateBasedAuthProperties, default is Undefined, optional
+        certificate based auth properties
     customerUserName : str, default is Undefined, optional
         The user name for the service account.
     directoryId : str, default is Undefined, optional
@@ -1421,7 +1636,10 @@ schema WorkspacesAwsUpboundIoV1beta2DirectoryStatusAtProvider:
     id : str, default is Undefined, optional
         The WorkSpaces directory identifier.
     ipGroupIds : [str], default is Undefined, optional
-        –  The identifiers of the IP access control groups associated with the directory.
+        The identifiers of the IP access control groups associated with the directory.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     registrationCode : str, default is Undefined, optional
         The registration code for the directory. This is the code that users enter in their Amazon WorkSpaces client application to connect to the directory.
     samlProperties : WorkspacesAwsUpboundIoV1beta2DirectoryStatusAtProviderSamlProperties, default is Undefined, optional
@@ -1434,16 +1652,28 @@ schema WorkspacesAwsUpboundIoV1beta2DirectoryStatusAtProvider:
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
         A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
+    userIdentityType : str, default is Undefined, optional
+        Specifies the user identity type for the WorkSpaces directory. Valid values are CUSTOMER_MANAGED, AWS_DIRECTORY_SERVICE, AWS_IAM_IDENTITY_CENTER.
     workspaceAccessProperties : WorkspacesAwsUpboundIoV1beta2DirectoryStatusAtProviderWorkspaceAccessProperties, default is Undefined, optional
         workspace access properties
     workspaceCreationProperties : WorkspacesAwsUpboundIoV1beta2DirectoryStatusAtProviderWorkspaceCreationProperties, default is Undefined, optional
         workspace creation properties
+    workspaceDirectoryDescription : str, default is Undefined, optional
+        The description of the WorkSpaces directory when workspace_type is set to POOLS.
+    workspaceDirectoryName : str, default is Undefined, optional
+        The name of the WorkSpaces directory when workspace_type is set to POOLS.
     workspaceSecurityGroupId : str, default is Undefined, optional
         The identifier of the security group that is assigned to new WorkSpaces.
+    workspaceType : str, default is Undefined, optional
+        Specifies the type of WorkSpaces directory. Valid values are PERSONAL and POOLS. Default is PERSONAL.
     """
 
 
+    activeDirectoryConfig?: WorkspacesAwsUpboundIoV1beta2DirectoryStatusAtProviderActiveDirectoryConfig
+
     alias?: str
+
+    certificateBasedAuthProperties?: WorkspacesAwsUpboundIoV1beta2DirectoryStatusAtProviderCertificateBasedAuthProperties
 
     customerUserName?: str
 
@@ -1461,6 +1691,8 @@ schema WorkspacesAwsUpboundIoV1beta2DirectoryStatusAtProvider:
 
     ipGroupIds?: [str]
 
+    region?: str
+
     registrationCode?: str
 
     samlProperties?: WorkspacesAwsUpboundIoV1beta2DirectoryStatusAtProviderSamlProperties
@@ -1473,16 +1705,60 @@ schema WorkspacesAwsUpboundIoV1beta2DirectoryStatusAtProvider:
 
     tagsAll?: {str:str}
 
+    userIdentityType?: str
+
     workspaceAccessProperties?: WorkspacesAwsUpboundIoV1beta2DirectoryStatusAtProviderWorkspaceAccessProperties
 
     workspaceCreationProperties?: WorkspacesAwsUpboundIoV1beta2DirectoryStatusAtProviderWorkspaceCreationProperties
 
+    workspaceDirectoryDescription?: str
+
+    workspaceDirectoryName?: str
+
     workspaceSecurityGroupId?: str
+
+    workspaceType?: str
+
+
+schema WorkspacesAwsUpboundIoV1beta2DirectoryStatusAtProviderActiveDirectoryConfig:
+    r"""
+    Configuration for Active Directory integration when workspace_type is set to POOLS. Defined below.
+
+    Attributes
+    ----------
+    domainName : str, default is Undefined, optional
+        Fully qualified domain name of the AWS Directory Service directory.
+    serviceAccountSecretArn : str, default is Undefined, optional
+        ARN of the Secrets Manager secret that contains the credentials for the service account. For more information, see Service Account Details.
+    """
+
+
+    domainName?: str
+
+    serviceAccountSecretArn?: str
+
+
+schema WorkspacesAwsUpboundIoV1beta2DirectoryStatusAtProviderCertificateBasedAuthProperties:
+    r"""
+    Configuration of certificate-based authentication (CBA) integration. Requires SAML authentication to be enabled. Defined below.
+
+    Attributes
+    ----------
+    certificateAuthorityArn : str, default is Undefined, optional
+        The Amazon Resource Name (ARN) of the certificate manager private certificate authority (ACM-PCA) that is used for certificate-based authentication.
+    status : str, default is Undefined, optional
+        Status of certificate-based authentication. Default DISABLED.
+    """
+
+
+    certificateAuthorityArn?: str
+
+    status?: str
 
 
 schema WorkspacesAwsUpboundIoV1beta2DirectoryStatusAtProviderSamlProperties:
     r"""
-    –  Configuration of SAML authentication integration. Defined below.
+    Configuration of SAML authentication integration. Defined below.
 
     Attributes
     ----------
@@ -1504,20 +1780,20 @@ schema WorkspacesAwsUpboundIoV1beta2DirectoryStatusAtProviderSamlProperties:
 
 schema WorkspacesAwsUpboundIoV1beta2DirectoryStatusAtProviderSelfServicePermissions:
     r"""
-    service capabilities. Defined below.
+    Permissions to enable or disable self-service capabilities when workspace_type is set to PERSONAL.. Defined below.
 
     Attributes
     ----------
     changeComputeType : bool, default is Undefined, optional
-        –  Whether WorkSpaces directory users can change the compute type (bundle) for their workspace. Default false.
+        Whether WorkSpaces directory users can change the compute type (bundle) for their workspace. Default false.
     increaseVolumeSize : bool, default is Undefined, optional
-        –  Whether WorkSpaces directory users can increase the volume size of the drives on their workspace. Default false.
+        Whether WorkSpaces directory users can increase the volume size of the drives on their workspace. Default false.
     rebuildWorkspace : bool, default is Undefined, optional
-        –  Whether WorkSpaces directory users can rebuild the operating system of a workspace to its original state. Default false.
+        Whether WorkSpaces directory users can rebuild the operating system of a workspace to its original state. Default false.
     restartWorkspace : bool, default is Undefined, optional
-        –  Whether WorkSpaces directory users can restart their workspace. Default true.
+        Whether WorkSpaces directory users can restart their workspace. Default true.
     switchRunningMode : bool, default is Undefined, optional
-        –  Whether WorkSpaces directory users can switch the running mode of their workspace. Default false.
+        Whether WorkSpaces directory users can switch the running mode of their workspace. Default false.
     """
 
 
@@ -1534,26 +1810,26 @@ schema WorkspacesAwsUpboundIoV1beta2DirectoryStatusAtProviderSelfServicePermissi
 
 schema WorkspacesAwsUpboundIoV1beta2DirectoryStatusAtProviderWorkspaceAccessProperties:
     r"""
-    –  Specifies which devices and operating systems users can use to access their WorkSpaces. Defined below.
+    Specifies which devices and operating systems users can use to access their WorkSpaces. Defined below.
 
     Attributes
     ----------
     deviceTypeAndroid : str, default is Undefined, optional
-        –  Indicates whether users can use Android devices to access their WorkSpaces.
+        Indicates whether users can use Android devices to access their WorkSpaces.
     deviceTypeChromeos : str, default is Undefined, optional
-        –  Indicates whether users can use Chromebooks to access their WorkSpaces.
+        Indicates whether users can use Chromebooks to access their WorkSpaces.
     deviceTypeIos : str, default is Undefined, optional
-        –  Indicates whether users can use iOS devices to access their WorkSpaces.
+        Indicates whether users can use iOS devices to access their WorkSpaces.
     deviceTypeLinux : str, default is Undefined, optional
-        –  Indicates whether users can use Linux clients to access their WorkSpaces.
+        Indicates whether users can use Linux clients to access their WorkSpaces.
     deviceTypeOsx : str, default is Undefined, optional
-        –  Indicates whether users can use macOS clients to access their WorkSpaces.
+        Indicates whether users can use macOS clients to access their WorkSpaces.
     deviceTypeWeb : str, default is Undefined, optional
-        –  Indicates whether users can access their WorkSpaces through a web browser.
+        Indicates whether users can access their WorkSpaces through a web browser.
     deviceTypeWindows : str, default is Undefined, optional
-        –  Indicates whether users can use Windows clients to access their WorkSpaces.
+        Indicates whether users can use Windows clients to access their WorkSpaces.
     deviceTypeZeroclient : str, default is Undefined, optional
-        –  Indicates whether users can use zero client devices to access their WorkSpaces.
+        Indicates whether users can use zero client devices to access their WorkSpaces.
     """
 
 
@@ -1576,20 +1852,20 @@ schema WorkspacesAwsUpboundIoV1beta2DirectoryStatusAtProviderWorkspaceAccessProp
 
 schema WorkspacesAwsUpboundIoV1beta2DirectoryStatusAtProviderWorkspaceCreationProperties:
     r"""
-    –  Default properties that are used for creating WorkSpaces. Defined below.
+    Default properties that are used for creating WorkSpaces. Defined below.
 
     Attributes
     ----------
     customSecurityGroupId : str, default is Undefined, optional
-        –  The identifier of your custom security group. Should relate to the same VPC, where workspaces reside in.
+        The identifier of your custom security group. Should relate to the same VPC, where workspaces reside in.
     defaultOu : str, default is Undefined, optional
-        –  The default organizational unit (OU) for your WorkSpace directories. Should conform "OU=<value>,DC=<value>,...,DC=<value>" pattern.
+        The default organizational unit (OU) for your WorkSpace directories. Should conform "OU=<value>,DC=<value>,...,DC=<value>" pattern.
     enableInternetAccess : bool, default is Undefined, optional
-        –  Indicates whether internet access is enabled for your WorkSpaces.
+        Indicates whether internet access is enabled for your WorkSpaces.
     enableMaintenanceMode : bool, default is Undefined, optional
-        –  Indicates whether maintenance mode is enabled for your WorkSpaces. For more information, see WorkSpace Maintenance..
+        Indicates whether maintenance mode is enabled for your WorkSpaces. Valid only if workspace_type is set to PERSONAL.
     userEnabledAsLocalAdministrator : bool, default is Undefined, optional
-        –  Indicates whether users are local administrators of their WorkSpaces.
+        Indicates whether users are local administrators of their WorkSpaces. Valid only if workspace_type is set to PERSONAL.
     """
 
 

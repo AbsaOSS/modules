@@ -66,8 +66,6 @@ schema GlobalacceleratorAwsUpboundIoV1beta2AcceleratorSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : GlobalacceleratorAwsUpboundIoV1beta2AcceleratorSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : GlobalacceleratorAwsUpboundIoV1beta2AcceleratorSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : GlobalacceleratorAwsUpboundIoV1beta2AcceleratorSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema GlobalacceleratorAwsUpboundIoV1beta2AcceleratorSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: GlobalacceleratorAwsUpboundIoV1beta2AcceleratorSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: GlobalacceleratorAwsUpboundIoV1beta2AcceleratorSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: GlobalacceleratorAwsUpboundIoV1beta2AcceleratorSpecWriteConnectionSecretToRef
 
@@ -104,8 +100,6 @@ schema GlobalacceleratorAwsUpboundIoV1beta2AcceleratorSpecForProvider:
         The IP addresses to use for BYOIP accelerators. If not specified, the service assigns IP addresses. Valid values: 1 or 2 IPv4 addresses.
     name : str, default is Undefined, optional
         The name of the accelerator.
-    region : str, default is Undefined, required
-        Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     """
@@ -120,8 +114,6 @@ schema GlobalacceleratorAwsUpboundIoV1beta2AcceleratorSpecForProvider:
     ipAddresses?: [str]
 
     name?: str
-
-    region: str
 
     tags?: {str:str}
 
@@ -257,112 +249,12 @@ schema GlobalacceleratorAwsUpboundIoV1beta2AcceleratorSpecProviderConfigRefPolic
     resolve?: "Always" | "IfNotPresent"
 
 
-schema GlobalacceleratorAwsUpboundIoV1beta2AcceleratorSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : GlobalacceleratorAwsUpboundIoV1beta2AcceleratorSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : GlobalacceleratorAwsUpboundIoV1beta2AcceleratorSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: GlobalacceleratorAwsUpboundIoV1beta2AcceleratorSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: GlobalacceleratorAwsUpboundIoV1beta2AcceleratorSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema GlobalacceleratorAwsUpboundIoV1beta2AcceleratorSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : GlobalacceleratorAwsUpboundIoV1beta2AcceleratorSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: GlobalacceleratorAwsUpboundIoV1beta2AcceleratorSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema GlobalacceleratorAwsUpboundIoV1beta2AcceleratorSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema GlobalacceleratorAwsUpboundIoV1beta2AcceleratorSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema GlobalacceleratorAwsUpboundIoV1beta2AcceleratorSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -408,6 +300,8 @@ schema GlobalacceleratorAwsUpboundIoV1beta2AcceleratorStatusAtProvider:
 
     Attributes
     ----------
+    arn : str, default is Undefined, optional
+        The Amazon Resource Name (ARN) of the accelerator.
     attributes : GlobalacceleratorAwsUpboundIoV1beta2AcceleratorStatusAtProviderAttributes, default is Undefined, optional
         attributes
     dnsName : str, default is Undefined, optional
@@ -436,6 +330,8 @@ schema GlobalacceleratorAwsUpboundIoV1beta2AcceleratorStatusAtProvider:
         A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     """
 
+
+    arn?: str
 
     attributes?: GlobalacceleratorAwsUpboundIoV1beta2AcceleratorStatusAtProviderAttributes
 

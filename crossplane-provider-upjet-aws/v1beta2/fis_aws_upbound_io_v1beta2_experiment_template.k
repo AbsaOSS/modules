@@ -66,8 +66,6 @@ schema FisAwsUpboundIoV1beta2ExperimentTemplateSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : FisAwsUpboundIoV1beta2ExperimentTemplateSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : FisAwsUpboundIoV1beta2ExperimentTemplateSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : FisAwsUpboundIoV1beta2ExperimentTemplateSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema FisAwsUpboundIoV1beta2ExperimentTemplateSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecWriteConnectionSecretToRef
 
@@ -100,9 +96,12 @@ schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProvider:
         Description for the experiment template.
     experimentOptions : FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentOptions, default is Undefined, optional
         experiment options
+    experimentReportConfiguration : FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfiguration, default is Undefined, optional
+        experiment report configuration
     logConfiguration : FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderLogConfiguration, default is Undefined, optional
         log configuration
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     roleArn : str, default is Undefined, optional
         ARN of an IAM role that grants the AWS FIS service permission to perform service actions on your behalf.
@@ -124,6 +123,8 @@ schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProvider:
     description?: str
 
     experimentOptions?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentOptions
+
+    experimentReportConfiguration?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfiguration
 
     logConfiguration?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderLogConfiguration
 
@@ -228,6 +229,286 @@ schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentOptions:
     accountTargeting?: str
 
     emptyTargetResolutionMode?: str
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfiguration:
+    r"""
+    The configuration for experiment reporting. See below.
+
+    Attributes
+    ----------
+    dataSources : FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationDataSources, default is Undefined, optional
+        data sources
+    outputs : FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationOutputs, default is Undefined, optional
+        outputs
+    postExperimentDuration : str, default is Undefined, optional
+        The duration of the post-experiment period. Defaults to PT20M.
+    preExperimentDuration : str, default is Undefined, optional
+        The duration of the pre-experiment period. Defaults to PT20M.
+    """
+
+
+    dataSources?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationDataSources
+
+    outputs?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationOutputs
+
+    postExperimentDuration?: str
+
+    preExperimentDuration?: str
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationDataSources:
+    r"""
+    The data sources for the experiment report. See below.
+
+    Attributes
+    ----------
+    cloudwatchDashboard : [FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0], default is Undefined, optional
+        The data sources for the experiment report. See below.
+    """
+
+
+    cloudwatchDashboard?: [FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0]
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0:
+    r"""
+    fis aws upbound io v1beta2 experiment template spec for provider experiment report configuration data sources cloudwatch dashboard items0
+
+    Attributes
+    ----------
+    dashboardArn : str, default is Undefined, optional
+        The ARN of the CloudWatch dashboard.
+    dashboardArnRef : FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0DashboardArnRef, default is Undefined, optional
+        dashboard arn ref
+    dashboardArnSelector : FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0DashboardArnSelector, default is Undefined, optional
+        dashboard arn selector
+    """
+
+
+    dashboardArn?: str
+
+    dashboardArnRef?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0DashboardArnRef
+
+    dashboardArnSelector?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0DashboardArnSelector
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0DashboardArnRef:
+    r"""
+    Reference to a Dashboard in cloudwatch to populate dashboardArn.
+
+    Attributes
+    ----------
+    name : str, default is Undefined, required
+        Name of the referenced object.
+    policy : FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0DashboardArnRefPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    name: str
+
+    policy?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0DashboardArnRefPolicy
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0DashboardArnRefPolicy:
+    r"""
+    Policies for referencing.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0DashboardArnSelector:
+    r"""
+    Selector for a Dashboard in cloudwatch to populate dashboardArn.
+
+    Attributes
+    ----------
+    matchControllerRef : bool, default is Undefined, optional
+        MatchControllerRef ensures an object with the same controller reference
+        as the selecting object is selected.
+    matchLabels : {str:str}, default is Undefined, optional
+        MatchLabels ensures an object with matching labels is selected.
+    policy : FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0DashboardArnSelectorPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    matchControllerRef?: bool
+
+    matchLabels?: {str:str}
+
+    policy?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0DashboardArnSelectorPolicy
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0DashboardArnSelectorPolicy:
+    r"""
+    Policies for selection.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationOutputs:
+    r"""
+    The outputs for the experiment report. See below.
+
+    Attributes
+    ----------
+    s3Configuration : FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationOutputsS3Configuration, default is Undefined, optional
+        s3 configuration
+    """
+
+
+    s3Configuration?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationOutputsS3Configuration
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationOutputsS3Configuration:
+    r"""
+    The data sources for the experiment report. See below.
+
+    Attributes
+    ----------
+    bucketName : str, default is Undefined, optional
+        The name of the destination bucket.
+    bucketNameRef : FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationOutputsS3ConfigurationBucketNameRef, default is Undefined, optional
+        bucket name ref
+    bucketNameSelector : FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationOutputsS3ConfigurationBucketNameSelector, default is Undefined, optional
+        bucket name selector
+    prefix : str, default is Undefined, optional
+        The bucket prefix.
+    """
+
+
+    bucketName?: str
+
+    bucketNameRef?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationOutputsS3ConfigurationBucketNameRef
+
+    bucketNameSelector?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationOutputsS3ConfigurationBucketNameSelector
+
+    prefix?: str
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationOutputsS3ConfigurationBucketNameRef:
+    r"""
+    Reference to a Bucket in s3 to populate bucketName.
+
+    Attributes
+    ----------
+    name : str, default is Undefined, required
+        Name of the referenced object.
+    policy : FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationOutputsS3ConfigurationBucketNameRefPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    name: str
+
+    policy?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationOutputsS3ConfigurationBucketNameRefPolicy
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationOutputsS3ConfigurationBucketNameRefPolicy:
+    r"""
+    Policies for referencing.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationOutputsS3ConfigurationBucketNameSelector:
+    r"""
+    Selector for a Bucket in s3 to populate bucketName.
+
+    Attributes
+    ----------
+    matchControllerRef : bool, default is Undefined, optional
+        MatchControllerRef ensures an object with the same controller reference
+        as the selecting object is selected.
+    matchLabels : {str:str}, default is Undefined, optional
+        MatchLabels ensures an object with matching labels is selected.
+    policy : FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationOutputsS3ConfigurationBucketNameSelectorPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    matchControllerRef?: bool
+
+    matchLabels?: {str:str}
+
+    policy?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationOutputsS3ConfigurationBucketNameSelectorPolicy
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderExperimentReportConfigurationOutputsS3ConfigurationBucketNameSelectorPolicy:
+    r"""
+    Policies for selection.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
 
 
 schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecForProviderLogConfiguration:
@@ -486,6 +767,8 @@ schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProvider:
         Description for the experiment template.
     experimentOptions : FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentOptions, default is Undefined, optional
         experiment options
+    experimentReportConfiguration : FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfiguration, default is Undefined, optional
+        experiment report configuration
     logConfiguration : FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderLogConfiguration, default is Undefined, optional
         log configuration
     roleArn : str, default is Undefined, optional
@@ -508,6 +791,8 @@ schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProvider:
     description?: str
 
     experimentOptions?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentOptions
+
+    experimentReportConfiguration?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfiguration
 
     logConfiguration?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderLogConfiguration
 
@@ -610,6 +895,286 @@ schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentOptions
     accountTargeting?: str
 
     emptyTargetResolutionMode?: str
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfiguration:
+    r"""
+    The configuration for experiment reporting. See below.
+
+    Attributes
+    ----------
+    dataSources : FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationDataSources, default is Undefined, optional
+        data sources
+    outputs : FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationOutputs, default is Undefined, optional
+        outputs
+    postExperimentDuration : str, default is Undefined, optional
+        The duration of the post-experiment period. Defaults to PT20M.
+    preExperimentDuration : str, default is Undefined, optional
+        The duration of the pre-experiment period. Defaults to PT20M.
+    """
+
+
+    dataSources?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationDataSources
+
+    outputs?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationOutputs
+
+    postExperimentDuration?: str
+
+    preExperimentDuration?: str
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationDataSources:
+    r"""
+    The data sources for the experiment report. See below.
+
+    Attributes
+    ----------
+    cloudwatchDashboard : [FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0], default is Undefined, optional
+        The data sources for the experiment report. See below.
+    """
+
+
+    cloudwatchDashboard?: [FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0]
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0:
+    r"""
+    fis aws upbound io v1beta2 experiment template spec init provider experiment report configuration data sources cloudwatch dashboard items0
+
+    Attributes
+    ----------
+    dashboardArn : str, default is Undefined, optional
+        The ARN of the CloudWatch dashboard.
+    dashboardArnRef : FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0DashboardArnRef, default is Undefined, optional
+        dashboard arn ref
+    dashboardArnSelector : FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0DashboardArnSelector, default is Undefined, optional
+        dashboard arn selector
+    """
+
+
+    dashboardArn?: str
+
+    dashboardArnRef?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0DashboardArnRef
+
+    dashboardArnSelector?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0DashboardArnSelector
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0DashboardArnRef:
+    r"""
+    Reference to a Dashboard in cloudwatch to populate dashboardArn.
+
+    Attributes
+    ----------
+    name : str, default is Undefined, required
+        Name of the referenced object.
+    policy : FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0DashboardArnRefPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    name: str
+
+    policy?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0DashboardArnRefPolicy
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0DashboardArnRefPolicy:
+    r"""
+    Policies for referencing.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0DashboardArnSelector:
+    r"""
+    Selector for a Dashboard in cloudwatch to populate dashboardArn.
+
+    Attributes
+    ----------
+    matchControllerRef : bool, default is Undefined, optional
+        MatchControllerRef ensures an object with the same controller reference
+        as the selecting object is selected.
+    matchLabels : {str:str}, default is Undefined, optional
+        MatchLabels ensures an object with matching labels is selected.
+    policy : FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0DashboardArnSelectorPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    matchControllerRef?: bool
+
+    matchLabels?: {str:str}
+
+    policy?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0DashboardArnSelectorPolicy
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0DashboardArnSelectorPolicy:
+    r"""
+    Policies for selection.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationOutputs:
+    r"""
+    The outputs for the experiment report. See below.
+
+    Attributes
+    ----------
+    s3Configuration : FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationOutputsS3Configuration, default is Undefined, optional
+        s3 configuration
+    """
+
+
+    s3Configuration?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationOutputsS3Configuration
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationOutputsS3Configuration:
+    r"""
+    The data sources for the experiment report. See below.
+
+    Attributes
+    ----------
+    bucketName : str, default is Undefined, optional
+        The name of the destination bucket.
+    bucketNameRef : FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationOutputsS3ConfigurationBucketNameRef, default is Undefined, optional
+        bucket name ref
+    bucketNameSelector : FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationOutputsS3ConfigurationBucketNameSelector, default is Undefined, optional
+        bucket name selector
+    prefix : str, default is Undefined, optional
+        The bucket prefix.
+    """
+
+
+    bucketName?: str
+
+    bucketNameRef?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationOutputsS3ConfigurationBucketNameRef
+
+    bucketNameSelector?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationOutputsS3ConfigurationBucketNameSelector
+
+    prefix?: str
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationOutputsS3ConfigurationBucketNameRef:
+    r"""
+    Reference to a Bucket in s3 to populate bucketName.
+
+    Attributes
+    ----------
+    name : str, default is Undefined, required
+        Name of the referenced object.
+    policy : FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationOutputsS3ConfigurationBucketNameRefPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    name: str
+
+    policy?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationOutputsS3ConfigurationBucketNameRefPolicy
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationOutputsS3ConfigurationBucketNameRefPolicy:
+    r"""
+    Policies for referencing.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationOutputsS3ConfigurationBucketNameSelector:
+    r"""
+    Selector for a Bucket in s3 to populate bucketName.
+
+    Attributes
+    ----------
+    matchControllerRef : bool, default is Undefined, optional
+        MatchControllerRef ensures an object with the same controller reference
+        as the selecting object is selected.
+    matchLabels : {str:str}, default is Undefined, optional
+        MatchLabels ensures an object with matching labels is selected.
+    policy : FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationOutputsS3ConfigurationBucketNameSelectorPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    matchControllerRef?: bool
+
+    matchLabels?: {str:str}
+
+    policy?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationOutputsS3ConfigurationBucketNameSelectorPolicy
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderExperimentReportConfigurationOutputsS3ConfigurationBucketNameSelectorPolicy:
+    r"""
+    Policies for selection.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
 
 
 schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecInitProviderLogConfiguration:
@@ -891,112 +1456,12 @@ schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : FisAwsUpboundIoV1beta2ExperimentTemplateSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : FisAwsUpboundIoV1beta2ExperimentTemplateSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : FisAwsUpboundIoV1beta2ExperimentTemplateSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: FisAwsUpboundIoV1beta2ExperimentTemplateSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema FisAwsUpboundIoV1beta2ExperimentTemplateSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1048,10 +1513,15 @@ schema FisAwsUpboundIoV1beta2ExperimentTemplateStatusAtProvider:
         Description for the experiment template.
     experimentOptions : FisAwsUpboundIoV1beta2ExperimentTemplateStatusAtProviderExperimentOptions, default is Undefined, optional
         experiment options
+    experimentReportConfiguration : FisAwsUpboundIoV1beta2ExperimentTemplateStatusAtProviderExperimentReportConfiguration, default is Undefined, optional
+        experiment report configuration
     id : str, default is Undefined, optional
         Experiment Template ID.
     logConfiguration : FisAwsUpboundIoV1beta2ExperimentTemplateStatusAtProviderLogConfiguration, default is Undefined, optional
         log configuration
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     roleArn : str, default is Undefined, optional
         ARN of an IAM role that grants the AWS FIS service permission to perform service actions on your behalf.
     stopCondition : [FisAwsUpboundIoV1beta2ExperimentTemplateStatusAtProviderStopConditionItems0], default is Undefined, optional
@@ -1071,9 +1541,13 @@ schema FisAwsUpboundIoV1beta2ExperimentTemplateStatusAtProvider:
 
     experimentOptions?: FisAwsUpboundIoV1beta2ExperimentTemplateStatusAtProviderExperimentOptions
 
+    experimentReportConfiguration?: FisAwsUpboundIoV1beta2ExperimentTemplateStatusAtProviderExperimentReportConfiguration
+
     id?: str
 
     logConfiguration?: FisAwsUpboundIoV1beta2ExperimentTemplateStatusAtProviderLogConfiguration
+
+    region?: str
 
     roleArn?: str
 
@@ -1172,6 +1646,92 @@ schema FisAwsUpboundIoV1beta2ExperimentTemplateStatusAtProviderExperimentOptions
     accountTargeting?: str
 
     emptyTargetResolutionMode?: str
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateStatusAtProviderExperimentReportConfiguration:
+    r"""
+    The configuration for experiment reporting. See below.
+
+    Attributes
+    ----------
+    dataSources : FisAwsUpboundIoV1beta2ExperimentTemplateStatusAtProviderExperimentReportConfigurationDataSources, default is Undefined, optional
+        data sources
+    outputs : FisAwsUpboundIoV1beta2ExperimentTemplateStatusAtProviderExperimentReportConfigurationOutputs, default is Undefined, optional
+        outputs
+    postExperimentDuration : str, default is Undefined, optional
+        The duration of the post-experiment period. Defaults to PT20M.
+    preExperimentDuration : str, default is Undefined, optional
+        The duration of the pre-experiment period. Defaults to PT20M.
+    """
+
+
+    dataSources?: FisAwsUpboundIoV1beta2ExperimentTemplateStatusAtProviderExperimentReportConfigurationDataSources
+
+    outputs?: FisAwsUpboundIoV1beta2ExperimentTemplateStatusAtProviderExperimentReportConfigurationOutputs
+
+    postExperimentDuration?: str
+
+    preExperimentDuration?: str
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateStatusAtProviderExperimentReportConfigurationDataSources:
+    r"""
+    The data sources for the experiment report. See below.
+
+    Attributes
+    ----------
+    cloudwatchDashboard : [FisAwsUpboundIoV1beta2ExperimentTemplateStatusAtProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0], default is Undefined, optional
+        The data sources for the experiment report. See below.
+    """
+
+
+    cloudwatchDashboard?: [FisAwsUpboundIoV1beta2ExperimentTemplateStatusAtProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0]
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateStatusAtProviderExperimentReportConfigurationDataSourcesCloudwatchDashboardItems0:
+    r"""
+    fis aws upbound io v1beta2 experiment template status at provider experiment report configuration data sources cloudwatch dashboard items0
+
+    Attributes
+    ----------
+    dashboardArn : str, default is Undefined, optional
+        The ARN of the CloudWatch dashboard.
+    """
+
+
+    dashboardArn?: str
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateStatusAtProviderExperimentReportConfigurationOutputs:
+    r"""
+    The outputs for the experiment report. See below.
+
+    Attributes
+    ----------
+    s3Configuration : FisAwsUpboundIoV1beta2ExperimentTemplateStatusAtProviderExperimentReportConfigurationOutputsS3Configuration, default is Undefined, optional
+        s3 configuration
+    """
+
+
+    s3Configuration?: FisAwsUpboundIoV1beta2ExperimentTemplateStatusAtProviderExperimentReportConfigurationOutputsS3Configuration
+
+
+schema FisAwsUpboundIoV1beta2ExperimentTemplateStatusAtProviderExperimentReportConfigurationOutputsS3Configuration:
+    r"""
+    The data sources for the experiment report. See below.
+
+    Attributes
+    ----------
+    bucketName : str, default is Undefined, optional
+        The name of the destination bucket.
+    prefix : str, default is Undefined, optional
+        The bucket prefix.
+    """
+
+
+    bucketName?: str
+
+    prefix?: str
 
 
 schema FisAwsUpboundIoV1beta2ExperimentTemplateStatusAtProviderLogConfiguration:

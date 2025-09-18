@@ -66,8 +66,6 @@ schema SsmAwsUpboundIoV1beta1PatchBaselineSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : SsmAwsUpboundIoV1beta1PatchBaselineSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : SsmAwsUpboundIoV1beta1PatchBaselineSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : SsmAwsUpboundIoV1beta1PatchBaselineSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema SsmAwsUpboundIoV1beta1PatchBaselineSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: SsmAwsUpboundIoV1beta1PatchBaselineSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: SsmAwsUpboundIoV1beta1PatchBaselineSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: SsmAwsUpboundIoV1beta1PatchBaselineSpecWriteConnectionSecretToRef
 
@@ -111,6 +107,7 @@ schema SsmAwsUpboundIoV1beta1PatchBaselineSpecForProvider:
     operatingSystem : str, default is Undefined, optional
         Operating system the patch baseline applies to. Valid values are ALMA_LINUX, AMAZON_LINUX, AMAZON_LINUX_2, AMAZON_LINUX_2022, AMAZON_LINUX_2023, CENTOS, DEBIAN, MACOS, ORACLE_LINUX, RASPBIAN, REDHAT_ENTERPRISE_LINUX, ROCKY_LINUX, SUSE, UBUNTU, and WINDOWS. The default value is WINDOWS.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     rejectedPatches : [str], default is Undefined, optional
         List of rejected patches.
@@ -437,112 +434,12 @@ schema SsmAwsUpboundIoV1beta1PatchBaselineSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema SsmAwsUpboundIoV1beta1PatchBaselineSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : SsmAwsUpboundIoV1beta1PatchBaselineSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : SsmAwsUpboundIoV1beta1PatchBaselineSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: SsmAwsUpboundIoV1beta1PatchBaselineSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: SsmAwsUpboundIoV1beta1PatchBaselineSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema SsmAwsUpboundIoV1beta1PatchBaselineSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : SsmAwsUpboundIoV1beta1PatchBaselineSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: SsmAwsUpboundIoV1beta1PatchBaselineSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema SsmAwsUpboundIoV1beta1PatchBaselineSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema SsmAwsUpboundIoV1beta1PatchBaselineSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema SsmAwsUpboundIoV1beta1PatchBaselineSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -610,6 +507,9 @@ schema SsmAwsUpboundIoV1beta1PatchBaselineStatusAtProvider:
         Name of the patch baseline.
     operatingSystem : str, default is Undefined, optional
         Operating system the patch baseline applies to. Valid values are ALMA_LINUX, AMAZON_LINUX, AMAZON_LINUX_2, AMAZON_LINUX_2022, AMAZON_LINUX_2023, CENTOS, DEBIAN, MACOS, ORACLE_LINUX, RASPBIAN, REDHAT_ENTERPRISE_LINUX, ROCKY_LINUX, SUSE, UBUNTU, and WINDOWS. The default value is WINDOWS.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     rejectedPatches : [str], default is Undefined, optional
         List of rejected patches.
     rejectedPatchesAction : str, default is Undefined, optional
@@ -644,6 +544,8 @@ schema SsmAwsUpboundIoV1beta1PatchBaselineStatusAtProvider:
     name?: str
 
     operatingSystem?: str
+
+    region?: str
 
     rejectedPatches?: [str]
 

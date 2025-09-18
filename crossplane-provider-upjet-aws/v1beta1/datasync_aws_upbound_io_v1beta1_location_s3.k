@@ -66,8 +66,6 @@ schema DatasyncAwsUpboundIoV1beta1LocationS3Spec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : DatasyncAwsUpboundIoV1beta1LocationS3SpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : DatasyncAwsUpboundIoV1beta1LocationS3SpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : DatasyncAwsUpboundIoV1beta1LocationS3SpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema DatasyncAwsUpboundIoV1beta1LocationS3Spec:
 
     providerConfigRef?: DatasyncAwsUpboundIoV1beta1LocationS3SpecProviderConfigRef
 
-    publishConnectionDetailsTo?: DatasyncAwsUpboundIoV1beta1LocationS3SpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: DatasyncAwsUpboundIoV1beta1LocationS3SpecWriteConnectionSecretToRef
 
 
@@ -95,11 +91,12 @@ schema DatasyncAwsUpboundIoV1beta1LocationS3SpecForProvider:
     Attributes
     ----------
     agentArns : [str], default is Undefined, optional
-        A list of DataSync Agent ARNs with which this location will be associated.
+        (Amazon S3 on Outposts only) Amazon Resource Name (ARN) of the DataSync agent on the Outpost.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     s3BucketArn : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of the S3 Bucket.
+        Amazon Resource Name (ARN) of the S3 bucket, or the Amazon S3 access point if the S3 bucket is located on an AWS Outposts resource.
     s3BucketArnRef : DatasyncAwsUpboundIoV1beta1LocationS3SpecForProviderS3BucketArnRef, default is Undefined, optional
         s3 bucket arn ref
     s3BucketArnSelector : DatasyncAwsUpboundIoV1beta1LocationS3SpecForProviderS3BucketArnSelector, default is Undefined, optional
@@ -107,7 +104,7 @@ schema DatasyncAwsUpboundIoV1beta1LocationS3SpecForProvider:
     s3Config : [DatasyncAwsUpboundIoV1beta1LocationS3SpecForProviderS3ConfigItems0], default is Undefined, optional
         Configuration block containing information for connecting to S3.
     s3StorageClass : str, default is Undefined, optional
-        The Amazon S3 storage class that you want to store your files in when this location is used as a task destination. Valid values
+        Amazon S3 storage class that you want to store your files in when this location is used as a task destination. Valid values
     subdirectory : str, default is Undefined, optional
         Prefix to perform actions as source or destination.
     tags : {str:str}, default is Undefined, optional
@@ -350,9 +347,9 @@ schema DatasyncAwsUpboundIoV1beta1LocationS3SpecInitProvider:
     Attributes
     ----------
     agentArns : [str], default is Undefined, optional
-        A list of DataSync Agent ARNs with which this location will be associated.
+        (Amazon S3 on Outposts only) Amazon Resource Name (ARN) of the DataSync agent on the Outpost.
     s3BucketArn : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of the S3 Bucket.
+        Amazon Resource Name (ARN) of the S3 bucket, or the Amazon S3 access point if the S3 bucket is located on an AWS Outposts resource.
     s3BucketArnRef : DatasyncAwsUpboundIoV1beta1LocationS3SpecInitProviderS3BucketArnRef, default is Undefined, optional
         s3 bucket arn ref
     s3BucketArnSelector : DatasyncAwsUpboundIoV1beta1LocationS3SpecInitProviderS3BucketArnSelector, default is Undefined, optional
@@ -360,7 +357,7 @@ schema DatasyncAwsUpboundIoV1beta1LocationS3SpecInitProvider:
     s3Config : [DatasyncAwsUpboundIoV1beta1LocationS3SpecInitProviderS3ConfigItems0], default is Undefined, optional
         Configuration block containing information for connecting to S3.
     s3StorageClass : str, default is Undefined, optional
-        The Amazon S3 storage class that you want to store your files in when this location is used as a task destination. Valid values
+        Amazon S3 storage class that you want to store your files in when this location is used as a task destination. Valid values
     subdirectory : str, default is Undefined, optional
         Prefix to perform actions as source or destination.
     tags : {str:str}, default is Undefined, optional
@@ -629,112 +626,12 @@ schema DatasyncAwsUpboundIoV1beta1LocationS3SpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema DatasyncAwsUpboundIoV1beta1LocationS3SpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : DatasyncAwsUpboundIoV1beta1LocationS3SpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : DatasyncAwsUpboundIoV1beta1LocationS3SpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: DatasyncAwsUpboundIoV1beta1LocationS3SpecPublishConnectionDetailsToConfigRef
-
-    metadata?: DatasyncAwsUpboundIoV1beta1LocationS3SpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema DatasyncAwsUpboundIoV1beta1LocationS3SpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : DatasyncAwsUpboundIoV1beta1LocationS3SpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: DatasyncAwsUpboundIoV1beta1LocationS3SpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema DatasyncAwsUpboundIoV1beta1LocationS3SpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema DatasyncAwsUpboundIoV1beta1LocationS3SpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema DatasyncAwsUpboundIoV1beta1LocationS3SpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -781,17 +678,20 @@ schema DatasyncAwsUpboundIoV1beta1LocationS3StatusAtProvider:
     Attributes
     ----------
     agentArns : [str], default is Undefined, optional
-        A list of DataSync Agent ARNs with which this location will be associated.
+        (Amazon S3 on Outposts only) Amazon Resource Name (ARN) of the DataSync agent on the Outpost.
     arn : str, default is Undefined, optional
         Amazon Resource Name (ARN) of the DataSync Location.
     id : str, default is Undefined, optional
         Amazon Resource Name (ARN) of the DataSync Location.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     s3BucketArn : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of the S3 Bucket.
+        Amazon Resource Name (ARN) of the S3 bucket, or the Amazon S3 access point if the S3 bucket is located on an AWS Outposts resource.
     s3Config : [DatasyncAwsUpboundIoV1beta1LocationS3StatusAtProviderS3ConfigItems0], default is Undefined, optional
         Configuration block containing information for connecting to S3.
     s3StorageClass : str, default is Undefined, optional
-        The Amazon S3 storage class that you want to store your files in when this location is used as a task destination. Valid values
+        Amazon S3 storage class that you want to store your files in when this location is used as a task destination. Valid values
     subdirectory : str, default is Undefined, optional
         Prefix to perform actions as source or destination.
     tags : {str:str}, default is Undefined, optional
@@ -808,6 +708,8 @@ schema DatasyncAwsUpboundIoV1beta1LocationS3StatusAtProvider:
     arn?: str
 
     id?: str
+
+    region?: str
 
     s3BucketArn?: str
 

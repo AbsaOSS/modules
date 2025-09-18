@@ -66,8 +66,6 @@ schema LakeformationAwsUpboundIoV1beta1ResourceSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : LakeformationAwsUpboundIoV1beta1ResourceSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : LakeformationAwsUpboundIoV1beta1ResourceSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : LakeformationAwsUpboundIoV1beta1ResourceSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema LakeformationAwsUpboundIoV1beta1ResourceSpec:
 
     providerConfigRef?: LakeformationAwsUpboundIoV1beta1ResourceSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: LakeformationAwsUpboundIoV1beta1ResourceSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: LakeformationAwsUpboundIoV1beta1ResourceSpecWriteConnectionSecretToRef
 
 
@@ -95,13 +91,14 @@ schema LakeformationAwsUpboundIoV1beta1ResourceSpecForProvider:
     Attributes
     ----------
     arn : str, default is Undefined, optional
-        –  Amazon Resource Name (ARN) of the resource.
+        Amazon Resource Name (ARN) of the resource.
     hybridAccessEnabled : bool, default is Undefined, optional
         Flag to enable AWS LakeFormation hybrid access permission mode.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     roleArn : str, default is Undefined, optional
-        –  Role that has read/write access to the resource.
+        Role that has read/write access to the resource.
     roleArnRef : LakeformationAwsUpboundIoV1beta1ResourceSpecForProviderRoleArnRef, default is Undefined, optional
         role arn ref
     roleArnSelector : LakeformationAwsUpboundIoV1beta1ResourceSpecForProviderRoleArnSelector, default is Undefined, optional
@@ -109,7 +106,7 @@ schema LakeformationAwsUpboundIoV1beta1ResourceSpecForProvider:
     useServiceLinkedRole : bool, default is Undefined, optional
         Designates an AWS Identity and Access Management (IAM) service-linked role by registering this role with the Data Catalog.
     withFederation : bool, default is Undefined, optional
-        with federation
+        Whether or not the resource is a federated resource. Set to true when registering AWS Glue connections for federated catalog functionality.
     """
 
 
@@ -235,11 +232,11 @@ schema LakeformationAwsUpboundIoV1beta1ResourceSpecInitProvider:
     Attributes
     ----------
     arn : str, default is Undefined, optional
-        –  Amazon Resource Name (ARN) of the resource.
+        Amazon Resource Name (ARN) of the resource.
     hybridAccessEnabled : bool, default is Undefined, optional
         Flag to enable AWS LakeFormation hybrid access permission mode.
     roleArn : str, default is Undefined, optional
-        –  Role that has read/write access to the resource.
+        Role that has read/write access to the resource.
     roleArnRef : LakeformationAwsUpboundIoV1beta1ResourceSpecInitProviderRoleArnRef, default is Undefined, optional
         role arn ref
     roleArnSelector : LakeformationAwsUpboundIoV1beta1ResourceSpecInitProviderRoleArnSelector, default is Undefined, optional
@@ -247,7 +244,7 @@ schema LakeformationAwsUpboundIoV1beta1ResourceSpecInitProvider:
     useServiceLinkedRole : bool, default is Undefined, optional
         Designates an AWS Identity and Access Management (IAM) service-linked role by registering this role with the Data Catalog.
     withFederation : bool, default is Undefined, optional
-        with federation
+        Whether or not the resource is a federated resource. Set to true when registering AWS Glue connections for federated catalog functionality.
     """
 
 
@@ -399,112 +396,12 @@ schema LakeformationAwsUpboundIoV1beta1ResourceSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema LakeformationAwsUpboundIoV1beta1ResourceSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : LakeformationAwsUpboundIoV1beta1ResourceSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : LakeformationAwsUpboundIoV1beta1ResourceSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: LakeformationAwsUpboundIoV1beta1ResourceSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: LakeformationAwsUpboundIoV1beta1ResourceSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema LakeformationAwsUpboundIoV1beta1ResourceSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : LakeformationAwsUpboundIoV1beta1ResourceSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: LakeformationAwsUpboundIoV1beta1ResourceSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema LakeformationAwsUpboundIoV1beta1ResourceSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema LakeformationAwsUpboundIoV1beta1ResourceSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema LakeformationAwsUpboundIoV1beta1ResourceSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -551,19 +448,22 @@ schema LakeformationAwsUpboundIoV1beta1ResourceStatusAtProvider:
     Attributes
     ----------
     arn : str, default is Undefined, optional
-        –  Amazon Resource Name (ARN) of the resource.
+        Amazon Resource Name (ARN) of the resource.
     hybridAccessEnabled : bool, default is Undefined, optional
         Flag to enable AWS LakeFormation hybrid access permission mode.
     id : str, default is Undefined, optional
         id
     lastModified : str, default is Undefined, optional
         Date and time the resource was last modified in RFC 3339 format.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     roleArn : str, default is Undefined, optional
-        –  Role that has read/write access to the resource.
+        Role that has read/write access to the resource.
     useServiceLinkedRole : bool, default is Undefined, optional
         Designates an AWS Identity and Access Management (IAM) service-linked role by registering this role with the Data Catalog.
     withFederation : bool, default is Undefined, optional
-        with federation
+        Whether or not the resource is a federated resource. Set to true when registering AWS Glue connections for federated catalog functionality.
     """
 
 
@@ -574,6 +474,8 @@ schema LakeformationAwsUpboundIoV1beta1ResourceStatusAtProvider:
     id?: str
 
     lastModified?: str
+
+    region?: str
 
     roleArn?: str
 

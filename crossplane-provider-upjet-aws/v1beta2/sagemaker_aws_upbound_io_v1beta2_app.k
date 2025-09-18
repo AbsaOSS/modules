@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema App:
     r"""
-    App is the Schema for the Apps API. Provides a SageMaker App resource.
+    App is the Schema for the Apps API. Provides a SageMaker AI App resource.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema SagemakerAwsUpboundIoV1beta2AppSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : SagemakerAwsUpboundIoV1beta2AppSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : SagemakerAwsUpboundIoV1beta2AppSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : SagemakerAwsUpboundIoV1beta2AppSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema SagemakerAwsUpboundIoV1beta2AppSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: SagemakerAwsUpboundIoV1beta2AppSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: SagemakerAwsUpboundIoV1beta2AppSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: SagemakerAwsUpboundIoV1beta2AppSpecWriteConnectionSecretToRef
 
@@ -105,6 +101,7 @@ schema SagemakerAwsUpboundIoV1beta2AppSpecForProvider:
     domainIdSelector : SagemakerAwsUpboundIoV1beta2AppSpecForProviderDomainIDSelector, default is Undefined, optional
         domain Id selector
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     resourceSpec : SagemakerAwsUpboundIoV1beta2AppSpecForProviderResourceSpec, default is Undefined, optional
         resource spec
@@ -237,18 +234,18 @@ schema SagemakerAwsUpboundIoV1beta2AppSpecForProviderDomainIDSelectorPolicy:
 
 schema SagemakerAwsUpboundIoV1beta2AppSpecForProviderResourceSpec:
     r"""
-    The instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance.See Resource Spec below.
+    The instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance.See Resource Spec below.
 
     Attributes
     ----------
     instanceType : str, default is Undefined, optional
-        The instance type that the image version runs on. For valid values see SageMaker Instance Types.
+        The instance type that the image version runs on. For valid values see SageMaker AI Instance Types.
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The ARN of the SageMaker image that the image version belongs to.
+        The ARN of the SageMaker AI image that the image version belongs to.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -508,18 +505,18 @@ schema SagemakerAwsUpboundIoV1beta2AppSpecInitProviderDomainIDSelectorPolicy:
 
 schema SagemakerAwsUpboundIoV1beta2AppSpecInitProviderResourceSpec:
     r"""
-    The instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance.See Resource Spec below.
+    The instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance.See Resource Spec below.
 
     Attributes
     ----------
     instanceType : str, default is Undefined, optional
-        The instance type that the image version runs on. For valid values see SageMaker Instance Types.
+        The instance type that the image version runs on. For valid values see SageMaker AI Instance Types.
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The ARN of the SageMaker image that the image version belongs to.
+        The ARN of the SageMaker AI image that the image version belongs to.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -669,112 +666,12 @@ schema SagemakerAwsUpboundIoV1beta2AppSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema SagemakerAwsUpboundIoV1beta2AppSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : SagemakerAwsUpboundIoV1beta2AppSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : SagemakerAwsUpboundIoV1beta2AppSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: SagemakerAwsUpboundIoV1beta2AppSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: SagemakerAwsUpboundIoV1beta2AppSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema SagemakerAwsUpboundIoV1beta2AppSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : SagemakerAwsUpboundIoV1beta2AppSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: SagemakerAwsUpboundIoV1beta2AppSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema SagemakerAwsUpboundIoV1beta2AppSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema SagemakerAwsUpboundIoV1beta2AppSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema SagemakerAwsUpboundIoV1beta2AppSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -830,6 +727,9 @@ schema SagemakerAwsUpboundIoV1beta2AppStatusAtProvider:
         The domain ID.
     id : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the app.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     resourceSpec : SagemakerAwsUpboundIoV1beta2AppStatusAtProviderResourceSpec, default is Undefined, optional
         resource spec
     spaceName : str, default is Undefined, optional
@@ -853,6 +753,8 @@ schema SagemakerAwsUpboundIoV1beta2AppStatusAtProvider:
 
     id?: str
 
+    region?: str
+
     resourceSpec?: SagemakerAwsUpboundIoV1beta2AppStatusAtProviderResourceSpec
 
     spaceName?: str
@@ -866,18 +768,18 @@ schema SagemakerAwsUpboundIoV1beta2AppStatusAtProvider:
 
 schema SagemakerAwsUpboundIoV1beta2AppStatusAtProviderResourceSpec:
     r"""
-    The instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance.See Resource Spec below.
+    The instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance.See Resource Spec below.
 
     Attributes
     ----------
     instanceType : str, default is Undefined, optional
-        The instance type that the image version runs on. For valid values see SageMaker Instance Types.
+        The instance type that the image version runs on. For valid values see SageMaker AI Instance Types.
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The ARN of the SageMaker image that the image version belongs to.
+        The ARN of the SageMaker AI image that the image version belongs to.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """

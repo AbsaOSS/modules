@@ -66,8 +66,6 @@ schema RumAwsUpboundIoV1beta1AppMonitorSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : RumAwsUpboundIoV1beta1AppMonitorSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : RumAwsUpboundIoV1beta1AppMonitorSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : RumAwsUpboundIoV1beta1AppMonitorSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema RumAwsUpboundIoV1beta1AppMonitorSpec:
 
     providerConfigRef?: RumAwsUpboundIoV1beta1AppMonitorSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: RumAwsUpboundIoV1beta1AppMonitorSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: RumAwsUpboundIoV1beta1AppMonitorSpecWriteConnectionSecretToRef
 
 
@@ -99,10 +95,13 @@ schema RumAwsUpboundIoV1beta1AppMonitorSpecForProvider:
     customEvents : [RumAwsUpboundIoV1beta1AppMonitorSpecForProviderCustomEventsItems0], default is Undefined, optional
         Specifies whether this app monitor allows the web client to define and send custom events. If you omit this parameter, custom events are DISABLED. See custom_events below.
     cwLogEnabled : bool, default is Undefined, optional
-        Data collected by RUM is kept by RUM for 30 days and then deleted. This parameter  specifies whether RUM sends a copy of this telemetry data to Amazon CloudWatch Logs in your account. This enables you to keep the telemetry data for more than 30 days, but it does incur Amazon CloudWatch Logs charges. Default value is false.
+        Data collected by RUM is kept by RUM for 30 days and then deleted. This parameter specifies whether RUM sends a copy of this telemetry data to Amazon CloudWatch Logs in your account. This enables you to keep the telemetry data for more than 30 days, but it does incur Amazon CloudWatch Logs charges. Default value is false.
     domain : str, default is Undefined, optional
-        The top-level internet domain name for which your application has administrative authority.
+        The top-level internet domain name for which your application has administrative authority. Exactly one of domain or domain_list must be specified.
+    domainList : [str], default is Undefined, optional
+        A list of internet domain names for which your application has administrative authority. Exactly one of domain or domain_list must be specified.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
@@ -117,6 +116,8 @@ schema RumAwsUpboundIoV1beta1AppMonitorSpecForProvider:
 
     domain?: str
 
+    domainList?: [str]
+
     region: str
 
     tags?: {str:str}
@@ -129,9 +130,9 @@ schema RumAwsUpboundIoV1beta1AppMonitorSpecForProviderAppMonitorConfigurationIte
     Attributes
     ----------
     allowCookies : bool, default is Undefined, optional
-        If you set this to true, RUM web client sets two cookies, a session cookie  and a user cookie. The cookies allow the RUM web client to collect data relating to the number of users an application has and the behavior of the application across a sequence of events. Cookies are stored in the top-level domain of the current page.
+        If you set this to true, RUM web client sets two cookies, a session cookie and a user cookie. The cookies allow the RUM web client to collect data relating to the number of users an application has and the behavior of the application across a sequence of events. Cookies are stored in the top-level domain of the current page.
     enableXray : bool, default is Undefined, optional
-        If you set this to true, RUM enables X-Ray tracing for the user sessions  that RUM samples. RUM adds an X-Ray trace header to allowed HTTP requests. It also records an X-Ray segment for allowed HTTP requests.
+        If you set this to true, RUM enables X-Ray tracing for the user sessions that RUM samples. RUM adds an X-Ray trace header to allowed HTTP requests. It also records an X-Ray segment for allowed HTTP requests.
     excludedPages : [str], default is Undefined, optional
         A list of URLs in your website or application to exclude from RUM data collection.
     favoritePages : [str], default is Undefined, optional
@@ -202,9 +203,11 @@ schema RumAwsUpboundIoV1beta1AppMonitorSpecInitProvider:
     customEvents : [RumAwsUpboundIoV1beta1AppMonitorSpecInitProviderCustomEventsItems0], default is Undefined, optional
         Specifies whether this app monitor allows the web client to define and send custom events. If you omit this parameter, custom events are DISABLED. See custom_events below.
     cwLogEnabled : bool, default is Undefined, optional
-        Data collected by RUM is kept by RUM for 30 days and then deleted. This parameter  specifies whether RUM sends a copy of this telemetry data to Amazon CloudWatch Logs in your account. This enables you to keep the telemetry data for more than 30 days, but it does incur Amazon CloudWatch Logs charges. Default value is false.
+        Data collected by RUM is kept by RUM for 30 days and then deleted. This parameter specifies whether RUM sends a copy of this telemetry data to Amazon CloudWatch Logs in your account. This enables you to keep the telemetry data for more than 30 days, but it does incur Amazon CloudWatch Logs charges. Default value is false.
     domain : str, default is Undefined, optional
-        The top-level internet domain name for which your application has administrative authority.
+        The top-level internet domain name for which your application has administrative authority. Exactly one of domain or domain_list must be specified.
+    domainList : [str], default is Undefined, optional
+        A list of internet domain names for which your application has administrative authority. Exactly one of domain or domain_list must be specified.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     """
@@ -218,6 +221,8 @@ schema RumAwsUpboundIoV1beta1AppMonitorSpecInitProvider:
 
     domain?: str
 
+    domainList?: [str]
+
     tags?: {str:str}
 
 
@@ -228,9 +233,9 @@ schema RumAwsUpboundIoV1beta1AppMonitorSpecInitProviderAppMonitorConfigurationIt
     Attributes
     ----------
     allowCookies : bool, default is Undefined, optional
-        If you set this to true, RUM web client sets two cookies, a session cookie  and a user cookie. The cookies allow the RUM web client to collect data relating to the number of users an application has and the behavior of the application across a sequence of events. Cookies are stored in the top-level domain of the current page.
+        If you set this to true, RUM web client sets two cookies, a session cookie and a user cookie. The cookies allow the RUM web client to collect data relating to the number of users an application has and the behavior of the application across a sequence of events. Cookies are stored in the top-level domain of the current page.
     enableXray : bool, default is Undefined, optional
-        If you set this to true, RUM enables X-Ray tracing for the user sessions  that RUM samples. RUM adds an X-Ray trace header to allowed HTTP requests. It also records an X-Ray segment for allowed HTTP requests.
+        If you set this to true, RUM enables X-Ray tracing for the user sessions that RUM samples. RUM adds an X-Ray trace header to allowed HTTP requests. It also records an X-Ray segment for allowed HTTP requests.
     excludedPages : [str], default is Undefined, optional
         A list of URLs in your website or application to exclude from RUM data collection.
     favoritePages : [str], default is Undefined, optional
@@ -325,112 +330,12 @@ schema RumAwsUpboundIoV1beta1AppMonitorSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema RumAwsUpboundIoV1beta1AppMonitorSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : RumAwsUpboundIoV1beta1AppMonitorSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : RumAwsUpboundIoV1beta1AppMonitorSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: RumAwsUpboundIoV1beta1AppMonitorSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: RumAwsUpboundIoV1beta1AppMonitorSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema RumAwsUpboundIoV1beta1AppMonitorSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : RumAwsUpboundIoV1beta1AppMonitorSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: RumAwsUpboundIoV1beta1AppMonitorSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema RumAwsUpboundIoV1beta1AppMonitorSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema RumAwsUpboundIoV1beta1AppMonitorSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema RumAwsUpboundIoV1beta1AppMonitorSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -485,13 +390,18 @@ schema RumAwsUpboundIoV1beta1AppMonitorStatusAtProvider:
     customEvents : [RumAwsUpboundIoV1beta1AppMonitorStatusAtProviderCustomEventsItems0], default is Undefined, optional
         Specifies whether this app monitor allows the web client to define and send custom events. If you omit this parameter, custom events are DISABLED. See custom_events below.
     cwLogEnabled : bool, default is Undefined, optional
-        Data collected by RUM is kept by RUM for 30 days and then deleted. This parameter  specifies whether RUM sends a copy of this telemetry data to Amazon CloudWatch Logs in your account. This enables you to keep the telemetry data for more than 30 days, but it does incur Amazon CloudWatch Logs charges. Default value is false.
+        Data collected by RUM is kept by RUM for 30 days and then deleted. This parameter specifies whether RUM sends a copy of this telemetry data to Amazon CloudWatch Logs in your account. This enables you to keep the telemetry data for more than 30 days, but it does incur Amazon CloudWatch Logs charges. Default value is false.
     cwLogGroup : str, default is Undefined, optional
         The name of the log group where the copies are stored.
     domain : str, default is Undefined, optional
-        The top-level internet domain name for which your application has administrative authority.
+        The top-level internet domain name for which your application has administrative authority. Exactly one of domain or domain_list must be specified.
+    domainList : [str], default is Undefined, optional
+        A list of internet domain names for which your application has administrative authority. Exactly one of domain or domain_list must be specified.
     id : str, default is Undefined, optional
         The CloudWatch RUM name as it is the identifier of a RUM.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
@@ -513,7 +423,11 @@ schema RumAwsUpboundIoV1beta1AppMonitorStatusAtProvider:
 
     domain?: str
 
+    domainList?: [str]
+
     id?: str
+
+    region?: str
 
     tags?: {str:str}
 
@@ -527,9 +441,9 @@ schema RumAwsUpboundIoV1beta1AppMonitorStatusAtProviderAppMonitorConfigurationIt
     Attributes
     ----------
     allowCookies : bool, default is Undefined, optional
-        If you set this to true, RUM web client sets two cookies, a session cookie  and a user cookie. The cookies allow the RUM web client to collect data relating to the number of users an application has and the behavior of the application across a sequence of events. Cookies are stored in the top-level domain of the current page.
+        If you set this to true, RUM web client sets two cookies, a session cookie and a user cookie. The cookies allow the RUM web client to collect data relating to the number of users an application has and the behavior of the application across a sequence of events. Cookies are stored in the top-level domain of the current page.
     enableXray : bool, default is Undefined, optional
-        If you set this to true, RUM enables X-Ray tracing for the user sessions  that RUM samples. RUM adds an X-Ray trace header to allowed HTTP requests. It also records an X-Ray segment for allowed HTTP requests.
+        If you set this to true, RUM enables X-Ray tracing for the user sessions that RUM samples. RUM adds an X-Ray trace header to allowed HTTP requests. It also records an X-Ray segment for allowed HTTP requests.
     excludedPages : [str], default is Undefined, optional
         A list of URLs in your website or application to exclude from RUM data collection.
     favoritePages : [str], default is Undefined, optional

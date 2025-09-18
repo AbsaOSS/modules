@@ -66,8 +66,6 @@ schema SsmAwsUpboundIoV1beta2AssociationSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : SsmAwsUpboundIoV1beta2AssociationSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : SsmAwsUpboundIoV1beta2AssociationSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : SsmAwsUpboundIoV1beta2AssociationSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema SsmAwsUpboundIoV1beta2AssociationSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: SsmAwsUpboundIoV1beta2AssociationSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: SsmAwsUpboundIoV1beta2AssociationSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: SsmAwsUpboundIoV1beta2AssociationSpecWriteConnectionSecretToRef
 
@@ -104,8 +100,6 @@ schema SsmAwsUpboundIoV1beta2AssociationSpecForProvider:
         The compliance severity for the association. Can be one of the following: UNSPECIFIED, LOW, MEDIUM, HIGH or CRITICAL
     documentVersion : str, default is Undefined, optional
         The document version you want to associate with the target(s). Can be a specific version or the default version.
-    instanceId : str, default is Undefined, optional
-        The instance ID to apply an SSM document to. Use targets with key InstanceIds for document schema versions 2.0 and above. Use the targets attribute instead.
     maxConcurrency : str, default is Undefined, optional
         The maximum number of targets allowed to run the association at the same time. You can specify a number, for example 10, or a percentage of the target set, for example 10%.
     maxErrors : str, default is Undefined, optional
@@ -121,6 +115,7 @@ schema SsmAwsUpboundIoV1beta2AssociationSpecForProvider:
     parameters : {str:str}, default is Undefined, optional
         A block of arbitrary string parameters to pass to the SSM document.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     scheduleExpression : str, default is Undefined, optional
         A cron or rate expression that specifies when the association runs.
@@ -144,8 +139,6 @@ schema SsmAwsUpboundIoV1beta2AssociationSpecForProvider:
     complianceSeverity?: str
 
     documentVersion?: str
-
-    instanceId?: str
 
     maxConcurrency?: str
 
@@ -294,7 +287,7 @@ schema SsmAwsUpboundIoV1beta2AssociationSpecForProviderTargetsItems0:
     key : str, default is Undefined, optional
         Either InstanceIds or tag:Tag Name to specify an EC2 tag.
     values : [str], default is Undefined, optional
-        A list of instance IDs or tag values. AWS currently limits this list size to one value.
+        User-defined criteria that maps to Key. A list of instance IDs or tag values.
     valuesRefs : [SsmAwsUpboundIoV1beta2AssociationSpecForProviderTargetsItems0ValuesRefsItems0], default is Undefined, optional
         References to Instance in ec2 to populate values.
     valuesSelector : SsmAwsUpboundIoV1beta2AssociationSpecForProviderTargetsItems0ValuesSelector, default is Undefined, optional
@@ -425,8 +418,6 @@ schema SsmAwsUpboundIoV1beta2AssociationSpecInitProvider:
         The compliance severity for the association. Can be one of the following: UNSPECIFIED, LOW, MEDIUM, HIGH or CRITICAL
     documentVersion : str, default is Undefined, optional
         The document version you want to associate with the target(s). Can be a specific version or the default version.
-    instanceId : str, default is Undefined, optional
-        The instance ID to apply an SSM document to. Use targets with key InstanceIds for document schema versions 2.0 and above. Use the targets attribute instead.
     maxConcurrency : str, default is Undefined, optional
         The maximum number of targets allowed to run the association at the same time. You can specify a number, for example 10, or a percentage of the target set, for example 10%.
     maxErrors : str, default is Undefined, optional
@@ -463,8 +454,6 @@ schema SsmAwsUpboundIoV1beta2AssociationSpecInitProvider:
     complianceSeverity?: str
 
     documentVersion?: str
-
-    instanceId?: str
 
     maxConcurrency?: str
 
@@ -611,7 +600,7 @@ schema SsmAwsUpboundIoV1beta2AssociationSpecInitProviderTargetsItems0:
     key : str, default is Undefined, optional
         Either InstanceIds or tag:Tag Name to specify an EC2 tag.
     values : [str], default is Undefined, optional
-        A list of instance IDs or tag values. AWS currently limits this list size to one value.
+        User-defined criteria that maps to Key. A list of instance IDs or tag values.
     valuesRefs : [SsmAwsUpboundIoV1beta2AssociationSpecInitProviderTargetsItems0ValuesRefsItems0], default is Undefined, optional
         References to Instance in ec2 to populate values.
     valuesSelector : SsmAwsUpboundIoV1beta2AssociationSpecInitProviderTargetsItems0ValuesSelector, default is Undefined, optional
@@ -761,112 +750,12 @@ schema SsmAwsUpboundIoV1beta2AssociationSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema SsmAwsUpboundIoV1beta2AssociationSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : SsmAwsUpboundIoV1beta2AssociationSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : SsmAwsUpboundIoV1beta2AssociationSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: SsmAwsUpboundIoV1beta2AssociationSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: SsmAwsUpboundIoV1beta2AssociationSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema SsmAwsUpboundIoV1beta2AssociationSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : SsmAwsUpboundIoV1beta2AssociationSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: SsmAwsUpboundIoV1beta2AssociationSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema SsmAwsUpboundIoV1beta2AssociationSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema SsmAwsUpboundIoV1beta2AssociationSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema SsmAwsUpboundIoV1beta2AssociationSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -928,8 +817,6 @@ schema SsmAwsUpboundIoV1beta2AssociationStatusAtProvider:
         The document version you want to associate with the target(s). Can be a specific version or the default version.
     id : str, default is Undefined, optional
         id
-    instanceId : str, default is Undefined, optional
-        The instance ID to apply an SSM document to. Use targets with key InstanceIds for document schema versions 2.0 and above. Use the targets attribute instead.
     maxConcurrency : str, default is Undefined, optional
         The maximum number of targets allowed to run the association at the same time. You can specify a number, for example 10, or a percentage of the target set, for example 10%.
     maxErrors : str, default is Undefined, optional
@@ -940,6 +827,9 @@ schema SsmAwsUpboundIoV1beta2AssociationStatusAtProvider:
         output location
     parameters : {str:str}, default is Undefined, optional
         A block of arbitrary string parameters to pass to the SSM document.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     scheduleExpression : str, default is Undefined, optional
         A cron or rate expression that specifies when the association runs.
     syncCompliance : str, default is Undefined, optional
@@ -971,8 +861,6 @@ schema SsmAwsUpboundIoV1beta2AssociationStatusAtProvider:
 
     id?: str
 
-    instanceId?: str
-
     maxConcurrency?: str
 
     maxErrors?: str
@@ -982,6 +870,8 @@ schema SsmAwsUpboundIoV1beta2AssociationStatusAtProvider:
     outputLocation?: SsmAwsUpboundIoV1beta2AssociationStatusAtProviderOutputLocation
 
     parameters?: {str:str}
+
+    region?: str
 
     scheduleExpression?: str
 
@@ -1027,7 +917,7 @@ schema SsmAwsUpboundIoV1beta2AssociationStatusAtProviderTargetsItems0:
     key : str, default is Undefined, optional
         Either InstanceIds or tag:Tag Name to specify an EC2 tag.
     values : [str], default is Undefined, optional
-        A list of instance IDs or tag values. AWS currently limits this list size to one value.
+        User-defined criteria that maps to Key. A list of instance IDs or tag values.
     """
 
 

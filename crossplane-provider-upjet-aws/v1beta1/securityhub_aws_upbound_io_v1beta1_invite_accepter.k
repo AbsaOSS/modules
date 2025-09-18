@@ -66,8 +66,6 @@ schema SecurityhubAwsUpboundIoV1beta1InviteAccepterSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : SecurityhubAwsUpboundIoV1beta1InviteAccepterSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : SecurityhubAwsUpboundIoV1beta1InviteAccepterSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : SecurityhubAwsUpboundIoV1beta1InviteAccepterSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema SecurityhubAwsUpboundIoV1beta1InviteAccepterSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: SecurityhubAwsUpboundIoV1beta1InviteAccepterSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: SecurityhubAwsUpboundIoV1beta1InviteAccepterSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: SecurityhubAwsUpboundIoV1beta1InviteAccepterSpecWriteConnectionSecretToRef
 
@@ -101,6 +97,7 @@ schema SecurityhubAwsUpboundIoV1beta1InviteAccepterSpecForProvider:
     masterIdSelector : SecurityhubAwsUpboundIoV1beta1InviteAccepterSpecForProviderMasterIDSelector, default is Undefined, optional
         master Id selector
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     """
 
@@ -367,112 +364,12 @@ schema SecurityhubAwsUpboundIoV1beta1InviteAccepterSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema SecurityhubAwsUpboundIoV1beta1InviteAccepterSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : SecurityhubAwsUpboundIoV1beta1InviteAccepterSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : SecurityhubAwsUpboundIoV1beta1InviteAccepterSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: SecurityhubAwsUpboundIoV1beta1InviteAccepterSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: SecurityhubAwsUpboundIoV1beta1InviteAccepterSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema SecurityhubAwsUpboundIoV1beta1InviteAccepterSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : SecurityhubAwsUpboundIoV1beta1InviteAccepterSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: SecurityhubAwsUpboundIoV1beta1InviteAccepterSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema SecurityhubAwsUpboundIoV1beta1InviteAccepterSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema SecurityhubAwsUpboundIoV1beta1InviteAccepterSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema SecurityhubAwsUpboundIoV1beta1InviteAccepterSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -524,6 +421,9 @@ schema SecurityhubAwsUpboundIoV1beta1InviteAccepterStatusAtProvider:
         The ID of the invitation.
     masterId : str, default is Undefined, optional
         The account ID of the master Security Hub account whose invitation you're accepting.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     """
 
 
@@ -532,6 +432,8 @@ schema SecurityhubAwsUpboundIoV1beta1InviteAccepterStatusAtProvider:
     invitationId?: str
 
     masterId?: str
+
+    region?: str
 
 
 schema SecurityhubAwsUpboundIoV1beta1InviteAccepterStatusConditionsItems0:

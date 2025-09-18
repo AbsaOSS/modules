@@ -66,8 +66,6 @@ schema EcsAwsUpboundIoV1beta2ServiceSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : EcsAwsUpboundIoV1beta2ServiceSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : EcsAwsUpboundIoV1beta2ServiceSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : EcsAwsUpboundIoV1beta2ServiceSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema EcsAwsUpboundIoV1beta2ServiceSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: EcsAwsUpboundIoV1beta2ServiceSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: EcsAwsUpboundIoV1beta2ServiceSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: EcsAwsUpboundIoV1beta2ServiceSpecWriteConnectionSecretToRef
 
@@ -147,6 +143,7 @@ schema EcsAwsUpboundIoV1beta2ServiceSpecForProvider:
     propagateTags : str, default is Undefined, optional
         Whether to propagate the tags from the task definition or the service to the tasks. The valid values are SERVICE and TASK_DEFINITION.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     schedulingStrategy : str, default is Undefined, optional
         Scheduling strategy to use for the service. The valid values are REPLICA and DAEMON. Defaults to REPLICA. Note that Tasks using the Fargate launch type or the .
@@ -1211,6 +1208,8 @@ schema EcsAwsUpboundIoV1beta2ServiceSpecForProviderVolumeConfigurationManagedEbs
         The tags to apply to the volume. See below.
     throughput : float, default is Undefined, optional
         Throughput to provision for a volume, in MiB/s, with a maximum of 1,000 MiB/s.
+    volumeInitializationRate : float, default is Undefined, optional
+        Volume Initialization Rate in MiB/s. You must also specify a snapshot_id.
     volumeType : str, default is Undefined, optional
         Volume type.
     """
@@ -1233,6 +1232,8 @@ schema EcsAwsUpboundIoV1beta2ServiceSpecForProviderVolumeConfigurationManagedEbs
     tagSpecifications?: [EcsAwsUpboundIoV1beta2ServiceSpecForProviderVolumeConfigurationManagedEbsVolumeTagSpecificationsItems0]
 
     throughput?: float
+
+    volumeInitializationRate?: float
 
     volumeType?: str
 
@@ -2409,6 +2410,8 @@ schema EcsAwsUpboundIoV1beta2ServiceSpecInitProviderVolumeConfigurationManagedEb
         The tags to apply to the volume. See below.
     throughput : float, default is Undefined, optional
         Throughput to provision for a volume, in MiB/s, with a maximum of 1,000 MiB/s.
+    volumeInitializationRate : float, default is Undefined, optional
+        Volume Initialization Rate in MiB/s. You must also specify a snapshot_id.
     volumeType : str, default is Undefined, optional
         Volume type.
     """
@@ -2431,6 +2434,8 @@ schema EcsAwsUpboundIoV1beta2ServiceSpecInitProviderVolumeConfigurationManagedEb
     tagSpecifications?: [EcsAwsUpboundIoV1beta2ServiceSpecInitProviderVolumeConfigurationManagedEbsVolumeTagSpecificationsItems0]
 
     throughput?: float
+
+    volumeInitializationRate?: float
 
     volumeType?: str
 
@@ -2523,112 +2528,12 @@ schema EcsAwsUpboundIoV1beta2ServiceSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema EcsAwsUpboundIoV1beta2ServiceSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : EcsAwsUpboundIoV1beta2ServiceSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : EcsAwsUpboundIoV1beta2ServiceSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: EcsAwsUpboundIoV1beta2ServiceSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: EcsAwsUpboundIoV1beta2ServiceSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema EcsAwsUpboundIoV1beta2ServiceSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : EcsAwsUpboundIoV1beta2ServiceSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: EcsAwsUpboundIoV1beta2ServiceSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema EcsAwsUpboundIoV1beta2ServiceSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema EcsAwsUpboundIoV1beta2ServiceSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema EcsAwsUpboundIoV1beta2ServiceSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -2676,6 +2581,8 @@ schema EcsAwsUpboundIoV1beta2ServiceStatusAtProvider:
     ----------
     alarms : EcsAwsUpboundIoV1beta2ServiceStatusAtProviderAlarms, default is Undefined, optional
         alarms
+    arn : str, default is Undefined, optional
+        ARN that identifies the service.
     availabilityZoneRebalancing : str, default is Undefined, optional
         ECS automatically redistributes tasks within a service across Availability Zones (AZs) to mitigate the risk of impaired application availability due to underlying infrastructure failures and task lifecycle activities. The valid values are ENABLED and DISABLED. Defaults to DISABLED.
     capacityProviderStrategy : [EcsAwsUpboundIoV1beta2ServiceStatusAtProviderCapacityProviderStrategyItems0], default is Undefined, optional
@@ -2705,7 +2612,7 @@ schema EcsAwsUpboundIoV1beta2ServiceStatusAtProvider:
     iamRole : str, default is Undefined, optional
         ARN of the IAM role that allows Amazon ECS to make calls to your load balancer on your behalf. This parameter is required if you are using a load balancer with your service, but only if your task definition does not use the awsvpc network mode. If using awsvpc network mode, do not specify this role. If your account has already created the Amazon ECS service-linked role, that role is used by default for your service unless you specify a role here.
     id : str, default is Undefined, optional
-        ARN that identifies the service.
+        id
     launchType : str, default is Undefined, optional
         Launch type on which to run your service. The valid values are EC2, FARGATE, and EXTERNAL. Defaults to EC2. Conflicts with capacity_provider_strategy.
     loadBalancer : [EcsAwsUpboundIoV1beta2ServiceStatusAtProviderLoadBalancerItems0], default is Undefined, optional
@@ -2720,6 +2627,9 @@ schema EcsAwsUpboundIoV1beta2ServiceStatusAtProvider:
         Platform version on which to run your service. Only applicable for launch_type set to FARGATE. Defaults to LATEST. More information about Fargate platform versions can be found in the AWS ECS User Guide.
     propagateTags : str, default is Undefined, optional
         Whether to propagate the tags from the task definition or the service to the tasks. The valid values are SERVICE and TASK_DEFINITION.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     schedulingStrategy : str, default is Undefined, optional
         Scheduling strategy to use for the service. The valid values are REPLICA and DAEMON. Defaults to REPLICA. Note that Tasks using the Fargate launch type or the .
     serviceConnectConfiguration : EcsAwsUpboundIoV1beta2ServiceStatusAtProviderServiceConnectConfiguration, default is Undefined, optional
@@ -2744,6 +2654,8 @@ schema EcsAwsUpboundIoV1beta2ServiceStatusAtProvider:
 
 
     alarms?: EcsAwsUpboundIoV1beta2ServiceStatusAtProviderAlarms
+
+    arn?: str
 
     availabilityZoneRebalancing?: str
 
@@ -2788,6 +2700,8 @@ schema EcsAwsUpboundIoV1beta2ServiceStatusAtProvider:
     platformVersion?: str
 
     propagateTags?: str
+
+    region?: str
 
     schedulingStrategy?: str
 
@@ -3213,6 +3127,8 @@ schema EcsAwsUpboundIoV1beta2ServiceStatusAtProviderVolumeConfigurationManagedEb
         The tags to apply to the volume. See below.
     throughput : float, default is Undefined, optional
         Throughput to provision for a volume, in MiB/s, with a maximum of 1,000 MiB/s.
+    volumeInitializationRate : float, default is Undefined, optional
+        Volume Initialization Rate in MiB/s. You must also specify a snapshot_id.
     volumeType : str, default is Undefined, optional
         Volume type.
     """
@@ -3235,6 +3151,8 @@ schema EcsAwsUpboundIoV1beta2ServiceStatusAtProviderVolumeConfigurationManagedEb
     tagSpecifications?: [EcsAwsUpboundIoV1beta2ServiceStatusAtProviderVolumeConfigurationManagedEbsVolumeTagSpecificationsItems0]
 
     throughput?: float
+
+    volumeInitializationRate?: float
 
     volumeType?: str
 

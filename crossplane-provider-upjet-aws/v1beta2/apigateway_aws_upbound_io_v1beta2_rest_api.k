@@ -66,8 +66,6 @@ schema ApigatewayAwsUpboundIoV1beta2RestAPISpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : ApigatewayAwsUpboundIoV1beta2RestAPISpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : ApigatewayAwsUpboundIoV1beta2RestAPISpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : ApigatewayAwsUpboundIoV1beta2RestAPISpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema ApigatewayAwsUpboundIoV1beta2RestAPISpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: ApigatewayAwsUpboundIoV1beta2RestAPISpecProviderConfigRef
-
-    publishConnectionDetailsTo?: ApigatewayAwsUpboundIoV1beta2RestAPISpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: ApigatewayAwsUpboundIoV1beta2RestAPISpecWriteConnectionSecretToRef
 
@@ -117,6 +113,7 @@ schema ApigatewayAwsUpboundIoV1beta2RestAPISpecForProvider:
     putRestApiMode : str, default is Undefined, optional
         Mode of the PutRestApi operation when importing an OpenAPI specification via the body argument (create or update operation). Valid values are merge and overwrite. If unspecificed, defaults to overwrite (for backwards compatibility). This corresponds to the x-amazon-apigateway-put-integration-method extension. If the argument value is provided and is different than the OpenAPI value, the argument value will override the OpenAPI value.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
@@ -156,6 +153,8 @@ schema ApigatewayAwsUpboundIoV1beta2RestAPISpecForProviderEndpointConfiguration:
 
     Attributes
     ----------
+    ipAddressType : str, default is Undefined, optional
+        The IP address types that can invoke an API (RestApi). Valid values: ipv4, dualstack. Use ipv4 to allow only IPv4 addresses to invoke an API, or use dualstack to allow both IPv4 and IPv6 addresses to invoke an API. For the PRIVATE endpoint type, only dualstack is supported.
     types : [str], default is Undefined, optional
         List of endpoint types. This resource currently only supports managing a single value. Valid values: EDGE, REGIONAL or PRIVATE. If unspecified, defaults to EDGE. If set to PRIVATE recommend to set put_rest_api_mode = merge to not cause the endpoints and associated Route53 records to be deleted. Refer to the documentation for more information on the difference between edge-optimized and regional APIs.
     vpcEndpointIds : [str], default is Undefined, optional
@@ -166,6 +165,8 @@ schema ApigatewayAwsUpboundIoV1beta2RestAPISpecForProviderEndpointConfiguration:
         vpc endpoint ids selector
     """
 
+
+    ipAddressType?: str
 
     types?: [str]
 
@@ -338,6 +339,8 @@ schema ApigatewayAwsUpboundIoV1beta2RestAPISpecInitProviderEndpointConfiguration
 
     Attributes
     ----------
+    ipAddressType : str, default is Undefined, optional
+        The IP address types that can invoke an API (RestApi). Valid values: ipv4, dualstack. Use ipv4 to allow only IPv4 addresses to invoke an API, or use dualstack to allow both IPv4 and IPv6 addresses to invoke an API. For the PRIVATE endpoint type, only dualstack is supported.
     types : [str], default is Undefined, optional
         List of endpoint types. This resource currently only supports managing a single value. Valid values: EDGE, REGIONAL or PRIVATE. If unspecified, defaults to EDGE. If set to PRIVATE recommend to set put_rest_api_mode = merge to not cause the endpoints and associated Route53 records to be deleted. Refer to the documentation for more information on the difference between edge-optimized and regional APIs.
     vpcEndpointIds : [str], default is Undefined, optional
@@ -348,6 +351,8 @@ schema ApigatewayAwsUpboundIoV1beta2RestAPISpecInitProviderEndpointConfiguration
         vpc endpoint ids selector
     """
 
+
+    ipAddressType?: str
 
     types?: [str]
 
@@ -491,112 +496,12 @@ schema ApigatewayAwsUpboundIoV1beta2RestAPISpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema ApigatewayAwsUpboundIoV1beta2RestAPISpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : ApigatewayAwsUpboundIoV1beta2RestAPISpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : ApigatewayAwsUpboundIoV1beta2RestAPISpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: ApigatewayAwsUpboundIoV1beta2RestAPISpecPublishConnectionDetailsToConfigRef
-
-    metadata?: ApigatewayAwsUpboundIoV1beta2RestAPISpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema ApigatewayAwsUpboundIoV1beta2RestAPISpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : ApigatewayAwsUpboundIoV1beta2RestAPISpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: ApigatewayAwsUpboundIoV1beta2RestAPISpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema ApigatewayAwsUpboundIoV1beta2RestAPISpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema ApigatewayAwsUpboundIoV1beta2RestAPISpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema ApigatewayAwsUpboundIoV1beta2RestAPISpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -676,6 +581,9 @@ schema ApigatewayAwsUpboundIoV1beta2RestAPIStatusAtProvider:
         JSON formatted policy document that controls access to the API Gateway. We recommend using the aws_api_gateway_rest_api_policy resource instead. If importing an OpenAPI specification via the body argument, this corresponds to the x-amazon-apigateway-policy extension. If the argument value is provided and is different than the OpenAPI value, the argument value will override the OpenAPI value.
     putRestApiMode : str, default is Undefined, optional
         Mode of the PutRestApi operation when importing an OpenAPI specification via the body argument (create or update operation). Valid values are merge and overwrite. If unspecificed, defaults to overwrite (for backwards compatibility). This corresponds to the x-amazon-apigateway-put-integration-method extension. If the argument value is provided and is different than the OpenAPI value, the argument value will override the OpenAPI value.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     rootResourceId : str, default is Undefined, optional
         Resource ID of the REST API's root
     tags : {str:str}, default is Undefined, optional
@@ -717,6 +625,8 @@ schema ApigatewayAwsUpboundIoV1beta2RestAPIStatusAtProvider:
 
     putRestApiMode?: str
 
+    region?: str
+
     rootResourceId?: str
 
     tags?: {str:str}
@@ -730,12 +640,16 @@ schema ApigatewayAwsUpboundIoV1beta2RestAPIStatusAtProviderEndpointConfiguration
 
     Attributes
     ----------
+    ipAddressType : str, default is Undefined, optional
+        The IP address types that can invoke an API (RestApi). Valid values: ipv4, dualstack. Use ipv4 to allow only IPv4 addresses to invoke an API, or use dualstack to allow both IPv4 and IPv6 addresses to invoke an API. For the PRIVATE endpoint type, only dualstack is supported.
     types : [str], default is Undefined, optional
         List of endpoint types. This resource currently only supports managing a single value. Valid values: EDGE, REGIONAL or PRIVATE. If unspecified, defaults to EDGE. If set to PRIVATE recommend to set put_rest_api_mode = merge to not cause the endpoints and associated Route53 records to be deleted. Refer to the documentation for more information on the difference between edge-optimized and regional APIs.
     vpcEndpointIds : [str], default is Undefined, optional
         Set of VPC Endpoint identifiers. It is only supported for PRIVATE endpoint type. If importing an OpenAPI specification via the body argument, this corresponds to the x-amazon-apigateway-endpoint-configuration extension vpcEndpointIds property. If the argument value is provided and is different than the OpenAPI value, the argument value will override the OpenAPI value.
     """
 
+
+    ipAddressType?: str
 
     types?: [str]
 

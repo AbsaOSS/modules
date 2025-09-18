@@ -66,8 +66,6 @@ schema CodeguruprofilerAwsUpboundIoV1beta1ProfilingGroupSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : CodeguruprofilerAwsUpboundIoV1beta1ProfilingGroupSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : CodeguruprofilerAwsUpboundIoV1beta1ProfilingGroupSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : CodeguruprofilerAwsUpboundIoV1beta1ProfilingGroupSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema CodeguruprofilerAwsUpboundIoV1beta1ProfilingGroupSpec:
 
     providerConfigRef?: CodeguruprofilerAwsUpboundIoV1beta1ProfilingGroupSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: CodeguruprofilerAwsUpboundIoV1beta1ProfilingGroupSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: CodeguruprofilerAwsUpboundIoV1beta1ProfilingGroupSpecWriteConnectionSecretToRef
 
 
@@ -99,6 +95,7 @@ schema CodeguruprofilerAwsUpboundIoV1beta1ProfilingGroupSpecForProvider:
     computePlatform : str, default is Undefined, optional
         Compute platform of the profiling group.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
@@ -217,112 +214,12 @@ schema CodeguruprofilerAwsUpboundIoV1beta1ProfilingGroupSpecProviderConfigRefPol
     resolve?: "Always" | "IfNotPresent"
 
 
-schema CodeguruprofilerAwsUpboundIoV1beta1ProfilingGroupSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : CodeguruprofilerAwsUpboundIoV1beta1ProfilingGroupSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : CodeguruprofilerAwsUpboundIoV1beta1ProfilingGroupSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: CodeguruprofilerAwsUpboundIoV1beta1ProfilingGroupSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: CodeguruprofilerAwsUpboundIoV1beta1ProfilingGroupSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema CodeguruprofilerAwsUpboundIoV1beta1ProfilingGroupSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : CodeguruprofilerAwsUpboundIoV1beta1ProfilingGroupSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: CodeguruprofilerAwsUpboundIoV1beta1ProfilingGroupSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema CodeguruprofilerAwsUpboundIoV1beta1ProfilingGroupSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema CodeguruprofilerAwsUpboundIoV1beta1ProfilingGroupSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema CodeguruprofilerAwsUpboundIoV1beta1ProfilingGroupSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -376,6 +273,9 @@ schema CodeguruprofilerAwsUpboundIoV1beta1ProfilingGroupStatusAtProvider:
         Compute platform of the profiling group.
     id : str, default is Undefined, optional
         Name of the profiling group.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
@@ -390,6 +290,8 @@ schema CodeguruprofilerAwsUpboundIoV1beta1ProfilingGroupStatusAtProvider:
     computePlatform?: str
 
     id?: str
+
+    region?: str
 
     tags?: {str:str}
 

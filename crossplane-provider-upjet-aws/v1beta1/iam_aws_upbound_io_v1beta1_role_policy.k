@@ -66,8 +66,6 @@ schema IamAwsUpboundIoV1beta1RolePolicySpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : IamAwsUpboundIoV1beta1RolePolicySpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : IamAwsUpboundIoV1beta1RolePolicySpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : IamAwsUpboundIoV1beta1RolePolicySpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema IamAwsUpboundIoV1beta1RolePolicySpec:
 
     providerConfigRef?: IamAwsUpboundIoV1beta1RolePolicySpecProviderConfigRef
 
-    publishConnectionDetailsTo?: IamAwsUpboundIoV1beta1RolePolicySpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: IamAwsUpboundIoV1beta1RolePolicySpecWriteConnectionSecretToRef
 
 
@@ -95,7 +91,8 @@ schema IamAwsUpboundIoV1beta1RolePolicySpecForProvider:
     Attributes
     ----------
     policy : str, default is Undefined, optional
-        The inline policy document. This is a JSON formatted string
+        The inline policy document.
+        This is a JSON formatted string
     role : str, default is Undefined, optional
         The name of the IAM role to attach to the policy.
     roleRef : IamAwsUpboundIoV1beta1RolePolicySpecForProviderRoleRef, default is Undefined, optional
@@ -219,7 +216,8 @@ schema IamAwsUpboundIoV1beta1RolePolicySpecInitProvider:
     Attributes
     ----------
     policy : str, default is Undefined, optional
-        The inline policy document. This is a JSON formatted string
+        The inline policy document.
+        This is a JSON formatted string
     """
 
 
@@ -270,112 +268,12 @@ schema IamAwsUpboundIoV1beta1RolePolicySpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema IamAwsUpboundIoV1beta1RolePolicySpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : IamAwsUpboundIoV1beta1RolePolicySpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : IamAwsUpboundIoV1beta1RolePolicySpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: IamAwsUpboundIoV1beta1RolePolicySpecPublishConnectionDetailsToConfigRef
-
-    metadata?: IamAwsUpboundIoV1beta1RolePolicySpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema IamAwsUpboundIoV1beta1RolePolicySpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : IamAwsUpboundIoV1beta1RolePolicySpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: IamAwsUpboundIoV1beta1RolePolicySpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema IamAwsUpboundIoV1beta1RolePolicySpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema IamAwsUpboundIoV1beta1RolePolicySpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema IamAwsUpboundIoV1beta1RolePolicySpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -422,9 +320,10 @@ schema IamAwsUpboundIoV1beta1RolePolicyStatusAtProvider:
     Attributes
     ----------
     id : str, default is Undefined, optional
-        The role policy ID, in the form of role_name:role_policy_name.
+        id
     policy : str, default is Undefined, optional
-        The inline policy document. This is a JSON formatted string
+        The inline policy document.
+        This is a JSON formatted string
     role : str, default is Undefined, optional
         The name of the IAM role to attach to the policy.
     """

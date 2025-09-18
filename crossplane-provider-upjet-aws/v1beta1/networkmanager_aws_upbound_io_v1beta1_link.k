@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema Link:
     r"""
-    Link is the Schema for the Links API. Creates a link for a site.
+    Link is the Schema for the Links API. Manages a Network Manager link.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema NetworkmanagerAwsUpboundIoV1beta1LinkSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : NetworkmanagerAwsUpboundIoV1beta1LinkSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : NetworkmanagerAwsUpboundIoV1beta1LinkSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : NetworkmanagerAwsUpboundIoV1beta1LinkSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema NetworkmanagerAwsUpboundIoV1beta1LinkSpec:
 
     providerConfigRef?: NetworkmanagerAwsUpboundIoV1beta1LinkSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: NetworkmanagerAwsUpboundIoV1beta1LinkSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: NetworkmanagerAwsUpboundIoV1beta1LinkSpecWriteConnectionSecretToRef
 
 
@@ -95,21 +91,19 @@ schema NetworkmanagerAwsUpboundIoV1beta1LinkSpecForProvider:
     Attributes
     ----------
     bandwidth : [NetworkmanagerAwsUpboundIoV1beta1LinkSpecForProviderBandwidthItems0], default is Undefined, optional
-        The upload speed and download speed in Mbps. Documented below.
+        Upload speed and download speed in Mbps. See below.
     description : str, default is Undefined, optional
-        A description of the link.
+        Description of the link.
     globalNetworkId : str, default is Undefined, optional
-        The ID of the global network.
+        ID of the global network.
     globalNetworkIdRef : NetworkmanagerAwsUpboundIoV1beta1LinkSpecForProviderGlobalNetworkIDRef, default is Undefined, optional
         global network Id ref
     globalNetworkIdSelector : NetworkmanagerAwsUpboundIoV1beta1LinkSpecForProviderGlobalNetworkIDSelector, default is Undefined, optional
         global network Id selector
     providerName : str, default is Undefined, optional
-        The provider of the link.
-    region : str, default is Undefined, required
-        Region is the region you'd like your resource to be created in.
+        Provider of the link.
     siteId : str, default is Undefined, optional
-        The ID of the site.
+        ID of the site.
     siteIdRef : NetworkmanagerAwsUpboundIoV1beta1LinkSpecForProviderSiteIDRef, default is Undefined, optional
         site Id ref
     siteIdSelector : NetworkmanagerAwsUpboundIoV1beta1LinkSpecForProviderSiteIDSelector, default is Undefined, optional
@@ -117,7 +111,7 @@ schema NetworkmanagerAwsUpboundIoV1beta1LinkSpecForProvider:
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     $type : str, default is Undefined, optional
-        The type of the link.
+        Type of the link.
     """
 
 
@@ -132,8 +126,6 @@ schema NetworkmanagerAwsUpboundIoV1beta1LinkSpecForProvider:
     globalNetworkIdSelector?: NetworkmanagerAwsUpboundIoV1beta1LinkSpecForProviderGlobalNetworkIDSelector
 
     providerName?: str
-
-    region: str
 
     siteId?: str
 
@@ -358,19 +350,19 @@ schema NetworkmanagerAwsUpboundIoV1beta1LinkSpecInitProvider:
     Attributes
     ----------
     bandwidth : [NetworkmanagerAwsUpboundIoV1beta1LinkSpecInitProviderBandwidthItems0], default is Undefined, optional
-        The upload speed and download speed in Mbps. Documented below.
+        Upload speed and download speed in Mbps. See below.
     description : str, default is Undefined, optional
-        A description of the link.
+        Description of the link.
     globalNetworkId : str, default is Undefined, optional
-        The ID of the global network.
+        ID of the global network.
     globalNetworkIdRef : NetworkmanagerAwsUpboundIoV1beta1LinkSpecInitProviderGlobalNetworkIDRef, default is Undefined, optional
         global network Id ref
     globalNetworkIdSelector : NetworkmanagerAwsUpboundIoV1beta1LinkSpecInitProviderGlobalNetworkIDSelector, default is Undefined, optional
         global network Id selector
     providerName : str, default is Undefined, optional
-        The provider of the link.
+        Provider of the link.
     siteId : str, default is Undefined, optional
-        The ID of the site.
+        ID of the site.
     siteIdRef : NetworkmanagerAwsUpboundIoV1beta1LinkSpecInitProviderSiteIDRef, default is Undefined, optional
         site Id ref
     siteIdSelector : NetworkmanagerAwsUpboundIoV1beta1LinkSpecInitProviderSiteIDSelector, default is Undefined, optional
@@ -378,7 +370,7 @@ schema NetworkmanagerAwsUpboundIoV1beta1LinkSpecInitProvider:
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     $type : str, default is Undefined, optional
-        The type of the link.
+        Type of the link.
     """
 
 
@@ -645,112 +637,12 @@ schema NetworkmanagerAwsUpboundIoV1beta1LinkSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema NetworkmanagerAwsUpboundIoV1beta1LinkSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : NetworkmanagerAwsUpboundIoV1beta1LinkSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : NetworkmanagerAwsUpboundIoV1beta1LinkSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: NetworkmanagerAwsUpboundIoV1beta1LinkSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: NetworkmanagerAwsUpboundIoV1beta1LinkSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema NetworkmanagerAwsUpboundIoV1beta1LinkSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : NetworkmanagerAwsUpboundIoV1beta1LinkSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: NetworkmanagerAwsUpboundIoV1beta1LinkSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema NetworkmanagerAwsUpboundIoV1beta1LinkSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema NetworkmanagerAwsUpboundIoV1beta1LinkSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema NetworkmanagerAwsUpboundIoV1beta1LinkSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -797,25 +689,25 @@ schema NetworkmanagerAwsUpboundIoV1beta1LinkStatusAtProvider:
     Attributes
     ----------
     arn : str, default is Undefined, optional
-        Link Amazon Resource Name (ARN).
+        Link ARN.
     bandwidth : [NetworkmanagerAwsUpboundIoV1beta1LinkStatusAtProviderBandwidthItems0], default is Undefined, optional
-        The upload speed and download speed in Mbps. Documented below.
+        Upload speed and download speed in Mbps. See below.
     description : str, default is Undefined, optional
-        A description of the link.
+        Description of the link.
     globalNetworkId : str, default is Undefined, optional
-        The ID of the global network.
+        ID of the global network.
     id : str, default is Undefined, optional
         id
     providerName : str, default is Undefined, optional
-        The provider of the link.
+        Provider of the link.
     siteId : str, default is Undefined, optional
-        The ID of the site.
+        ID of the site.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
-        A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
+        Map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     $type : str, default is Undefined, optional
-        The type of the link.
+        Type of the link.
     """
 
 

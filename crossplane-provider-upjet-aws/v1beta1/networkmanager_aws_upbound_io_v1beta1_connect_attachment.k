@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema ConnectAttachment:
     r"""
-    ConnectAttachment is the Schema for the ConnectAttachments API.
+    ConnectAttachment is the Schema for the ConnectAttachments API. Manages an AWS Network Manager Connect Attachment.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpec:
 
     providerConfigRef?: NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecWriteConnectionSecretToRef
 
 
@@ -95,25 +91,23 @@ schema NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecForProvider:
     Attributes
     ----------
     coreNetworkId : str, default is Undefined, optional
-        The ID of a core network where you want to create the attachment.
+        ID of a core network where you want to create the attachment.
     coreNetworkIdRef : NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecForProviderCoreNetworkIDRef, default is Undefined, optional
         core network Id ref
     coreNetworkIdSelector : NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecForProviderCoreNetworkIDSelector, default is Undefined, optional
         core network Id selector
     edgeLocation : str, default is Undefined, optional
-        The Region where the edge is located.
+        Region where the edge is located.
     edgeLocationRef : NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecForProviderEdgeLocationRef, default is Undefined, optional
         edge location ref
     edgeLocationSelector : NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecForProviderEdgeLocationSelector, default is Undefined, optional
         edge location selector
     options : [NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecForProviderOptionsItems0], default is Undefined, optional
         Options block. See options for more information.
-    region : str, default is Undefined, required
-        Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     transportAttachmentId : str, default is Undefined, optional
-        The ID of the attachment between the two connections.
+        ID of the attachment between the two connections.
     transportAttachmentIdRef : NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecForProviderTransportAttachmentIDRef, default is Undefined, optional
         transport attachment Id ref
     transportAttachmentIdSelector : NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecForProviderTransportAttachmentIDSelector, default is Undefined, optional
@@ -134,8 +128,6 @@ schema NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecForProvider:
     edgeLocationSelector?: NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecForProviderEdgeLocationSelector
 
     options?: [NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecForProviderOptionsItems0]
-
-    region: str
 
     tags?: {str:str}
 
@@ -331,7 +323,7 @@ schema NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecForProviderOptionsI
     Attributes
     ----------
     $protocol : str, default is Undefined, optional
-        The protocol used for the attachment connection. Possible values are GRE and NO_ENCAP.
+        Protocol used for the attachment connection. Valid values: GRE, NO_ENCAP.
     """
 
 
@@ -443,13 +435,13 @@ schema NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecInitProvider:
     Attributes
     ----------
     coreNetworkId : str, default is Undefined, optional
-        The ID of a core network where you want to create the attachment.
+        ID of a core network where you want to create the attachment.
     coreNetworkIdRef : NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecInitProviderCoreNetworkIDRef, default is Undefined, optional
         core network Id ref
     coreNetworkIdSelector : NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecInitProviderCoreNetworkIDSelector, default is Undefined, optional
         core network Id selector
     edgeLocation : str, default is Undefined, optional
-        The Region where the edge is located.
+        Region where the edge is located.
     edgeLocationRef : NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecInitProviderEdgeLocationRef, default is Undefined, optional
         edge location ref
     edgeLocationSelector : NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecInitProviderEdgeLocationSelector, default is Undefined, optional
@@ -459,7 +451,7 @@ schema NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecInitProvider:
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     transportAttachmentId : str, default is Undefined, optional
-        The ID of the attachment between the two connections.
+        ID of the attachment between the two connections.
     transportAttachmentIdRef : NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecInitProviderTransportAttachmentIDRef, default is Undefined, optional
         transport attachment Id ref
     transportAttachmentIdSelector : NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecInitProviderTransportAttachmentIDSelector, default is Undefined, optional
@@ -675,7 +667,7 @@ schema NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecInitProviderOptions
     Attributes
     ----------
     $protocol : str, default is Undefined, optional
-        The protocol used for the attachment connection. Possible values are GRE and NO_ENCAP.
+        Protocol used for the attachment connection. Valid values: GRE, NO_ENCAP.
     """
 
 
@@ -815,112 +807,12 @@ schema NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecProviderConfigRefPo
     resolve?: "Always" | "IfNotPresent"
 
 
-schema NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -967,37 +859,37 @@ schema NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentStatusAtProvider:
     Attributes
     ----------
     arn : str, default is Undefined, optional
-        The ARN of the attachment.
+        ARN of the attachment.
     attachmentId : str, default is Undefined, optional
-        The ID of the attachment.
+        ID of the attachment.
     attachmentPolicyRuleNumber : float, default is Undefined, optional
-        The policy rule number associated with the attachment.
+        Policy rule number associated with the attachment.
     attachmentType : str, default is Undefined, optional
-        The type of attachment.
+        Type of attachment.
     coreNetworkArn : str, default is Undefined, optional
-        The ARN of a core network.
+        ARN of a core network.
     coreNetworkId : str, default is Undefined, optional
-        The ID of a core network where you want to create the attachment.
+        ID of a core network where you want to create the attachment.
     edgeLocation : str, default is Undefined, optional
-        The Region where the edge is located.
+        Region where the edge is located.
     id : str, default is Undefined, optional
-        The ID of the attachment.
+        id
     options : [NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentStatusAtProviderOptionsItems0], default is Undefined, optional
         Options block. See options for more information.
     ownerAccountId : str, default is Undefined, optional
-        The ID of the attachment account owner.
+        ID of the attachment account owner.
     resourceArn : str, default is Undefined, optional
-        The attachment resource ARN.
+        Attachment resource ARN.
     segmentName : str, default is Undefined, optional
-        The name of the segment attachment.
+        Name of the segment attachment.
     state : str, default is Undefined, optional
-        The state of the attachment.
+        State of the attachment.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
-        A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
+        Map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     transportAttachmentId : str, default is Undefined, optional
-        The ID of the attachment between the two connections.
+        ID of the attachment between the two connections.
     """
 
 
@@ -1041,7 +933,7 @@ schema NetworkmanagerAwsUpboundIoV1beta1ConnectAttachmentStatusAtProviderOptions
     Attributes
     ----------
     $protocol : str, default is Undefined, optional
-        The protocol used for the attachment connection. Possible values are GRE and NO_ENCAP.
+        Protocol used for the attachment connection. Valid values: GRE, NO_ENCAP.
     """
 
 

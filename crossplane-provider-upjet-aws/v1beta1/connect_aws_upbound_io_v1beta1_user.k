@@ -66,8 +66,6 @@ schema ConnectAwsUpboundIoV1beta1UserSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : ConnectAwsUpboundIoV1beta1UserSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : ConnectAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : ConnectAwsUpboundIoV1beta1UserSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema ConnectAwsUpboundIoV1beta1UserSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: ConnectAwsUpboundIoV1beta1UserSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: ConnectAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: ConnectAwsUpboundIoV1beta1UserSpecWriteConnectionSecretToRef
 
@@ -113,6 +109,7 @@ schema ConnectAwsUpboundIoV1beta1UserSpecForProvider:
     phoneConfig : [ConnectAwsUpboundIoV1beta1UserSpecForProviderPhoneConfigItems0], default is Undefined, optional
         A block that contains information about the phone settings for the user. Documented below.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     routingProfileId : str, default is Undefined, optional
         The identifier of the routing profile for the user.
@@ -178,6 +175,8 @@ schema ConnectAwsUpboundIoV1beta1UserSpecForProviderIdentityInfoItems0:
         The first name. This is required if you are using Amazon Connect or SAML for identity management. Minimum length of 1. Maximum length of 100.
     lastName : str, default is Undefined, optional
         The last name. This is required if you are using Amazon Connect or SAML for identity management. Minimum length of 1. Maximum length of 100.
+    secondaryEmail : str, default is Undefined, optional
+        The secondary email address. If present, email notifications will be sent to this email address instead of the primary one.
     """
 
 
@@ -186,6 +185,8 @@ schema ConnectAwsUpboundIoV1beta1UserSpecForProviderIdentityInfoItems0:
     firstName?: str
 
     lastName?: str
+
+    secondaryEmail?: str
 
 
 schema ConnectAwsUpboundIoV1beta1UserSpecForProviderInstanceIDRef:
@@ -598,6 +599,8 @@ schema ConnectAwsUpboundIoV1beta1UserSpecInitProviderIdentityInfoItems0:
         The first name. This is required if you are using Amazon Connect or SAML for identity management. Minimum length of 1. Maximum length of 100.
     lastName : str, default is Undefined, optional
         The last name. This is required if you are using Amazon Connect or SAML for identity management. Minimum length of 1. Maximum length of 100.
+    secondaryEmail : str, default is Undefined, optional
+        The secondary email address. If present, email notifications will be sent to this email address instead of the primary one.
     """
 
 
@@ -606,6 +609,8 @@ schema ConnectAwsUpboundIoV1beta1UserSpecInitProviderIdentityInfoItems0:
     firstName?: str
 
     lastName?: str
+
+    secondaryEmail?: str
 
 
 schema ConnectAwsUpboundIoV1beta1UserSpecInitProviderInstanceIDRef:
@@ -967,112 +972,12 @@ schema ConnectAwsUpboundIoV1beta1UserSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema ConnectAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : ConnectAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : ConnectAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: ConnectAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: ConnectAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema ConnectAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : ConnectAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: ConnectAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema ConnectAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema ConnectAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema ConnectAwsUpboundIoV1beta1UserSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1135,6 +1040,9 @@ schema ConnectAwsUpboundIoV1beta1UserStatusAtProvider:
         The user name for the account. For instances not using SAML for identity management, the user name can include up to 20 characters. If you are using SAML for identity management, the user name can include up to 64 characters from [a-zA-Z0-9_-.\@]+.
     phoneConfig : [ConnectAwsUpboundIoV1beta1UserStatusAtProviderPhoneConfigItems0], default is Undefined, optional
         A block that contains information about the phone settings for the user. Documented below.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     routingProfileId : str, default is Undefined, optional
         The identifier of the routing profile for the user.
     securityProfileIds : [str], default is Undefined, optional
@@ -1164,6 +1072,8 @@ schema ConnectAwsUpboundIoV1beta1UserStatusAtProvider:
 
     phoneConfig?: [ConnectAwsUpboundIoV1beta1UserStatusAtProviderPhoneConfigItems0]
 
+    region?: str
+
     routingProfileId?: str
 
     securityProfileIds?: [str]
@@ -1187,6 +1097,8 @@ schema ConnectAwsUpboundIoV1beta1UserStatusAtProviderIdentityInfoItems0:
         The first name. This is required if you are using Amazon Connect or SAML for identity management. Minimum length of 1. Maximum length of 100.
     lastName : str, default is Undefined, optional
         The last name. This is required if you are using Amazon Connect or SAML for identity management. Minimum length of 1. Maximum length of 100.
+    secondaryEmail : str, default is Undefined, optional
+        The secondary email address. If present, email notifications will be sent to this email address instead of the primary one.
     """
 
 
@@ -1195,6 +1107,8 @@ schema ConnectAwsUpboundIoV1beta1UserStatusAtProviderIdentityInfoItems0:
     firstName?: str
 
     lastName?: str
+
+    secondaryEmail?: str
 
 
 schema ConnectAwsUpboundIoV1beta1UserStatusAtProviderPhoneConfigItems0:

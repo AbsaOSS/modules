@@ -66,8 +66,6 @@ schema RedshiftAwsUpboundIoV1beta1SnapshotCopyGrantSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : RedshiftAwsUpboundIoV1beta1SnapshotCopyGrantSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : RedshiftAwsUpboundIoV1beta1SnapshotCopyGrantSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : RedshiftAwsUpboundIoV1beta1SnapshotCopyGrantSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema RedshiftAwsUpboundIoV1beta1SnapshotCopyGrantSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: RedshiftAwsUpboundIoV1beta1SnapshotCopyGrantSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: RedshiftAwsUpboundIoV1beta1SnapshotCopyGrantSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: RedshiftAwsUpboundIoV1beta1SnapshotCopyGrantSpecWriteConnectionSecretToRef
 
@@ -101,6 +97,7 @@ schema RedshiftAwsUpboundIoV1beta1SnapshotCopyGrantSpecForProvider:
     kmsKeyIdSelector : RedshiftAwsUpboundIoV1beta1SnapshotCopyGrantSpecForProviderKmsKeyIDSelector, default is Undefined, optional
         kms key Id selector
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     snapshotCopyGrantName : str, default is Undefined, optional
         A friendly name for identifying the grant.
@@ -383,112 +380,12 @@ schema RedshiftAwsUpboundIoV1beta1SnapshotCopyGrantSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema RedshiftAwsUpboundIoV1beta1SnapshotCopyGrantSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : RedshiftAwsUpboundIoV1beta1SnapshotCopyGrantSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : RedshiftAwsUpboundIoV1beta1SnapshotCopyGrantSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: RedshiftAwsUpboundIoV1beta1SnapshotCopyGrantSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: RedshiftAwsUpboundIoV1beta1SnapshotCopyGrantSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema RedshiftAwsUpboundIoV1beta1SnapshotCopyGrantSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : RedshiftAwsUpboundIoV1beta1SnapshotCopyGrantSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: RedshiftAwsUpboundIoV1beta1SnapshotCopyGrantSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema RedshiftAwsUpboundIoV1beta1SnapshotCopyGrantSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema RedshiftAwsUpboundIoV1beta1SnapshotCopyGrantSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema RedshiftAwsUpboundIoV1beta1SnapshotCopyGrantSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -540,6 +437,9 @@ schema RedshiftAwsUpboundIoV1beta1SnapshotCopyGrantStatusAtProvider:
         id
     kmsKeyId : str, default is Undefined, optional
         The unique identifier for the customer master key (CMK) that the grant applies to. Specify the key ID or the Amazon Resource Name (ARN) of the CMK. To specify a CMK in a different AWS account, you must use the key ARN. If not specified, the default key is used.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     snapshotCopyGrantName : str, default is Undefined, optional
         A friendly name for identifying the grant.
     tags : {str:str}, default is Undefined, optional
@@ -554,6 +454,8 @@ schema RedshiftAwsUpboundIoV1beta1SnapshotCopyGrantStatusAtProvider:
     id?: str
 
     kmsKeyId?: str
+
+    region?: str
 
     snapshotCopyGrantName?: str
 

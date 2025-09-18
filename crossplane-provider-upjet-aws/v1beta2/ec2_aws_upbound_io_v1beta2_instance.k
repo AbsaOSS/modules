@@ -66,8 +66,6 @@ schema Ec2AwsUpboundIoV1beta2InstanceSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : Ec2AwsUpboundIoV1beta2InstanceSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : Ec2AwsUpboundIoV1beta2InstanceSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : Ec2AwsUpboundIoV1beta2InstanceSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema Ec2AwsUpboundIoV1beta2InstanceSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: Ec2AwsUpboundIoV1beta2InstanceSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: Ec2AwsUpboundIoV1beta2InstanceSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: Ec2AwsUpboundIoV1beta2InstanceSpecWriteConnectionSecretToRef
 
@@ -102,12 +98,8 @@ schema Ec2AwsUpboundIoV1beta2InstanceSpecForProvider:
         AZ to start the instance in.
     capacityReservationSpecification : Ec2AwsUpboundIoV1beta2InstanceSpecForProviderCapacityReservationSpecification, default is Undefined, optional
         capacity reservation specification
-    cpuCoreCount : float, default is Undefined, optional
-        Sets the number of CPU cores for an instance. This option is only supported on creation of instance type that support CPU Options CPU Cores and Threads Per CPU Core Per Instance Type - specifying this option for unsupported instance types will return an error from the EC2 API.
     cpuOptions : Ec2AwsUpboundIoV1beta2InstanceSpecForProviderCPUOptions, default is Undefined, optional
         cpu options
-    cpuThreadsPerCore : float, default is Undefined, optional
-        If set to 1, hyperthreading is disabled on the launched instance. Defaults to 2 if not set. See Optimizing CPU Options for more information.
     creditSpecification : Ec2AwsUpboundIoV1beta2InstanceSpecForProviderCreditSpecification, default is Undefined, optional
         credit specification
     disableApiStop : bool, default is Undefined, optional
@@ -165,6 +157,7 @@ schema Ec2AwsUpboundIoV1beta2InstanceSpecForProvider:
     privateIp : str, default is Undefined, optional
         Private IP address to associate with the instance in a VPC.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     rootBlockDevice : Ec2AwsUpboundIoV1beta2InstanceSpecForProviderRootBlockDevice, default is Undefined, optional
         root block device
@@ -207,11 +200,7 @@ schema Ec2AwsUpboundIoV1beta2InstanceSpecForProvider:
 
     capacityReservationSpecification?: Ec2AwsUpboundIoV1beta2InstanceSpecForProviderCapacityReservationSpecification
 
-    cpuCoreCount?: float
-
     cpuOptions?: Ec2AwsUpboundIoV1beta2InstanceSpecForProviderCPUOptions
-
-    cpuThreadsPerCore?: float
 
     creditSpecification?: Ec2AwsUpboundIoV1beta2InstanceSpecForProviderCreditSpecification
 
@@ -1160,12 +1149,8 @@ schema Ec2AwsUpboundIoV1beta2InstanceSpecInitProvider:
         AZ to start the instance in.
     capacityReservationSpecification : Ec2AwsUpboundIoV1beta2InstanceSpecInitProviderCapacityReservationSpecification, default is Undefined, optional
         capacity reservation specification
-    cpuCoreCount : float, default is Undefined, optional
-        Sets the number of CPU cores for an instance. This option is only supported on creation of instance type that support CPU Options CPU Cores and Threads Per CPU Core Per Instance Type - specifying this option for unsupported instance types will return an error from the EC2 API.
     cpuOptions : Ec2AwsUpboundIoV1beta2InstanceSpecInitProviderCPUOptions, default is Undefined, optional
         cpu options
-    cpuThreadsPerCore : float, default is Undefined, optional
-        If set to 1, hyperthreading is disabled on the launched instance. Defaults to 2 if not set. See Optimizing CPU Options for more information.
     creditSpecification : Ec2AwsUpboundIoV1beta2InstanceSpecInitProviderCreditSpecification, default is Undefined, optional
         credit specification
     disableApiStop : bool, default is Undefined, optional
@@ -1263,11 +1248,7 @@ schema Ec2AwsUpboundIoV1beta2InstanceSpecInitProvider:
 
     capacityReservationSpecification?: Ec2AwsUpboundIoV1beta2InstanceSpecInitProviderCapacityReservationSpecification
 
-    cpuCoreCount?: float
-
     cpuOptions?: Ec2AwsUpboundIoV1beta2InstanceSpecInitProviderCPUOptions
-
-    cpuThreadsPerCore?: float
 
     creditSpecification?: Ec2AwsUpboundIoV1beta2InstanceSpecInitProviderCreditSpecification
 
@@ -2235,112 +2216,12 @@ schema Ec2AwsUpboundIoV1beta2InstanceSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema Ec2AwsUpboundIoV1beta2InstanceSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : Ec2AwsUpboundIoV1beta2InstanceSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : Ec2AwsUpboundIoV1beta2InstanceSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: Ec2AwsUpboundIoV1beta2InstanceSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: Ec2AwsUpboundIoV1beta2InstanceSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema Ec2AwsUpboundIoV1beta2InstanceSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : Ec2AwsUpboundIoV1beta2InstanceSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: Ec2AwsUpboundIoV1beta2InstanceSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema Ec2AwsUpboundIoV1beta2InstanceSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema Ec2AwsUpboundIoV1beta2InstanceSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema Ec2AwsUpboundIoV1beta2InstanceSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -2396,12 +2277,8 @@ schema Ec2AwsUpboundIoV1beta2InstanceStatusAtProvider:
         AZ to start the instance in.
     capacityReservationSpecification : Ec2AwsUpboundIoV1beta2InstanceStatusAtProviderCapacityReservationSpecification, default is Undefined, optional
         capacity reservation specification
-    cpuCoreCount : float, default is Undefined, optional
-        Sets the number of CPU cores for an instance. This option is only supported on creation of instance type that support CPU Options CPU Cores and Threads Per CPU Core Per Instance Type - specifying this option for unsupported instance types will return an error from the EC2 API.
     cpuOptions : Ec2AwsUpboundIoV1beta2InstanceStatusAtProviderCPUOptions, default is Undefined, optional
         cpu options
-    cpuThreadsPerCore : float, default is Undefined, optional
-        If set to 1, hyperthreading is disabled on the launched instance. Defaults to 2 if not set. See Optimizing CPU Options for more information.
     creditSpecification : Ec2AwsUpboundIoV1beta2InstanceStatusAtProviderCreditSpecification, default is Undefined, optional
         credit specification
     disableApiStop : bool, default is Undefined, optional
@@ -2476,6 +2353,9 @@ schema Ec2AwsUpboundIoV1beta2InstanceStatusAtProvider:
         Public DNS name assigned to the instance. For EC2-VPC, this is only available if you've enabled DNS hostnames for your VPC.
     publicIp : str, default is Undefined, optional
         Public IP address assigned to the instance, if applicable. NOTE: If you are using an aws_eip with your instance, you should refer to the EIP's address directly and not use public_ip as this field will change after the EIP is attached.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     rootBlockDevice : Ec2AwsUpboundIoV1beta2InstanceStatusAtProviderRootBlockDevice, default is Undefined, optional
         root block device
     secondaryPrivateIps : [str], default is Undefined, optional
@@ -2517,11 +2397,7 @@ schema Ec2AwsUpboundIoV1beta2InstanceStatusAtProvider:
 
     capacityReservationSpecification?: Ec2AwsUpboundIoV1beta2InstanceStatusAtProviderCapacityReservationSpecification
 
-    cpuCoreCount?: float
-
     cpuOptions?: Ec2AwsUpboundIoV1beta2InstanceStatusAtProviderCPUOptions
-
-    cpuThreadsPerCore?: float
 
     creditSpecification?: Ec2AwsUpboundIoV1beta2InstanceStatusAtProviderCreditSpecification
 
@@ -2596,6 +2472,8 @@ schema Ec2AwsUpboundIoV1beta2InstanceStatusAtProvider:
     publicDns?: str
 
     publicIp?: str
+
+    region?: str
 
     rootBlockDevice?: Ec2AwsUpboundIoV1beta2InstanceStatusAtProviderRootBlockDevice
 

@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema ImageVersion:
     r"""
-    ImageVersion is the Schema for the ImageVersions API. Provides a SageMaker Image Version resource.
+    ImageVersion is the Schema for the ImageVersions API. Provides a SageMaker AI Image Version resource.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema SagemakerAwsUpboundIoV1beta1ImageVersionSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : SagemakerAwsUpboundIoV1beta1ImageVersionSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : SagemakerAwsUpboundIoV1beta1ImageVersionSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : SagemakerAwsUpboundIoV1beta1ImageVersionSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema SagemakerAwsUpboundIoV1beta1ImageVersionSpec:
 
     providerConfigRef?: SagemakerAwsUpboundIoV1beta1ImageVersionSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: SagemakerAwsUpboundIoV1beta1ImageVersionSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: SagemakerAwsUpboundIoV1beta1ImageVersionSpecWriteConnectionSecretToRef
 
 
@@ -94,20 +90,41 @@ schema SagemakerAwsUpboundIoV1beta1ImageVersionSpecForProvider:
 
     Attributes
     ----------
+    aliases : [str], default is Undefined, optional
+        A list of aliases for the image version.
     baseImage : str, default is Undefined, optional
         The registry path of the container image on which this image version is based.
+    horovod : bool, default is Undefined, optional
+        Indicates Horovod compatibility.
     imageName : str, default is Undefined, optional
         The name of the image. Must be unique to your account.
     imageNameRef : SagemakerAwsUpboundIoV1beta1ImageVersionSpecForProviderImageNameRef, default is Undefined, optional
         image name ref
     imageNameSelector : SagemakerAwsUpboundIoV1beta1ImageVersionSpecForProviderImageNameSelector, default is Undefined, optional
         image name selector
+    jobType : str, default is Undefined, optional
+        Indicates SageMaker AI job type compatibility. Valid values are: TRAINING, INFERENCE, and NOTEBOOK_KERNEL.
+    mlFramework : str, default is Undefined, optional
+        The machine learning framework vended in the image version.
+    processor : str, default is Undefined, optional
+        Indicates CPU or GPU compatibility. Valid values are: CPU and GPU.
+    programmingLang : str, default is Undefined, optional
+        The supported programming language and its version.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
+    releaseNotes : str, default is Undefined, optional
+        The maintainer description of the image version.
+    vendorGuidance : str, default is Undefined, optional
+        The stability of the image version, specified by the maintainer. Valid values are: NOT_PROVIDED, STABLE, TO_BE_ARCHIVED, and ARCHIVED.
     """
 
 
+    aliases?: [str]
+
     baseImage?: str
+
+    horovod?: bool
 
     imageName?: str
 
@@ -115,7 +132,19 @@ schema SagemakerAwsUpboundIoV1beta1ImageVersionSpecForProvider:
 
     imageNameSelector?: SagemakerAwsUpboundIoV1beta1ImageVersionSpecForProviderImageNameSelector
 
+    jobType?: str
+
+    mlFramework?: str
+
+    processor?: str
+
+    programmingLang?: str
+
     region: str
+
+    releaseNotes?: str
+
+    vendorGuidance?: str
 
 
 schema SagemakerAwsUpboundIoV1beta1ImageVersionSpecForProviderImageNameRef:
@@ -222,24 +251,56 @@ schema SagemakerAwsUpboundIoV1beta1ImageVersionSpecInitProvider:
 
     Attributes
     ----------
+    aliases : [str], default is Undefined, optional
+        A list of aliases for the image version.
     baseImage : str, default is Undefined, optional
         The registry path of the container image on which this image version is based.
+    horovod : bool, default is Undefined, optional
+        Indicates Horovod compatibility.
     imageName : str, default is Undefined, optional
         The name of the image. Must be unique to your account.
     imageNameRef : SagemakerAwsUpboundIoV1beta1ImageVersionSpecInitProviderImageNameRef, default is Undefined, optional
         image name ref
     imageNameSelector : SagemakerAwsUpboundIoV1beta1ImageVersionSpecInitProviderImageNameSelector, default is Undefined, optional
         image name selector
+    jobType : str, default is Undefined, optional
+        Indicates SageMaker AI job type compatibility. Valid values are: TRAINING, INFERENCE, and NOTEBOOK_KERNEL.
+    mlFramework : str, default is Undefined, optional
+        The machine learning framework vended in the image version.
+    processor : str, default is Undefined, optional
+        Indicates CPU or GPU compatibility. Valid values are: CPU and GPU.
+    programmingLang : str, default is Undefined, optional
+        The supported programming language and its version.
+    releaseNotes : str, default is Undefined, optional
+        The maintainer description of the image version.
+    vendorGuidance : str, default is Undefined, optional
+        The stability of the image version, specified by the maintainer. Valid values are: NOT_PROVIDED, STABLE, TO_BE_ARCHIVED, and ARCHIVED.
     """
 
 
+    aliases?: [str]
+
     baseImage?: str
+
+    horovod?: bool
 
     imageName?: str
 
     imageNameRef?: SagemakerAwsUpboundIoV1beta1ImageVersionSpecInitProviderImageNameRef
 
     imageNameSelector?: SagemakerAwsUpboundIoV1beta1ImageVersionSpecInitProviderImageNameSelector
+
+    jobType?: str
+
+    mlFramework?: str
+
+    processor?: str
+
+    programmingLang?: str
+
+    releaseNotes?: str
+
+    vendorGuidance?: str
 
 
 schema SagemakerAwsUpboundIoV1beta1ImageVersionSpecInitProviderImageNameRef:
@@ -375,112 +436,12 @@ schema SagemakerAwsUpboundIoV1beta1ImageVersionSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema SagemakerAwsUpboundIoV1beta1ImageVersionSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : SagemakerAwsUpboundIoV1beta1ImageVersionSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : SagemakerAwsUpboundIoV1beta1ImageVersionSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: SagemakerAwsUpboundIoV1beta1ImageVersionSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: SagemakerAwsUpboundIoV1beta1ImageVersionSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema SagemakerAwsUpboundIoV1beta1ImageVersionSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : SagemakerAwsUpboundIoV1beta1ImageVersionSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: SagemakerAwsUpboundIoV1beta1ImageVersionSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema SagemakerAwsUpboundIoV1beta1ImageVersionSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema SagemakerAwsUpboundIoV1beta1ImageVersionSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema SagemakerAwsUpboundIoV1beta1ImageVersionSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -526,22 +487,43 @@ schema SagemakerAwsUpboundIoV1beta1ImageVersionStatusAtProvider:
 
     Attributes
     ----------
+    aliases : [str], default is Undefined, optional
+        A list of aliases for the image version.
     arn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) assigned by AWS to this Image Version.
     baseImage : str, default is Undefined, optional
         The registry path of the container image on which this image version is based.
     containerImage : str, default is Undefined, optional
         The registry path of the container image that contains this image version.
+    horovod : bool, default is Undefined, optional
+        Indicates Horovod compatibility.
     id : str, default is Undefined, optional
-        The name of the Image.
+        id
     imageArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the image the version is based on.
+        The Amazon Resource Name (ARN) assigned by AWS to this Image Version.
     imageName : str, default is Undefined, optional
         The name of the image. Must be unique to your account.
+    jobType : str, default is Undefined, optional
+        Indicates SageMaker AI job type compatibility. Valid values are: TRAINING, INFERENCE, and NOTEBOOK_KERNEL.
+    mlFramework : str, default is Undefined, optional
+        The machine learning framework vended in the image version.
+    processor : str, default is Undefined, optional
+        Indicates CPU or GPU compatibility. Valid values are: CPU and GPU.
+    programmingLang : str, default is Undefined, optional
+        The supported programming language and its version.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
+    releaseNotes : str, default is Undefined, optional
+        The maintainer description of the image version.
+    vendorGuidance : str, default is Undefined, optional
+        The stability of the image version, specified by the maintainer. Valid values are: NOT_PROVIDED, STABLE, TO_BE_ARCHIVED, and ARCHIVED.
     version : float, default is Undefined, optional
-        version
+        The version of the image. If not specified, the latest version is described.
     """
 
+
+    aliases?: [str]
 
     arn?: str
 
@@ -549,11 +531,27 @@ schema SagemakerAwsUpboundIoV1beta1ImageVersionStatusAtProvider:
 
     containerImage?: str
 
+    horovod?: bool
+
     id?: str
 
     imageArn?: str
 
     imageName?: str
+
+    jobType?: str
+
+    mlFramework?: str
+
+    processor?: str
+
+    programmingLang?: str
+
+    region?: str
+
+    releaseNotes?: str
+
+    vendorGuidance?: str
 
     version?: float
 

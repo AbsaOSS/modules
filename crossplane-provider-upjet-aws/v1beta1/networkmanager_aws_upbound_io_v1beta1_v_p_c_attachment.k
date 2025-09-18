@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema VPCAttachment:
     r"""
-    VPCAttachment is the Schema for the VPCAttachments API.
+    VPCAttachment is the Schema for the VPCAttachments API. Manages a Network Manager VPC attachment.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpec:
 
     providerConfigRef?: NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecWriteConnectionSecretToRef
 
 
@@ -95,17 +91,15 @@ schema NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecForProvider:
     Attributes
     ----------
     coreNetworkId : str, default is Undefined, optional
-        The ID of a core network for the VPC attachment.
+        ID of a core network for the VPC attachment.
     coreNetworkIdRef : NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecForProviderCoreNetworkIDRef, default is Undefined, optional
         core network Id ref
     coreNetworkIdSelector : NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecForProviderCoreNetworkIDSelector, default is Undefined, optional
         core network Id selector
     options : [NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecForProviderOptionsItems0], default is Undefined, optional
-        Options for the VPC attachment.
-    region : str, default is Undefined, required
-        Region is the region you'd like your resource to be created in.
+        Options for the VPC attachment. See below.
     subnetArns : [str], default is Undefined, optional
-        The subnet ARN of the VPC attachment.
+        Subnet ARNs of the VPC attachment.
     subnetArnsRefs : [NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecForProviderSubnetArnsRefsItems0], default is Undefined, optional
         References to Subnet in ec2 to populate subnetArns.
     subnetArnsSelector : NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecForProviderSubnetArnsSelector, default is Undefined, optional
@@ -113,7 +107,7 @@ schema NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecForProvider:
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     vpcArn : str, default is Undefined, optional
-        The ARN of the VPC.
+        ARN of the VPC.
     vpcArnRef : NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecForProviderVpcArnRef, default is Undefined, optional
         vpc arn ref
     vpcArnSelector : NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecForProviderVpcArnSelector, default is Undefined, optional
@@ -128,8 +122,6 @@ schema NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecForProvider:
     coreNetworkIdSelector?: NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecForProviderCoreNetworkIDSelector
 
     options?: [NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecForProviderOptionsItems0]
-
-    region: str
 
     subnetArns?: [str]
 
@@ -242,12 +234,9 @@ schema NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecForProviderOptionsItems
     Attributes
     ----------
     applianceModeSupport : bool, default is Undefined, optional
-        Indicates whether appliance mode is supported.
-        If enabled, traffic flow between a source and destination use the same Availability Zone for the VPC attachment for the lifetime of that flow.
-        If the VPC attachment is pending acceptance, changing this value will recreate the resource.
+        Whether to enable appliance mode support. If enabled, traffic flow between a source and destination use the same Availability Zone for the VPC attachment for the lifetime of that flow. If the VPC attachment is pending acceptance, changing this value will recreate the resource.
     ipv6Support : bool, default is Undefined, optional
-        Indicates whether IPv6 is supported.
-        If the VPC attachment is pending acceptance, changing this value will recreate the resource.
+        Whether to enable IPv6 support. If the VPC attachment is pending acceptance, changing this value will recreate the resource.
     """
 
 
@@ -450,15 +439,15 @@ schema NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecInitProvider:
     Attributes
     ----------
     coreNetworkId : str, default is Undefined, optional
-        The ID of a core network for the VPC attachment.
+        ID of a core network for the VPC attachment.
     coreNetworkIdRef : NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecInitProviderCoreNetworkIDRef, default is Undefined, optional
         core network Id ref
     coreNetworkIdSelector : NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecInitProviderCoreNetworkIDSelector, default is Undefined, optional
         core network Id selector
     options : [NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecInitProviderOptionsItems0], default is Undefined, optional
-        Options for the VPC attachment.
+        Options for the VPC attachment. See below.
     subnetArns : [str], default is Undefined, optional
-        The subnet ARN of the VPC attachment.
+        Subnet ARNs of the VPC attachment.
     subnetArnsRefs : [NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecInitProviderSubnetArnsRefsItems0], default is Undefined, optional
         References to Subnet in ec2 to populate subnetArns.
     subnetArnsSelector : NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecInitProviderSubnetArnsSelector, default is Undefined, optional
@@ -466,7 +455,7 @@ schema NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecInitProvider:
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     vpcArn : str, default is Undefined, optional
-        The ARN of the VPC.
+        ARN of the VPC.
     vpcArnRef : NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecInitProviderVpcArnRef, default is Undefined, optional
         vpc arn ref
     vpcArnSelector : NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecInitProviderVpcArnSelector, default is Undefined, optional
@@ -593,12 +582,9 @@ schema NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecInitProviderOptionsItem
     Attributes
     ----------
     applianceModeSupport : bool, default is Undefined, optional
-        Indicates whether appliance mode is supported.
-        If enabled, traffic flow between a source and destination use the same Availability Zone for the VPC attachment for the lifetime of that flow.
-        If the VPC attachment is pending acceptance, changing this value will recreate the resource.
+        Whether to enable appliance mode support. If enabled, traffic flow between a source and destination use the same Availability Zone for the VPC attachment for the lifetime of that flow. If the VPC attachment is pending acceptance, changing this value will recreate the resource.
     ipv6Support : bool, default is Undefined, optional
-        Indicates whether IPv6 is supported.
-        If the VPC attachment is pending acceptance, changing this value will recreate the resource.
+        Whether to enable IPv6 support. If the VPC attachment is pending acceptance, changing this value will recreate the resource.
     """
 
 
@@ -829,112 +815,12 @@ schema NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecProviderConfigRefPolicy
     resolve?: "Always" | "IfNotPresent"
 
 
-schema NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -981,37 +867,37 @@ schema NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentStatusAtProvider:
     Attributes
     ----------
     arn : str, default is Undefined, optional
-        The ARN of the attachment.
+        ARN of the attachment.
     attachmentPolicyRuleNumber : float, default is Undefined, optional
-        The policy rule number associated with the attachment.
+        Policy rule number associated with the attachment.
     attachmentType : str, default is Undefined, optional
-        The type of attachment.
+        Type of attachment.
     coreNetworkArn : str, default is Undefined, optional
-        The ARN of a core network.
+        ARN of a core network.
     coreNetworkId : str, default is Undefined, optional
-        The ID of a core network for the VPC attachment.
+        ID of a core network for the VPC attachment.
     edgeLocation : str, default is Undefined, optional
-        The Region where the edge is located.
+        Region where the edge is located.
     id : str, default is Undefined, optional
-        The ID of the attachment.
+        ID of the attachment.
     options : [NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentStatusAtProviderOptionsItems0], default is Undefined, optional
-        Options for the VPC attachment.
+        Options for the VPC attachment. See below.
     ownerAccountId : str, default is Undefined, optional
-        The ID of the attachment account owner.
+        ID of the attachment account owner.
     resourceArn : str, default is Undefined, optional
-        The attachment resource ARN.
+        Attachment resource ARN.
     segmentName : str, default is Undefined, optional
-        The name of the segment attachment.
+        Name of the segment attachment.
     state : str, default is Undefined, optional
-        The state of the attachment.
+        State of the attachment.
     subnetArns : [str], default is Undefined, optional
-        The subnet ARN of the VPC attachment.
+        Subnet ARNs of the VPC attachment.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
-        A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
+        Map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     vpcArn : str, default is Undefined, optional
-        The ARN of the VPC.
+        ARN of the VPC.
     """
 
 
@@ -1055,12 +941,9 @@ schema NetworkmanagerAwsUpboundIoV1beta1VPCAttachmentStatusAtProviderOptionsItem
     Attributes
     ----------
     applianceModeSupport : bool, default is Undefined, optional
-        Indicates whether appliance mode is supported.
-        If enabled, traffic flow between a source and destination use the same Availability Zone for the VPC attachment for the lifetime of that flow.
-        If the VPC attachment is pending acceptance, changing this value will recreate the resource.
+        Whether to enable appliance mode support. If enabled, traffic flow between a source and destination use the same Availability Zone for the VPC attachment for the lifetime of that flow. If the VPC attachment is pending acceptance, changing this value will recreate the resource.
     ipv6Support : bool, default is Undefined, optional
-        Indicates whether IPv6 is supported.
-        If the VPC attachment is pending acceptance, changing this value will recreate the resource.
+        Whether to enable IPv6 support. If the VPC attachment is pending acceptance, changing this value will recreate the resource.
     """
 
 

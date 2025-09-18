@@ -66,8 +66,6 @@ schema ServicecatalogAwsUpboundIoV1beta1TagOptionResourceAssociationSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : ServicecatalogAwsUpboundIoV1beta1TagOptionResourceAssociationSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : ServicecatalogAwsUpboundIoV1beta1TagOptionResourceAssociationSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : ServicecatalogAwsUpboundIoV1beta1TagOptionResourceAssociationSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema ServicecatalogAwsUpboundIoV1beta1TagOptionResourceAssociationSpec:
 
     providerConfigRef?: ServicecatalogAwsUpboundIoV1beta1TagOptionResourceAssociationSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: ServicecatalogAwsUpboundIoV1beta1TagOptionResourceAssociationSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: ServicecatalogAwsUpboundIoV1beta1TagOptionResourceAssociationSpecWriteConnectionSecretToRef
 
 
@@ -95,6 +91,7 @@ schema ServicecatalogAwsUpboundIoV1beta1TagOptionResourceAssociationSpecForProvi
     Attributes
     ----------
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     resourceId : str, default is Undefined, optional
         Resource identifier.
@@ -569,112 +566,12 @@ schema ServicecatalogAwsUpboundIoV1beta1TagOptionResourceAssociationSpecProvider
     resolve?: "Always" | "IfNotPresent"
 
 
-schema ServicecatalogAwsUpboundIoV1beta1TagOptionResourceAssociationSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : ServicecatalogAwsUpboundIoV1beta1TagOptionResourceAssociationSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : ServicecatalogAwsUpboundIoV1beta1TagOptionResourceAssociationSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: ServicecatalogAwsUpboundIoV1beta1TagOptionResourceAssociationSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: ServicecatalogAwsUpboundIoV1beta1TagOptionResourceAssociationSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema ServicecatalogAwsUpboundIoV1beta1TagOptionResourceAssociationSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : ServicecatalogAwsUpboundIoV1beta1TagOptionResourceAssociationSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: ServicecatalogAwsUpboundIoV1beta1TagOptionResourceAssociationSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema ServicecatalogAwsUpboundIoV1beta1TagOptionResourceAssociationSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema ServicecatalogAwsUpboundIoV1beta1TagOptionResourceAssociationSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema ServicecatalogAwsUpboundIoV1beta1TagOptionResourceAssociationSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -722,6 +619,9 @@ schema ServicecatalogAwsUpboundIoV1beta1TagOptionResourceAssociationStatusAtProv
     ----------
     id : str, default is Undefined, optional
         Identifier of the association.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     resourceArn : str, default is Undefined, optional
         ARN of the resource.
     resourceCreatedTime : str, default is Undefined, optional
@@ -738,6 +638,8 @@ schema ServicecatalogAwsUpboundIoV1beta1TagOptionResourceAssociationStatusAtProv
 
 
     id?: str
+
+    region?: str
 
     resourceArn?: str
 

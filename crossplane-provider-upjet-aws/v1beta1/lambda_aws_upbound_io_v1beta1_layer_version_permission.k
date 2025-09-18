@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema LayerVersionPermission:
     r"""
-    LayerVersionPermission is the Schema for the LayerVersionPermissions API. Provides a Lambda Layer Version Permission resource.
+    LayerVersionPermission is the Schema for the LayerVersionPermissions API. Manages an AWS Lambda Layer Version Permission.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpec:
 
     providerConfigRef?: LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecWriteConnectionSecretToRef
 
 
@@ -95,27 +91,40 @@ schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecForProvider:
     Attributes
     ----------
     action : str, default is Undefined, optional
-        Action, which will be allowed. lambda:GetLayerVersion value is suggested by AWS documantation.
+        Action that will be allowed. lambda:GetLayerVersion is the standard value for layer access.
     layerName : str, default is Undefined, optional
-        The name or ARN of the Lambda Layer, which you want to grant access to.
+        Name or ARN of the Lambda Layer.
+    layerNameRef : LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecForProviderLayerNameRef, default is Undefined, optional
+        layer name ref
+    layerNameSelector : LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecForProviderLayerNameSelector, default is Undefined, optional
+        layer name selector
     organizationId : str, default is Undefined, optional
-        An identifier of AWS Organization, which should be able to use your Lambda Layer. principal should be equal to * if organization_id provided.
+        AWS Organization ID that should be able to use your Lambda Layer. principal should be set to * when organization_id is provided.
     principal : str, default is Undefined, optional
-        AWS account ID which should be able to use your Lambda Layer. * can be used here, if you want to share your Lambda Layer widely.
+        AWS account ID that should be able to use your Lambda Layer. Use * to share with all AWS accounts.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     skipDestroy : bool, default is Undefined, optional
-        Whether to retain the old version of a previously deployed Lambda Layer. Default is false. When this is not set to true, changing any of compatible_architectures, compatible_runtimes, description, filename, layer_name, license_info, s3_bucket, s3_key, s3_object_version, or source_code_hash forces deletion of the existing layer version and creation of a new layer version.
+        Whether to retain the permission when the resource is destroyed. Default is false.
     statementId : str, default is Undefined, optional
-        The name of Lambda Layer Permission, for example dev-account - human readable note about what is this permission for.
+        Unique identifier for the permission statement.
     versionNumber : float, default is Undefined, optional
-        Version of Lambda Layer, which you want to grant access to. Note: permissions only apply to a single version of a layer.
+        Version of Lambda Layer to grant access to. Note: permissions only apply to a single version of a layer.
+    versionNumberRef : LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecForProviderVersionNumberRef, default is Undefined, optional
+        version number ref
+    versionNumberSelector : LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecForProviderVersionNumberSelector, default is Undefined, optional
+        version number selector
     """
 
 
     action?: str
 
     layerName?: str
+
+    layerNameRef?: LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecForProviderLayerNameRef
+
+    layerNameSelector?: LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecForProviderLayerNameSelector
 
     organizationId?: str
 
@@ -128,6 +137,188 @@ schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecForProvider:
     statementId?: str
 
     versionNumber?: float
+
+    versionNumberRef?: LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecForProviderVersionNumberRef
+
+    versionNumberSelector?: LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecForProviderVersionNumberSelector
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecForProviderLayerNameRef:
+    r"""
+    Reference to a LayerVersion in lambda to populate layerName.
+
+    Attributes
+    ----------
+    name : str, default is Undefined, required
+        Name of the referenced object.
+    policy : LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecForProviderLayerNameRefPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    name: str
+
+    policy?: LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecForProviderLayerNameRefPolicy
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecForProviderLayerNameRefPolicy:
+    r"""
+    Policies for referencing.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecForProviderLayerNameSelector:
+    r"""
+    Selector for a LayerVersion in lambda to populate layerName.
+
+    Attributes
+    ----------
+    matchControllerRef : bool, default is Undefined, optional
+        MatchControllerRef ensures an object with the same controller reference
+        as the selecting object is selected.
+    matchLabels : {str:str}, default is Undefined, optional
+        MatchLabels ensures an object with matching labels is selected.
+    policy : LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecForProviderLayerNameSelectorPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    matchControllerRef?: bool
+
+    matchLabels?: {str:str}
+
+    policy?: LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecForProviderLayerNameSelectorPolicy
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecForProviderLayerNameSelectorPolicy:
+    r"""
+    Policies for selection.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecForProviderVersionNumberRef:
+    r"""
+    Reference to a LayerVersion in lambda to populate versionNumber.
+
+    Attributes
+    ----------
+    name : str, default is Undefined, required
+        Name of the referenced object.
+    policy : LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecForProviderVersionNumberRefPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    name: str
+
+    policy?: LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecForProviderVersionNumberRefPolicy
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecForProviderVersionNumberRefPolicy:
+    r"""
+    Policies for referencing.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecForProviderVersionNumberSelector:
+    r"""
+    Selector for a LayerVersion in lambda to populate versionNumber.
+
+    Attributes
+    ----------
+    matchControllerRef : bool, default is Undefined, optional
+        MatchControllerRef ensures an object with the same controller reference
+        as the selecting object is selected.
+    matchLabels : {str:str}, default is Undefined, optional
+        MatchLabels ensures an object with matching labels is selected.
+    policy : LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecForProviderVersionNumberSelectorPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    matchControllerRef?: bool
+
+    matchLabels?: {str:str}
+
+    policy?: LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecForProviderVersionNumberSelectorPolicy
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecForProviderVersionNumberSelectorPolicy:
+    r"""
+    Policies for selection.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
 
 
 schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecInitProvider:
@@ -146,25 +337,37 @@ schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecInitProvider:
     Attributes
     ----------
     action : str, default is Undefined, optional
-        Action, which will be allowed. lambda:GetLayerVersion value is suggested by AWS documantation.
+        Action that will be allowed. lambda:GetLayerVersion is the standard value for layer access.
     layerName : str, default is Undefined, optional
-        The name or ARN of the Lambda Layer, which you want to grant access to.
+        Name or ARN of the Lambda Layer.
+    layerNameRef : LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecInitProviderLayerNameRef, default is Undefined, optional
+        layer name ref
+    layerNameSelector : LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecInitProviderLayerNameSelector, default is Undefined, optional
+        layer name selector
     organizationId : str, default is Undefined, optional
-        An identifier of AWS Organization, which should be able to use your Lambda Layer. principal should be equal to * if organization_id provided.
+        AWS Organization ID that should be able to use your Lambda Layer. principal should be set to * when organization_id is provided.
     principal : str, default is Undefined, optional
-        AWS account ID which should be able to use your Lambda Layer. * can be used here, if you want to share your Lambda Layer widely.
+        AWS account ID that should be able to use your Lambda Layer. Use * to share with all AWS accounts.
     skipDestroy : bool, default is Undefined, optional
-        Whether to retain the old version of a previously deployed Lambda Layer. Default is false. When this is not set to true, changing any of compatible_architectures, compatible_runtimes, description, filename, layer_name, license_info, s3_bucket, s3_key, s3_object_version, or source_code_hash forces deletion of the existing layer version and creation of a new layer version.
+        Whether to retain the permission when the resource is destroyed. Default is false.
     statementId : str, default is Undefined, optional
-        The name of Lambda Layer Permission, for example dev-account - human readable note about what is this permission for.
+        Unique identifier for the permission statement.
     versionNumber : float, default is Undefined, optional
-        Version of Lambda Layer, which you want to grant access to. Note: permissions only apply to a single version of a layer.
+        Version of Lambda Layer to grant access to. Note: permissions only apply to a single version of a layer.
+    versionNumberRef : LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecInitProviderVersionNumberRef, default is Undefined, optional
+        version number ref
+    versionNumberSelector : LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecInitProviderVersionNumberSelector, default is Undefined, optional
+        version number selector
     """
 
 
     action?: str
 
     layerName?: str
+
+    layerNameRef?: LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecInitProviderLayerNameRef
+
+    layerNameSelector?: LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecInitProviderLayerNameSelector
 
     organizationId?: str
 
@@ -175,6 +378,188 @@ schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecInitProvider:
     statementId?: str
 
     versionNumber?: float
+
+    versionNumberRef?: LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecInitProviderVersionNumberRef
+
+    versionNumberSelector?: LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecInitProviderVersionNumberSelector
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecInitProviderLayerNameRef:
+    r"""
+    Reference to a LayerVersion in lambda to populate layerName.
+
+    Attributes
+    ----------
+    name : str, default is Undefined, required
+        Name of the referenced object.
+    policy : LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecInitProviderLayerNameRefPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    name: str
+
+    policy?: LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecInitProviderLayerNameRefPolicy
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecInitProviderLayerNameRefPolicy:
+    r"""
+    Policies for referencing.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecInitProviderLayerNameSelector:
+    r"""
+    Selector for a LayerVersion in lambda to populate layerName.
+
+    Attributes
+    ----------
+    matchControllerRef : bool, default is Undefined, optional
+        MatchControllerRef ensures an object with the same controller reference
+        as the selecting object is selected.
+    matchLabels : {str:str}, default is Undefined, optional
+        MatchLabels ensures an object with matching labels is selected.
+    policy : LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecInitProviderLayerNameSelectorPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    matchControllerRef?: bool
+
+    matchLabels?: {str:str}
+
+    policy?: LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecInitProviderLayerNameSelectorPolicy
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecInitProviderLayerNameSelectorPolicy:
+    r"""
+    Policies for selection.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecInitProviderVersionNumberRef:
+    r"""
+    Reference to a LayerVersion in lambda to populate versionNumber.
+
+    Attributes
+    ----------
+    name : str, default is Undefined, required
+        Name of the referenced object.
+    policy : LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecInitProviderVersionNumberRefPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    name: str
+
+    policy?: LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecInitProviderVersionNumberRefPolicy
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecInitProviderVersionNumberRefPolicy:
+    r"""
+    Policies for referencing.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecInitProviderVersionNumberSelector:
+    r"""
+    Selector for a LayerVersion in lambda to populate versionNumber.
+
+    Attributes
+    ----------
+    matchControllerRef : bool, default is Undefined, optional
+        MatchControllerRef ensures an object with the same controller reference
+        as the selecting object is selected.
+    matchLabels : {str:str}, default is Undefined, optional
+        MatchLabels ensures an object with matching labels is selected.
+    policy : LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecInitProviderVersionNumberSelectorPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    matchControllerRef?: bool
+
+    matchLabels?: {str:str}
+
+    policy?: LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecInitProviderVersionNumberSelectorPolicy
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecInitProviderVersionNumberSelectorPolicy:
+    r"""
+    Policies for selection.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
 
 
 schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecProviderConfigRef:
@@ -221,112 +606,12 @@ schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecProviderConfigRefPolic
     resolve?: "Always" | "IfNotPresent"
 
 
-schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -373,25 +658,28 @@ schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionStatusAtProvider:
     Attributes
     ----------
     action : str, default is Undefined, optional
-        Action, which will be allowed. lambda:GetLayerVersion value is suggested by AWS documantation.
+        Action that will be allowed. lambda:GetLayerVersion is the standard value for layer access.
     id : str, default is Undefined, optional
-        The layer_name and version_number, separated by a comma (,).
+        Layer name and version number, separated by a comma (,).
     layerName : str, default is Undefined, optional
-        The name or ARN of the Lambda Layer, which you want to grant access to.
+        Name or ARN of the Lambda Layer.
     organizationId : str, default is Undefined, optional
-        An identifier of AWS Organization, which should be able to use your Lambda Layer. principal should be equal to * if organization_id provided.
+        AWS Organization ID that should be able to use your Lambda Layer. principal should be set to * when organization_id is provided.
     policy : str, default is Undefined, optional
         Full Lambda Layer Permission policy.
     principal : str, default is Undefined, optional
-        AWS account ID which should be able to use your Lambda Layer. * can be used here, if you want to share your Lambda Layer widely.
+        AWS account ID that should be able to use your Lambda Layer. Use * to share with all AWS accounts.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     revisionId : str, default is Undefined, optional
-        A unique identifier for the current revision of the policy.
+        Unique identifier for the current revision of the policy.
     skipDestroy : bool, default is Undefined, optional
-        Whether to retain the old version of a previously deployed Lambda Layer. Default is false. When this is not set to true, changing any of compatible_architectures, compatible_runtimes, description, filename, layer_name, license_info, s3_bucket, s3_key, s3_object_version, or source_code_hash forces deletion of the existing layer version and creation of a new layer version.
+        Whether to retain the permission when the resource is destroyed. Default is false.
     statementId : str, default is Undefined, optional
-        The name of Lambda Layer Permission, for example dev-account - human readable note about what is this permission for.
+        Unique identifier for the permission statement.
     versionNumber : float, default is Undefined, optional
-        Version of Lambda Layer, which you want to grant access to. Note: permissions only apply to a single version of a layer.
+        Version of Lambda Layer to grant access to. Note: permissions only apply to a single version of a layer.
     """
 
 
@@ -406,6 +694,8 @@ schema LambdaAwsUpboundIoV1beta1LayerVersionPermissionStatusAtProvider:
     policy?: str
 
     principal?: str
+
+    region?: str
 
     revisionId?: str
 

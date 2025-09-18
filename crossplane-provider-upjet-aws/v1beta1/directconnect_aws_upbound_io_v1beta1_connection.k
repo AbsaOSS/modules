@@ -66,8 +66,6 @@ schema DirectconnectAwsUpboundIoV1beta1ConnectionSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : DirectconnectAwsUpboundIoV1beta1ConnectionSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : DirectconnectAwsUpboundIoV1beta1ConnectionSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : DirectconnectAwsUpboundIoV1beta1ConnectionSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema DirectconnectAwsUpboundIoV1beta1ConnectionSpec:
 
     providerConfigRef?: DirectconnectAwsUpboundIoV1beta1ConnectionSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: DirectconnectAwsUpboundIoV1beta1ConnectionSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: DirectconnectAwsUpboundIoV1beta1ConnectionSpecWriteConnectionSecretToRef
 
 
@@ -95,7 +91,7 @@ schema DirectconnectAwsUpboundIoV1beta1ConnectionSpecForProvider:
     Attributes
     ----------
     bandwidth : str, default is Undefined, optional
-        The bandwidth of the connection. Valid values for dedicated connections: 1Gbps, 10Gbps. Valid values for hosted connections: 50Mbps, 100Mbps, 200Mbps, 300Mbps, 400Mbps, 500Mbps, 1Gbps, 2Gbps, 5Gbps, 10Gbps and 100Gbps. Case sensitive.
+        The bandwidth of the connection. Valid values for dedicated connections: 1Gbps, 10Gbps, 100Gbps, and 400Gbps. Valid values for hosted connections: 50Mbps, 100Mbps, 200Mbps, 300Mbps, 400Mbps, 500Mbps, 1Gbps, 2Gbps, 5Gbps, 10Gbps, and 25Gbps. Case sensitive. Refer to the AWS Direct Connection supported bandwidths for Dedicated Connections and Hosted Connections.
     encryptionMode : str, default is Undefined, optional
         The connection MAC Security (MACsec) encryption mode. MAC Security (MACsec) is only available on dedicated connections. Valid values are no_encrypt, should_encrypt, and must_encrypt.
     location : str, default is Undefined, optional
@@ -105,6 +101,7 @@ schema DirectconnectAwsUpboundIoV1beta1ConnectionSpecForProvider:
     providerName : str, default is Undefined, optional
         The name of the service provider associated with the connection.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     requestMacsec : bool, default is Undefined, optional
         Boolean value indicating whether you want the connection to support MAC Security (MACsec). MAC Security (MACsec) is only available on dedicated connections. See MACsec prerequisites for more information about MAC Security (MACsec) prerequisites. Default value: false.
@@ -150,7 +147,7 @@ schema DirectconnectAwsUpboundIoV1beta1ConnectionSpecInitProvider:
     Attributes
     ----------
     bandwidth : str, default is Undefined, optional
-        The bandwidth of the connection. Valid values for dedicated connections: 1Gbps, 10Gbps. Valid values for hosted connections: 50Mbps, 100Mbps, 200Mbps, 300Mbps, 400Mbps, 500Mbps, 1Gbps, 2Gbps, 5Gbps, 10Gbps and 100Gbps. Case sensitive.
+        The bandwidth of the connection. Valid values for dedicated connections: 1Gbps, 10Gbps, 100Gbps, and 400Gbps. Valid values for hosted connections: 50Mbps, 100Mbps, 200Mbps, 300Mbps, 400Mbps, 500Mbps, 1Gbps, 2Gbps, 5Gbps, 10Gbps, and 25Gbps. Case sensitive. Refer to the AWS Direct Connection supported bandwidths for Dedicated Connections and Hosted Connections.
     encryptionMode : str, default is Undefined, optional
         The connection MAC Security (MACsec) encryption mode. MAC Security (MACsec) is only available on dedicated connections. Valid values are no_encrypt, should_encrypt, and must_encrypt.
     location : str, default is Undefined, optional
@@ -229,112 +226,12 @@ schema DirectconnectAwsUpboundIoV1beta1ConnectionSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema DirectconnectAwsUpboundIoV1beta1ConnectionSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : DirectconnectAwsUpboundIoV1beta1ConnectionSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : DirectconnectAwsUpboundIoV1beta1ConnectionSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: DirectconnectAwsUpboundIoV1beta1ConnectionSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: DirectconnectAwsUpboundIoV1beta1ConnectionSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema DirectconnectAwsUpboundIoV1beta1ConnectionSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : DirectconnectAwsUpboundIoV1beta1ConnectionSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: DirectconnectAwsUpboundIoV1beta1ConnectionSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema DirectconnectAwsUpboundIoV1beta1ConnectionSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema DirectconnectAwsUpboundIoV1beta1ConnectionSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema DirectconnectAwsUpboundIoV1beta1ConnectionSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -385,7 +282,7 @@ schema DirectconnectAwsUpboundIoV1beta1ConnectionStatusAtProvider:
     awsDevice : str, default is Undefined, optional
         The Direct Connect endpoint on which the physical connection terminates.
     bandwidth : str, default is Undefined, optional
-        The bandwidth of the connection. Valid values for dedicated connections: 1Gbps, 10Gbps. Valid values for hosted connections: 50Mbps, 100Mbps, 200Mbps, 300Mbps, 400Mbps, 500Mbps, 1Gbps, 2Gbps, 5Gbps, 10Gbps and 100Gbps. Case sensitive.
+        The bandwidth of the connection. Valid values for dedicated connections: 1Gbps, 10Gbps, 100Gbps, and 400Gbps. Valid values for hosted connections: 50Mbps, 100Mbps, 200Mbps, 300Mbps, 400Mbps, 500Mbps, 1Gbps, 2Gbps, 5Gbps, 10Gbps, and 25Gbps. Case sensitive. Refer to the AWS Direct Connection supported bandwidths for Dedicated Connections and Hosted Connections.
     encryptionMode : str, default is Undefined, optional
         The connection MAC Security (MACsec) encryption mode. MAC Security (MACsec) is only available on dedicated connections. Valid values are no_encrypt, should_encrypt, and must_encrypt.
     hasLogicalRedundancy : str, default is Undefined, optional
@@ -408,6 +305,9 @@ schema DirectconnectAwsUpboundIoV1beta1ConnectionStatusAtProvider:
         The MAC Security (MACsec) port link status of the connection.
     providerName : str, default is Undefined, optional
         The name of the service provider associated with the connection.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     requestMacsec : bool, default is Undefined, optional
         Boolean value indicating whether you want the connection to support MAC Security (MACsec). MAC Security (MACsec) is only available on dedicated connections. See MACsec prerequisites for more information about MAC Security (MACsec) prerequisites. Default value: false.
     skipDestroy : bool, default is Undefined, optional
@@ -448,6 +348,8 @@ schema DirectconnectAwsUpboundIoV1beta1ConnectionStatusAtProvider:
     portEncryptionStatus?: str
 
     providerName?: str
+
+    region?: str
 
     requestMacsec?: bool
 

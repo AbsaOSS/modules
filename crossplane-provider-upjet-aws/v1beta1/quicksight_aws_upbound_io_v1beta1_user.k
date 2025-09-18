@@ -66,8 +66,6 @@ schema QuicksightAwsUpboundIoV1beta1UserSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : QuicksightAwsUpboundIoV1beta1UserSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : QuicksightAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : QuicksightAwsUpboundIoV1beta1UserSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema QuicksightAwsUpboundIoV1beta1UserSpec:
 
     providerConfigRef?: QuicksightAwsUpboundIoV1beta1UserSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: QuicksightAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: QuicksightAwsUpboundIoV1beta1UserSpecWriteConnectionSecretToRef
 
 
@@ -95,23 +91,24 @@ schema QuicksightAwsUpboundIoV1beta1UserSpecForProvider:
     Attributes
     ----------
     awsAccountId : str, default is Undefined, optional
-        The ID for the AWS account that the user is in. Currently, you use the ID for the AWS account that contains your Amazon QuickSight account.
+        ID for the AWS account that the user is in. Use the ID for the AWS account that contains your Amazon QuickSight account.
     email : str, default is Undefined, optional
-        The email address of the user that you want to register.
+        Email address of the user that you want to register.
     iamArn : str, default is Undefined, optional
-        The ARN of the IAM user or role that you are registering with Amazon QuickSight.
+        ARN of the IAM user or role that you are registering with Amazon QuickSight. Required only for users with an identity type of IAM.
     identityType : str, default is Undefined, optional
-        Amazon QuickSight supports several ways of managing the identity of users. This parameter accepts either  IAM or QUICKSIGHT. If IAM is specified, the iam_arn must also be specified.
+        Identity type that your Amazon QuickSight account uses to manage the identity of users. Valid values: IAM, QUICKSIGHT.
     namespace : str, default is Undefined, optional
         The Amazon Quicksight namespace to create the user in. Defaults to default.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     sessionName : str, default is Undefined, optional
-        The name of the IAM session to use when assuming roles that can embed QuickSight dashboards. Only valid for registering users using an assumed IAM role. Additionally, if registering multiple users using the same IAM role, each user needs to have a unique session name.
+        Name of the IAM session to use when assuming roles that can embed QuickSight dashboards. Only valid for registering users using an assumed IAM role. Additionally, if registering multiple users using the same IAM role, each user needs to have a unique session name.
     userName : str, default is Undefined, optional
-        The Amazon QuickSight user name that you want to create for the user you are registering. Only valid for registering a user with identity_type set to QUICKSIGHT.
+        Amazon QuickSight user name that you want to create for the user you are registering. Required only for users with an identity type of QUICKSIGHT.
     userRole : str, default is Undefined, optional
-        The Amazon QuickSight role of the user. The user role can be one of the following: READER, AUTHOR, ADMIN, READER_PRO, AUTHOR_PRO or ADMIN_PRO.
+        Amazon QuickSight role for the user. Value values: READER, AUTHOR, ADMIN, READER_PRO, AUTHOR_PRO, ADMIN_PRO.
     """
 
 
@@ -150,21 +147,21 @@ schema QuicksightAwsUpboundIoV1beta1UserSpecInitProvider:
     Attributes
     ----------
     awsAccountId : str, default is Undefined, optional
-        The ID for the AWS account that the user is in. Currently, you use the ID for the AWS account that contains your Amazon QuickSight account.
+        ID for the AWS account that the user is in. Use the ID for the AWS account that contains your Amazon QuickSight account.
     email : str, default is Undefined, optional
-        The email address of the user that you want to register.
+        Email address of the user that you want to register.
     iamArn : str, default is Undefined, optional
-        The ARN of the IAM user or role that you are registering with Amazon QuickSight.
+        ARN of the IAM user or role that you are registering with Amazon QuickSight. Required only for users with an identity type of IAM.
     identityType : str, default is Undefined, optional
-        Amazon QuickSight supports several ways of managing the identity of users. This parameter accepts either  IAM or QUICKSIGHT. If IAM is specified, the iam_arn must also be specified.
+        Identity type that your Amazon QuickSight account uses to manage the identity of users. Valid values: IAM, QUICKSIGHT.
     namespace : str, default is Undefined, optional
         The Amazon Quicksight namespace to create the user in. Defaults to default.
     sessionName : str, default is Undefined, optional
-        The name of the IAM session to use when assuming roles that can embed QuickSight dashboards. Only valid for registering users using an assumed IAM role. Additionally, if registering multiple users using the same IAM role, each user needs to have a unique session name.
+        Name of the IAM session to use when assuming roles that can embed QuickSight dashboards. Only valid for registering users using an assumed IAM role. Additionally, if registering multiple users using the same IAM role, each user needs to have a unique session name.
     userName : str, default is Undefined, optional
-        The Amazon QuickSight user name that you want to create for the user you are registering. Only valid for registering a user with identity_type set to QUICKSIGHT.
+        Amazon QuickSight user name that you want to create for the user you are registering. Required only for users with an identity type of QUICKSIGHT.
     userRole : str, default is Undefined, optional
-        The Amazon QuickSight role of the user. The user role can be one of the following: READER, AUTHOR, ADMIN, READER_PRO, AUTHOR_PRO or ADMIN_PRO.
+        Amazon QuickSight role for the user. Value values: READER, AUTHOR, ADMIN, READER_PRO, AUTHOR_PRO, ADMIN_PRO.
     """
 
 
@@ -229,112 +226,12 @@ schema QuicksightAwsUpboundIoV1beta1UserSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema QuicksightAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : QuicksightAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : QuicksightAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: QuicksightAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: QuicksightAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema QuicksightAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : QuicksightAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: QuicksightAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema QuicksightAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema QuicksightAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema QuicksightAwsUpboundIoV1beta1UserSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -381,25 +278,30 @@ schema QuicksightAwsUpboundIoV1beta1UserStatusAtProvider:
     Attributes
     ----------
     arn : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of the user
+        Amazon Resource Name (ARN) for the user.
     awsAccountId : str, default is Undefined, optional
-        The ID for the AWS account that the user is in. Currently, you use the ID for the AWS account that contains your Amazon QuickSight account.
+        ID for the AWS account that the user is in. Use the ID for the AWS account that contains your Amazon QuickSight account.
     email : str, default is Undefined, optional
-        The email address of the user that you want to register.
+        Email address of the user that you want to register.
     iamArn : str, default is Undefined, optional
-        The ARN of the IAM user or role that you are registering with Amazon QuickSight.
+        ARN of the IAM user or role that you are registering with Amazon QuickSight. Required only for users with an identity type of IAM.
     id : str, default is Undefined, optional
-        id
+        Unique identifier consisting of the account ID, the namespace, and the user name separated by /s.
     identityType : str, default is Undefined, optional
-        Amazon QuickSight supports several ways of managing the identity of users. This parameter accepts either  IAM or QUICKSIGHT. If IAM is specified, the iam_arn must also be specified.
+        Identity type that your Amazon QuickSight account uses to manage the identity of users. Valid values: IAM, QUICKSIGHT.
     namespace : str, default is Undefined, optional
         The Amazon Quicksight namespace to create the user in. Defaults to default.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     sessionName : str, default is Undefined, optional
-        The name of the IAM session to use when assuming roles that can embed QuickSight dashboards. Only valid for registering users using an assumed IAM role. Additionally, if registering multiple users using the same IAM role, each user needs to have a unique session name.
+        Name of the IAM session to use when assuming roles that can embed QuickSight dashboards. Only valid for registering users using an assumed IAM role. Additionally, if registering multiple users using the same IAM role, each user needs to have a unique session name.
+    userInvitationUrl : str, default is Undefined, optional
+        URL the user visits to complete registration and provide a password. Returned only for users with an identity type of QUICKSIGHT.
     userName : str, default is Undefined, optional
-        The Amazon QuickSight user name that you want to create for the user you are registering. Only valid for registering a user with identity_type set to QUICKSIGHT.
+        Amazon QuickSight user name that you want to create for the user you are registering. Required only for users with an identity type of QUICKSIGHT.
     userRole : str, default is Undefined, optional
-        The Amazon QuickSight role of the user. The user role can be one of the following: READER, AUTHOR, ADMIN, READER_PRO, AUTHOR_PRO or ADMIN_PRO.
+        Amazon QuickSight role for the user. Value values: READER, AUTHOR, ADMIN, READER_PRO, AUTHOR_PRO, ADMIN_PRO.
     """
 
 
@@ -417,7 +319,11 @@ schema QuicksightAwsUpboundIoV1beta1UserStatusAtProvider:
 
     namespace?: str
 
+    region?: str
+
     sessionName?: str
+
+    userInvitationUrl?: str
 
     userName?: str
 

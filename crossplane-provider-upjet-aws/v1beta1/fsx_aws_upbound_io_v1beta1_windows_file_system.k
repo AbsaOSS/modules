@@ -66,8 +66,6 @@ schema FsxAwsUpboundIoV1beta1WindowsFileSystemSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : FsxAwsUpboundIoV1beta1WindowsFileSystemSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : FsxAwsUpboundIoV1beta1WindowsFileSystemSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : FsxAwsUpboundIoV1beta1WindowsFileSystemSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema FsxAwsUpboundIoV1beta1WindowsFileSystemSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: FsxAwsUpboundIoV1beta1WindowsFileSystemSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: FsxAwsUpboundIoV1beta1WindowsFileSystemSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: FsxAwsUpboundIoV1beta1WindowsFileSystemSpecWriteConnectionSecretToRef
 
@@ -103,7 +99,7 @@ schema FsxAwsUpboundIoV1beta1WindowsFileSystemSpecForProvider:
     aliases : [str], default is Undefined, optional
         An array DNS alias names that you want to associate with the Amazon FSx file system.  For more information, see Working with DNS Aliases
     auditLogConfiguration : [FsxAwsUpboundIoV1beta1WindowsFileSystemSpecForProviderAuditLogConfigurationItems0], default is Undefined, optional
-        The configuration that Amazon FSx for Windows File Server uses to audit and log user accesses of files, folders, and file shares on the Amazon FSx for Windows File Server file system. See Audit Log Configuration below.
+        The configuration that Amazon FSx for Windows File Server uses to audit and log user accesses of files, folders, and file shares on the Amazon FSx for Windows File Server file system. See audit_log_configuration Block for details.
     automaticBackupRetentionDays : float, default is Undefined, optional
         The number of days to retain automatic backups. Minimum of 0 and maximum of 90. Defaults to 7. Set to 0 to disable.
     backupId : str, default is Undefined, optional
@@ -115,7 +111,7 @@ schema FsxAwsUpboundIoV1beta1WindowsFileSystemSpecForProvider:
     deploymentType : str, default is Undefined, optional
         Specifies the file system deployment type, valid values are MULTI_AZ_1, SINGLE_AZ_1 and SINGLE_AZ_2. Default value is SINGLE_AZ_1.
     diskIopsConfiguration : [FsxAwsUpboundIoV1beta1WindowsFileSystemSpecForProviderDiskIopsConfigurationItems0], default is Undefined, optional
-        The SSD IOPS configuration for the Amazon FSx for Windows File Server file system. See Disk Iops Configuration below.
+        The SSD IOPS configuration for the Amazon FSx for Windows File Server file system. See disk_iops_configuration Block for details.
     finalBackupTags : {str:str}, default is Undefined, optional
         A map of tags to apply to the file system's final backup.
     kmsKeyId : str, default is Undefined, optional
@@ -127,6 +123,7 @@ schema FsxAwsUpboundIoV1beta1WindowsFileSystemSpecForProvider:
     preferredSubnetId : str, default is Undefined, optional
         Specifies the subnet in which you want the preferred file server to be located. Required for when deployment type is MULTI_AZ_1.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     securityGroupIdRefs : [FsxAwsUpboundIoV1beta1WindowsFileSystemSpecForProviderSecurityGroupIDRefsItems0], default is Undefined, optional
         References to SecurityGroup in ec2 to populate securityGroupIds.
@@ -135,7 +132,7 @@ schema FsxAwsUpboundIoV1beta1WindowsFileSystemSpecForProvider:
     securityGroupIds : [str], default is Undefined, optional
         A list of IDs for the security groups that apply to the specified network interfaces created for file system access. These security groups will apply to all network interfaces.
     selfManagedActiveDirectory : [FsxAwsUpboundIoV1beta1WindowsFileSystemSpecForProviderSelfManagedActiveDirectoryItems0], default is Undefined, optional
-        Configuration block that Amazon FSx uses to join the Windows File Server instance to your self-managed (including on-premises) Microsoft Active Directory (AD) directory. Cannot be specified with active_directory_id. See Self-Managed Active Directory below.
+        Configuration block that Amazon FSx uses to join the Windows File Server instance to your self-managed (including on-premises) Microsoft Active Directory (AD) directory. Cannot be specified with active_directory_id. See self_managed_active_directory Block for details.
     skipFinalBackup : bool, default is Undefined, optional
         When enabled, will skip the default final backup taken when the file system is deleted. This configuration must be applied separately before attempting to delete the resource to have the desired behavior. Defaults to false.
     storageCapacity : float, default is Undefined, optional
@@ -151,7 +148,7 @@ schema FsxAwsUpboundIoV1beta1WindowsFileSystemSpecForProvider:
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     throughputCapacity : float, default is Undefined, optional
-        Throughput (megabytes per second) of the file system in power of 2 increments. Minimum of 8 and maximum of 2048.
+        Throughput (megabytes per second) of the file system. For valid values, refer to the AWS documentation.
     weeklyMaintenanceStartTime : str, default is Undefined, optional
         The preferred start time (in d:HH:MM format) to perform weekly maintenance, in the UTC time zone.
     """
@@ -336,9 +333,9 @@ schema FsxAwsUpboundIoV1beta1WindowsFileSystemSpecForProviderDiskIopsConfigurati
     Attributes
     ----------
     iops : float, default is Undefined, optional
-        - The total number of SSD IOPS provisioned for the file system.
+        The total number of SSD IOPS provisioned for the file system.
     mode : str, default is Undefined, optional
-        - Specifies whether the number of IOPS for the file system is using the system. Valid values are AUTOMATIC and USER_PROVISIONED. Default value is AUTOMATIC.
+        Specifies whether the number of IOPS for the file system is using the system. Valid values are AUTOMATIC and USER_PROVISIONED. Default value is AUTOMATIC.
     """
 
 
@@ -694,7 +691,7 @@ schema FsxAwsUpboundIoV1beta1WindowsFileSystemSpecInitProvider:
     aliases : [str], default is Undefined, optional
         An array DNS alias names that you want to associate with the Amazon FSx file system.  For more information, see Working with DNS Aliases
     auditLogConfiguration : [FsxAwsUpboundIoV1beta1WindowsFileSystemSpecInitProviderAuditLogConfigurationItems0], default is Undefined, optional
-        The configuration that Amazon FSx for Windows File Server uses to audit and log user accesses of files, folders, and file shares on the Amazon FSx for Windows File Server file system. See Audit Log Configuration below.
+        The configuration that Amazon FSx for Windows File Server uses to audit and log user accesses of files, folders, and file shares on the Amazon FSx for Windows File Server file system. See audit_log_configuration Block for details.
     automaticBackupRetentionDays : float, default is Undefined, optional
         The number of days to retain automatic backups. Minimum of 0 and maximum of 90. Defaults to 7. Set to 0 to disable.
     backupId : str, default is Undefined, optional
@@ -706,7 +703,7 @@ schema FsxAwsUpboundIoV1beta1WindowsFileSystemSpecInitProvider:
     deploymentType : str, default is Undefined, optional
         Specifies the file system deployment type, valid values are MULTI_AZ_1, SINGLE_AZ_1 and SINGLE_AZ_2. Default value is SINGLE_AZ_1.
     diskIopsConfiguration : [FsxAwsUpboundIoV1beta1WindowsFileSystemSpecInitProviderDiskIopsConfigurationItems0], default is Undefined, optional
-        The SSD IOPS configuration for the Amazon FSx for Windows File Server file system. See Disk Iops Configuration below.
+        The SSD IOPS configuration for the Amazon FSx for Windows File Server file system. See disk_iops_configuration Block for details.
     finalBackupTags : {str:str}, default is Undefined, optional
         A map of tags to apply to the file system's final backup.
     kmsKeyId : str, default is Undefined, optional
@@ -724,7 +721,7 @@ schema FsxAwsUpboundIoV1beta1WindowsFileSystemSpecInitProvider:
     securityGroupIds : [str], default is Undefined, optional
         A list of IDs for the security groups that apply to the specified network interfaces created for file system access. These security groups will apply to all network interfaces.
     selfManagedActiveDirectory : [FsxAwsUpboundIoV1beta1WindowsFileSystemSpecInitProviderSelfManagedActiveDirectoryItems0], default is Undefined, optional
-        Configuration block that Amazon FSx uses to join the Windows File Server instance to your self-managed (including on-premises) Microsoft Active Directory (AD) directory. Cannot be specified with active_directory_id. See Self-Managed Active Directory below.
+        Configuration block that Amazon FSx uses to join the Windows File Server instance to your self-managed (including on-premises) Microsoft Active Directory (AD) directory. Cannot be specified with active_directory_id. See self_managed_active_directory Block for details.
     skipFinalBackup : bool, default is Undefined, optional
         When enabled, will skip the default final backup taken when the file system is deleted. This configuration must be applied separately before attempting to delete the resource to have the desired behavior. Defaults to false.
     storageCapacity : float, default is Undefined, optional
@@ -740,7 +737,7 @@ schema FsxAwsUpboundIoV1beta1WindowsFileSystemSpecInitProvider:
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     throughputCapacity : float, default is Undefined, optional
-        Throughput (megabytes per second) of the file system in power of 2 increments. Minimum of 8 and maximum of 2048.
+        Throughput (megabytes per second) of the file system. For valid values, refer to the AWS documentation.
     weeklyMaintenanceStartTime : str, default is Undefined, optional
         The preferred start time (in d:HH:MM format) to perform weekly maintenance, in the UTC time zone.
     """
@@ -923,9 +920,9 @@ schema FsxAwsUpboundIoV1beta1WindowsFileSystemSpecInitProviderDiskIopsConfigurat
     Attributes
     ----------
     iops : float, default is Undefined, optional
-        - The total number of SSD IOPS provisioned for the file system.
+        The total number of SSD IOPS provisioned for the file system.
     mode : str, default is Undefined, optional
-        - Specifies whether the number of IOPS for the file system is using the system. Valid values are AUTOMATIC and USER_PROVISIONED. Default value is AUTOMATIC.
+        Specifies whether the number of IOPS for the file system is using the system. Valid values are AUTOMATIC and USER_PROVISIONED. Default value is AUTOMATIC.
     """
 
 
@@ -1301,112 +1298,12 @@ schema FsxAwsUpboundIoV1beta1WindowsFileSystemSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema FsxAwsUpboundIoV1beta1WindowsFileSystemSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : FsxAwsUpboundIoV1beta1WindowsFileSystemSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : FsxAwsUpboundIoV1beta1WindowsFileSystemSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: FsxAwsUpboundIoV1beta1WindowsFileSystemSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: FsxAwsUpboundIoV1beta1WindowsFileSystemSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema FsxAwsUpboundIoV1beta1WindowsFileSystemSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : FsxAwsUpboundIoV1beta1WindowsFileSystemSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: FsxAwsUpboundIoV1beta1WindowsFileSystemSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema FsxAwsUpboundIoV1beta1WindowsFileSystemSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema FsxAwsUpboundIoV1beta1WindowsFileSystemSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema FsxAwsUpboundIoV1beta1WindowsFileSystemSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1459,7 +1356,7 @@ schema FsxAwsUpboundIoV1beta1WindowsFileSystemStatusAtProvider:
     arn : str, default is Undefined, optional
         Amazon Resource Name of the file system.
     auditLogConfiguration : [FsxAwsUpboundIoV1beta1WindowsFileSystemStatusAtProviderAuditLogConfigurationItems0], default is Undefined, optional
-        The configuration that Amazon FSx for Windows File Server uses to audit and log user accesses of files, folders, and file shares on the Amazon FSx for Windows File Server file system. See Audit Log Configuration below.
+        The configuration that Amazon FSx for Windows File Server uses to audit and log user accesses of files, folders, and file shares on the Amazon FSx for Windows File Server file system. See audit_log_configuration Block for details.
     automaticBackupRetentionDays : float, default is Undefined, optional
         The number of days to retain automatic backups. Minimum of 0 and maximum of 90. Defaults to 7. Set to 0 to disable.
     backupId : str, default is Undefined, optional
@@ -1471,7 +1368,7 @@ schema FsxAwsUpboundIoV1beta1WindowsFileSystemStatusAtProvider:
     deploymentType : str, default is Undefined, optional
         Specifies the file system deployment type, valid values are MULTI_AZ_1, SINGLE_AZ_1 and SINGLE_AZ_2. Default value is SINGLE_AZ_1.
     diskIopsConfiguration : [FsxAwsUpboundIoV1beta1WindowsFileSystemStatusAtProviderDiskIopsConfigurationItems0], default is Undefined, optional
-        The SSD IOPS configuration for the Amazon FSx for Windows File Server file system. See Disk Iops Configuration below.
+        The SSD IOPS configuration for the Amazon FSx for Windows File Server file system. See disk_iops_configuration Block for details.
     dnsName : str, default is Undefined, optional
         DNS name for the file system, e.g., fs-12345678.corp.example.com (domain name matching the Active Directory domain name)
     finalBackupTags : {str:str}, default is Undefined, optional
@@ -1488,12 +1385,15 @@ schema FsxAwsUpboundIoV1beta1WindowsFileSystemStatusAtProvider:
         The IP address of the primary, or preferred, file server.
     preferredSubnetId : str, default is Undefined, optional
         Specifies the subnet in which you want the preferred file server to be located. Required for when deployment type is MULTI_AZ_1.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     remoteAdministrationEndpoint : str, default is Undefined, optional
         For MULTI_AZ_1 deployment types, use this endpoint when performing administrative tasks on the file system using Amazon FSx Remote PowerShell. For SINGLE_AZ_1 deployment types, this is the DNS name of the file system.
     securityGroupIds : [str], default is Undefined, optional
         A list of IDs for the security groups that apply to the specified network interfaces created for file system access. These security groups will apply to all network interfaces.
     selfManagedActiveDirectory : [FsxAwsUpboundIoV1beta1WindowsFileSystemStatusAtProviderSelfManagedActiveDirectoryItems0], default is Undefined, optional
-        Configuration block that Amazon FSx uses to join the Windows File Server instance to your self-managed (including on-premises) Microsoft Active Directory (AD) directory. Cannot be specified with active_directory_id. See Self-Managed Active Directory below.
+        Configuration block that Amazon FSx uses to join the Windows File Server instance to your self-managed (including on-premises) Microsoft Active Directory (AD) directory. Cannot be specified with active_directory_id. See self_managed_active_directory Block for details.
     skipFinalBackup : bool, default is Undefined, optional
         When enabled, will skip the default final backup taken when the file system is deleted. This configuration must be applied separately before attempting to delete the resource to have the desired behavior. Defaults to false.
     storageCapacity : float, default is Undefined, optional
@@ -1507,7 +1407,7 @@ schema FsxAwsUpboundIoV1beta1WindowsFileSystemStatusAtProvider:
     tagsAll : {str:str}, default is Undefined, optional
         A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     throughputCapacity : float, default is Undefined, optional
-        Throughput (megabytes per second) of the file system in power of 2 increments. Minimum of 8 and maximum of 2048.
+        Throughput (megabytes per second) of the file system. For valid values, refer to the AWS documentation.
     vpcId : str, default is Undefined, optional
         Identifier of the Virtual Private Cloud for the file system.
     weeklyMaintenanceStartTime : str, default is Undefined, optional
@@ -1550,6 +1450,8 @@ schema FsxAwsUpboundIoV1beta1WindowsFileSystemStatusAtProvider:
     preferredFileServerIp?: str
 
     preferredSubnetId?: str
+
+    region?: str
 
     remoteAdministrationEndpoint?: str
 
@@ -1605,9 +1507,9 @@ schema FsxAwsUpboundIoV1beta1WindowsFileSystemStatusAtProviderDiskIopsConfigurat
     Attributes
     ----------
     iops : float, default is Undefined, optional
-        - The total number of SSD IOPS provisioned for the file system.
+        The total number of SSD IOPS provisioned for the file system.
     mode : str, default is Undefined, optional
-        - Specifies whether the number of IOPS for the file system is using the system. Valid values are AUTOMATIC and USER_PROVISIONED. Default value is AUTOMATIC.
+        Specifies whether the number of IOPS for the file system is using the system. Valid values are AUTOMATIC and USER_PROVISIONED. Default value is AUTOMATIC.
     """
 
 

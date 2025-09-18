@@ -66,8 +66,6 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpec:
 
     providerConfigRef?: FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecWriteConnectionSecretToRef
 
 
@@ -95,7 +91,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProvider:
     Attributes
     ----------
     destination : str, default is Undefined, optional
-        –  This is the destination to where the data is delivered. The only options are s3 (Deprecated, use extended_s3 instead), extended_s3, redshift, elasticsearch, splunk, http_endpoint, opensearch, opensearchserverless and snowflake.
+        This is the destination to where the data is delivered. The only options are s3 (Deprecated, use extended_s3 instead), extended_s3, redshift, elasticsearch, splunk, http_endpoint, opensearch, opensearchserverless and snowflake.
     destinationId : str, default is Undefined, optional
         destination Id
     elasticsearchConfiguration : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderElasticsearchConfigurationItems0], default is Undefined, optional
@@ -119,7 +115,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProvider:
     redshiftConfiguration : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderRedshiftConfigurationItems0], default is Undefined, optional
         Configuration options when destination is redshift. Requires the user to also specify an s3_configuration block. See redshift_configuration block below for details.
     region : str, default is Undefined, required
-        If you don't specify an AWS Region, the default is the current region.
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     serverSideEncryption : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderServerSideEncryptionItems0], default is Undefined, optional
         Encrypt at rest options. See server_side_encryption block below for details.
@@ -391,7 +387,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderElasticsearchConf
     parameters : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderElasticsearchConfigurationItems0ProcessingConfigurationItems0ProcessorsItems0ParametersItems0], default is Undefined, optional
         Specifies the processor parameters as multiple blocks. See parameters block below for details.
     $type : str, default is Undefined, optional
-        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord, Decompression, CloudWatchLogProcessing. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     """
 
 
@@ -407,7 +403,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderElasticsearchConf
     Attributes
     ----------
     parameterName : str, default is Undefined, optional
-        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter, CompressionFormat, DataMessageExtraction. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     parameterValue : str, default is Undefined, optional
         Parameter value. Must be between 1 and 512 length (inclusive). When providing a Lambda ARN, you should specify the resource version as well.
     """
@@ -1768,7 +1764,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderExtendedS3Configu
     parameters : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderExtendedS3ConfigurationItems0ProcessingConfigurationItems0ProcessorsItems0ParametersItems0], default is Undefined, optional
         Specifies the processor parameters as multiple blocks. See parameters block below for details.
     $type : str, default is Undefined, optional
-        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord, Decompression, CloudWatchLogProcessing. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     """
 
 
@@ -1784,7 +1780,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderExtendedS3Configu
     Attributes
     ----------
     parameterName : str, default is Undefined, optional
-        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter, CompressionFormat, DataMessageExtraction. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     parameterValue : str, default is Undefined, optional
         Parameter value. Must be between 1 and 512 length (inclusive). When providing a Lambda ARN, you should specify the resource version as well.
     """
@@ -2094,7 +2090,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderHTTPEndpointConfi
     parameters : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderHTTPEndpointConfigurationItems0ProcessingConfigurationItems0ProcessorsItems0ParametersItems0], default is Undefined, optional
         Specifies the processor parameters as multiple blocks. See parameters block below for details.
     $type : str, default is Undefined, optional
-        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord, Decompression, CloudWatchLogProcessing. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     """
 
 
@@ -2110,7 +2106,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderHTTPEndpointConfi
     Attributes
     ----------
     parameterName : str, default is Undefined, optional
-        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter, CompressionFormat, DataMessageExtraction. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     parameterValue : str, default is Undefined, optional
         Parameter value. Must be between 1 and 512 length (inclusive). When providing a Lambda ARN, you should specify the resource version as well.
     """
@@ -3266,6 +3262,8 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderMskSourceConfigur
         The authentication configuration of the Amazon MSK cluster. See authentication_configuration block below for details.
     mskClusterArn : str, default is Undefined, optional
         The ARN of the Amazon MSK cluster.
+    readFromTimestamp : str, default is Undefined, optional
+        The start date and time in UTC for the offset position within your MSK topic from where Firehose begins to read. By default, this is set to timestamp when Firehose becomes Active. If you want to create a Firehose stream with Earliest start position set the read_from_timestamp parameter to Epoch (1970-01-01T00:00:00Z).
     topicName : str, default is Undefined, optional
         The topic name within the Amazon MSK cluster.
     """
@@ -3274,6 +3272,8 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderMskSourceConfigur
     authenticationConfiguration?: [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderMskSourceConfigurationItems0AuthenticationConfigurationItems0]
 
     mskClusterArn?: str
+
+    readFromTimestamp?: str
 
     topicName?: str
 
@@ -3534,7 +3534,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderOpensearchConfigu
     parameters : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderOpensearchConfigurationItems0ProcessingConfigurationItems0ProcessorsItems0ParametersItems0], default is Undefined, optional
         Specifies the processor parameters as multiple blocks. See parameters block below for details.
     $type : str, default is Undefined, optional
-        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord, Decompression, CloudWatchLogProcessing. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     """
 
 
@@ -3550,7 +3550,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderOpensearchConfigu
     Attributes
     ----------
     parameterName : str, default is Undefined, optional
-        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter, CompressionFormat, DataMessageExtraction. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     parameterValue : str, default is Undefined, optional
         Parameter value. Must be between 1 and 512 length (inclusive). When providing a Lambda ARN, you should specify the resource version as well.
     """
@@ -4434,7 +4434,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderOpensearchserverl
     parameters : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderOpensearchserverlessConfigurationItems0ProcessingConfigurationItems0ProcessorsItems0ParametersItems0], default is Undefined, optional
         Specifies the processor parameters as multiple blocks. See parameters block below for details.
     $type : str, default is Undefined, optional
-        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord, Decompression, CloudWatchLogProcessing. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     """
 
 
@@ -4450,7 +4450,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderOpensearchserverl
     Attributes
     ----------
     parameterName : str, default is Undefined, optional
-        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter, CompressionFormat, DataMessageExtraction. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     parameterValue : str, default is Undefined, optional
         Parameter value. Must be between 1 and 512 length (inclusive). When providing a Lambda ARN, you should specify the resource version as well.
     """
@@ -4865,6 +4865,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderRedshiftConfigura
         role arn selector
     s3BackupConfiguration : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderRedshiftConfigurationItems0S3BackupConfigurationItems0], default is Undefined, optional
         The configuration for backup in Amazon S3. Required if s3_backup_mode is Enabled. Supports the same fields as s3_configuration object.
+        secrets_manager_configuration -  The Secrets Manager configuration. See secrets_manager_configuration block below for details. This value is required if username and password are not provided.
     s3BackupMode : str, default is Undefined, optional
         The Amazon S3 backup mode.  Valid values are Disabled and Enabled.  Default value is Disabled.
     s3Configuration : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderRedshiftConfigurationItems0S3ConfigurationItems0], default is Undefined, optional
@@ -4872,7 +4873,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderRedshiftConfigura
     secretsManagerConfiguration : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderRedshiftConfigurationItems0SecretsManagerConfigurationItems0], default is Undefined, optional
         The Secrets Manager configuration. See secrets_manager_configuration block below for details. This value is required if user and private_key are not provided.
     username : str, default is Undefined, optional
-        The username that the firehose delivery stream will assume. It is strongly recommended that the username and password provided is used exclusively for Amazon Kinesis Firehose purposes, and that the permissions for the account are restricted for Amazon Redshift INSERT permissions.
+        The username that the firehose delivery stream will assume. It is strongly recommended that the username and password provided is used exclusively for Amazon Kinesis Firehose purposes, and that the permissions for the account are restricted for Amazon Redshift INSERT permissions. This value is required if secrets_manager_configuration is not provided.
     """
 
 
@@ -4980,7 +4981,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderRedshiftConfigura
     parameters : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderRedshiftConfigurationItems0ProcessingConfigurationItems0ProcessorsItems0ParametersItems0], default is Undefined, optional
         Specifies the processor parameters as multiple blocks. See parameters block below for details.
     $type : str, default is Undefined, optional
-        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord, Decompression, CloudWatchLogProcessing. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     """
 
 
@@ -4996,7 +4997,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderRedshiftConfigura
     Attributes
     ----------
     parameterName : str, default is Undefined, optional
-        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter, CompressionFormat, DataMessageExtraction. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     parameterValue : str, default is Undefined, optional
         Parameter value. Must be between 1 and 512 length (inclusive). When providing a Lambda ARN, you should specify the resource version as well.
     """
@@ -5717,7 +5718,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderSnowflakeConfigur
     table : str, default is Undefined, optional
         The Snowflake table name.
     user : str, default is Undefined, optional
-        The user for authentication.
+        The user for authentication. This value is required if secrets_manager_configuration is not provided.
     """
 
 
@@ -5861,7 +5862,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderSnowflakeConfigur
     parameters : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderSnowflakeConfigurationItems0ProcessingConfigurationItems0ProcessorsItems0ParametersItems0], default is Undefined, optional
         Specifies the processor parameters as multiple blocks. See parameters block below for details.
     $type : str, default is Undefined, optional
-        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord, Decompression, CloudWatchLogProcessing. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     """
 
 
@@ -5877,7 +5878,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderSnowflakeConfigur
     Attributes
     ----------
     parameterName : str, default is Undefined, optional
-        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter, CompressionFormat, DataMessageExtraction. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     parameterValue : str, default is Undefined, optional
         Parameter value. Must be between 1 and 512 length (inclusive). When providing a Lambda ARN, you should specify the resource version as well.
     """
@@ -6320,6 +6321,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderSplunkConfigurati
         After an initial failure to deliver to Splunk, the total amount of time, in seconds between 0 to 7200, during which Firehose re-attempts delivery (including the first attempt).  After this time has elapsed, the failed documents are written to Amazon S3.  The default value is 300s.  There will be no retry if the value is 0.
     s3BackupMode : str, default is Undefined, optional
         Defines how documents should be delivered to Amazon S3.  Valid values are FailedEventsOnly and AllEvents.  Default value is FailedEventsOnly.
+        secrets_manager_configuration -  The Secrets Manager configuration. See secrets_manager_configuration block below for details. This value is required if hec_token is not provided.
     s3Configuration : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderSplunkConfigurationItems0S3ConfigurationItems0], default is Undefined, optional
         The S3 Configuration. See s3_configuration block below for details.
     secretsManagerConfiguration : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderSplunkConfigurationItems0SecretsManagerConfigurationItems0], default is Undefined, optional
@@ -6423,7 +6425,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderSplunkConfigurati
     parameters : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderSplunkConfigurationItems0ProcessingConfigurationItems0ProcessorsItems0ParametersItems0], default is Undefined, optional
         Specifies the processor parameters as multiple blocks. See parameters block below for details.
     $type : str, default is Undefined, optional
-        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord, Decompression, CloudWatchLogProcessing. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     """
 
 
@@ -6439,7 +6441,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecForProviderSplunkConfigurati
     Attributes
     ----------
     parameterName : str, default is Undefined, optional
-        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter, CompressionFormat, DataMessageExtraction. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     parameterValue : str, default is Undefined, optional
         Parameter value. Must be between 1 and 512 length (inclusive). When providing a Lambda ARN, you should specify the resource version as well.
     """
@@ -6751,7 +6753,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProvider:
     Attributes
     ----------
     destination : str, default is Undefined, optional
-        –  This is the destination to where the data is delivered. The only options are s3 (Deprecated, use extended_s3 instead), extended_s3, redshift, elasticsearch, splunk, http_endpoint, opensearch, opensearchserverless and snowflake.
+        This is the destination to where the data is delivered. The only options are s3 (Deprecated, use extended_s3 instead), extended_s3, redshift, elasticsearch, splunk, http_endpoint, opensearch, opensearchserverless and snowflake.
     destinationId : str, default is Undefined, optional
         destination Id
     elasticsearchConfiguration : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderElasticsearchConfigurationItems0], default is Undefined, optional
@@ -7042,7 +7044,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderElasticsearchCon
     parameters : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderElasticsearchConfigurationItems0ProcessingConfigurationItems0ProcessorsItems0ParametersItems0], default is Undefined, optional
         Specifies the processor parameters as multiple blocks. See parameters block below for details.
     $type : str, default is Undefined, optional
-        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord, Decompression, CloudWatchLogProcessing. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     """
 
 
@@ -7058,7 +7060,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderElasticsearchCon
     Attributes
     ----------
     parameterName : str, default is Undefined, optional
-        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter, CompressionFormat, DataMessageExtraction. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     parameterValue : str, default is Undefined, optional
         Parameter value. Must be between 1 and 512 length (inclusive). When providing a Lambda ARN, you should specify the resource version as well.
     """
@@ -8415,7 +8417,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderExtendedS3Config
     parameters : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderExtendedS3ConfigurationItems0ProcessingConfigurationItems0ProcessorsItems0ParametersItems0], default is Undefined, optional
         Specifies the processor parameters as multiple blocks. See parameters block below for details.
     $type : str, default is Undefined, optional
-        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord, Decompression, CloudWatchLogProcessing. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     """
 
 
@@ -8431,7 +8433,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderExtendedS3Config
     Attributes
     ----------
     parameterName : str, default is Undefined, optional
-        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter, CompressionFormat, DataMessageExtraction. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     parameterValue : str, default is Undefined, optional
         Parameter value. Must be between 1 and 512 length (inclusive). When providing a Lambda ARN, you should specify the resource version as well.
     """
@@ -8741,7 +8743,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderHTTPEndpointConf
     parameters : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderHTTPEndpointConfigurationItems0ProcessingConfigurationItems0ProcessorsItems0ParametersItems0], default is Undefined, optional
         Specifies the processor parameters as multiple blocks. See parameters block below for details.
     $type : str, default is Undefined, optional
-        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord, Decompression, CloudWatchLogProcessing. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     """
 
 
@@ -8757,7 +8759,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderHTTPEndpointConf
     Attributes
     ----------
     parameterName : str, default is Undefined, optional
-        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter, CompressionFormat, DataMessageExtraction. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     parameterValue : str, default is Undefined, optional
         Parameter value. Must be between 1 and 512 length (inclusive). When providing a Lambda ARN, you should specify the resource version as well.
     """
@@ -9913,6 +9915,8 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderMskSourceConfigu
         The authentication configuration of the Amazon MSK cluster. See authentication_configuration block below for details.
     mskClusterArn : str, default is Undefined, optional
         The ARN of the Amazon MSK cluster.
+    readFromTimestamp : str, default is Undefined, optional
+        The start date and time in UTC for the offset position within your MSK topic from where Firehose begins to read. By default, this is set to timestamp when Firehose becomes Active. If you want to create a Firehose stream with Earliest start position set the read_from_timestamp parameter to Epoch (1970-01-01T00:00:00Z).
     topicName : str, default is Undefined, optional
         The topic name within the Amazon MSK cluster.
     """
@@ -9921,6 +9925,8 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderMskSourceConfigu
     authenticationConfiguration?: [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderMskSourceConfigurationItems0AuthenticationConfigurationItems0]
 
     mskClusterArn?: str
+
+    readFromTimestamp?: str
 
     topicName?: str
 
@@ -10181,7 +10187,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderOpensearchConfig
     parameters : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderOpensearchConfigurationItems0ProcessingConfigurationItems0ProcessorsItems0ParametersItems0], default is Undefined, optional
         Specifies the processor parameters as multiple blocks. See parameters block below for details.
     $type : str, default is Undefined, optional
-        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord, Decompression, CloudWatchLogProcessing. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     """
 
 
@@ -10197,7 +10203,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderOpensearchConfig
     Attributes
     ----------
     parameterName : str, default is Undefined, optional
-        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter, CompressionFormat, DataMessageExtraction. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     parameterValue : str, default is Undefined, optional
         Parameter value. Must be between 1 and 512 length (inclusive). When providing a Lambda ARN, you should specify the resource version as well.
     """
@@ -11081,7 +11087,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderOpensearchserver
     parameters : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderOpensearchserverlessConfigurationItems0ProcessingConfigurationItems0ProcessorsItems0ParametersItems0], default is Undefined, optional
         Specifies the processor parameters as multiple blocks. See parameters block below for details.
     $type : str, default is Undefined, optional
-        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord, Decompression, CloudWatchLogProcessing. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     """
 
 
@@ -11097,7 +11103,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderOpensearchserver
     Attributes
     ----------
     parameterName : str, default is Undefined, optional
-        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter, CompressionFormat, DataMessageExtraction. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     parameterValue : str, default is Undefined, optional
         Parameter value. Must be between 1 and 512 length (inclusive). When providing a Lambda ARN, you should specify the resource version as well.
     """
@@ -11512,6 +11518,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderRedshiftConfigur
         role arn selector
     s3BackupConfiguration : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderRedshiftConfigurationItems0S3BackupConfigurationItems0], default is Undefined, optional
         The configuration for backup in Amazon S3. Required if s3_backup_mode is Enabled. Supports the same fields as s3_configuration object.
+        secrets_manager_configuration -  The Secrets Manager configuration. See secrets_manager_configuration block below for details. This value is required if username and password are not provided.
     s3BackupMode : str, default is Undefined, optional
         The Amazon S3 backup mode.  Valid values are Disabled and Enabled.  Default value is Disabled.
     s3Configuration : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderRedshiftConfigurationItems0S3ConfigurationItems0], default is Undefined, optional
@@ -11519,7 +11526,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderRedshiftConfigur
     secretsManagerConfiguration : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderRedshiftConfigurationItems0SecretsManagerConfigurationItems0], default is Undefined, optional
         The Secrets Manager configuration. See secrets_manager_configuration block below for details. This value is required if user and private_key are not provided.
     username : str, default is Undefined, optional
-        The username that the firehose delivery stream will assume. It is strongly recommended that the username and password provided is used exclusively for Amazon Kinesis Firehose purposes, and that the permissions for the account are restricted for Amazon Redshift INSERT permissions.
+        The username that the firehose delivery stream will assume. It is strongly recommended that the username and password provided is used exclusively for Amazon Kinesis Firehose purposes, and that the permissions for the account are restricted for Amazon Redshift INSERT permissions. This value is required if secrets_manager_configuration is not provided.
     """
 
 
@@ -11627,7 +11634,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderRedshiftConfigur
     parameters : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderRedshiftConfigurationItems0ProcessingConfigurationItems0ProcessorsItems0ParametersItems0], default is Undefined, optional
         Specifies the processor parameters as multiple blocks. See parameters block below for details.
     $type : str, default is Undefined, optional
-        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord, Decompression, CloudWatchLogProcessing. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     """
 
 
@@ -11643,7 +11650,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderRedshiftConfigur
     Attributes
     ----------
     parameterName : str, default is Undefined, optional
-        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter, CompressionFormat, DataMessageExtraction. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     parameterValue : str, default is Undefined, optional
         Parameter value. Must be between 1 and 512 length (inclusive). When providing a Lambda ARN, you should specify the resource version as well.
     """
@@ -12364,7 +12371,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderSnowflakeConfigu
     table : str, default is Undefined, optional
         The Snowflake table name.
     user : str, default is Undefined, optional
-        The user for authentication.
+        The user for authentication. This value is required if secrets_manager_configuration is not provided.
     """
 
 
@@ -12508,7 +12515,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderSnowflakeConfigu
     parameters : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderSnowflakeConfigurationItems0ProcessingConfigurationItems0ProcessorsItems0ParametersItems0], default is Undefined, optional
         Specifies the processor parameters as multiple blocks. See parameters block below for details.
     $type : str, default is Undefined, optional
-        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord, Decompression, CloudWatchLogProcessing. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     """
 
 
@@ -12524,7 +12531,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderSnowflakeConfigu
     Attributes
     ----------
     parameterName : str, default is Undefined, optional
-        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter, CompressionFormat, DataMessageExtraction. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     parameterValue : str, default is Undefined, optional
         Parameter value. Must be between 1 and 512 length (inclusive). When providing a Lambda ARN, you should specify the resource version as well.
     """
@@ -12967,6 +12974,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderSplunkConfigurat
         After an initial failure to deliver to Splunk, the total amount of time, in seconds between 0 to 7200, during which Firehose re-attempts delivery (including the first attempt).  After this time has elapsed, the failed documents are written to Amazon S3.  The default value is 300s.  There will be no retry if the value is 0.
     s3BackupMode : str, default is Undefined, optional
         Defines how documents should be delivered to Amazon S3.  Valid values are FailedEventsOnly and AllEvents.  Default value is FailedEventsOnly.
+        secrets_manager_configuration -  The Secrets Manager configuration. See secrets_manager_configuration block below for details. This value is required if hec_token is not provided.
     s3Configuration : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderSplunkConfigurationItems0S3ConfigurationItems0], default is Undefined, optional
         The S3 Configuration. See s3_configuration block below for details.
     secretsManagerConfiguration : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderSplunkConfigurationItems0SecretsManagerConfigurationItems0], default is Undefined, optional
@@ -13070,7 +13078,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderSplunkConfigurat
     parameters : [FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderSplunkConfigurationItems0ProcessingConfigurationItems0ProcessorsItems0ParametersItems0], default is Undefined, optional
         Specifies the processor parameters as multiple blocks. See parameters block below for details.
     $type : str, default is Undefined, optional
-        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord, Decompression, CloudWatchLogProcessing. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     """
 
 
@@ -13086,7 +13094,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecInitProviderSplunkConfigurat
     Attributes
     ----------
     parameterName : str, default is Undefined, optional
-        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter, CompressionFormat, DataMessageExtraction. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     parameterValue : str, default is Undefined, optional
         Parameter value. Must be between 1 and 512 length (inclusive). When providing a Lambda ARN, you should specify the resource version as well.
     """
@@ -13426,112 +13434,12 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema FirehoseAwsUpboundIoV1beta1DeliveryStreamSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -13580,7 +13488,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProvider:
     arn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) specifying the Stream
     destination : str, default is Undefined, optional
-        –  This is the destination to where the data is delivered. The only options are s3 (Deprecated, use extended_s3 instead), extended_s3, redshift, elasticsearch, splunk, http_endpoint, opensearch, opensearchserverless and snowflake.
+        This is the destination to where the data is delivered. The only options are s3 (Deprecated, use extended_s3 instead), extended_s3, redshift, elasticsearch, splunk, http_endpoint, opensearch, opensearchserverless and snowflake.
     destinationId : str, default is Undefined, optional
         destination Id
     elasticsearchConfiguration : [FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderElasticsearchConfigurationItems0], default is Undefined, optional
@@ -13605,6 +13513,9 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProvider:
         Configuration options when destination is opensearchserverless. See opensearchserverless_configuration block below for details.
     redshiftConfiguration : [FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderRedshiftConfigurationItems0], default is Undefined, optional
         Configuration options when destination is redshift. Requires the user to also specify an s3_configuration block. See redshift_configuration block below for details.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     serverSideEncryption : [FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderServerSideEncryptionItems0], default is Undefined, optional
         Encrypt at rest options. See server_side_encryption block below for details.
     snowflakeConfiguration : [FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderSnowflakeConfigurationItems0], default is Undefined, optional
@@ -13647,6 +13558,8 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProvider:
     opensearchserverlessConfiguration?: [FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderOpensearchserverlessConfigurationItems0]
 
     redshiftConfiguration?: [FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderRedshiftConfigurationItems0]
+
+    region?: str
 
     serverSideEncryption?: [FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderServerSideEncryptionItems0]
 
@@ -13776,7 +13689,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderElasticsearchCon
     parameters : [FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderElasticsearchConfigurationItems0ProcessingConfigurationItems0ProcessorsItems0ParametersItems0], default is Undefined, optional
         Specifies the processor parameters as multiple blocks. See parameters block below for details.
     $type : str, default is Undefined, optional
-        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord, Decompression, CloudWatchLogProcessing. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     """
 
 
@@ -13792,7 +13705,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderElasticsearchCon
     Attributes
     ----------
     parameterName : str, default is Undefined, optional
-        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter, CompressionFormat, DataMessageExtraction. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     parameterValue : str, default is Undefined, optional
         Parameter value. Must be between 1 and 512 length (inclusive). When providing a Lambda ARN, you should specify the resource version as well.
     """
@@ -14284,7 +14197,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderExtendedS3Config
     parameters : [FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderExtendedS3ConfigurationItems0ProcessingConfigurationItems0ProcessorsItems0ParametersItems0], default is Undefined, optional
         Specifies the processor parameters as multiple blocks. See parameters block below for details.
     $type : str, default is Undefined, optional
-        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord, Decompression, CloudWatchLogProcessing. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     """
 
 
@@ -14300,7 +14213,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderExtendedS3Config
     Attributes
     ----------
     parameterName : str, default is Undefined, optional
-        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter, CompressionFormat, DataMessageExtraction. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     parameterValue : str, default is Undefined, optional
         Parameter value. Must be between 1 and 512 length (inclusive). When providing a Lambda ARN, you should specify the resource version as well.
     """
@@ -14487,7 +14400,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderHTTPEndpointConf
     parameters : [FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderHTTPEndpointConfigurationItems0ProcessingConfigurationItems0ProcessorsItems0ParametersItems0], default is Undefined, optional
         Specifies the processor parameters as multiple blocks. See parameters block below for details.
     $type : str, default is Undefined, optional
-        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord, Decompression, CloudWatchLogProcessing. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     """
 
 
@@ -14503,7 +14416,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderHTTPEndpointConf
     Attributes
     ----------
     parameterName : str, default is Undefined, optional
-        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter, CompressionFormat, DataMessageExtraction. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     parameterValue : str, default is Undefined, optional
         Parameter value. Must be between 1 and 512 length (inclusive). When providing a Lambda ARN, you should specify the resource version as well.
     """
@@ -14891,6 +14804,8 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderMskSourceConfigu
         The authentication configuration of the Amazon MSK cluster. See authentication_configuration block below for details.
     mskClusterArn : str, default is Undefined, optional
         The ARN of the Amazon MSK cluster.
+    readFromTimestamp : str, default is Undefined, optional
+        The start date and time in UTC for the offset position within your MSK topic from where Firehose begins to read. By default, this is set to timestamp when Firehose becomes Active. If you want to create a Firehose stream with Earliest start position set the read_from_timestamp parameter to Epoch (1970-01-01T00:00:00Z).
     topicName : str, default is Undefined, optional
         The topic name within the Amazon MSK cluster.
     """
@@ -14899,6 +14814,8 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderMskSourceConfigu
     authenticationConfiguration?: [FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderMskSourceConfigurationItems0AuthenticationConfigurationItems0]
 
     mskClusterArn?: str
+
+    readFromTimestamp?: str
 
     topicName?: str
 
@@ -15054,7 +14971,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderOpensearchConfig
     parameters : [FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderOpensearchConfigurationItems0ProcessingConfigurationItems0ProcessorsItems0ParametersItems0], default is Undefined, optional
         Specifies the processor parameters as multiple blocks. See parameters block below for details.
     $type : str, default is Undefined, optional
-        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord, Decompression, CloudWatchLogProcessing. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     """
 
 
@@ -15070,7 +14987,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderOpensearchConfig
     Attributes
     ----------
     parameterName : str, default is Undefined, optional
-        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter, CompressionFormat, DataMessageExtraction. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     parameterValue : str, default is Undefined, optional
         Parameter value. Must be between 1 and 512 length (inclusive). When providing a Lambda ARN, you should specify the resource version as well.
     """
@@ -15279,7 +15196,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderOpensearchserver
     parameters : [FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderOpensearchserverlessConfigurationItems0ProcessingConfigurationItems0ProcessorsItems0ParametersItems0], default is Undefined, optional
         Specifies the processor parameters as multiple blocks. See parameters block below for details.
     $type : str, default is Undefined, optional
-        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord, Decompression, CloudWatchLogProcessing. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     """
 
 
@@ -15295,7 +15212,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderOpensearchserver
     Attributes
     ----------
     parameterName : str, default is Undefined, optional
-        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter, CompressionFormat, DataMessageExtraction. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     parameterValue : str, default is Undefined, optional
         Parameter value. Must be between 1 and 512 length (inclusive). When providing a Lambda ARN, you should specify the resource version as well.
     """
@@ -15425,6 +15342,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderRedshiftConfigur
         The arn of the role the stream assumes.
     s3BackupConfiguration : [FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderRedshiftConfigurationItems0S3BackupConfigurationItems0], default is Undefined, optional
         The configuration for backup in Amazon S3. Required if s3_backup_mode is Enabled. Supports the same fields as s3_configuration object.
+        secrets_manager_configuration -  The Secrets Manager configuration. See secrets_manager_configuration block below for details. This value is required if username and password are not provided.
     s3BackupMode : str, default is Undefined, optional
         The Amazon S3 backup mode.  Valid values are Disabled and Enabled.  Default value is Disabled.
     s3Configuration : [FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderRedshiftConfigurationItems0S3ConfigurationItems0], default is Undefined, optional
@@ -15432,7 +15350,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderRedshiftConfigur
     secretsManagerConfiguration : [FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderRedshiftConfigurationItems0SecretsManagerConfigurationItems0], default is Undefined, optional
         The Secrets Manager configuration. See secrets_manager_configuration block below for details. This value is required if user and private_key are not provided.
     username : str, default is Undefined, optional
-        The username that the firehose delivery stream will assume. It is strongly recommended that the username and password provided is used exclusively for Amazon Kinesis Firehose purposes, and that the permissions for the account are restricted for Amazon Redshift INSERT permissions.
+        The username that the firehose delivery stream will assume. It is strongly recommended that the username and password provided is used exclusively for Amazon Kinesis Firehose purposes, and that the permissions for the account are restricted for Amazon Redshift INSERT permissions. This value is required if secrets_manager_configuration is not provided.
     """
 
 
@@ -15512,7 +15430,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderRedshiftConfigur
     parameters : [FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderRedshiftConfigurationItems0ProcessingConfigurationItems0ProcessorsItems0ParametersItems0], default is Undefined, optional
         Specifies the processor parameters as multiple blocks. See parameters block below for details.
     $type : str, default is Undefined, optional
-        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord, Decompression, CloudWatchLogProcessing. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     """
 
 
@@ -15528,7 +15446,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderRedshiftConfigur
     Attributes
     ----------
     parameterName : str, default is Undefined, optional
-        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter, CompressionFormat, DataMessageExtraction. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     parameterValue : str, default is Undefined, optional
         Parameter value. Must be between 1 and 512 length (inclusive). When providing a Lambda ARN, you should specify the resource version as well.
     """
@@ -15764,7 +15682,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderSnowflakeConfigu
     table : str, default is Undefined, optional
         The Snowflake table name.
     user : str, default is Undefined, optional
-        The user for authentication.
+        The user for authentication. This value is required if secrets_manager_configuration is not provided.
     """
 
 
@@ -15856,7 +15774,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderSnowflakeConfigu
     parameters : [FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderSnowflakeConfigurationItems0ProcessingConfigurationItems0ProcessorsItems0ParametersItems0], default is Undefined, optional
         Specifies the processor parameters as multiple blocks. See parameters block below for details.
     $type : str, default is Undefined, optional
-        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord, Decompression, CloudWatchLogProcessing. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     """
 
 
@@ -15872,7 +15790,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderSnowflakeConfigu
     Attributes
     ----------
     parameterName : str, default is Undefined, optional
-        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter, CompressionFormat, DataMessageExtraction. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     parameterValue : str, default is Undefined, optional
         Parameter value. Must be between 1 and 512 length (inclusive). When providing a Lambda ARN, you should specify the resource version as well.
     """
@@ -16030,6 +15948,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderSplunkConfigurat
         After an initial failure to deliver to Splunk, the total amount of time, in seconds between 0 to 7200, during which Firehose re-attempts delivery (including the first attempt).  After this time has elapsed, the failed documents are written to Amazon S3.  The default value is 300s.  There will be no retry if the value is 0.
     s3BackupMode : str, default is Undefined, optional
         Defines how documents should be delivered to Amazon S3.  Valid values are FailedEventsOnly and AllEvents.  Default value is FailedEventsOnly.
+        secrets_manager_configuration -  The Secrets Manager configuration. See secrets_manager_configuration block below for details. This value is required if hec_token is not provided.
     s3Configuration : [FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderSplunkConfigurationItems0S3ConfigurationItems0], default is Undefined, optional
         The S3 Configuration. See s3_configuration block below for details.
     secretsManagerConfiguration : [FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderSplunkConfigurationItems0SecretsManagerConfigurationItems0], default is Undefined, optional
@@ -16109,7 +16028,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderSplunkConfigurat
     parameters : [FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderSplunkConfigurationItems0ProcessingConfigurationItems0ProcessorsItems0ParametersItems0], default is Undefined, optional
         Specifies the processor parameters as multiple blocks. See parameters block below for details.
     $type : str, default is Undefined, optional
-        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        The type of processor. Valid Values: RecordDeAggregation, Lambda, MetadataExtraction, AppendDelimiterToRecord, Decompression, CloudWatchLogProcessing. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     """
 
 
@@ -16125,7 +16044,7 @@ schema FirehoseAwsUpboundIoV1beta1DeliveryStreamStatusAtProviderSplunkConfigurat
     Attributes
     ----------
     parameterName : str, default is Undefined, optional
-        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter. Validation is done against AWS SDK constants; so that values not explicitly listed may also work.
+        Parameter name. Valid Values: LambdaArn, NumberOfRetries, MetadataExtractionQuery, JsonParsingEngine, RoleArn, BufferSizeInMBs, BufferIntervalInSeconds, SubRecordType, Delimiter, CompressionFormat, DataMessageExtraction. Validation is done against AWS SDK constants; so values not explicitly listed may also work.
     parameterValue : str, default is Undefined, optional
         Parameter value. Must be between 1 and 512 length (inclusive). When providing a Lambda ARN, you should specify the resource version as well.
     """

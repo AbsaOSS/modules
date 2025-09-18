@@ -66,8 +66,6 @@ schema KendraAwsUpboundIoV1beta1DataSourceSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : KendraAwsUpboundIoV1beta1DataSourceSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : KendraAwsUpboundIoV1beta1DataSourceSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : KendraAwsUpboundIoV1beta1DataSourceSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema KendraAwsUpboundIoV1beta1DataSourceSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: KendraAwsUpboundIoV1beta1DataSourceSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: KendraAwsUpboundIoV1beta1DataSourceSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: KendraAwsUpboundIoV1beta1DataSourceSpecWriteConnectionSecretToRef
 
@@ -111,6 +107,7 @@ schema KendraAwsUpboundIoV1beta1DataSourceSpecForProvider:
     name : str, default is Undefined, optional
         A name for your data source connector.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     roleArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of a role with permission to access the data source connector. For more information, see IAM roles for Amazon Kendra. You can't specify the role_arn parameter when the type parameter is set to CUSTOM. The role_arn parameter is required for all other data sources.
@@ -165,13 +162,17 @@ schema KendraAwsUpboundIoV1beta1DataSourceSpecForProviderConfigurationItems0:
     Attributes
     ----------
     s3Configuration : [KendraAwsUpboundIoV1beta1DataSourceSpecForProviderConfigurationItems0S3ConfigurationItems0], default is Undefined, optional
-        A block that provides the configuration information to connect to an Amazon S3 bucket as your data source. Detailed below.
-    webCrawlerConfiguration : [KendraAwsUpboundIoV1beta1DataSourceSpecForProviderConfigurationItems0WebCrawlerConfigurationItems0], default is Undefined, optional
+        (Deprecated, Required if type is set to S3) A block that provides the configuration information to connect to an Amazon S3 bucket as your data source. Detailed below.
+    templateConfiguration : [KendraAwsUpboundIoV1beta1DataSourceSpecForProviderConfigurationItems0TemplateConfigurationItems0], default is Undefined, optional
         A block that provides the configuration information required for Amazon Kendra Web Crawler. Detailed below.
+    webCrawlerConfiguration : [KendraAwsUpboundIoV1beta1DataSourceSpecForProviderConfigurationItems0WebCrawlerConfigurationItems0], default is Undefined, optional
+        (Deprecated, Required if type is set to WEBCRAWLER) A block that provides the configuration information required for Amazon Kendra Web Crawler. Detailed below.
     """
 
 
     s3Configuration?: [KendraAwsUpboundIoV1beta1DataSourceSpecForProviderConfigurationItems0S3ConfigurationItems0]
+
+    templateConfiguration?: [KendraAwsUpboundIoV1beta1DataSourceSpecForProviderConfigurationItems0TemplateConfigurationItems0]
 
     webCrawlerConfiguration?: [KendraAwsUpboundIoV1beta1DataSourceSpecForProviderConfigurationItems0WebCrawlerConfigurationItems0]
 
@@ -335,6 +336,20 @@ schema KendraAwsUpboundIoV1beta1DataSourceSpecForProviderConfigurationItems0S3Co
     s3Prefix?: str
 
 
+schema KendraAwsUpboundIoV1beta1DataSourceSpecForProviderConfigurationItems0TemplateConfigurationItems0:
+    r"""
+    kendra aws upbound io v1beta1 data source spec for provider configuration items0 template configuration items0
+
+    Attributes
+    ----------
+    template : str, default is Undefined, optional
+        JSON string containing a data source template schema.
+    """
+
+
+    template?: str
+
+
 schema KendraAwsUpboundIoV1beta1DataSourceSpecForProviderConfigurationItems0WebCrawlerConfigurationItems0:
     r"""
     kendra aws upbound io v1beta1 data source spec for provider configuration items0 web crawler configuration items0
@@ -344,7 +359,7 @@ schema KendraAwsUpboundIoV1beta1DataSourceSpecForProviderConfigurationItems0WebC
     authenticationConfiguration : [KendraAwsUpboundIoV1beta1DataSourceSpecForProviderConfigurationItems0WebCrawlerConfigurationItems0AuthenticationConfigurationItems0], default is Undefined, optional
         A block with the configuration information required to connect to websites using authentication. You can connect to websites using basic authentication of user name and password. You use a secret in AWS Secrets Manager to store your authentication credentials. You must provide the website host name and port number. For example, the host name of https://a.example.com/page1.html is "a.example.com" and the port is 443, the standard port for HTTPS. Detailed below.
     crawlDepth : float, default is Undefined, optional
-        Specifies the number of levels in a website that you want to crawl. The first level begins from the website seed or starting point URL. For example, if a website has 3 levels – index level (i.e. seed in this example), sections level, and subsections level – and you are only interested in crawling information up to the sections level (i.e. levels 0-1), you can set your depth to 1. The default crawl depth is set to 2. Minimum value of 0. Maximum value of 10.
+        Specifies the number of levels in a website that you want to crawl. The first level begins from the website seed or starting point URL. For example, if a website has 3 levels - index level (i.e. seed in this example), sections level, and subsections level - and you are only interested in crawling information up to the sections level (i.e. levels 0-1), you can set your depth to 1. The default crawl depth is set to 2. Minimum value of 0. Maximum value of 10.
     maxContentSizePerPageInMegaBytes : float, default is Undefined, optional
         The maximum size (in MB) of a webpage or attachment to crawl. Files larger than this size (in MB) are skipped/not crawled. The default maximum size of a webpage or attachment is set to 50 MB. Minimum value of 1.0e-06. Maximum value of 50.
     maxLinksPerPage : float, default is Undefined, optional
@@ -402,15 +417,15 @@ schema KendraAwsUpboundIoV1beta1DataSourceSpecForProviderConfigurationItems0WebC
     Attributes
     ----------
     credentials : str, default is Undefined, optional
-        Your secret ARN, which you can create in AWS Secrets Manager. You use a secret if basic authentication credentials are required to connect to a website. The secret stores your credentials of user name and password.
+        Your secret ARN, which you can create in AWS Secrets Manager. The credentials are optional. You use a secret if web proxy credentials are required to connect to a website host. Amazon Kendra currently support basic authentication to connect to a web proxy server. The secret stores your credentials.
     credentialsRef : KendraAwsUpboundIoV1beta1DataSourceSpecForProviderConfigurationItems0WebCrawlerConfigurationItems0AuthenticationConfigurationItems0BasicAuthenticationItems0CredentialsRef, default is Undefined, optional
         credentials ref
     credentialsSelector : KendraAwsUpboundIoV1beta1DataSourceSpecForProviderConfigurationItems0WebCrawlerConfigurationItems0AuthenticationConfigurationItems0BasicAuthenticationItems0CredentialsSelector, default is Undefined, optional
         credentials selector
     host : str, default is Undefined, optional
-        The name of the website host you want to connect to using authentication credentials. For example, the host name of https://a.example.com/page1.html is "a.example.com".
+        The name of the website host you want to connect to via a web proxy server. For example, the host name of https://a.example.com/page1.html is "a.example.com".
     port : float, default is Undefined, optional
-        The port number of the website host you want to connect to using authentication credentials. For example, the port for https://a.example.com/page1.html is 443, the standard port for HTTPS.
+        The port number of the website host you want to connect to via a web proxy server. For example, the port for https://a.example.com/page1.html is 443, the standard port for HTTPS.
     """
 
 
@@ -521,15 +536,15 @@ schema KendraAwsUpboundIoV1beta1DataSourceSpecForProviderConfigurationItems0WebC
     Attributes
     ----------
     credentials : str, default is Undefined, optional
-        Your secret ARN, which you can create in AWS Secrets Manager. You use a secret if basic authentication credentials are required to connect to a website. The secret stores your credentials of user name and password.
+        Your secret ARN, which you can create in AWS Secrets Manager. The credentials are optional. You use a secret if web proxy credentials are required to connect to a website host. Amazon Kendra currently support basic authentication to connect to a web proxy server. The secret stores your credentials.
     credentialsRef : KendraAwsUpboundIoV1beta1DataSourceSpecForProviderConfigurationItems0WebCrawlerConfigurationItems0ProxyConfigurationItems0CredentialsRef, default is Undefined, optional
         credentials ref
     credentialsSelector : KendraAwsUpboundIoV1beta1DataSourceSpecForProviderConfigurationItems0WebCrawlerConfigurationItems0ProxyConfigurationItems0CredentialsSelector, default is Undefined, optional
         credentials selector
     host : str, default is Undefined, optional
-        The name of the website host you want to connect to using authentication credentials. For example, the host name of https://a.example.com/page1.html is "a.example.com".
+        The name of the website host you want to connect to via a web proxy server. For example, the host name of https://a.example.com/page1.html is "a.example.com".
     port : float, default is Undefined, optional
-        The port number of the website host you want to connect to using authentication credentials. For example, the port for https://a.example.com/page1.html is 443, the standard port for HTTPS.
+        The port number of the website host you want to connect to via a web proxy server. For example, the port for https://a.example.com/page1.html is 443, the standard port for HTTPS.
     """
 
 
@@ -1227,13 +1242,17 @@ schema KendraAwsUpboundIoV1beta1DataSourceSpecInitProviderConfigurationItems0:
     Attributes
     ----------
     s3Configuration : [KendraAwsUpboundIoV1beta1DataSourceSpecInitProviderConfigurationItems0S3ConfigurationItems0], default is Undefined, optional
-        A block that provides the configuration information to connect to an Amazon S3 bucket as your data source. Detailed below.
-    webCrawlerConfiguration : [KendraAwsUpboundIoV1beta1DataSourceSpecInitProviderConfigurationItems0WebCrawlerConfigurationItems0], default is Undefined, optional
+        (Deprecated, Required if type is set to S3) A block that provides the configuration information to connect to an Amazon S3 bucket as your data source. Detailed below.
+    templateConfiguration : [KendraAwsUpboundIoV1beta1DataSourceSpecInitProviderConfigurationItems0TemplateConfigurationItems0], default is Undefined, optional
         A block that provides the configuration information required for Amazon Kendra Web Crawler. Detailed below.
+    webCrawlerConfiguration : [KendraAwsUpboundIoV1beta1DataSourceSpecInitProviderConfigurationItems0WebCrawlerConfigurationItems0], default is Undefined, optional
+        (Deprecated, Required if type is set to WEBCRAWLER) A block that provides the configuration information required for Amazon Kendra Web Crawler. Detailed below.
     """
 
 
     s3Configuration?: [KendraAwsUpboundIoV1beta1DataSourceSpecInitProviderConfigurationItems0S3ConfigurationItems0]
+
+    templateConfiguration?: [KendraAwsUpboundIoV1beta1DataSourceSpecInitProviderConfigurationItems0TemplateConfigurationItems0]
 
     webCrawlerConfiguration?: [KendraAwsUpboundIoV1beta1DataSourceSpecInitProviderConfigurationItems0WebCrawlerConfigurationItems0]
 
@@ -1397,6 +1416,20 @@ schema KendraAwsUpboundIoV1beta1DataSourceSpecInitProviderConfigurationItems0S3C
     s3Prefix?: str
 
 
+schema KendraAwsUpboundIoV1beta1DataSourceSpecInitProviderConfigurationItems0TemplateConfigurationItems0:
+    r"""
+    kendra aws upbound io v1beta1 data source spec init provider configuration items0 template configuration items0
+
+    Attributes
+    ----------
+    template : str, default is Undefined, optional
+        JSON string containing a data source template schema.
+    """
+
+
+    template?: str
+
+
 schema KendraAwsUpboundIoV1beta1DataSourceSpecInitProviderConfigurationItems0WebCrawlerConfigurationItems0:
     r"""
     kendra aws upbound io v1beta1 data source spec init provider configuration items0 web crawler configuration items0
@@ -1406,7 +1439,7 @@ schema KendraAwsUpboundIoV1beta1DataSourceSpecInitProviderConfigurationItems0Web
     authenticationConfiguration : [KendraAwsUpboundIoV1beta1DataSourceSpecInitProviderConfigurationItems0WebCrawlerConfigurationItems0AuthenticationConfigurationItems0], default is Undefined, optional
         A block with the configuration information required to connect to websites using authentication. You can connect to websites using basic authentication of user name and password. You use a secret in AWS Secrets Manager to store your authentication credentials. You must provide the website host name and port number. For example, the host name of https://a.example.com/page1.html is "a.example.com" and the port is 443, the standard port for HTTPS. Detailed below.
     crawlDepth : float, default is Undefined, optional
-        Specifies the number of levels in a website that you want to crawl. The first level begins from the website seed or starting point URL. For example, if a website has 3 levels – index level (i.e. seed in this example), sections level, and subsections level – and you are only interested in crawling information up to the sections level (i.e. levels 0-1), you can set your depth to 1. The default crawl depth is set to 2. Minimum value of 0. Maximum value of 10.
+        Specifies the number of levels in a website that you want to crawl. The first level begins from the website seed or starting point URL. For example, if a website has 3 levels - index level (i.e. seed in this example), sections level, and subsections level - and you are only interested in crawling information up to the sections level (i.e. levels 0-1), you can set your depth to 1. The default crawl depth is set to 2. Minimum value of 0. Maximum value of 10.
     maxContentSizePerPageInMegaBytes : float, default is Undefined, optional
         The maximum size (in MB) of a webpage or attachment to crawl. Files larger than this size (in MB) are skipped/not crawled. The default maximum size of a webpage or attachment is set to 50 MB. Minimum value of 1.0e-06. Maximum value of 50.
     maxLinksPerPage : float, default is Undefined, optional
@@ -1464,15 +1497,15 @@ schema KendraAwsUpboundIoV1beta1DataSourceSpecInitProviderConfigurationItems0Web
     Attributes
     ----------
     credentials : str, default is Undefined, optional
-        Your secret ARN, which you can create in AWS Secrets Manager. You use a secret if basic authentication credentials are required to connect to a website. The secret stores your credentials of user name and password.
+        Your secret ARN, which you can create in AWS Secrets Manager. The credentials are optional. You use a secret if web proxy credentials are required to connect to a website host. Amazon Kendra currently support basic authentication to connect to a web proxy server. The secret stores your credentials.
     credentialsRef : KendraAwsUpboundIoV1beta1DataSourceSpecInitProviderConfigurationItems0WebCrawlerConfigurationItems0AuthenticationConfigurationItems0BasicAuthenticationItems0CredentialsRef, default is Undefined, optional
         credentials ref
     credentialsSelector : KendraAwsUpboundIoV1beta1DataSourceSpecInitProviderConfigurationItems0WebCrawlerConfigurationItems0AuthenticationConfigurationItems0BasicAuthenticationItems0CredentialsSelector, default is Undefined, optional
         credentials selector
     host : str, default is Undefined, optional
-        The name of the website host you want to connect to using authentication credentials. For example, the host name of https://a.example.com/page1.html is "a.example.com".
+        The name of the website host you want to connect to via a web proxy server. For example, the host name of https://a.example.com/page1.html is "a.example.com".
     port : float, default is Undefined, optional
-        The port number of the website host you want to connect to using authentication credentials. For example, the port for https://a.example.com/page1.html is 443, the standard port for HTTPS.
+        The port number of the website host you want to connect to via a web proxy server. For example, the port for https://a.example.com/page1.html is 443, the standard port for HTTPS.
     """
 
 
@@ -1583,15 +1616,15 @@ schema KendraAwsUpboundIoV1beta1DataSourceSpecInitProviderConfigurationItems0Web
     Attributes
     ----------
     credentials : str, default is Undefined, optional
-        Your secret ARN, which you can create in AWS Secrets Manager. You use a secret if basic authentication credentials are required to connect to a website. The secret stores your credentials of user name and password.
+        Your secret ARN, which you can create in AWS Secrets Manager. The credentials are optional. You use a secret if web proxy credentials are required to connect to a website host. Amazon Kendra currently support basic authentication to connect to a web proxy server. The secret stores your credentials.
     credentialsRef : KendraAwsUpboundIoV1beta1DataSourceSpecInitProviderConfigurationItems0WebCrawlerConfigurationItems0ProxyConfigurationItems0CredentialsRef, default is Undefined, optional
         credentials ref
     credentialsSelector : KendraAwsUpboundIoV1beta1DataSourceSpecInitProviderConfigurationItems0WebCrawlerConfigurationItems0ProxyConfigurationItems0CredentialsSelector, default is Undefined, optional
         credentials selector
     host : str, default is Undefined, optional
-        The name of the website host you want to connect to using authentication credentials. For example, the host name of https://a.example.com/page1.html is "a.example.com".
+        The name of the website host you want to connect to via a web proxy server. For example, the host name of https://a.example.com/page1.html is "a.example.com".
     port : float, default is Undefined, optional
-        The port number of the website host you want to connect to using authentication credentials. For example, the port for https://a.example.com/page1.html is 443, the standard port for HTTPS.
+        The port number of the website host you want to connect to via a web proxy server. For example, the port for https://a.example.com/page1.html is 443, the standard port for HTTPS.
     """
 
 
@@ -2251,112 +2284,12 @@ schema KendraAwsUpboundIoV1beta1DataSourceSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema KendraAwsUpboundIoV1beta1DataSourceSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : KendraAwsUpboundIoV1beta1DataSourceSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : KendraAwsUpboundIoV1beta1DataSourceSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: KendraAwsUpboundIoV1beta1DataSourceSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: KendraAwsUpboundIoV1beta1DataSourceSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema KendraAwsUpboundIoV1beta1DataSourceSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : KendraAwsUpboundIoV1beta1DataSourceSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: KendraAwsUpboundIoV1beta1DataSourceSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema KendraAwsUpboundIoV1beta1DataSourceSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema KendraAwsUpboundIoV1beta1DataSourceSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema KendraAwsUpboundIoV1beta1DataSourceSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -2407,7 +2340,7 @@ schema KendraAwsUpboundIoV1beta1DataSourceStatusAtProvider:
     configuration : [KendraAwsUpboundIoV1beta1DataSourceStatusAtProviderConfigurationItems0], default is Undefined, optional
         A block with the configuration information to connect to your Data Source repository. You can't specify the configuration block when the type parameter is set to CUSTOM. Detailed below.
     createdAt : str, default is Undefined, optional
-        The Unix timestamp of when the Data Source was created.
+        The Unix time stamp of when the Data Source was created.
     customDocumentEnrichmentConfiguration : [KendraAwsUpboundIoV1beta1DataSourceStatusAtProviderCustomDocumentEnrichmentConfigurationItems0], default is Undefined, optional
         A block with the configuration information for altering document metadata and content during the document ingestion process. For more information on how to create, modify and delete document metadata, or make other content alterations when you ingest documents into Amazon Kendra, see Customizing document metadata during the ingestion process. Detailed below.
     dataSourceId : str, default is Undefined, optional
@@ -2415,7 +2348,7 @@ schema KendraAwsUpboundIoV1beta1DataSourceStatusAtProvider:
     description : str, default is Undefined, optional
         A description for the Data Source connector.
     errorMessage : str, default is Undefined, optional
-        When the Status field value is FAILED, the ErrorMessage field contains a description of the error that caused the Data Source to fail.
+        When the Status field value is FAILED, contains a description of the error that caused the Data Source to fail.
     id : str, default is Undefined, optional
         The unique identifiers of the Data Source and index separated by a slash (/).
     indexId : str, default is Undefined, optional
@@ -2424,6 +2357,9 @@ schema KendraAwsUpboundIoV1beta1DataSourceStatusAtProvider:
         The code for a language. This allows you to support a language for all documents when creating the Data Source connector. English is supported by default. For more information on supported languages, including their codes, see Adding documents in languages other than English.
     name : str, default is Undefined, optional
         A name for your data source connector.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     roleArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of a role with permission to access the data source connector. For more information, see IAM roles for Amazon Kendra. You can't specify the role_arn parameter when the type parameter is set to CUSTOM. The role_arn parameter is required for all other data sources.
     schedule : str, default is Undefined, optional
@@ -2437,7 +2373,7 @@ schema KendraAwsUpboundIoV1beta1DataSourceStatusAtProvider:
     $type : str, default is Undefined, optional
         The type of data source repository. For an updated list of values, refer to Valid Values for Type.
     updatedAt : str, default is Undefined, optional
-        The Unix timestamp of when the Data Source was last updated.
+        The Unix time stamp of when the Data Source was last updated.
     """
 
 
@@ -2463,6 +2399,8 @@ schema KendraAwsUpboundIoV1beta1DataSourceStatusAtProvider:
 
     name?: str
 
+    region?: str
+
     roleArn?: str
 
     schedule?: str
@@ -2485,13 +2423,17 @@ schema KendraAwsUpboundIoV1beta1DataSourceStatusAtProviderConfigurationItems0:
     Attributes
     ----------
     s3Configuration : [KendraAwsUpboundIoV1beta1DataSourceStatusAtProviderConfigurationItems0S3ConfigurationItems0], default is Undefined, optional
-        A block that provides the configuration information to connect to an Amazon S3 bucket as your data source. Detailed below.
-    webCrawlerConfiguration : [KendraAwsUpboundIoV1beta1DataSourceStatusAtProviderConfigurationItems0WebCrawlerConfigurationItems0], default is Undefined, optional
+        (Deprecated, Required if type is set to S3) A block that provides the configuration information to connect to an Amazon S3 bucket as your data source. Detailed below.
+    templateConfiguration : [KendraAwsUpboundIoV1beta1DataSourceStatusAtProviderConfigurationItems0TemplateConfigurationItems0], default is Undefined, optional
         A block that provides the configuration information required for Amazon Kendra Web Crawler. Detailed below.
+    webCrawlerConfiguration : [KendraAwsUpboundIoV1beta1DataSourceStatusAtProviderConfigurationItems0WebCrawlerConfigurationItems0], default is Undefined, optional
+        (Deprecated, Required if type is set to WEBCRAWLER) A block that provides the configuration information required for Amazon Kendra Web Crawler. Detailed below.
     """
 
 
     s3Configuration?: [KendraAwsUpboundIoV1beta1DataSourceStatusAtProviderConfigurationItems0S3ConfigurationItems0]
+
+    templateConfiguration?: [KendraAwsUpboundIoV1beta1DataSourceStatusAtProviderConfigurationItems0TemplateConfigurationItems0]
 
     webCrawlerConfiguration?: [KendraAwsUpboundIoV1beta1DataSourceStatusAtProviderConfigurationItems0WebCrawlerConfigurationItems0]
 
@@ -2558,6 +2500,20 @@ schema KendraAwsUpboundIoV1beta1DataSourceStatusAtProviderConfigurationItems0S3C
     s3Prefix?: str
 
 
+schema KendraAwsUpboundIoV1beta1DataSourceStatusAtProviderConfigurationItems0TemplateConfigurationItems0:
+    r"""
+    kendra aws upbound io v1beta1 data source status at provider configuration items0 template configuration items0
+
+    Attributes
+    ----------
+    template : str, default is Undefined, optional
+        JSON string containing a data source template schema.
+    """
+
+
+    template?: str
+
+
 schema KendraAwsUpboundIoV1beta1DataSourceStatusAtProviderConfigurationItems0WebCrawlerConfigurationItems0:
     r"""
     kendra aws upbound io v1beta1 data source status at provider configuration items0 web crawler configuration items0
@@ -2567,7 +2523,7 @@ schema KendraAwsUpboundIoV1beta1DataSourceStatusAtProviderConfigurationItems0Web
     authenticationConfiguration : [KendraAwsUpboundIoV1beta1DataSourceStatusAtProviderConfigurationItems0WebCrawlerConfigurationItems0AuthenticationConfigurationItems0], default is Undefined, optional
         A block with the configuration information required to connect to websites using authentication. You can connect to websites using basic authentication of user name and password. You use a secret in AWS Secrets Manager to store your authentication credentials. You must provide the website host name and port number. For example, the host name of https://a.example.com/page1.html is "a.example.com" and the port is 443, the standard port for HTTPS. Detailed below.
     crawlDepth : float, default is Undefined, optional
-        Specifies the number of levels in a website that you want to crawl. The first level begins from the website seed or starting point URL. For example, if a website has 3 levels – index level (i.e. seed in this example), sections level, and subsections level – and you are only interested in crawling information up to the sections level (i.e. levels 0-1), you can set your depth to 1. The default crawl depth is set to 2. Minimum value of 0. Maximum value of 10.
+        Specifies the number of levels in a website that you want to crawl. The first level begins from the website seed or starting point URL. For example, if a website has 3 levels - index level (i.e. seed in this example), sections level, and subsections level - and you are only interested in crawling information up to the sections level (i.e. levels 0-1), you can set your depth to 1. The default crawl depth is set to 2. Minimum value of 0. Maximum value of 10.
     maxContentSizePerPageInMegaBytes : float, default is Undefined, optional
         The maximum size (in MB) of a webpage or attachment to crawl. Files larger than this size (in MB) are skipped/not crawled. The default maximum size of a webpage or attachment is set to 50 MB. Minimum value of 1.0e-06. Maximum value of 50.
     maxLinksPerPage : float, default is Undefined, optional
@@ -2625,11 +2581,11 @@ schema KendraAwsUpboundIoV1beta1DataSourceStatusAtProviderConfigurationItems0Web
     Attributes
     ----------
     credentials : str, default is Undefined, optional
-        Your secret ARN, which you can create in AWS Secrets Manager. You use a secret if basic authentication credentials are required to connect to a website. The secret stores your credentials of user name and password.
+        Your secret ARN, which you can create in AWS Secrets Manager. The credentials are optional. You use a secret if web proxy credentials are required to connect to a website host. Amazon Kendra currently support basic authentication to connect to a web proxy server. The secret stores your credentials.
     host : str, default is Undefined, optional
-        The name of the website host you want to connect to using authentication credentials. For example, the host name of https://a.example.com/page1.html is "a.example.com".
+        The name of the website host you want to connect to via a web proxy server. For example, the host name of https://a.example.com/page1.html is "a.example.com".
     port : float, default is Undefined, optional
-        The port number of the website host you want to connect to using authentication credentials. For example, the port for https://a.example.com/page1.html is 443, the standard port for HTTPS.
+        The port number of the website host you want to connect to via a web proxy server. For example, the port for https://a.example.com/page1.html is 443, the standard port for HTTPS.
     """
 
 
@@ -2647,11 +2603,11 @@ schema KendraAwsUpboundIoV1beta1DataSourceStatusAtProviderConfigurationItems0Web
     Attributes
     ----------
     credentials : str, default is Undefined, optional
-        Your secret ARN, which you can create in AWS Secrets Manager. You use a secret if basic authentication credentials are required to connect to a website. The secret stores your credentials of user name and password.
+        Your secret ARN, which you can create in AWS Secrets Manager. The credentials are optional. You use a secret if web proxy credentials are required to connect to a website host. Amazon Kendra currently support basic authentication to connect to a web proxy server. The secret stores your credentials.
     host : str, default is Undefined, optional
-        The name of the website host you want to connect to using authentication credentials. For example, the host name of https://a.example.com/page1.html is "a.example.com".
+        The name of the website host you want to connect to via a web proxy server. For example, the host name of https://a.example.com/page1.html is "a.example.com".
     port : float, default is Undefined, optional
-        The port number of the website host you want to connect to using authentication credentials. For example, the port for https://a.example.com/page1.html is 443, the standard port for HTTPS.
+        The port number of the website host you want to connect to via a web proxy server. For example, the port for https://a.example.com/page1.html is 443, the standard port for HTTPS.
     """
 
 

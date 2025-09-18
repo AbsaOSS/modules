@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema Workteam:
     r"""
-    Workteam is the Schema for the Workteams API. Provides a SageMaker Workteam resource.
+    Workteam is the Schema for the Workteams API. Provides a SageMaker AI Workteam resource.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema SagemakerAwsUpboundIoV1beta1WorkteamSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : SagemakerAwsUpboundIoV1beta1WorkteamSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : SagemakerAwsUpboundIoV1beta1WorkteamSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : SagemakerAwsUpboundIoV1beta1WorkteamSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema SagemakerAwsUpboundIoV1beta1WorkteamSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: SagemakerAwsUpboundIoV1beta1WorkteamSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: SagemakerAwsUpboundIoV1beta1WorkteamSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: SagemakerAwsUpboundIoV1beta1WorkteamSpecWriteConnectionSecretToRef
 
@@ -101,11 +97,12 @@ schema SagemakerAwsUpboundIoV1beta1WorkteamSpecForProvider:
     notificationConfiguration : [SagemakerAwsUpboundIoV1beta1WorkteamSpecForProviderNotificationConfigurationItems0], default is Undefined, optional
         Configures notification of workers regarding available or expiring work items. see Notification Configuration details below.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
-    workerAccessConfiguration : SagemakerAwsUpboundIoV1beta1WorkteamSpecForProviderWorkerAccessConfiguration, default is Undefined, optional
-        worker access configuration
+    workerAccessConfiguration : [SagemakerAwsUpboundIoV1beta1WorkteamSpecForProviderWorkerAccessConfigurationItems0], default is Undefined, optional
+        Use this optional parameter to constrain access to an Amazon S3 resource based on the IP address using supported IAM global condition keys. The Amazon S3 resource is accessed in the worker portal using a Amazon S3 presigned URL. see Worker Access Configuration details below.
     workforceName : str, default is Undefined, optional
         The name of the workforce.
     workforceNameRef : SagemakerAwsUpboundIoV1beta1WorkteamSpecForProviderWorkforceNameRef, default is Undefined, optional
@@ -125,7 +122,7 @@ schema SagemakerAwsUpboundIoV1beta1WorkteamSpecForProvider:
 
     tags?: {str:str}
 
-    workerAccessConfiguration?: SagemakerAwsUpboundIoV1beta1WorkteamSpecForProviderWorkerAccessConfiguration
+    workerAccessConfiguration?: [SagemakerAwsUpboundIoV1beta1WorkteamSpecForProviderWorkerAccessConfigurationItems0]
 
     workforceName?: str
 
@@ -493,37 +490,37 @@ schema SagemakerAwsUpboundIoV1beta1WorkteamSpecForProviderNotificationConfigurat
     notificationTopicArn?: str
 
 
-schema SagemakerAwsUpboundIoV1beta1WorkteamSpecForProviderWorkerAccessConfiguration:
+schema SagemakerAwsUpboundIoV1beta1WorkteamSpecForProviderWorkerAccessConfigurationItems0:
     r"""
-    Use this optional parameter to constrain access to an Amazon S3 resource based on the IP address using supported IAM global condition keys. The Amazon S3 resource is accessed in the worker portal using a Amazon S3 presigned URL. see Worker Access Configuration details below.
+    sagemaker aws upbound io v1beta1 workteam spec for provider worker access configuration items0
 
     Attributes
     ----------
-    s3Presign : SagemakerAwsUpboundIoV1beta1WorkteamSpecForProviderWorkerAccessConfigurationS3Presign, default is Undefined, optional
-        s3 presign
+    s3Presign : [SagemakerAwsUpboundIoV1beta1WorkteamSpecForProviderWorkerAccessConfigurationItems0S3PresignItems0], default is Undefined, optional
+        Defines any Amazon S3 resource constraints. see S3 Presign details below.
     """
 
 
-    s3Presign?: SagemakerAwsUpboundIoV1beta1WorkteamSpecForProviderWorkerAccessConfigurationS3Presign
+    s3Presign?: [SagemakerAwsUpboundIoV1beta1WorkteamSpecForProviderWorkerAccessConfigurationItems0S3PresignItems0]
 
 
-schema SagemakerAwsUpboundIoV1beta1WorkteamSpecForProviderWorkerAccessConfigurationS3Presign:
+schema SagemakerAwsUpboundIoV1beta1WorkteamSpecForProviderWorkerAccessConfigurationItems0S3PresignItems0:
     r"""
-    Defines any Amazon S3 resource constraints. see S3 Presign details below.
+    sagemaker aws upbound io v1beta1 workteam spec for provider worker access configuration items0 s3 presign items0
 
     Attributes
     ----------
-    iamPolicyConstraints : SagemakerAwsUpboundIoV1beta1WorkteamSpecForProviderWorkerAccessConfigurationS3PresignIamPolicyConstraints, default is Undefined, optional
-        iam policy constraints
+    iamPolicyConstraints : [SagemakerAwsUpboundIoV1beta1WorkteamSpecForProviderWorkerAccessConfigurationItems0S3PresignItems0IamPolicyConstraintsItems0], default is Undefined, optional
+        Use this parameter to specify the allowed request source. Possible sources are either SourceIp or VpcSourceIp. see IAM Policy Constraints details below.
     """
 
 
-    iamPolicyConstraints?: SagemakerAwsUpboundIoV1beta1WorkteamSpecForProviderWorkerAccessConfigurationS3PresignIamPolicyConstraints
+    iamPolicyConstraints?: [SagemakerAwsUpboundIoV1beta1WorkteamSpecForProviderWorkerAccessConfigurationItems0S3PresignItems0IamPolicyConstraintsItems0]
 
 
-schema SagemakerAwsUpboundIoV1beta1WorkteamSpecForProviderWorkerAccessConfigurationS3PresignIamPolicyConstraints:
+schema SagemakerAwsUpboundIoV1beta1WorkteamSpecForProviderWorkerAccessConfigurationItems0S3PresignItems0IamPolicyConstraintsItems0:
     r"""
-    Use this parameter to specify the allowed request source. Possible sources are either SourceIp or VpcSourceIp. see IAM Policy Constraints details below.
+    sagemaker aws upbound io v1beta1 workteam spec for provider worker access configuration items0 s3 presign items0 iam policy constraints items0
 
     Attributes
     ----------
@@ -651,8 +648,8 @@ schema SagemakerAwsUpboundIoV1beta1WorkteamSpecInitProvider:
         Configures notification of workers regarding available or expiring work items. see Notification Configuration details below.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
-    workerAccessConfiguration : SagemakerAwsUpboundIoV1beta1WorkteamSpecInitProviderWorkerAccessConfiguration, default is Undefined, optional
-        worker access configuration
+    workerAccessConfiguration : [SagemakerAwsUpboundIoV1beta1WorkteamSpecInitProviderWorkerAccessConfigurationItems0], default is Undefined, optional
+        Use this optional parameter to constrain access to an Amazon S3 resource based on the IP address using supported IAM global condition keys. The Amazon S3 resource is accessed in the worker portal using a Amazon S3 presigned URL. see Worker Access Configuration details below.
     workforceName : str, default is Undefined, optional
         The name of the workforce.
     workforceNameRef : SagemakerAwsUpboundIoV1beta1WorkteamSpecInitProviderWorkforceNameRef, default is Undefined, optional
@@ -670,7 +667,7 @@ schema SagemakerAwsUpboundIoV1beta1WorkteamSpecInitProvider:
 
     tags?: {str:str}
 
-    workerAccessConfiguration?: SagemakerAwsUpboundIoV1beta1WorkteamSpecInitProviderWorkerAccessConfiguration
+    workerAccessConfiguration?: [SagemakerAwsUpboundIoV1beta1WorkteamSpecInitProviderWorkerAccessConfigurationItems0]
 
     workforceName?: str
 
@@ -1038,37 +1035,37 @@ schema SagemakerAwsUpboundIoV1beta1WorkteamSpecInitProviderNotificationConfigura
     notificationTopicArn?: str
 
 
-schema SagemakerAwsUpboundIoV1beta1WorkteamSpecInitProviderWorkerAccessConfiguration:
+schema SagemakerAwsUpboundIoV1beta1WorkteamSpecInitProviderWorkerAccessConfigurationItems0:
     r"""
-    Use this optional parameter to constrain access to an Amazon S3 resource based on the IP address using supported IAM global condition keys. The Amazon S3 resource is accessed in the worker portal using a Amazon S3 presigned URL. see Worker Access Configuration details below.
+    sagemaker aws upbound io v1beta1 workteam spec init provider worker access configuration items0
 
     Attributes
     ----------
-    s3Presign : SagemakerAwsUpboundIoV1beta1WorkteamSpecInitProviderWorkerAccessConfigurationS3Presign, default is Undefined, optional
-        s3 presign
+    s3Presign : [SagemakerAwsUpboundIoV1beta1WorkteamSpecInitProviderWorkerAccessConfigurationItems0S3PresignItems0], default is Undefined, optional
+        Defines any Amazon S3 resource constraints. see S3 Presign details below.
     """
 
 
-    s3Presign?: SagemakerAwsUpboundIoV1beta1WorkteamSpecInitProviderWorkerAccessConfigurationS3Presign
+    s3Presign?: [SagemakerAwsUpboundIoV1beta1WorkteamSpecInitProviderWorkerAccessConfigurationItems0S3PresignItems0]
 
 
-schema SagemakerAwsUpboundIoV1beta1WorkteamSpecInitProviderWorkerAccessConfigurationS3Presign:
+schema SagemakerAwsUpboundIoV1beta1WorkteamSpecInitProviderWorkerAccessConfigurationItems0S3PresignItems0:
     r"""
-    Defines any Amazon S3 resource constraints. see S3 Presign details below.
+    sagemaker aws upbound io v1beta1 workteam spec init provider worker access configuration items0 s3 presign items0
 
     Attributes
     ----------
-    iamPolicyConstraints : SagemakerAwsUpboundIoV1beta1WorkteamSpecInitProviderWorkerAccessConfigurationS3PresignIamPolicyConstraints, default is Undefined, optional
-        iam policy constraints
+    iamPolicyConstraints : [SagemakerAwsUpboundIoV1beta1WorkteamSpecInitProviderWorkerAccessConfigurationItems0S3PresignItems0IamPolicyConstraintsItems0], default is Undefined, optional
+        Use this parameter to specify the allowed request source. Possible sources are either SourceIp or VpcSourceIp. see IAM Policy Constraints details below.
     """
 
 
-    iamPolicyConstraints?: SagemakerAwsUpboundIoV1beta1WorkteamSpecInitProviderWorkerAccessConfigurationS3PresignIamPolicyConstraints
+    iamPolicyConstraints?: [SagemakerAwsUpboundIoV1beta1WorkteamSpecInitProviderWorkerAccessConfigurationItems0S3PresignItems0IamPolicyConstraintsItems0]
 
 
-schema SagemakerAwsUpboundIoV1beta1WorkteamSpecInitProviderWorkerAccessConfigurationS3PresignIamPolicyConstraints:
+schema SagemakerAwsUpboundIoV1beta1WorkteamSpecInitProviderWorkerAccessConfigurationItems0S3PresignItems0IamPolicyConstraintsItems0:
     r"""
-    Use this parameter to specify the allowed request source. Possible sources are either SourceIp or VpcSourceIp. see IAM Policy Constraints details below.
+    sagemaker aws upbound io v1beta1 workteam spec init provider worker access configuration items0 s3 presign items0 iam policy constraints items0
 
     Attributes
     ----------
@@ -1217,112 +1214,12 @@ schema SagemakerAwsUpboundIoV1beta1WorkteamSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema SagemakerAwsUpboundIoV1beta1WorkteamSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : SagemakerAwsUpboundIoV1beta1WorkteamSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : SagemakerAwsUpboundIoV1beta1WorkteamSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: SagemakerAwsUpboundIoV1beta1WorkteamSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: SagemakerAwsUpboundIoV1beta1WorkteamSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema SagemakerAwsUpboundIoV1beta1WorkteamSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : SagemakerAwsUpboundIoV1beta1WorkteamSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: SagemakerAwsUpboundIoV1beta1WorkteamSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema SagemakerAwsUpboundIoV1beta1WorkteamSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema SagemakerAwsUpboundIoV1beta1WorkteamSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema SagemakerAwsUpboundIoV1beta1WorkteamSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1378,14 +1275,17 @@ schema SagemakerAwsUpboundIoV1beta1WorkteamStatusAtProvider:
         A list of Member Definitions that contains objects that identify the workers that make up the work team. Workforces can be created using Amazon Cognito or your own OIDC Identity Provider (IdP). For private workforces created using Amazon Cognito use cognito_member_definition. For workforces created using your own OIDC identity provider (IdP) use oidc_member_definition. Do not provide input for both of these parameters in a single request. see Member Definition details below.
     notificationConfiguration : [SagemakerAwsUpboundIoV1beta1WorkteamStatusAtProviderNotificationConfigurationItems0], default is Undefined, optional
         Configures notification of workers regarding available or expiring work items. see Notification Configuration details below.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     subdomain : str, default is Undefined, optional
         The subdomain for your OIDC Identity Provider.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
         A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
-    workerAccessConfiguration : SagemakerAwsUpboundIoV1beta1WorkteamStatusAtProviderWorkerAccessConfiguration, default is Undefined, optional
-        worker access configuration
+    workerAccessConfiguration : [SagemakerAwsUpboundIoV1beta1WorkteamStatusAtProviderWorkerAccessConfigurationItems0], default is Undefined, optional
+        Use this optional parameter to constrain access to an Amazon S3 resource based on the IP address using supported IAM global condition keys. The Amazon S3 resource is accessed in the worker portal using a Amazon S3 presigned URL. see Worker Access Configuration details below.
     workforceName : str, default is Undefined, optional
         The name of the workforce.
     """
@@ -1401,13 +1301,15 @@ schema SagemakerAwsUpboundIoV1beta1WorkteamStatusAtProvider:
 
     notificationConfiguration?: [SagemakerAwsUpboundIoV1beta1WorkteamStatusAtProviderNotificationConfigurationItems0]
 
+    region?: str
+
     subdomain?: str
 
     tags?: {str:str}
 
     tagsAll?: {str:str}
 
-    workerAccessConfiguration?: SagemakerAwsUpboundIoV1beta1WorkteamStatusAtProviderWorkerAccessConfiguration
+    workerAccessConfiguration?: [SagemakerAwsUpboundIoV1beta1WorkteamStatusAtProviderWorkerAccessConfigurationItems0]
 
     workforceName?: str
 
@@ -1480,37 +1382,37 @@ schema SagemakerAwsUpboundIoV1beta1WorkteamStatusAtProviderNotificationConfigura
     notificationTopicArn?: str
 
 
-schema SagemakerAwsUpboundIoV1beta1WorkteamStatusAtProviderWorkerAccessConfiguration:
+schema SagemakerAwsUpboundIoV1beta1WorkteamStatusAtProviderWorkerAccessConfigurationItems0:
     r"""
-    Use this optional parameter to constrain access to an Amazon S3 resource based on the IP address using supported IAM global condition keys. The Amazon S3 resource is accessed in the worker portal using a Amazon S3 presigned URL. see Worker Access Configuration details below.
+    sagemaker aws upbound io v1beta1 workteam status at provider worker access configuration items0
 
     Attributes
     ----------
-    s3Presign : SagemakerAwsUpboundIoV1beta1WorkteamStatusAtProviderWorkerAccessConfigurationS3Presign, default is Undefined, optional
-        s3 presign
+    s3Presign : [SagemakerAwsUpboundIoV1beta1WorkteamStatusAtProviderWorkerAccessConfigurationItems0S3PresignItems0], default is Undefined, optional
+        Defines any Amazon S3 resource constraints. see S3 Presign details below.
     """
 
 
-    s3Presign?: SagemakerAwsUpboundIoV1beta1WorkteamStatusAtProviderWorkerAccessConfigurationS3Presign
+    s3Presign?: [SagemakerAwsUpboundIoV1beta1WorkteamStatusAtProviderWorkerAccessConfigurationItems0S3PresignItems0]
 
 
-schema SagemakerAwsUpboundIoV1beta1WorkteamStatusAtProviderWorkerAccessConfigurationS3Presign:
+schema SagemakerAwsUpboundIoV1beta1WorkteamStatusAtProviderWorkerAccessConfigurationItems0S3PresignItems0:
     r"""
-    Defines any Amazon S3 resource constraints. see S3 Presign details below.
+    sagemaker aws upbound io v1beta1 workteam status at provider worker access configuration items0 s3 presign items0
 
     Attributes
     ----------
-    iamPolicyConstraints : SagemakerAwsUpboundIoV1beta1WorkteamStatusAtProviderWorkerAccessConfigurationS3PresignIamPolicyConstraints, default is Undefined, optional
-        iam policy constraints
+    iamPolicyConstraints : [SagemakerAwsUpboundIoV1beta1WorkteamStatusAtProviderWorkerAccessConfigurationItems0S3PresignItems0IamPolicyConstraintsItems0], default is Undefined, optional
+        Use this parameter to specify the allowed request source. Possible sources are either SourceIp or VpcSourceIp. see IAM Policy Constraints details below.
     """
 
 
-    iamPolicyConstraints?: SagemakerAwsUpboundIoV1beta1WorkteamStatusAtProviderWorkerAccessConfigurationS3PresignIamPolicyConstraints
+    iamPolicyConstraints?: [SagemakerAwsUpboundIoV1beta1WorkteamStatusAtProviderWorkerAccessConfigurationItems0S3PresignItems0IamPolicyConstraintsItems0]
 
 
-schema SagemakerAwsUpboundIoV1beta1WorkteamStatusAtProviderWorkerAccessConfigurationS3PresignIamPolicyConstraints:
+schema SagemakerAwsUpboundIoV1beta1WorkteamStatusAtProviderWorkerAccessConfigurationItems0S3PresignItems0IamPolicyConstraintsItems0:
     r"""
-    Use this parameter to specify the allowed request source. Possible sources are either SourceIp or VpcSourceIp. see IAM Policy Constraints details below.
+    sagemaker aws upbound io v1beta1 workteam status at provider worker access configuration items0 s3 presign items0 iam policy constraints items0
 
     Attributes
     ----------

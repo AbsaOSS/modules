@@ -66,8 +66,6 @@ schema KinesisAwsUpboundIoV1beta1StreamConsumerSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : KinesisAwsUpboundIoV1beta1StreamConsumerSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : KinesisAwsUpboundIoV1beta1StreamConsumerSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : KinesisAwsUpboundIoV1beta1StreamConsumerSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema KinesisAwsUpboundIoV1beta1StreamConsumerSpec:
 
     providerConfigRef?: KinesisAwsUpboundIoV1beta1StreamConsumerSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: KinesisAwsUpboundIoV1beta1StreamConsumerSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: KinesisAwsUpboundIoV1beta1StreamConsumerSpecWriteConnectionSecretToRef
 
 
@@ -97,13 +93,16 @@ schema KinesisAwsUpboundIoV1beta1StreamConsumerSpecForProvider:
     name : str, default is Undefined, optional
         Name of the stream consumer.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     streamArn : str, default is Undefined, optional
-        –  Amazon Resource Name (ARN) of the data stream the consumer is registered with.
+        Amazon Resource Name (ARN) of the data stream the consumer is registered with.
     streamArnRef : KinesisAwsUpboundIoV1beta1StreamConsumerSpecForProviderStreamArnRef, default is Undefined, optional
         stream arn ref
     streamArnSelector : KinesisAwsUpboundIoV1beta1StreamConsumerSpecForProviderStreamArnSelector, default is Undefined, optional
         stream arn selector
+    tags : {str:str}, default is Undefined, optional
+        tags
     """
 
 
@@ -116,6 +115,8 @@ schema KinesisAwsUpboundIoV1beta1StreamConsumerSpecForProvider:
     streamArnRef?: KinesisAwsUpboundIoV1beta1StreamConsumerSpecForProviderStreamArnRef
 
     streamArnSelector?: KinesisAwsUpboundIoV1beta1StreamConsumerSpecForProviderStreamArnSelector
+
+    tags?: {str:str}
 
 
 schema KinesisAwsUpboundIoV1beta1StreamConsumerSpecForProviderStreamArnRef:
@@ -225,11 +226,13 @@ schema KinesisAwsUpboundIoV1beta1StreamConsumerSpecInitProvider:
     name : str, default is Undefined, optional
         Name of the stream consumer.
     streamArn : str, default is Undefined, optional
-        –  Amazon Resource Name (ARN) of the data stream the consumer is registered with.
+        Amazon Resource Name (ARN) of the data stream the consumer is registered with.
     streamArnRef : KinesisAwsUpboundIoV1beta1StreamConsumerSpecInitProviderStreamArnRef, default is Undefined, optional
         stream arn ref
     streamArnSelector : KinesisAwsUpboundIoV1beta1StreamConsumerSpecInitProviderStreamArnSelector, default is Undefined, optional
         stream arn selector
+    tags : {str:str}, default is Undefined, optional
+        tags
     """
 
 
@@ -240,6 +243,8 @@ schema KinesisAwsUpboundIoV1beta1StreamConsumerSpecInitProvider:
     streamArnRef?: KinesisAwsUpboundIoV1beta1StreamConsumerSpecInitProviderStreamArnRef
 
     streamArnSelector?: KinesisAwsUpboundIoV1beta1StreamConsumerSpecInitProviderStreamArnSelector
+
+    tags?: {str:str}
 
 
 schema KinesisAwsUpboundIoV1beta1StreamConsumerSpecInitProviderStreamArnRef:
@@ -375,112 +380,12 @@ schema KinesisAwsUpboundIoV1beta1StreamConsumerSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema KinesisAwsUpboundIoV1beta1StreamConsumerSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : KinesisAwsUpboundIoV1beta1StreamConsumerSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : KinesisAwsUpboundIoV1beta1StreamConsumerSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: KinesisAwsUpboundIoV1beta1StreamConsumerSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: KinesisAwsUpboundIoV1beta1StreamConsumerSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema KinesisAwsUpboundIoV1beta1StreamConsumerSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : KinesisAwsUpboundIoV1beta1StreamConsumerSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: KinesisAwsUpboundIoV1beta1StreamConsumerSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema KinesisAwsUpboundIoV1beta1StreamConsumerSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema KinesisAwsUpboundIoV1beta1StreamConsumerSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema KinesisAwsUpboundIoV1beta1StreamConsumerSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -534,8 +439,15 @@ schema KinesisAwsUpboundIoV1beta1StreamConsumerStatusAtProvider:
         Amazon Resource Name (ARN) of the stream consumer.
     name : str, default is Undefined, optional
         Name of the stream consumer.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     streamArn : str, default is Undefined, optional
-        –  Amazon Resource Name (ARN) of the data stream the consumer is registered with.
+        Amazon Resource Name (ARN) of the data stream the consumer is registered with.
+    tags : {str:str}, default is Undefined, optional
+        tags
+    tagsAll : {str:str}, default is Undefined, optional
+        tags all
     """
 
 
@@ -547,7 +459,13 @@ schema KinesisAwsUpboundIoV1beta1StreamConsumerStatusAtProvider:
 
     name?: str
 
+    region?: str
+
     streamArn?: str
+
+    tags?: {str:str}
+
+    tagsAll?: {str:str}
 
 
 schema KinesisAwsUpboundIoV1beta1StreamConsumerStatusConditionsItems0:

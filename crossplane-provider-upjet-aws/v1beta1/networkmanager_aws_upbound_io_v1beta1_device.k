@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema Device:
     r"""
-    Device is the Schema for the Devices API. Creates a device in a global network.
+    Device is the Schema for the Devices API. Manages a Network Manager Device.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema NetworkmanagerAwsUpboundIoV1beta1DeviceSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : NetworkmanagerAwsUpboundIoV1beta1DeviceSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : NetworkmanagerAwsUpboundIoV1beta1DeviceSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : NetworkmanagerAwsUpboundIoV1beta1DeviceSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema NetworkmanagerAwsUpboundIoV1beta1DeviceSpec:
 
     providerConfigRef?: NetworkmanagerAwsUpboundIoV1beta1DeviceSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: NetworkmanagerAwsUpboundIoV1beta1DeviceSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: NetworkmanagerAwsUpboundIoV1beta1DeviceSpecWriteConnectionSecretToRef
 
 
@@ -95,25 +91,23 @@ schema NetworkmanagerAwsUpboundIoV1beta1DeviceSpecForProvider:
     Attributes
     ----------
     awsLocation : [NetworkmanagerAwsUpboundIoV1beta1DeviceSpecForProviderAwsLocationItems0], default is Undefined, optional
-        The AWS location of the device. Documented below.
+        AWS location of the device. Documented below.
     description : str, default is Undefined, optional
-        A description of the device.
+        Description of the device.
     globalNetworkId : str, default is Undefined, optional
-        The ID of the global network.
+        ID of the global network.
     globalNetworkIdRef : NetworkmanagerAwsUpboundIoV1beta1DeviceSpecForProviderGlobalNetworkIDRef, default is Undefined, optional
         global network Id ref
     globalNetworkIdSelector : NetworkmanagerAwsUpboundIoV1beta1DeviceSpecForProviderGlobalNetworkIDSelector, default is Undefined, optional
         global network Id selector
     location : [NetworkmanagerAwsUpboundIoV1beta1DeviceSpecForProviderLocationItems0], default is Undefined, optional
-        The location of the device. Documented below.
+        Location of the device. Documented below.
     model : str, default is Undefined, optional
-        The model of device.
-    region : str, default is Undefined, required
-        Region is the region you'd like your resource to be created in.
+        Model of device.
     serialNumber : str, default is Undefined, optional
-        The serial number of the device.
+        Serial number of the device.
     siteId : str, default is Undefined, optional
-        The ID of the site.
+        ID of the site.
     siteIdRef : NetworkmanagerAwsUpboundIoV1beta1DeviceSpecForProviderSiteIDRef, default is Undefined, optional
         site Id ref
     siteIdSelector : NetworkmanagerAwsUpboundIoV1beta1DeviceSpecForProviderSiteIDSelector, default is Undefined, optional
@@ -121,9 +115,9 @@ schema NetworkmanagerAwsUpboundIoV1beta1DeviceSpecForProvider:
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     $type : str, default is Undefined, optional
-        The type of device.
+        Type of device.
     vendor : str, default is Undefined, optional
-        The vendor of the device.
+        Vendor of the device.
     """
 
 
@@ -140,8 +134,6 @@ schema NetworkmanagerAwsUpboundIoV1beta1DeviceSpecForProvider:
     location?: [NetworkmanagerAwsUpboundIoV1beta1DeviceSpecForProviderLocationItems0]
 
     model?: str
-
-    region: str
 
     serialNumber?: str
 
@@ -165,9 +157,9 @@ schema NetworkmanagerAwsUpboundIoV1beta1DeviceSpecForProviderAwsLocationItems0:
     Attributes
     ----------
     subnetArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the subnet that the device is located in.
+        ARN of the subnet that the device is located in.
     zone : str, default is Undefined, optional
-        The Zone that the device is located in. Specify the ID of an Availability Zone, Local Zone, Wavelength Zone, or an Outpost.
+        Zone that the device is located in. Specify the ID of an Availability Zone, Local Zone, Wavelength Zone, or an Outpost.
     """
 
 
@@ -272,11 +264,11 @@ schema NetworkmanagerAwsUpboundIoV1beta1DeviceSpecForProviderLocationItems0:
     Attributes
     ----------
     address : str, default is Undefined, optional
-        The physical address.
+        Physical address.
     latitude : str, default is Undefined, optional
-        The latitude.
+        Latitude.
     longitude : str, default is Undefined, optional
-        The longitude.
+        Longitude.
     """
 
 
@@ -392,23 +384,23 @@ schema NetworkmanagerAwsUpboundIoV1beta1DeviceSpecInitProvider:
     Attributes
     ----------
     awsLocation : [NetworkmanagerAwsUpboundIoV1beta1DeviceSpecInitProviderAwsLocationItems0], default is Undefined, optional
-        The AWS location of the device. Documented below.
+        AWS location of the device. Documented below.
     description : str, default is Undefined, optional
-        A description of the device.
+        Description of the device.
     globalNetworkId : str, default is Undefined, optional
-        The ID of the global network.
+        ID of the global network.
     globalNetworkIdRef : NetworkmanagerAwsUpboundIoV1beta1DeviceSpecInitProviderGlobalNetworkIDRef, default is Undefined, optional
         global network Id ref
     globalNetworkIdSelector : NetworkmanagerAwsUpboundIoV1beta1DeviceSpecInitProviderGlobalNetworkIDSelector, default is Undefined, optional
         global network Id selector
     location : [NetworkmanagerAwsUpboundIoV1beta1DeviceSpecInitProviderLocationItems0], default is Undefined, optional
-        The location of the device. Documented below.
+        Location of the device. Documented below.
     model : str, default is Undefined, optional
-        The model of device.
+        Model of device.
     serialNumber : str, default is Undefined, optional
-        The serial number of the device.
+        Serial number of the device.
     siteId : str, default is Undefined, optional
-        The ID of the site.
+        ID of the site.
     siteIdRef : NetworkmanagerAwsUpboundIoV1beta1DeviceSpecInitProviderSiteIDRef, default is Undefined, optional
         site Id ref
     siteIdSelector : NetworkmanagerAwsUpboundIoV1beta1DeviceSpecInitProviderSiteIDSelector, default is Undefined, optional
@@ -416,9 +408,9 @@ schema NetworkmanagerAwsUpboundIoV1beta1DeviceSpecInitProvider:
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     $type : str, default is Undefined, optional
-        The type of device.
+        Type of device.
     vendor : str, default is Undefined, optional
-        The vendor of the device.
+        Vendor of the device.
     """
 
 
@@ -458,9 +450,9 @@ schema NetworkmanagerAwsUpboundIoV1beta1DeviceSpecInitProviderAwsLocationItems0:
     Attributes
     ----------
     subnetArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the subnet that the device is located in.
+        ARN of the subnet that the device is located in.
     zone : str, default is Undefined, optional
-        The Zone that the device is located in. Specify the ID of an Availability Zone, Local Zone, Wavelength Zone, or an Outpost.
+        Zone that the device is located in. Specify the ID of an Availability Zone, Local Zone, Wavelength Zone, or an Outpost.
     """
 
 
@@ -565,11 +557,11 @@ schema NetworkmanagerAwsUpboundIoV1beta1DeviceSpecInitProviderLocationItems0:
     Attributes
     ----------
     address : str, default is Undefined, optional
-        The physical address.
+        Physical address.
     latitude : str, default is Undefined, optional
-        The latitude.
+        Latitude.
     longitude : str, default is Undefined, optional
-        The longitude.
+        Longitude.
     """
 
 
@@ -713,112 +705,12 @@ schema NetworkmanagerAwsUpboundIoV1beta1DeviceSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema NetworkmanagerAwsUpboundIoV1beta1DeviceSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : NetworkmanagerAwsUpboundIoV1beta1DeviceSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : NetworkmanagerAwsUpboundIoV1beta1DeviceSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: NetworkmanagerAwsUpboundIoV1beta1DeviceSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: NetworkmanagerAwsUpboundIoV1beta1DeviceSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema NetworkmanagerAwsUpboundIoV1beta1DeviceSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : NetworkmanagerAwsUpboundIoV1beta1DeviceSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: NetworkmanagerAwsUpboundIoV1beta1DeviceSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema NetworkmanagerAwsUpboundIoV1beta1DeviceSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema NetworkmanagerAwsUpboundIoV1beta1DeviceSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema NetworkmanagerAwsUpboundIoV1beta1DeviceSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -865,31 +757,31 @@ schema NetworkmanagerAwsUpboundIoV1beta1DeviceStatusAtProvider:
     Attributes
     ----------
     arn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the device.
+        ARN of the device.
     awsLocation : [NetworkmanagerAwsUpboundIoV1beta1DeviceStatusAtProviderAwsLocationItems0], default is Undefined, optional
-        The AWS location of the device. Documented below.
+        AWS location of the device. Documented below.
     description : str, default is Undefined, optional
-        A description of the device.
+        Description of the device.
     globalNetworkId : str, default is Undefined, optional
-        The ID of the global network.
+        ID of the global network.
     id : str, default is Undefined, optional
         id
     location : [NetworkmanagerAwsUpboundIoV1beta1DeviceStatusAtProviderLocationItems0], default is Undefined, optional
-        The location of the device. Documented below.
+        Location of the device. Documented below.
     model : str, default is Undefined, optional
-        The model of device.
+        Model of device.
     serialNumber : str, default is Undefined, optional
-        The serial number of the device.
+        Serial number of the device.
     siteId : str, default is Undefined, optional
-        The ID of the site.
+        ID of the site.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
-        A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
+        Map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     $type : str, default is Undefined, optional
-        The type of device.
+        Type of device.
     vendor : str, default is Undefined, optional
-        The vendor of the device.
+        Vendor of the device.
     """
 
 
@@ -927,9 +819,9 @@ schema NetworkmanagerAwsUpboundIoV1beta1DeviceStatusAtProviderAwsLocationItems0:
     Attributes
     ----------
     subnetArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the subnet that the device is located in.
+        ARN of the subnet that the device is located in.
     zone : str, default is Undefined, optional
-        The Zone that the device is located in. Specify the ID of an Availability Zone, Local Zone, Wavelength Zone, or an Outpost.
+        Zone that the device is located in. Specify the ID of an Availability Zone, Local Zone, Wavelength Zone, or an Outpost.
     """
 
 
@@ -945,11 +837,11 @@ schema NetworkmanagerAwsUpboundIoV1beta1DeviceStatusAtProviderLocationItems0:
     Attributes
     ----------
     address : str, default is Undefined, optional
-        The physical address.
+        Physical address.
     latitude : str, default is Undefined, optional
-        The latitude.
+        Latitude.
     longitude : str, default is Undefined, optional
-        The longitude.
+        Longitude.
     """
 
 

@@ -66,8 +66,6 @@ schema DocdbAwsUpboundIoV1beta1ClusterInstanceSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : DocdbAwsUpboundIoV1beta1ClusterInstanceSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : DocdbAwsUpboundIoV1beta1ClusterInstanceSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : DocdbAwsUpboundIoV1beta1ClusterInstanceSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema DocdbAwsUpboundIoV1beta1ClusterInstanceSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: DocdbAwsUpboundIoV1beta1ClusterInstanceSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: DocdbAwsUpboundIoV1beta1ClusterInstanceSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: DocdbAwsUpboundIoV1beta1ClusterInstanceSpecWriteConnectionSecretToRef
 
@@ -110,7 +106,7 @@ schema DocdbAwsUpboundIoV1beta1ClusterInstanceSpecForProvider:
     clusterIdentifierSelector : DocdbAwsUpboundIoV1beta1ClusterInstanceSpecForProviderClusterIdentifierSelector, default is Undefined, optional
         cluster identifier selector
     copyTagsToSnapshot : bool, default is Undefined, optional
-        –  Copy all DB instance tags to snapshots. Default is false.
+        Copy all DB instance tags to snapshots. Default is false.
     enablePerformanceInsights : bool, default is Undefined, optional
         A value that indicates whether to enable Performance Insights for the DB Instance. Default false. See [docs] (https://docs.aws.amazon.com/documentdb/latest/developerguide/performance-insights.html) about the details.
     engine : str, default is Undefined, optional
@@ -127,6 +123,7 @@ schema DocdbAwsUpboundIoV1beta1ClusterInstanceSpecForProvider:
     promotionTier : float, default is Undefined, optional
         Default 0. Failover Priority setting on instance level. The reader who has lower tier has higher priority to get promoter to writer.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
@@ -286,7 +283,7 @@ schema DocdbAwsUpboundIoV1beta1ClusterInstanceSpecInitProvider:
     clusterIdentifierSelector : DocdbAwsUpboundIoV1beta1ClusterInstanceSpecInitProviderClusterIdentifierSelector, default is Undefined, optional
         cluster identifier selector
     copyTagsToSnapshot : bool, default is Undefined, optional
-        –  Copy all DB instance tags to snapshots. Default is false.
+        Copy all DB instance tags to snapshots. Default is false.
     enablePerformanceInsights : bool, default is Undefined, optional
         A value that indicates whether to enable Performance Insights for the DB Instance. Default false. See [docs] (https://docs.aws.amazon.com/documentdb/latest/developerguide/performance-insights.html) about the details.
     engine : str, default is Undefined, optional
@@ -471,112 +468,12 @@ schema DocdbAwsUpboundIoV1beta1ClusterInstanceSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema DocdbAwsUpboundIoV1beta1ClusterInstanceSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : DocdbAwsUpboundIoV1beta1ClusterInstanceSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : DocdbAwsUpboundIoV1beta1ClusterInstanceSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: DocdbAwsUpboundIoV1beta1ClusterInstanceSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: DocdbAwsUpboundIoV1beta1ClusterInstanceSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema DocdbAwsUpboundIoV1beta1ClusterInstanceSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : DocdbAwsUpboundIoV1beta1ClusterInstanceSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: DocdbAwsUpboundIoV1beta1ClusterInstanceSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema DocdbAwsUpboundIoV1beta1ClusterInstanceSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema DocdbAwsUpboundIoV1beta1ClusterInstanceSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema DocdbAwsUpboundIoV1beta1ClusterInstanceSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -636,7 +533,7 @@ schema DocdbAwsUpboundIoV1beta1ClusterInstanceStatusAtProvider:
     clusterIdentifier : str, default is Undefined, optional
         The identifier of the aws_docdb_cluster in which to launch this instance.
     copyTagsToSnapshot : bool, default is Undefined, optional
-        –  Copy all DB instance tags to snapshots. Default is false.
+        Copy all DB instance tags to snapshots. Default is false.
     dbSubnetGroupName : str, default is Undefined, optional
         The DB subnet group to associate with this DB instance.
     dbiResourceId : str, default is Undefined, optional
@@ -670,6 +567,9 @@ schema DocdbAwsUpboundIoV1beta1ClusterInstanceStatusAtProvider:
         Default 0. Failover Priority setting on instance level. The reader who has lower tier has higher priority to get promoter to writer.
     publiclyAccessible : bool, default is Undefined, optional
         publicly accessible
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     storageEncrypted : bool, default is Undefined, optional
         Specifies whether the DB cluster is encrypted.
     tags : {str:str}, default is Undefined, optional
@@ -677,7 +577,7 @@ schema DocdbAwsUpboundIoV1beta1ClusterInstanceStatusAtProvider:
     tagsAll : {str:str}, default is Undefined, optional
         A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     writer : bool, default is Undefined, optional
-        – Boolean indicating if this instance is writable. False indicates this instance is a read replica.
+        Boolean indicating if this instance is writable. False indicates this instance is a read replica.
     """
 
 
@@ -724,6 +624,8 @@ schema DocdbAwsUpboundIoV1beta1ClusterInstanceStatusAtProvider:
     promotionTier?: float
 
     publiclyAccessible?: bool
+
+    region?: str
 
     storageEncrypted?: bool
 

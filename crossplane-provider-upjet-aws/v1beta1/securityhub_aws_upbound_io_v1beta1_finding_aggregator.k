@@ -66,8 +66,6 @@ schema SecurityhubAwsUpboundIoV1beta1FindingAggregatorSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : SecurityhubAwsUpboundIoV1beta1FindingAggregatorSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : SecurityhubAwsUpboundIoV1beta1FindingAggregatorSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : SecurityhubAwsUpboundIoV1beta1FindingAggregatorSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema SecurityhubAwsUpboundIoV1beta1FindingAggregatorSpec:
 
     providerConfigRef?: SecurityhubAwsUpboundIoV1beta1FindingAggregatorSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: SecurityhubAwsUpboundIoV1beta1FindingAggregatorSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: SecurityhubAwsUpboundIoV1beta1FindingAggregatorSpecWriteConnectionSecretToRef
 
 
@@ -95,8 +91,9 @@ schema SecurityhubAwsUpboundIoV1beta1FindingAggregatorSpecForProvider:
     Attributes
     ----------
     linkingMode : str, default is Undefined, optional
-        Indicates whether to aggregate findings from all of the available Regions or from a specified list. The options are ALL_REGIONS, ALL_REGIONS_EXCEPT_SPECIFIED or SPECIFIED_REGIONS. When ALL_REGIONS or ALL_REGIONS_EXCEPT_SPECIFIED are used, Security Hub will automatically aggregate findings from new Regions as Security Hub supports them and you opt into them.
+        Indicates whether to aggregate findings from all of the available Regions or from a specified list. The options are ALL_REGIONS, ALL_REGIONS_EXCEPT_SPECIFIED, SPECIFIED_REGIONS or NO_REGIONS. When ALL_REGIONS or ALL_REGIONS_EXCEPT_SPECIFIED are used, Security Hub will automatically aggregate findings from new Regions as Security Hub supports them and you opt into them.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     specifiedRegions : [str], default is Undefined, optional
         List of regions to include or exclude
@@ -126,7 +123,7 @@ schema SecurityhubAwsUpboundIoV1beta1FindingAggregatorSpecInitProvider:
     Attributes
     ----------
     linkingMode : str, default is Undefined, optional
-        Indicates whether to aggregate findings from all of the available Regions or from a specified list. The options are ALL_REGIONS, ALL_REGIONS_EXCEPT_SPECIFIED or SPECIFIED_REGIONS. When ALL_REGIONS or ALL_REGIONS_EXCEPT_SPECIFIED are used, Security Hub will automatically aggregate findings from new Regions as Security Hub supports them and you opt into them.
+        Indicates whether to aggregate findings from all of the available Regions or from a specified list. The options are ALL_REGIONS, ALL_REGIONS_EXCEPT_SPECIFIED, SPECIFIED_REGIONS or NO_REGIONS. When ALL_REGIONS or ALL_REGIONS_EXCEPT_SPECIFIED are used, Security Hub will automatically aggregate findings from new Regions as Security Hub supports them and you opt into them.
     specifiedRegions : [str], default is Undefined, optional
         List of regions to include or exclude
     """
@@ -181,112 +178,12 @@ schema SecurityhubAwsUpboundIoV1beta1FindingAggregatorSpecProviderConfigRefPolic
     resolve?: "Always" | "IfNotPresent"
 
 
-schema SecurityhubAwsUpboundIoV1beta1FindingAggregatorSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : SecurityhubAwsUpboundIoV1beta1FindingAggregatorSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : SecurityhubAwsUpboundIoV1beta1FindingAggregatorSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: SecurityhubAwsUpboundIoV1beta1FindingAggregatorSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: SecurityhubAwsUpboundIoV1beta1FindingAggregatorSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema SecurityhubAwsUpboundIoV1beta1FindingAggregatorSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : SecurityhubAwsUpboundIoV1beta1FindingAggregatorSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: SecurityhubAwsUpboundIoV1beta1FindingAggregatorSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema SecurityhubAwsUpboundIoV1beta1FindingAggregatorSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema SecurityhubAwsUpboundIoV1beta1FindingAggregatorSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema SecurityhubAwsUpboundIoV1beta1FindingAggregatorSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -335,7 +232,10 @@ schema SecurityhubAwsUpboundIoV1beta1FindingAggregatorStatusAtProvider:
     id : str, default is Undefined, optional
         id
     linkingMode : str, default is Undefined, optional
-        Indicates whether to aggregate findings from all of the available Regions or from a specified list. The options are ALL_REGIONS, ALL_REGIONS_EXCEPT_SPECIFIED or SPECIFIED_REGIONS. When ALL_REGIONS or ALL_REGIONS_EXCEPT_SPECIFIED are used, Security Hub will automatically aggregate findings from new Regions as Security Hub supports them and you opt into them.
+        Indicates whether to aggregate findings from all of the available Regions or from a specified list. The options are ALL_REGIONS, ALL_REGIONS_EXCEPT_SPECIFIED, SPECIFIED_REGIONS or NO_REGIONS. When ALL_REGIONS or ALL_REGIONS_EXCEPT_SPECIFIED are used, Security Hub will automatically aggregate findings from new Regions as Security Hub supports them and you opt into them.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     specifiedRegions : [str], default is Undefined, optional
         List of regions to include or exclude
     """
@@ -344,6 +244,8 @@ schema SecurityhubAwsUpboundIoV1beta1FindingAggregatorStatusAtProvider:
     id?: str
 
     linkingMode?: str
+
+    region?: str
 
     specifiedRegions?: [str]
 

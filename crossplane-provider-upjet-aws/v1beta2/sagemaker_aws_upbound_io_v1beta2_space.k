@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema Space:
     r"""
-    Space is the Schema for the Spaces API. Provides a SageMaker Space resource.
+    Space is the Schema for the Spaces API. Provides a SageMaker AI Space resource.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : SagemakerAwsUpboundIoV1beta2SpaceSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : SagemakerAwsUpboundIoV1beta2SpaceSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : SagemakerAwsUpboundIoV1beta2SpaceSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: SagemakerAwsUpboundIoV1beta2SpaceSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: SagemakerAwsUpboundIoV1beta2SpaceSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: SagemakerAwsUpboundIoV1beta2SpaceSpecWriteConnectionSecretToRef
 
@@ -103,9 +99,10 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecForProvider:
     ownershipSettings : SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderOwnershipSettings, default is Undefined, optional
         ownership settings
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     spaceDisplayName : str, default is Undefined, optional
-        The name of the space that appears in the SageMaker Studio UI.
+        The name of the space that appears in the SageMaker AI Studio UI.
     spaceName : str, default is Undefined, optional
         The name of the space.
     spaceSettings : SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettings, default is Undefined, optional
@@ -252,7 +249,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettings:
     codeEditorAppSettings : SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsCodeEditorAppSettings, default is Undefined, optional
         code editor app settings
     customFileSystem : [SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsCustomFileSystemItems0], default is Undefined, optional
-        A file system, created by you, that you assign to a space for an Amazon SageMaker Domain. See custom_file_system Block below.
+        A file system, created by you, that you assign to a space for an Amazon SageMaker AI Domain. See custom_file_system Block below.
     jupyterLabAppSettings : SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsJupyterLabAppSettings, default is Undefined, optional
         jupyter lab app settings
     jupyterServerAppSettings : SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsJupyterServerAppSettings, default is Undefined, optional
@@ -318,7 +315,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsCodeEditorAp
     Attributes
     ----------
     idleTimeoutInMinutes : float, default is Undefined, optional
-        The time that SageMaker waits after the application becomes idle before shutting it down. Valid values are between 60 and 525600.
+        The time that SageMaker AI waits after the application becomes idle before shutting it down. Valid values are between 60 and 525600.
     """
 
 
@@ -327,7 +324,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsCodeEditorAp
 
 schema SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsCodeEditorAppSettingsDefaultResourceSpec:
     r"""
-    The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. See default_resource_spec Block below.
+    The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. See default_resource_spec Block below.
 
     Attributes
     ----------
@@ -336,9 +333,9 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsCodeEditorAp
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the SageMaker image created on the instance.
+        The Amazon Resource Name (ARN) of the SageMaker AI image created on the instance.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -392,7 +389,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsJupyterLabAp
     appLifecycleManagement : SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsJupyterLabAppSettingsAppLifecycleManagement, default is Undefined, optional
         app lifecycle management
     codeRepository : [SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsJupyterLabAppSettingsCodeRepositoryItems0], default is Undefined, optional
-        A list of Git repositories that SageMaker automatically displays to users for cloning in the JupyterServer application. See code_repository Block below.
+        A list of Git repositories that SageMaker AI automatically displays to users for cloning in the JupyterServer application. See code_repository Block below.
     defaultResourceSpec : SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsJupyterLabAppSettingsDefaultResourceSpec, default is Undefined, optional
         default resource spec
     """
@@ -426,7 +423,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsJupyterLabAp
     Attributes
     ----------
     idleTimeoutInMinutes : float, default is Undefined, optional
-        The time that SageMaker waits after the application becomes idle before shutting it down. Valid values are between 60 and 525600.
+        The time that SageMaker AI waits after the application becomes idle before shutting it down. Valid values are between 60 and 525600.
     """
 
 
@@ -449,7 +446,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsJupyterLabAp
 
 schema SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsJupyterLabAppSettingsDefaultResourceSpec:
     r"""
-    The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. See default_resource_spec Block below.
+    The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. See default_resource_spec Block below.
 
     Attributes
     ----------
@@ -458,9 +455,9 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsJupyterLabAp
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the SageMaker image created on the instance.
+        The Amazon Resource Name (ARN) of the SageMaker AI image created on the instance.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -484,7 +481,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsJupyterServe
     Attributes
     ----------
     codeRepository : [SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsJupyterServerAppSettingsCodeRepositoryItems0], default is Undefined, optional
-        A list of Git repositories that SageMaker automatically displays to users for cloning in the JupyterServer application. See code_repository Block below.
+        A list of Git repositories that SageMaker AI automatically displays to users for cloning in the JupyterServer application. See code_repository Block below.
     defaultResourceSpec : SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsJupyterServerAppSettingsDefaultResourceSpec, default is Undefined, optional
         default resource spec
     lifecycleConfigArns : [str], default is Undefined, optional
@@ -515,7 +512,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsJupyterServe
 
 schema SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsJupyterServerAppSettingsDefaultResourceSpec:
     r"""
-    The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. See default_resource_spec Block below.
+    The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. See default_resource_spec Block below.
 
     Attributes
     ----------
@@ -524,9 +521,9 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsJupyterServe
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the SageMaker image created on the instance.
+        The Amazon Resource Name (ARN) of the SageMaker AI image created on the instance.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -550,7 +547,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsKernelGatewa
     Attributes
     ----------
     customImage : [SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsKernelGatewayAppSettingsCustomImageItems0], default is Undefined, optional
-        A list of custom SageMaker images that are configured to run as a KernelGateway app. See custom_image Block below.
+        A list of custom SageMaker AI images that are configured to run as a KernelGateway app. See custom_image Block below.
     defaultResourceSpec : SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsKernelGatewayAppSettingsDefaultResourceSpec, default is Undefined, optional
         default resource spec
     lifecycleConfigArns : [str], default is Undefined, optional
@@ -589,7 +586,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsKernelGatewa
 
 schema SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsKernelGatewayAppSettingsDefaultResourceSpec:
     r"""
-    The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. See default_resource_spec Block below.
+    The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. See default_resource_spec Block below.
 
     Attributes
     ----------
@@ -598,9 +595,9 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecForProviderSpaceSettingsKernelGatewa
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the SageMaker image created on the instance.
+        The Amazon Resource Name (ARN) of the SageMaker AI image created on the instance.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -683,7 +680,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecInitProvider:
     ownershipSettings : SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderOwnershipSettings, default is Undefined, optional
         ownership settings
     spaceDisplayName : str, default is Undefined, optional
-        The name of the space that appears in the SageMaker Studio UI.
+        The name of the space that appears in the SageMaker AI Studio UI.
     spaceName : str, default is Undefined, optional
         The name of the space.
     spaceSettings : SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettings, default is Undefined, optional
@@ -828,7 +825,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettings:
     codeEditorAppSettings : SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsCodeEditorAppSettings, default is Undefined, optional
         code editor app settings
     customFileSystem : [SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsCustomFileSystemItems0], default is Undefined, optional
-        A file system, created by you, that you assign to a space for an Amazon SageMaker Domain. See custom_file_system Block below.
+        A file system, created by you, that you assign to a space for an Amazon SageMaker AI Domain. See custom_file_system Block below.
     jupyterLabAppSettings : SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsJupyterLabAppSettings, default is Undefined, optional
         jupyter lab app settings
     jupyterServerAppSettings : SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsJupyterServerAppSettings, default is Undefined, optional
@@ -894,7 +891,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsCodeEditorA
     Attributes
     ----------
     idleTimeoutInMinutes : float, default is Undefined, optional
-        The time that SageMaker waits after the application becomes idle before shutting it down. Valid values are between 60 and 525600.
+        The time that SageMaker AI waits after the application becomes idle before shutting it down. Valid values are between 60 and 525600.
     """
 
 
@@ -903,7 +900,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsCodeEditorA
 
 schema SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsCodeEditorAppSettingsDefaultResourceSpec:
     r"""
-    The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. See default_resource_spec Block below.
+    The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. See default_resource_spec Block below.
 
     Attributes
     ----------
@@ -912,9 +909,9 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsCodeEditorA
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the SageMaker image created on the instance.
+        The Amazon Resource Name (ARN) of the SageMaker AI image created on the instance.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -968,7 +965,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsJupyterLabA
     appLifecycleManagement : SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsJupyterLabAppSettingsAppLifecycleManagement, default is Undefined, optional
         app lifecycle management
     codeRepository : [SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsJupyterLabAppSettingsCodeRepositoryItems0], default is Undefined, optional
-        A list of Git repositories that SageMaker automatically displays to users for cloning in the JupyterServer application. See code_repository Block below.
+        A list of Git repositories that SageMaker AI automatically displays to users for cloning in the JupyterServer application. See code_repository Block below.
     defaultResourceSpec : SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsJupyterLabAppSettingsDefaultResourceSpec, default is Undefined, optional
         default resource spec
     """
@@ -1002,7 +999,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsJupyterLabA
     Attributes
     ----------
     idleTimeoutInMinutes : float, default is Undefined, optional
-        The time that SageMaker waits after the application becomes idle before shutting it down. Valid values are between 60 and 525600.
+        The time that SageMaker AI waits after the application becomes idle before shutting it down. Valid values are between 60 and 525600.
     """
 
 
@@ -1025,7 +1022,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsJupyterLabA
 
 schema SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsJupyterLabAppSettingsDefaultResourceSpec:
     r"""
-    The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. See default_resource_spec Block below.
+    The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. See default_resource_spec Block below.
 
     Attributes
     ----------
@@ -1034,9 +1031,9 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsJupyterLabA
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the SageMaker image created on the instance.
+        The Amazon Resource Name (ARN) of the SageMaker AI image created on the instance.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -1060,7 +1057,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsJupyterServ
     Attributes
     ----------
     codeRepository : [SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsJupyterServerAppSettingsCodeRepositoryItems0], default is Undefined, optional
-        A list of Git repositories that SageMaker automatically displays to users for cloning in the JupyterServer application. See code_repository Block below.
+        A list of Git repositories that SageMaker AI automatically displays to users for cloning in the JupyterServer application. See code_repository Block below.
     defaultResourceSpec : SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsJupyterServerAppSettingsDefaultResourceSpec, default is Undefined, optional
         default resource spec
     lifecycleConfigArns : [str], default is Undefined, optional
@@ -1091,7 +1088,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsJupyterServ
 
 schema SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsJupyterServerAppSettingsDefaultResourceSpec:
     r"""
-    The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. See default_resource_spec Block below.
+    The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. See default_resource_spec Block below.
 
     Attributes
     ----------
@@ -1100,9 +1097,9 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsJupyterServ
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the SageMaker image created on the instance.
+        The Amazon Resource Name (ARN) of the SageMaker AI image created on the instance.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -1126,7 +1123,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsKernelGatew
     Attributes
     ----------
     customImage : [SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsKernelGatewayAppSettingsCustomImageItems0], default is Undefined, optional
-        A list of custom SageMaker images that are configured to run as a KernelGateway app. See custom_image Block below.
+        A list of custom SageMaker AI images that are configured to run as a KernelGateway app. See custom_image Block below.
     defaultResourceSpec : SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsKernelGatewayAppSettingsDefaultResourceSpec, default is Undefined, optional
         default resource spec
     lifecycleConfigArns : [str], default is Undefined, optional
@@ -1165,7 +1162,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsKernelGatew
 
 schema SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsKernelGatewayAppSettingsDefaultResourceSpec:
     r"""
-    The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. See default_resource_spec Block below.
+    The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. See default_resource_spec Block below.
 
     Attributes
     ----------
@@ -1174,9 +1171,9 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecInitProviderSpaceSettingsKernelGatew
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the SageMaker image created on the instance.
+        The Amazon Resource Name (ARN) of the SageMaker AI image created on the instance.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -1279,112 +1276,12 @@ schema SagemakerAwsUpboundIoV1beta2SpaceSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema SagemakerAwsUpboundIoV1beta2SpaceSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : SagemakerAwsUpboundIoV1beta2SpaceSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : SagemakerAwsUpboundIoV1beta2SpaceSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: SagemakerAwsUpboundIoV1beta2SpaceSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: SagemakerAwsUpboundIoV1beta2SpaceSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema SagemakerAwsUpboundIoV1beta2SpaceSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : SagemakerAwsUpboundIoV1beta2SpaceSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: SagemakerAwsUpboundIoV1beta2SpaceSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema SagemakerAwsUpboundIoV1beta2SpaceSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema SagemakerAwsUpboundIoV1beta2SpaceSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema SagemakerAwsUpboundIoV1beta2SpaceSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1440,8 +1337,11 @@ schema SagemakerAwsUpboundIoV1beta2SpaceStatusAtProvider:
         The space's Amazon Resource Name (ARN).
     ownershipSettings : SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderOwnershipSettings, default is Undefined, optional
         ownership settings
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     spaceDisplayName : str, default is Undefined, optional
-        The name of the space that appears in the SageMaker Studio UI.
+        The name of the space that appears in the SageMaker AI Studio UI.
     spaceName : str, default is Undefined, optional
         The name of the space.
     spaceSettings : SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettings, default is Undefined, optional
@@ -1466,6 +1366,8 @@ schema SagemakerAwsUpboundIoV1beta2SpaceStatusAtProvider:
     id?: str
 
     ownershipSettings?: SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderOwnershipSettings
+
+    region?: str
 
     spaceDisplayName?: str
 
@@ -1507,7 +1409,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettings:
     codeEditorAppSettings : SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsCodeEditorAppSettings, default is Undefined, optional
         code editor app settings
     customFileSystem : [SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsCustomFileSystemItems0], default is Undefined, optional
-        A file system, created by you, that you assign to a space for an Amazon SageMaker Domain. See custom_file_system Block below.
+        A file system, created by you, that you assign to a space for an Amazon SageMaker AI Domain. See custom_file_system Block below.
     jupyterLabAppSettings : SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsJupyterLabAppSettings, default is Undefined, optional
         jupyter lab app settings
     jupyterServerAppSettings : SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsJupyterServerAppSettings, default is Undefined, optional
@@ -1573,7 +1475,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsCodeEditorA
     Attributes
     ----------
     idleTimeoutInMinutes : float, default is Undefined, optional
-        The time that SageMaker waits after the application becomes idle before shutting it down. Valid values are between 60 and 525600.
+        The time that SageMaker AI waits after the application becomes idle before shutting it down. Valid values are between 60 and 525600.
     """
 
 
@@ -1582,7 +1484,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsCodeEditorA
 
 schema SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsCodeEditorAppSettingsDefaultResourceSpec:
     r"""
-    The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. See default_resource_spec Block below.
+    The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. See default_resource_spec Block below.
 
     Attributes
     ----------
@@ -1591,9 +1493,9 @@ schema SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsCodeEditorA
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the SageMaker image created on the instance.
+        The Amazon Resource Name (ARN) of the SageMaker AI image created on the instance.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -1647,7 +1549,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsJupyterLabA
     appLifecycleManagement : SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsJupyterLabAppSettingsAppLifecycleManagement, default is Undefined, optional
         app lifecycle management
     codeRepository : [SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsJupyterLabAppSettingsCodeRepositoryItems0], default is Undefined, optional
-        A list of Git repositories that SageMaker automatically displays to users for cloning in the JupyterServer application. See code_repository Block below.
+        A list of Git repositories that SageMaker AI automatically displays to users for cloning in the JupyterServer application. See code_repository Block below.
     defaultResourceSpec : SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsJupyterLabAppSettingsDefaultResourceSpec, default is Undefined, optional
         default resource spec
     """
@@ -1681,7 +1583,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsJupyterLabA
     Attributes
     ----------
     idleTimeoutInMinutes : float, default is Undefined, optional
-        The time that SageMaker waits after the application becomes idle before shutting it down. Valid values are between 60 and 525600.
+        The time that SageMaker AI waits after the application becomes idle before shutting it down. Valid values are between 60 and 525600.
     """
 
 
@@ -1704,7 +1606,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsJupyterLabA
 
 schema SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsJupyterLabAppSettingsDefaultResourceSpec:
     r"""
-    The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. See default_resource_spec Block below.
+    The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. See default_resource_spec Block below.
 
     Attributes
     ----------
@@ -1713,9 +1615,9 @@ schema SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsJupyterLabA
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the SageMaker image created on the instance.
+        The Amazon Resource Name (ARN) of the SageMaker AI image created on the instance.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -1739,7 +1641,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsJupyterServ
     Attributes
     ----------
     codeRepository : [SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsJupyterServerAppSettingsCodeRepositoryItems0], default is Undefined, optional
-        A list of Git repositories that SageMaker automatically displays to users for cloning in the JupyterServer application. See code_repository Block below.
+        A list of Git repositories that SageMaker AI automatically displays to users for cloning in the JupyterServer application. See code_repository Block below.
     defaultResourceSpec : SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsJupyterServerAppSettingsDefaultResourceSpec, default is Undefined, optional
         default resource spec
     lifecycleConfigArns : [str], default is Undefined, optional
@@ -1770,7 +1672,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsJupyterServ
 
 schema SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsJupyterServerAppSettingsDefaultResourceSpec:
     r"""
-    The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. See default_resource_spec Block below.
+    The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. See default_resource_spec Block below.
 
     Attributes
     ----------
@@ -1779,9 +1681,9 @@ schema SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsJupyterServ
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the SageMaker image created on the instance.
+        The Amazon Resource Name (ARN) of the SageMaker AI image created on the instance.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -1805,7 +1707,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsKernelGatew
     Attributes
     ----------
     customImage : [SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsKernelGatewayAppSettingsCustomImageItems0], default is Undefined, optional
-        A list of custom SageMaker images that are configured to run as a KernelGateway app. See custom_image Block below.
+        A list of custom SageMaker AI images that are configured to run as a KernelGateway app. See custom_image Block below.
     defaultResourceSpec : SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsKernelGatewayAppSettingsDefaultResourceSpec, default is Undefined, optional
         default resource spec
     lifecycleConfigArns : [str], default is Undefined, optional
@@ -1844,7 +1746,7 @@ schema SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsKernelGatew
 
 schema SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsKernelGatewayAppSettingsDefaultResourceSpec:
     r"""
-    The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. See default_resource_spec Block below.
+    The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. See default_resource_spec Block below.
 
     Attributes
     ----------
@@ -1853,9 +1755,9 @@ schema SagemakerAwsUpboundIoV1beta2SpaceStatusAtProviderSpaceSettingsKernelGatew
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the SageMaker image created on the instance.
+        The Amazon Resource Name (ARN) of the SageMaker AI image created on the instance.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """

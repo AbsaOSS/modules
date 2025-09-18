@@ -66,8 +66,6 @@ schema RdsAwsUpboundIoV1beta1ProxySpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : RdsAwsUpboundIoV1beta1ProxySpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : RdsAwsUpboundIoV1beta1ProxySpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : RdsAwsUpboundIoV1beta1ProxySpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema RdsAwsUpboundIoV1beta1ProxySpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: RdsAwsUpboundIoV1beta1ProxySpecProviderConfigRef
-
-    publishConnectionDetailsTo?: RdsAwsUpboundIoV1beta1ProxySpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: RdsAwsUpboundIoV1beta1ProxySpecWriteConnectionSecretToRef
 
@@ -103,6 +99,7 @@ schema RdsAwsUpboundIoV1beta1ProxySpecForProvider:
     idleClientTimeout : float, default is Undefined, optional
         The number of seconds that a connection to the proxy can be inactive before the proxy disconnects it. You can set this value higher or lower than the connection timeout limit for the associated database.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     requireTls : bool, default is Undefined, optional
         A Boolean parameter that specifies whether Transport Layer Security (TLS) encryption is required for connections to the proxy. By enabling this setting, you can enforce encrypted TLS connections to the proxy.
@@ -171,7 +168,7 @@ schema RdsAwsUpboundIoV1beta1ProxySpecForProviderAuthItems0:
     authScheme : str, default is Undefined, optional
         The type of authentication that the proxy uses for connections from the proxy to the underlying database. One of SECRETS.
     clientPasswordAuthType : str, default is Undefined, optional
-        The type of authentication the proxy uses for connections from clients. Valid values are MYSQL_NATIVE_PASSWORD, POSTGRES_SCRAM_SHA_256, POSTGRES_MD5, and SQL_SERVER_AUTHENTICATION.
+        The type of authentication the proxy uses for connections from clients. Valid values are MYSQL_CACHING_SHA2_PASSWORD, MYSQL_NATIVE_PASSWORD, POSTGRES_SCRAM_SHA_256, POSTGRES_MD5, and SQL_SERVER_AUTHENTICATION.
     description : str, default is Undefined, optional
         A user-specified description about the authentication used by a proxy to log in as a specific database user.
     iamAuth : str, default is Undefined, optional
@@ -648,7 +645,7 @@ schema RdsAwsUpboundIoV1beta1ProxySpecInitProviderAuthItems0:
     authScheme : str, default is Undefined, optional
         The type of authentication that the proxy uses for connections from the proxy to the underlying database. One of SECRETS.
     clientPasswordAuthType : str, default is Undefined, optional
-        The type of authentication the proxy uses for connections from clients. Valid values are MYSQL_NATIVE_PASSWORD, POSTGRES_SCRAM_SHA_256, POSTGRES_MD5, and SQL_SERVER_AUTHENTICATION.
+        The type of authentication the proxy uses for connections from clients. Valid values are MYSQL_CACHING_SHA2_PASSWORD, MYSQL_NATIVE_PASSWORD, POSTGRES_SCRAM_SHA_256, POSTGRES_MD5, and SQL_SERVER_AUTHENTICATION.
     description : str, default is Undefined, optional
         A user-specified description about the authentication used by a proxy to log in as a specific database user.
     iamAuth : str, default is Undefined, optional
@@ -1081,112 +1078,12 @@ schema RdsAwsUpboundIoV1beta1ProxySpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema RdsAwsUpboundIoV1beta1ProxySpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : RdsAwsUpboundIoV1beta1ProxySpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : RdsAwsUpboundIoV1beta1ProxySpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: RdsAwsUpboundIoV1beta1ProxySpecPublishConnectionDetailsToConfigRef
-
-    metadata?: RdsAwsUpboundIoV1beta1ProxySpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema RdsAwsUpboundIoV1beta1ProxySpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : RdsAwsUpboundIoV1beta1ProxySpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: RdsAwsUpboundIoV1beta1ProxySpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema RdsAwsUpboundIoV1beta1ProxySpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema RdsAwsUpboundIoV1beta1ProxySpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema RdsAwsUpboundIoV1beta1ProxySpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1246,6 +1143,9 @@ schema RdsAwsUpboundIoV1beta1ProxyStatusAtProvider:
         The Amazon Resource Name (ARN) for the proxy.
     idleClientTimeout : float, default is Undefined, optional
         The number of seconds that a connection to the proxy can be inactive before the proxy disconnects it. You can set this value higher or lower than the connection timeout limit for the associated database.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     requireTls : bool, default is Undefined, optional
         A Boolean parameter that specifies whether Transport Layer Security (TLS) encryption is required for connections to the proxy. By enabling this setting, you can enforce encrypted TLS connections to the proxy.
     roleArn : str, default is Undefined, optional
@@ -1275,6 +1175,8 @@ schema RdsAwsUpboundIoV1beta1ProxyStatusAtProvider:
 
     idleClientTimeout?: float
 
+    region?: str
+
     requireTls?: bool
 
     roleArn?: str
@@ -1297,7 +1199,7 @@ schema RdsAwsUpboundIoV1beta1ProxyStatusAtProviderAuthItems0:
     authScheme : str, default is Undefined, optional
         The type of authentication that the proxy uses for connections from the proxy to the underlying database. One of SECRETS.
     clientPasswordAuthType : str, default is Undefined, optional
-        The type of authentication the proxy uses for connections from clients. Valid values are MYSQL_NATIVE_PASSWORD, POSTGRES_SCRAM_SHA_256, POSTGRES_MD5, and SQL_SERVER_AUTHENTICATION.
+        The type of authentication the proxy uses for connections from clients. Valid values are MYSQL_CACHING_SHA2_PASSWORD, MYSQL_NATIVE_PASSWORD, POSTGRES_SCRAM_SHA_256, POSTGRES_MD5, and SQL_SERVER_AUTHENTICATION.
     description : str, default is Undefined, optional
         A user-specified description about the authentication used by a proxy to log in as a specific database user.
     iamAuth : str, default is Undefined, optional

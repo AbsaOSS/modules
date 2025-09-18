@@ -66,8 +66,6 @@ schema LexmodelsAwsUpboundIoV1beta1BotAliasSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : LexmodelsAwsUpboundIoV1beta1BotAliasSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : LexmodelsAwsUpboundIoV1beta1BotAliasSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : LexmodelsAwsUpboundIoV1beta1BotAliasSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema LexmodelsAwsUpboundIoV1beta1BotAliasSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: LexmodelsAwsUpboundIoV1beta1BotAliasSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: LexmodelsAwsUpboundIoV1beta1BotAliasSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: LexmodelsAwsUpboundIoV1beta1BotAliasSpecWriteConnectionSecretToRef
 
@@ -103,6 +99,7 @@ schema LexmodelsAwsUpboundIoV1beta1BotAliasSpecForProvider:
     description : str, default is Undefined, optional
         A description of the alias. Must be less than or equal to 200 characters in length.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     """
 
@@ -285,112 +282,12 @@ schema LexmodelsAwsUpboundIoV1beta1BotAliasSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema LexmodelsAwsUpboundIoV1beta1BotAliasSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : LexmodelsAwsUpboundIoV1beta1BotAliasSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : LexmodelsAwsUpboundIoV1beta1BotAliasSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: LexmodelsAwsUpboundIoV1beta1BotAliasSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: LexmodelsAwsUpboundIoV1beta1BotAliasSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema LexmodelsAwsUpboundIoV1beta1BotAliasSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : LexmodelsAwsUpboundIoV1beta1BotAliasSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: LexmodelsAwsUpboundIoV1beta1BotAliasSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema LexmodelsAwsUpboundIoV1beta1BotAliasSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema LexmodelsAwsUpboundIoV1beta1BotAliasSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema LexmodelsAwsUpboundIoV1beta1BotAliasSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -454,6 +351,9 @@ schema LexmodelsAwsUpboundIoV1beta1BotAliasStatusAtProvider:
         id
     lastUpdatedDate : str, default is Undefined, optional
         The date that the bot alias was updated. When you create a resource, the creation date and the last updated date are the same.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     """
 
 
@@ -474,6 +374,8 @@ schema LexmodelsAwsUpboundIoV1beta1BotAliasStatusAtProvider:
     id?: str
 
     lastUpdatedDate?: str
+
+    region?: str
 
 
 schema LexmodelsAwsUpboundIoV1beta1BotAliasStatusAtProviderConversationLogsItems0:

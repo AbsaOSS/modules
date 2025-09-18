@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema Model:
     r"""
-    Model is the Schema for the Models API. Provides a SageMaker model resource.
+    Model is the Schema for the Models API. Provides a SageMaker AI model resource.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema SagemakerAwsUpboundIoV1beta1ModelSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : SagemakerAwsUpboundIoV1beta1ModelSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : SagemakerAwsUpboundIoV1beta1ModelSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : SagemakerAwsUpboundIoV1beta1ModelSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema SagemakerAwsUpboundIoV1beta1ModelSpec:
 
     providerConfigRef?: SagemakerAwsUpboundIoV1beta1ModelSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: SagemakerAwsUpboundIoV1beta1ModelSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: SagemakerAwsUpboundIoV1beta1ModelSpecWriteConnectionSecretToRef
 
 
@@ -99,7 +95,7 @@ schema SagemakerAwsUpboundIoV1beta1ModelSpecForProvider:
     enableNetworkIsolation : bool, default is Undefined, optional
         Isolates the model container. No inbound or outbound network calls can be made to or from the model container.
     executionRoleArn : str, default is Undefined, optional
-        A role that SageMaker can assume to access model artifacts and docker images for deployment.
+        A role that SageMaker AI can assume to access model artifacts and docker images for deployment.
     executionRoleArnRef : SagemakerAwsUpboundIoV1beta1ModelSpecForProviderExecutionRoleArnRef, default is Undefined, optional
         execution role arn ref
     executionRoleArnSelector : SagemakerAwsUpboundIoV1beta1ModelSpecForProviderExecutionRoleArnSelector, default is Undefined, optional
@@ -109,6 +105,7 @@ schema SagemakerAwsUpboundIoV1beta1ModelSpecForProvider:
     primaryContainer : [SagemakerAwsUpboundIoV1beta1ModelSpecForProviderPrimaryContainerItems0], default is Undefined, optional
         The primary docker image containing inference code that is used when the model is deployed for predictions.  If not specified, the container argument is required. Fields are documented below.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
@@ -158,7 +155,7 @@ schema SagemakerAwsUpboundIoV1beta1ModelSpecForProviderContainerItems0:
     mode : str, default is Undefined, optional
         The container hosts value SingleModel/MultiModel. The default value is SingleModel.
     modelDataSource : [SagemakerAwsUpboundIoV1beta1ModelSpecForProviderContainerItems0ModelDataSourceItems0], default is Undefined, optional
-        The location of model data to deploy. Use this for uncompressed model deployment. For information about how to deploy an uncompressed model, see Deploying uncompressed models in the AWS SageMaker Developer Guide.
+        The location of model data to deploy. Use this for uncompressed model deployment. For information about how to deploy an uncompressed model, see Deploying uncompressed models in the AWS SageMaker AI Developer Guide.
     modelDataUrl : str, default is Undefined, optional
         The URL for the S3 location where model artifacts are stored.
     modelPackageName : str, default is Undefined, optional
@@ -412,7 +409,7 @@ schema SagemakerAwsUpboundIoV1beta1ModelSpecForProviderPrimaryContainerItems0:
     mode : str, default is Undefined, optional
         The container hosts value SingleModel/MultiModel. The default value is SingleModel.
     modelDataSource : [SagemakerAwsUpboundIoV1beta1ModelSpecForProviderPrimaryContainerItems0ModelDataSourceItems0], default is Undefined, optional
-        The location of model data to deploy. Use this for uncompressed model deployment. For information about how to deploy an uncompressed model, see Deploying uncompressed models in the AWS SageMaker Developer Guide.
+        The location of model data to deploy. Use this for uncompressed model deployment. For information about how to deploy an uncompressed model, see Deploying uncompressed models in the AWS SageMaker AI Developer Guide.
     modelDataUrl : str, default is Undefined, optional
         The URL for the S3 location where model artifacts are stored.
     modelPackageName : str, default is Undefined, optional
@@ -581,7 +578,7 @@ schema SagemakerAwsUpboundIoV1beta1ModelSpecInitProvider:
     enableNetworkIsolation : bool, default is Undefined, optional
         Isolates the model container. No inbound or outbound network calls can be made to or from the model container.
     executionRoleArn : str, default is Undefined, optional
-        A role that SageMaker can assume to access model artifacts and docker images for deployment.
+        A role that SageMaker AI can assume to access model artifacts and docker images for deployment.
     executionRoleArnRef : SagemakerAwsUpboundIoV1beta1ModelSpecInitProviderExecutionRoleArnRef, default is Undefined, optional
         execution role arn ref
     executionRoleArnSelector : SagemakerAwsUpboundIoV1beta1ModelSpecInitProviderExecutionRoleArnSelector, default is Undefined, optional
@@ -636,7 +633,7 @@ schema SagemakerAwsUpboundIoV1beta1ModelSpecInitProviderContainerItems0:
     mode : str, default is Undefined, optional
         The container hosts value SingleModel/MultiModel. The default value is SingleModel.
     modelDataSource : [SagemakerAwsUpboundIoV1beta1ModelSpecInitProviderContainerItems0ModelDataSourceItems0], default is Undefined, optional
-        The location of model data to deploy. Use this for uncompressed model deployment. For information about how to deploy an uncompressed model, see Deploying uncompressed models in the AWS SageMaker Developer Guide.
+        The location of model data to deploy. Use this for uncompressed model deployment. For information about how to deploy an uncompressed model, see Deploying uncompressed models in the AWS SageMaker AI Developer Guide.
     modelDataUrl : str, default is Undefined, optional
         The URL for the S3 location where model artifacts are stored.
     modelPackageName : str, default is Undefined, optional
@@ -890,7 +887,7 @@ schema SagemakerAwsUpboundIoV1beta1ModelSpecInitProviderPrimaryContainerItems0:
     mode : str, default is Undefined, optional
         The container hosts value SingleModel/MultiModel. The default value is SingleModel.
     modelDataSource : [SagemakerAwsUpboundIoV1beta1ModelSpecInitProviderPrimaryContainerItems0ModelDataSourceItems0], default is Undefined, optional
-        The location of model data to deploy. Use this for uncompressed model deployment. For information about how to deploy an uncompressed model, see Deploying uncompressed models in the AWS SageMaker Developer Guide.
+        The location of model data to deploy. Use this for uncompressed model deployment. For information about how to deploy an uncompressed model, see Deploying uncompressed models in the AWS SageMaker AI Developer Guide.
     modelDataUrl : str, default is Undefined, optional
         The URL for the S3 location where model artifacts are stored.
     modelPackageName : str, default is Undefined, optional
@@ -1083,112 +1080,12 @@ schema SagemakerAwsUpboundIoV1beta1ModelSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema SagemakerAwsUpboundIoV1beta1ModelSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : SagemakerAwsUpboundIoV1beta1ModelSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : SagemakerAwsUpboundIoV1beta1ModelSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: SagemakerAwsUpboundIoV1beta1ModelSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: SagemakerAwsUpboundIoV1beta1ModelSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema SagemakerAwsUpboundIoV1beta1ModelSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : SagemakerAwsUpboundIoV1beta1ModelSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: SagemakerAwsUpboundIoV1beta1ModelSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema SagemakerAwsUpboundIoV1beta1ModelSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema SagemakerAwsUpboundIoV1beta1ModelSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema SagemakerAwsUpboundIoV1beta1ModelSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1241,13 +1138,16 @@ schema SagemakerAwsUpboundIoV1beta1ModelStatusAtProvider:
     enableNetworkIsolation : bool, default is Undefined, optional
         Isolates the model container. No inbound or outbound network calls can be made to or from the model container.
     executionRoleArn : str, default is Undefined, optional
-        A role that SageMaker can assume to access model artifacts and docker images for deployment.
+        A role that SageMaker AI can assume to access model artifacts and docker images for deployment.
     id : str, default is Undefined, optional
         id
     inferenceExecutionConfig : [SagemakerAwsUpboundIoV1beta1ModelStatusAtProviderInferenceExecutionConfigItems0], default is Undefined, optional
         Specifies details of how containers in a multi-container endpoint are called. see Inference Execution Config.
     primaryContainer : [SagemakerAwsUpboundIoV1beta1ModelStatusAtProviderPrimaryContainerItems0], default is Undefined, optional
         The primary docker image containing inference code that is used when the model is deployed for predictions.  If not specified, the container argument is required. Fields are documented below.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
@@ -1270,6 +1170,8 @@ schema SagemakerAwsUpboundIoV1beta1ModelStatusAtProvider:
     inferenceExecutionConfig?: [SagemakerAwsUpboundIoV1beta1ModelStatusAtProviderInferenceExecutionConfigItems0]
 
     primaryContainer?: [SagemakerAwsUpboundIoV1beta1ModelStatusAtProviderPrimaryContainerItems0]
+
+    region?: str
 
     tags?: {str:str}
 
@@ -1298,7 +1200,7 @@ schema SagemakerAwsUpboundIoV1beta1ModelStatusAtProviderContainerItems0:
     mode : str, default is Undefined, optional
         The container hosts value SingleModel/MultiModel. The default value is SingleModel.
     modelDataSource : [SagemakerAwsUpboundIoV1beta1ModelStatusAtProviderContainerItems0ModelDataSourceItems0], default is Undefined, optional
-        The location of model data to deploy. Use this for uncompressed model deployment. For information about how to deploy an uncompressed model, see Deploying uncompressed models in the AWS SageMaker Developer Guide.
+        The location of model data to deploy. Use this for uncompressed model deployment. For information about how to deploy an uncompressed model, see Deploying uncompressed models in the AWS SageMaker AI Developer Guide.
     modelDataUrl : str, default is Undefined, optional
         The URL for the S3 location where model artifacts are stored.
     modelPackageName : str, default is Undefined, optional
@@ -1463,7 +1365,7 @@ schema SagemakerAwsUpboundIoV1beta1ModelStatusAtProviderPrimaryContainerItems0:
     mode : str, default is Undefined, optional
         The container hosts value SingleModel/MultiModel. The default value is SingleModel.
     modelDataSource : [SagemakerAwsUpboundIoV1beta1ModelStatusAtProviderPrimaryContainerItems0ModelDataSourceItems0], default is Undefined, optional
-        The location of model data to deploy. Use this for uncompressed model deployment. For information about how to deploy an uncompressed model, see Deploying uncompressed models in the AWS SageMaker Developer Guide.
+        The location of model data to deploy. Use this for uncompressed model deployment. For information about how to deploy an uncompressed model, see Deploying uncompressed models in the AWS SageMaker AI Developer Guide.
     modelDataUrl : str, default is Undefined, optional
         The URL for the S3 location where model artifacts are stored.
     modelPackageName : str, default is Undefined, optional

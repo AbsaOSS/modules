@@ -66,8 +66,6 @@ schema CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecProviderConfigRef
-
-    publishConnectionDetailsTo?: CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecWriteConnectionSecretToRef
 
@@ -100,12 +96,8 @@ schema CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecForProvider:
         cors config
     customHeadersConfig : CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecForProviderCustomHeadersConfig, default is Undefined, optional
         custom headers config
-    etag : str, default is Undefined, optional
-        The current version of the response headers policy.
     name : str, default is Undefined, optional
         A unique name to identify the response headers policy.
-    region : str, default is Undefined, required
-        Region is the region you'd like your resource to be created in.
     removeHeadersConfig : CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecForProviderRemoveHeadersConfig, default is Undefined, optional
         remove headers config
     securityHeadersConfig : CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecForProviderSecurityHeadersConfig, default is Undefined, optional
@@ -121,11 +113,7 @@ schema CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecForProvider:
 
     customHeadersConfig?: CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecForProviderCustomHeadersConfig
 
-    etag?: str
-
     name?: str
-
-    region: str
 
     removeHeadersConfig?: CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecForProviderRemoveHeadersConfig
 
@@ -485,8 +473,6 @@ schema CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecInitProvider:
         cors config
     customHeadersConfig : CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecInitProviderCustomHeadersConfig, default is Undefined, optional
         custom headers config
-    etag : str, default is Undefined, optional
-        The current version of the response headers policy.
     name : str, default is Undefined, optional
         A unique name to identify the response headers policy.
     removeHeadersConfig : CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecInitProviderRemoveHeadersConfig, default is Undefined, optional
@@ -503,8 +489,6 @@ schema CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecInitProvider:
     corsConfig?: CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecInitProviderCorsConfig
 
     customHeadersConfig?: CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecInitProviderCustomHeadersConfig
-
-    etag?: str
 
     name?: str
 
@@ -889,112 +873,12 @@ schema CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecProviderConfigRefPo
     resolve?: "Always" | "IfNotPresent"
 
 
-schema CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecPublishConnectionDetailsToConfigRef
-
-    metadata?: CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicySpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1040,6 +924,8 @@ schema CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicyStatusAtProvider:
 
     Attributes
     ----------
+    arn : str, default is Undefined, optional
+        The response headers policy ARN.
     comment : str, default is Undefined, optional
         A comment to describe the response headers policy. The comment cannot be longer than 128 characters.
     corsConfig : CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicyStatusAtProviderCorsConfig, default is Undefined, optional
@@ -1060,6 +946,8 @@ schema CloudfrontAwsUpboundIoV1beta2ResponseHeadersPolicyStatusAtProvider:
         server timing headers config
     """
 
+
+    arn?: str
 
     comment?: str
 

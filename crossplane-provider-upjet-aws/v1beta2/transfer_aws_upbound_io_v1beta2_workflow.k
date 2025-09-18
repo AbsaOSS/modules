@@ -66,8 +66,6 @@ schema TransferAwsUpboundIoV1beta2WorkflowSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : TransferAwsUpboundIoV1beta2WorkflowSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : TransferAwsUpboundIoV1beta2WorkflowSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : TransferAwsUpboundIoV1beta2WorkflowSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema TransferAwsUpboundIoV1beta2WorkflowSpec:
 
     providerConfigRef?: TransferAwsUpboundIoV1beta2WorkflowSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: TransferAwsUpboundIoV1beta2WorkflowSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: TransferAwsUpboundIoV1beta2WorkflowSpecWriteConnectionSecretToRef
 
 
@@ -99,6 +95,7 @@ schema TransferAwsUpboundIoV1beta2WorkflowSpecForProvider:
     onExceptionSteps : [TransferAwsUpboundIoV1beta2WorkflowSpecForProviderOnExceptionStepsItems0], default is Undefined, optional
         Specifies the steps (actions) to take if errors are encountered during execution of the workflow. See Workflow Steps below.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     steps : [TransferAwsUpboundIoV1beta2WorkflowSpecForProviderStepsItems0], default is Undefined, optional
         Specifies the details for the steps that are in the specified workflow. See Workflow Steps below.
@@ -1519,112 +1516,12 @@ schema TransferAwsUpboundIoV1beta2WorkflowSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema TransferAwsUpboundIoV1beta2WorkflowSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : TransferAwsUpboundIoV1beta2WorkflowSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : TransferAwsUpboundIoV1beta2WorkflowSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: TransferAwsUpboundIoV1beta2WorkflowSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: TransferAwsUpboundIoV1beta2WorkflowSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema TransferAwsUpboundIoV1beta2WorkflowSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : TransferAwsUpboundIoV1beta2WorkflowSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: TransferAwsUpboundIoV1beta2WorkflowSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema TransferAwsUpboundIoV1beta2WorkflowSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema TransferAwsUpboundIoV1beta2WorkflowSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema TransferAwsUpboundIoV1beta2WorkflowSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1678,6 +1575,9 @@ schema TransferAwsUpboundIoV1beta2WorkflowStatusAtProvider:
         The Workflow id.
     onExceptionSteps : [TransferAwsUpboundIoV1beta2WorkflowStatusAtProviderOnExceptionStepsItems0], default is Undefined, optional
         Specifies the steps (actions) to take if errors are encountered during execution of the workflow. See Workflow Steps below.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     steps : [TransferAwsUpboundIoV1beta2WorkflowStatusAtProviderStepsItems0], default is Undefined, optional
         Specifies the details for the steps that are in the specified workflow. See Workflow Steps below.
     tags : {str:str}, default is Undefined, optional
@@ -1694,6 +1594,8 @@ schema TransferAwsUpboundIoV1beta2WorkflowStatusAtProvider:
     id?: str
 
     onExceptionSteps?: [TransferAwsUpboundIoV1beta2WorkflowStatusAtProviderOnExceptionStepsItems0]
+
+    region?: str
 
     steps?: [TransferAwsUpboundIoV1beta2WorkflowStatusAtProviderStepsItems0]
 

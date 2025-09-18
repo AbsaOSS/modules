@@ -66,8 +66,6 @@ schema Wafv2AwsUpboundIoV1beta1RuleGroupSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : Wafv2AwsUpboundIoV1beta1RuleGroupSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : Wafv2AwsUpboundIoV1beta1RuleGroupSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : Wafv2AwsUpboundIoV1beta1RuleGroupSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema Wafv2AwsUpboundIoV1beta1RuleGroupSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: Wafv2AwsUpboundIoV1beta1RuleGroupSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: Wafv2AwsUpboundIoV1beta1RuleGroupSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: Wafv2AwsUpboundIoV1beta1RuleGroupSpecWriteConnectionSecretToRef
 
@@ -103,6 +99,7 @@ schema Wafv2AwsUpboundIoV1beta1RuleGroupSpecForProvider:
     name : str, default is Undefined, optional
         A friendly name of the rule group.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     ruleJson : str, default is Undefined, optional
         A raw JSON string used to define the rules for allowing, blocking, or counting web requests. When this field is used, Crossplane cannot observe changes in the configuration through the AWS API; therefore, drift detection cannot be performed. Refer to the AWS documentation for the expected JSON structure: https://docs.aws.amazon.com/waf/latest/APIReference/API_CreateRuleGroup.html
@@ -317,112 +314,12 @@ schema Wafv2AwsUpboundIoV1beta1RuleGroupSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema Wafv2AwsUpboundIoV1beta1RuleGroupSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : Wafv2AwsUpboundIoV1beta1RuleGroupSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : Wafv2AwsUpboundIoV1beta1RuleGroupSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: Wafv2AwsUpboundIoV1beta1RuleGroupSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: Wafv2AwsUpboundIoV1beta1RuleGroupSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema Wafv2AwsUpboundIoV1beta1RuleGroupSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : Wafv2AwsUpboundIoV1beta1RuleGroupSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: Wafv2AwsUpboundIoV1beta1RuleGroupSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema Wafv2AwsUpboundIoV1beta1RuleGroupSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema Wafv2AwsUpboundIoV1beta1RuleGroupSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema Wafv2AwsUpboundIoV1beta1RuleGroupSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -482,6 +379,9 @@ schema Wafv2AwsUpboundIoV1beta1RuleGroupStatusAtProvider:
         lock token
     name : str, default is Undefined, optional
         A friendly name of the rule group.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     ruleJson : str, default is Undefined, optional
         A raw JSON string used to define the rules for allowing, blocking, or counting web requests. When this field is used, Crossplane cannot observe changes in the configuration through the AWS API; therefore, drift detection cannot be performed. Refer to the AWS documentation for the expected JSON structure: https://docs.aws.amazon.com/waf/latest/APIReference/API_CreateRuleGroup.html
     scope : str, default is Undefined, optional
@@ -508,6 +408,8 @@ schema Wafv2AwsUpboundIoV1beta1RuleGroupStatusAtProvider:
     lockToken?: str
 
     name?: str
+
+    region?: str
 
     ruleJson?: str
 

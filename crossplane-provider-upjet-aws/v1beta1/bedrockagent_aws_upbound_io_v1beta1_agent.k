@@ -66,8 +66,6 @@ schema BedrockagentAwsUpboundIoV1beta1AgentSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : BedrockagentAwsUpboundIoV1beta1AgentSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : BedrockagentAwsUpboundIoV1beta1AgentSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : BedrockagentAwsUpboundIoV1beta1AgentSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema BedrockagentAwsUpboundIoV1beta1AgentSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: BedrockagentAwsUpboundIoV1beta1AgentSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: BedrockagentAwsUpboundIoV1beta1AgentSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: BedrockagentAwsUpboundIoV1beta1AgentSpecWriteConnectionSecretToRef
 
@@ -115,12 +111,15 @@ schema BedrockagentAwsUpboundIoV1beta1AgentSpecForProvider:
     idleSessionTtlInSeconds : float, default is Undefined, optional
         Number of seconds for which Amazon Bedrock keeps information about a user's conversation with the agent. A user interaction remains active for the amount of time specified. If no conversation occurs during this time, the session expires and Amazon Bedrock deletes any data provided before the timeout.
     instruction : str, default is Undefined, optional
-        Instructions that tell the agent what it should do and how it should interact with users. The valid range is 40 - 8000 characters.
+        Instructions that tell the agent what it should do and how it should interact with users. The valid range is 40 - 20000 characters.
+    memoryConfiguration : [BedrockagentAwsUpboundIoV1beta1AgentSpecForProviderMemoryConfigurationItems0], default is Undefined, optional
+        Configurations for the agent's ability to retain the conversational context.
     prepareAgent : bool, default is Undefined, optional
         Whether to prepare the agent after creation or modification. Defaults to true.
     promptOverrideConfiguration : [BedrockagentAwsUpboundIoV1beta1AgentSpecForProviderPromptOverrideConfigurationItems0], default is Undefined, optional
         Configurations to override prompt templates in different parts of an agent sequence. For more information, see Advanced prompts. See prompt_override_configuration Block for details.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     skipResourceInUseCheck : bool, default is Undefined, optional
         Whether the in-use check is skipped when deleting the agent.
@@ -150,6 +149,8 @@ schema BedrockagentAwsUpboundIoV1beta1AgentSpecForProvider:
     idleSessionTtlInSeconds?: float
 
     instruction?: str
+
+    memoryConfiguration?: [BedrockagentAwsUpboundIoV1beta1AgentSpecForProviderMemoryConfigurationItems0]
 
     prepareAgent?: bool
 
@@ -267,6 +268,24 @@ schema BedrockagentAwsUpboundIoV1beta1AgentSpecForProviderGuardrailConfiguration
     guardrailIdentifier?: str
 
     guardrailVersion?: str
+
+
+schema BedrockagentAwsUpboundIoV1beta1AgentSpecForProviderMemoryConfigurationItems0:
+    r"""
+    bedrockagent aws upbound io v1beta1 agent spec for provider memory configuration items0
+
+    Attributes
+    ----------
+    enabledMemoryTypes : [str], default is Undefined, optional
+        The type of memory being stored by the agent. See AWS API documentation for possible values.
+    storageDays : float, default is Undefined, optional
+        The number of days the agent is configured to retain the conversational context. Minimum value of 0, maximum value of 30.
+    """
+
+
+    enabledMemoryTypes?: [str]
+
+    storageDays?: float
 
 
 schema BedrockagentAwsUpboundIoV1beta1AgentSpecForProviderPromptOverrideConfigurationItems0:
@@ -387,7 +406,9 @@ schema BedrockagentAwsUpboundIoV1beta1AgentSpecInitProvider:
     idleSessionTtlInSeconds : float, default is Undefined, optional
         Number of seconds for which Amazon Bedrock keeps information about a user's conversation with the agent. A user interaction remains active for the amount of time specified. If no conversation occurs during this time, the session expires and Amazon Bedrock deletes any data provided before the timeout.
     instruction : str, default is Undefined, optional
-        Instructions that tell the agent what it should do and how it should interact with users. The valid range is 40 - 8000 characters.
+        Instructions that tell the agent what it should do and how it should interact with users. The valid range is 40 - 20000 characters.
+    memoryConfiguration : [BedrockagentAwsUpboundIoV1beta1AgentSpecInitProviderMemoryConfigurationItems0], default is Undefined, optional
+        Configurations for the agent's ability to retain the conversational context.
     prepareAgent : bool, default is Undefined, optional
         Whether to prepare the agent after creation or modification. Defaults to true.
     promptOverrideConfiguration : [BedrockagentAwsUpboundIoV1beta1AgentSpecInitProviderPromptOverrideConfigurationItems0], default is Undefined, optional
@@ -420,6 +441,8 @@ schema BedrockagentAwsUpboundIoV1beta1AgentSpecInitProvider:
     idleSessionTtlInSeconds?: float
 
     instruction?: str
+
+    memoryConfiguration?: [BedrockagentAwsUpboundIoV1beta1AgentSpecInitProviderMemoryConfigurationItems0]
 
     prepareAgent?: bool
 
@@ -535,6 +558,24 @@ schema BedrockagentAwsUpboundIoV1beta1AgentSpecInitProviderGuardrailConfiguratio
     guardrailIdentifier?: str
 
     guardrailVersion?: str
+
+
+schema BedrockagentAwsUpboundIoV1beta1AgentSpecInitProviderMemoryConfigurationItems0:
+    r"""
+    bedrockagent aws upbound io v1beta1 agent spec init provider memory configuration items0
+
+    Attributes
+    ----------
+    enabledMemoryTypes : [str], default is Undefined, optional
+        The type of memory being stored by the agent. See AWS API documentation for possible values.
+    storageDays : float, default is Undefined, optional
+        The number of days the agent is configured to retain the conversational context. Minimum value of 0, maximum value of 30.
+    """
+
+
+    enabledMemoryTypes?: [str]
+
+    storageDays?: float
 
 
 schema BedrockagentAwsUpboundIoV1beta1AgentSpecInitProviderPromptOverrideConfigurationItems0:
@@ -663,112 +704,12 @@ schema BedrockagentAwsUpboundIoV1beta1AgentSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema BedrockagentAwsUpboundIoV1beta1AgentSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : BedrockagentAwsUpboundIoV1beta1AgentSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : BedrockagentAwsUpboundIoV1beta1AgentSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: BedrockagentAwsUpboundIoV1beta1AgentSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: BedrockagentAwsUpboundIoV1beta1AgentSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema BedrockagentAwsUpboundIoV1beta1AgentSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : BedrockagentAwsUpboundIoV1beta1AgentSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: BedrockagentAwsUpboundIoV1beta1AgentSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema BedrockagentAwsUpboundIoV1beta1AgentSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema BedrockagentAwsUpboundIoV1beta1AgentSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema BedrockagentAwsUpboundIoV1beta1AgentSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -839,11 +780,18 @@ schema BedrockagentAwsUpboundIoV1beta1AgentStatusAtProvider:
     idleSessionTtlInSeconds : float, default is Undefined, optional
         Number of seconds for which Amazon Bedrock keeps information about a user's conversation with the agent. A user interaction remains active for the amount of time specified. If no conversation occurs during this time, the session expires and Amazon Bedrock deletes any data provided before the timeout.
     instruction : str, default is Undefined, optional
-        Instructions that tell the agent what it should do and how it should interact with users. The valid range is 40 - 8000 characters.
+        Instructions that tell the agent what it should do and how it should interact with users. The valid range is 40 - 20000 characters.
+    memoryConfiguration : [BedrockagentAwsUpboundIoV1beta1AgentStatusAtProviderMemoryConfigurationItems0], default is Undefined, optional
+        Configurations for the agent's ability to retain the conversational context.
     prepareAgent : bool, default is Undefined, optional
         Whether to prepare the agent after creation or modification. Defaults to true.
+    preparedAt : str, default is Undefined, optional
+        Timestamp of when the agent was last prepared.
     promptOverrideConfiguration : [BedrockagentAwsUpboundIoV1beta1AgentStatusAtProviderPromptOverrideConfigurationItems0], default is Undefined, optional
         Configurations to override prompt templates in different parts of an agent sequence. For more information, see Advanced prompts. See prompt_override_configuration Block for details.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     skipResourceInUseCheck : bool, default is Undefined, optional
         Whether the in-use check is skipped when deleting the agent.
     tags : {str:str}, default is Undefined, optional
@@ -879,9 +827,15 @@ schema BedrockagentAwsUpboundIoV1beta1AgentStatusAtProvider:
 
     instruction?: str
 
+    memoryConfiguration?: [BedrockagentAwsUpboundIoV1beta1AgentStatusAtProviderMemoryConfigurationItems0]
+
     prepareAgent?: bool
 
+    preparedAt?: str
+
     promptOverrideConfiguration?: [BedrockagentAwsUpboundIoV1beta1AgentStatusAtProviderPromptOverrideConfigurationItems0]
+
+    region?: str
 
     skipResourceInUseCheck?: bool
 
@@ -906,6 +860,24 @@ schema BedrockagentAwsUpboundIoV1beta1AgentStatusAtProviderGuardrailConfiguratio
     guardrailIdentifier?: str
 
     guardrailVersion?: str
+
+
+schema BedrockagentAwsUpboundIoV1beta1AgentStatusAtProviderMemoryConfigurationItems0:
+    r"""
+    bedrockagent aws upbound io v1beta1 agent status at provider memory configuration items0
+
+    Attributes
+    ----------
+    enabledMemoryTypes : [str], default is Undefined, optional
+        The type of memory being stored by the agent. See AWS API documentation for possible values.
+    storageDays : float, default is Undefined, optional
+        The number of days the agent is configured to retain the conversational context. Minimum value of 0, maximum value of 30.
+    """
+
+
+    enabledMemoryTypes?: [str]
+
+    storageDays?: float
 
 
 schema BedrockagentAwsUpboundIoV1beta1AgentStatusAtProviderPromptOverrideConfigurationItems0:

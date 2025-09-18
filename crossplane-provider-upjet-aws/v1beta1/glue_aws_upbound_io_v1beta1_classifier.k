@@ -66,8 +66,6 @@ schema GlueAwsUpboundIoV1beta1ClassifierSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : GlueAwsUpboundIoV1beta1ClassifierSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : GlueAwsUpboundIoV1beta1ClassifierSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : GlueAwsUpboundIoV1beta1ClassifierSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema GlueAwsUpboundIoV1beta1ClassifierSpec:
 
     providerConfigRef?: GlueAwsUpboundIoV1beta1ClassifierSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: GlueAwsUpboundIoV1beta1ClassifierSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: GlueAwsUpboundIoV1beta1ClassifierSpecWriteConnectionSecretToRef
 
 
@@ -95,15 +91,16 @@ schema GlueAwsUpboundIoV1beta1ClassifierSpecForProvider:
     Attributes
     ----------
     csvClassifier : [GlueAwsUpboundIoV1beta1ClassifierSpecForProviderCsvClassifierItems0], default is Undefined, optional
-        A classifier for Csv content. Defined below.
+        A classifier for CSV content. Defined below.
     grokClassifier : [GlueAwsUpboundIoV1beta1ClassifierSpecForProviderGrokClassifierItems0], default is Undefined, optional
-        –  A classifier that uses grok patterns. Defined below.
+        A classifier that uses grok patterns. Defined below.
     jsonClassifier : [GlueAwsUpboundIoV1beta1ClassifierSpecForProviderJSONClassifierItems0], default is Undefined, optional
-        –  A classifier for JSON content. Defined below.
+        A classifier for JSON content. Defined below.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     xmlClassifier : [GlueAwsUpboundIoV1beta1ClassifierSpecForProviderXMLClassifierItems0], default is Undefined, optional
-        –  A classifier for XML content. Defined below.
+        A classifier for XML content. Defined below.
     """
 
 
@@ -133,7 +130,7 @@ schema GlueAwsUpboundIoV1beta1ClassifierSpecForProviderCsvClassifierItems0:
     customDatatypes : [str], default is Undefined, optional
         A list of supported custom datatypes. Valid values are BINARY, BOOLEAN, DATE, DECIMAL, DOUBLE, FLOAT, INT, LONG, SHORT, STRING, TIMESTAMP.
     delimiter : str, default is Undefined, optional
-        The delimiter used in the Csv to separate columns.
+        The delimiter used in the CSV to separate columns.
     disableValueTrimming : bool, default is Undefined, optional
         Specifies whether to trim column values.
     header : [str], default is Undefined, optional
@@ -141,7 +138,7 @@ schema GlueAwsUpboundIoV1beta1ClassifierSpecForProviderCsvClassifierItems0:
     quoteSymbol : str, default is Undefined, optional
         A custom symbol to denote what combines content into a single column value. It must be different from the column delimiter.
     serde : str, default is Undefined, optional
-        serde
+        The SerDe for processing CSV. Valid values are OpenCSVSerDe, LazySimpleSerDe, None.
     """
 
 
@@ -234,13 +231,13 @@ schema GlueAwsUpboundIoV1beta1ClassifierSpecInitProvider:
     Attributes
     ----------
     csvClassifier : [GlueAwsUpboundIoV1beta1ClassifierSpecInitProviderCsvClassifierItems0], default is Undefined, optional
-        A classifier for Csv content. Defined below.
+        A classifier for CSV content. Defined below.
     grokClassifier : [GlueAwsUpboundIoV1beta1ClassifierSpecInitProviderGrokClassifierItems0], default is Undefined, optional
-        –  A classifier that uses grok patterns. Defined below.
+        A classifier that uses grok patterns. Defined below.
     jsonClassifier : [GlueAwsUpboundIoV1beta1ClassifierSpecInitProviderJSONClassifierItems0], default is Undefined, optional
-        –  A classifier for JSON content. Defined below.
+        A classifier for JSON content. Defined below.
     xmlClassifier : [GlueAwsUpboundIoV1beta1ClassifierSpecInitProviderXMLClassifierItems0], default is Undefined, optional
-        –  A classifier for XML content. Defined below.
+        A classifier for XML content. Defined below.
     """
 
 
@@ -268,7 +265,7 @@ schema GlueAwsUpboundIoV1beta1ClassifierSpecInitProviderCsvClassifierItems0:
     customDatatypes : [str], default is Undefined, optional
         A list of supported custom datatypes. Valid values are BINARY, BOOLEAN, DATE, DECIMAL, DOUBLE, FLOAT, INT, LONG, SHORT, STRING, TIMESTAMP.
     delimiter : str, default is Undefined, optional
-        The delimiter used in the Csv to separate columns.
+        The delimiter used in the CSV to separate columns.
     disableValueTrimming : bool, default is Undefined, optional
         Specifies whether to trim column values.
     header : [str], default is Undefined, optional
@@ -276,7 +273,7 @@ schema GlueAwsUpboundIoV1beta1ClassifierSpecInitProviderCsvClassifierItems0:
     quoteSymbol : str, default is Undefined, optional
         A custom symbol to denote what combines content into a single column value. It must be different from the column delimiter.
     serde : str, default is Undefined, optional
-        serde
+        The SerDe for processing CSV. Valid values are OpenCSVSerDe, LazySimpleSerDe, None.
     """
 
 
@@ -397,112 +394,12 @@ schema GlueAwsUpboundIoV1beta1ClassifierSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema GlueAwsUpboundIoV1beta1ClassifierSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : GlueAwsUpboundIoV1beta1ClassifierSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : GlueAwsUpboundIoV1beta1ClassifierSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: GlueAwsUpboundIoV1beta1ClassifierSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: GlueAwsUpboundIoV1beta1ClassifierSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema GlueAwsUpboundIoV1beta1ClassifierSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : GlueAwsUpboundIoV1beta1ClassifierSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: GlueAwsUpboundIoV1beta1ClassifierSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema GlueAwsUpboundIoV1beta1ClassifierSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema GlueAwsUpboundIoV1beta1ClassifierSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema GlueAwsUpboundIoV1beta1ClassifierSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -549,15 +446,18 @@ schema GlueAwsUpboundIoV1beta1ClassifierStatusAtProvider:
     Attributes
     ----------
     csvClassifier : [GlueAwsUpboundIoV1beta1ClassifierStatusAtProviderCsvClassifierItems0], default is Undefined, optional
-        A classifier for Csv content. Defined below.
+        A classifier for CSV content. Defined below.
     grokClassifier : [GlueAwsUpboundIoV1beta1ClassifierStatusAtProviderGrokClassifierItems0], default is Undefined, optional
-        –  A classifier that uses grok patterns. Defined below.
+        A classifier that uses grok patterns. Defined below.
     id : str, default is Undefined, optional
         Name of the classifier
     jsonClassifier : [GlueAwsUpboundIoV1beta1ClassifierStatusAtProviderJSONClassifierItems0], default is Undefined, optional
-        –  A classifier for JSON content. Defined below.
+        A classifier for JSON content. Defined below.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     xmlClassifier : [GlueAwsUpboundIoV1beta1ClassifierStatusAtProviderXMLClassifierItems0], default is Undefined, optional
-        –  A classifier for XML content. Defined below.
+        A classifier for XML content. Defined below.
     """
 
 
@@ -568,6 +468,8 @@ schema GlueAwsUpboundIoV1beta1ClassifierStatusAtProvider:
     id?: str
 
     jsonClassifier?: [GlueAwsUpboundIoV1beta1ClassifierStatusAtProviderJSONClassifierItems0]
+
+    region?: str
 
     xmlClassifier?: [GlueAwsUpboundIoV1beta1ClassifierStatusAtProviderXMLClassifierItems0]
 
@@ -587,7 +489,7 @@ schema GlueAwsUpboundIoV1beta1ClassifierStatusAtProviderCsvClassifierItems0:
     customDatatypes : [str], default is Undefined, optional
         A list of supported custom datatypes. Valid values are BINARY, BOOLEAN, DATE, DECIMAL, DOUBLE, FLOAT, INT, LONG, SHORT, STRING, TIMESTAMP.
     delimiter : str, default is Undefined, optional
-        The delimiter used in the Csv to separate columns.
+        The delimiter used in the CSV to separate columns.
     disableValueTrimming : bool, default is Undefined, optional
         Specifies whether to trim column values.
     header : [str], default is Undefined, optional
@@ -595,7 +497,7 @@ schema GlueAwsUpboundIoV1beta1ClassifierStatusAtProviderCsvClassifierItems0:
     quoteSymbol : str, default is Undefined, optional
         A custom symbol to denote what combines content into a single column value. It must be different from the column delimiter.
     serde : str, default is Undefined, optional
-        serde
+        The SerDe for processing CSV. Valid values are OpenCSVSerDe, LazySimpleSerDe, None.
     """
 
 

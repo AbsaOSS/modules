@@ -66,8 +66,6 @@ schema ApigatewayAwsUpboundIoV1beta2StageSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : ApigatewayAwsUpboundIoV1beta2StageSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : ApigatewayAwsUpboundIoV1beta2StageSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : ApigatewayAwsUpboundIoV1beta2StageSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema ApigatewayAwsUpboundIoV1beta2StageSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: ApigatewayAwsUpboundIoV1beta2StageSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: ApigatewayAwsUpboundIoV1beta2StageSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: ApigatewayAwsUpboundIoV1beta2StageSpecWriteConnectionSecretToRef
 
@@ -113,8 +109,9 @@ schema ApigatewayAwsUpboundIoV1beta2StageSpecForProvider:
     description : str, default is Undefined, optional
         Description of the stage.
     documentationVersion : str, default is Undefined, optional
-        Version of the associated API documentation
+        Version of the associated API documentation.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     restApiId : str, default is Undefined, optional
         ID of the associated REST API
@@ -127,7 +124,7 @@ schema ApigatewayAwsUpboundIoV1beta2StageSpecForProvider:
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     variables : {str:str}, default is Undefined, optional
-        Map that defines the stage variables
+        Map that defines the stage variables.
     xrayTracingEnabled : bool, default is Undefined, optional
         Whether active tracing with X-ray is enabled. Defaults to false.
     """
@@ -427,7 +424,7 @@ schema ApigatewayAwsUpboundIoV1beta2StageSpecInitProvider:
     description : str, default is Undefined, optional
         Description of the stage.
     documentationVersion : str, default is Undefined, optional
-        Version of the associated API documentation
+        Version of the associated API documentation.
     restApiId : str, default is Undefined, optional
         ID of the associated REST API
     restApiIdRef : ApigatewayAwsUpboundIoV1beta2StageSpecInitProviderRestAPIIDRef, default is Undefined, optional
@@ -439,7 +436,7 @@ schema ApigatewayAwsUpboundIoV1beta2StageSpecInitProvider:
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     variables : {str:str}, default is Undefined, optional
-        Map that defines the stage variables
+        Map that defines the stage variables.
     xrayTracingEnabled : bool, default is Undefined, optional
         Whether active tracing with X-ray is enabled. Defaults to false.
     """
@@ -747,112 +744,12 @@ schema ApigatewayAwsUpboundIoV1beta2StageSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema ApigatewayAwsUpboundIoV1beta2StageSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : ApigatewayAwsUpboundIoV1beta2StageSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : ApigatewayAwsUpboundIoV1beta2StageSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: ApigatewayAwsUpboundIoV1beta2StageSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: ApigatewayAwsUpboundIoV1beta2StageSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema ApigatewayAwsUpboundIoV1beta2StageSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : ApigatewayAwsUpboundIoV1beta2StageSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: ApigatewayAwsUpboundIoV1beta2StageSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema ApigatewayAwsUpboundIoV1beta2StageSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema ApigatewayAwsUpboundIoV1beta2StageSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema ApigatewayAwsUpboundIoV1beta2StageSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -915,7 +812,7 @@ schema ApigatewayAwsUpboundIoV1beta2StageStatusAtProvider:
     description : str, default is Undefined, optional
         Description of the stage.
     documentationVersion : str, default is Undefined, optional
-        Version of the associated API documentation
+        Version of the associated API documentation.
     executionArn : str, default is Undefined, optional
         Execution ARN to be used in lambda_permission's source_arn
         when allowing API Gateway to invoke a Lambda function,
@@ -925,6 +822,9 @@ schema ApigatewayAwsUpboundIoV1beta2StageStatusAtProvider:
     invokeUrl : str, default is Undefined, optional
         URL to invoke the API pointing to the stage,
         e.g., https://z4675bid1j.execute-api.eu-west-2.amazonaws.com/prod
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     restApiId : str, default is Undefined, optional
         ID of the associated REST API
     stageName : str, default is Undefined, optional
@@ -934,7 +834,7 @@ schema ApigatewayAwsUpboundIoV1beta2StageStatusAtProvider:
     tagsAll : {str:str}, default is Undefined, optional
         Map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     variables : {str:str}, default is Undefined, optional
-        Map that defines the stage variables
+        Map that defines the stage variables.
     webAclArn : str, default is Undefined, optional
         ARN of the WebAcl associated with the Stage.
     xrayTracingEnabled : bool, default is Undefined, optional
@@ -965,6 +865,8 @@ schema ApigatewayAwsUpboundIoV1beta2StageStatusAtProvider:
     id?: str
 
     invokeUrl?: str
+
+    region?: str
 
     restApiId?: str
 

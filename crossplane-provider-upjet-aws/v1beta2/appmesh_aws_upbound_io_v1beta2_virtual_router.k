@@ -66,8 +66,6 @@ schema AppmeshAwsUpboundIoV1beta2VirtualRouterSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : AppmeshAwsUpboundIoV1beta2VirtualRouterSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : AppmeshAwsUpboundIoV1beta2VirtualRouterSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : AppmeshAwsUpboundIoV1beta2VirtualRouterSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema AppmeshAwsUpboundIoV1beta2VirtualRouterSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: AppmeshAwsUpboundIoV1beta2VirtualRouterSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: AppmeshAwsUpboundIoV1beta2VirtualRouterSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: AppmeshAwsUpboundIoV1beta2VirtualRouterSpecWriteConnectionSecretToRef
 
@@ -105,6 +101,7 @@ schema AppmeshAwsUpboundIoV1beta2VirtualRouterSpecForProvider:
     name : str, default is Undefined, optional
         Name to use for the virtual router. Must be between 1 and 255 characters in length.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     spec : AppmeshAwsUpboundIoV1beta2VirtualRouterSpecForProviderSpec, default is Undefined, optional
         spec
@@ -491,112 +488,12 @@ schema AppmeshAwsUpboundIoV1beta2VirtualRouterSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema AppmeshAwsUpboundIoV1beta2VirtualRouterSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : AppmeshAwsUpboundIoV1beta2VirtualRouterSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : AppmeshAwsUpboundIoV1beta2VirtualRouterSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: AppmeshAwsUpboundIoV1beta2VirtualRouterSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: AppmeshAwsUpboundIoV1beta2VirtualRouterSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema AppmeshAwsUpboundIoV1beta2VirtualRouterSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : AppmeshAwsUpboundIoV1beta2VirtualRouterSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: AppmeshAwsUpboundIoV1beta2VirtualRouterSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema AppmeshAwsUpboundIoV1beta2VirtualRouterSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema AppmeshAwsUpboundIoV1beta2VirtualRouterSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema AppmeshAwsUpboundIoV1beta2VirtualRouterSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -656,6 +553,9 @@ schema AppmeshAwsUpboundIoV1beta2VirtualRouterStatusAtProvider:
         AWS account ID of the service mesh's owner. Defaults to the account ID the AWS provider is currently connected to.
     name : str, default is Undefined, optional
         Name to use for the virtual router. Must be between 1 and 255 characters in length.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     resourceOwner : str, default is Undefined, optional
         Resource owner's AWS account ID.
     spec : AppmeshAwsUpboundIoV1beta2VirtualRouterStatusAtProviderSpec, default is Undefined, optional
@@ -680,6 +580,8 @@ schema AppmeshAwsUpboundIoV1beta2VirtualRouterStatusAtProvider:
     meshOwner?: str
 
     name?: str
+
+    region?: str
 
     resourceOwner?: str
 

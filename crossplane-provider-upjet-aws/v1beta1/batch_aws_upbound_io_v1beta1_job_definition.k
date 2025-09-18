@@ -66,8 +66,6 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : BatchAwsUpboundIoV1beta1JobDefinitionSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : BatchAwsUpboundIoV1beta1JobDefinitionSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : BatchAwsUpboundIoV1beta1JobDefinitionSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpec:
 
     providerConfigRef?: BatchAwsUpboundIoV1beta1JobDefinitionSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: BatchAwsUpboundIoV1beta1JobDefinitionSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: BatchAwsUpboundIoV1beta1JobDefinitionSpecWriteConnectionSecretToRef
 
 
@@ -95,35 +91,36 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecForProvider:
     Attributes
     ----------
     containerProperties : str, default is Undefined, optional
-        A valid container properties provided as a single valid JSON document. This parameter is only valid if the type parameter is container.
+        Valid container properties provided as a single valid JSON document. This parameter is only valid if the type parameter is container.
     deregisterOnNewRevision : bool, default is Undefined, optional
         When updating a job definition a new revision is created. This parameter determines if the previous version is deregistered (INACTIVE) or left  ACTIVE. Defaults to true.
     ecsProperties : str, default is Undefined, optional
         Valid ECS properties provided as a single valid JSON document. This parameter is only valid if the type parameter is container.
     eksProperties : [BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderEksPropertiesItems0], default is Undefined, optional
-        A valid eks properties. This parameter is only valid if the type parameter is container.
+        Valid eks properties. This parameter is only valid if the type parameter is container.
     name : str, default is Undefined, optional
-        Specifies the name of the job definition.
+        Name of the job definition.
     nodeProperties : str, default is Undefined, optional
-        A valid node properties provided as a single valid JSON document. This parameter is required if the type parameter is multinode.
+        Valid node properties provided as a single valid JSON document. This parameter is required if the type parameter is multinode.
     parameters : {str:str}, default is Undefined, optional
-        Specifies the parameter substitution placeholders to set in the job definition.
+        Parameter substitution placeholders to set in the job definition.
     platformCapabilities : [str], default is Undefined, optional
-        The platform capabilities required by the job definition. If no value is specified, it defaults to EC2. To run the job on Fargate resources, specify FARGATE.
+        Platform capabilities required by the job definition. If no value is specified, it defaults to EC2. To run the job on Fargate resources, specify FARGATE.
     propagateTags : bool, default is Undefined, optional
-        Specifies whether to propagate the tags from the job definition to the corresponding Amazon ECS task. Default is false.
+        Whether to propagate the tags from the job definition to the corresponding Amazon ECS task. Default is false.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     retryStrategy : [BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderRetryStrategyItems0], default is Undefined, optional
-        Specifies the retry strategy to use for failed jobs that are submitted with this job definition. Maximum number of retry_strategy is 1.  Defined below.
+        Retry strategy to use for failed jobs that are submitted with this job definition. Maximum number of retry_strategy is 1.  Defined below.
     schedulingPriority : float, default is Undefined, optional
-        The scheduling priority of the job definition. This only affects jobs in job queues with a fair share policy. Jobs with a higher scheduling priority are scheduled before jobs with a lower scheduling priority. Allowed values 0 through 9999.
+        Scheduling priority of the job definition. This only affects jobs in job queues with a fair share policy. Jobs with a higher scheduling priority are scheduled before jobs with a lower scheduling priority. Allowed values 0 through 9999.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     timeout : [BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderTimeoutItems0], default is Undefined, optional
-        Specifies the timeout for jobs so that if a job runs longer, AWS Batch terminates the job. Maximum number of timeout is 1. Defined below.
+        Timeout for jobs so that if a job runs longer, AWS Batch terminates the job. Maximum number of timeout is 1. Defined below.
     $type : str, default is Undefined, optional
-        The type of job definition. Must be container or multinode.
+        Type of job definition. Must be container or multinode.
     """
 
 
@@ -165,7 +162,7 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderEksPropertiesItems0:
     Attributes
     ----------
     podProperties : [BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderEksPropertiesItems0PodPropertiesItems0], default is Undefined, optional
-        The properties for the Kubernetes pod resources of a job. See pod_properties below.
+        Properties for the Kubernetes pod resources of a job. See pod_properties below.
     """
 
 
@@ -179,11 +176,11 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderEksPropertiesItems0Po
     Attributes
     ----------
     containers : [BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderEksPropertiesItems0PodPropertiesItems0ContainersItems0], default is Undefined, optional
-        The properties of the container that's used on the Amazon EKS pod. See containers below.
+        Properties of the container that's used on the Amazon EKS pod. See containers below.
     dnsPolicy : str, default is Undefined, optional
-        The DNS policy for the pod. The default value is ClusterFirst. If the host_network argument is not specified, the default is ClusterFirstWithHostNet. ClusterFirst indicates that any DNS query that does not match the configured cluster domain suffix is forwarded to the upstream nameserver inherited from the node. For more information, see Pod's DNS policy in the Kubernetes documentation.
+        DNS policy for the pod. The default value is ClusterFirst. If the host_network argument is not specified, the default is ClusterFirstWithHostNet. ClusterFirst indicates that any DNS query that does not match the configured cluster domain suffix is forwarded to the upstream nameserver inherited from the node. For more information, see Pod's DNS policy in the Kubernetes documentation.
     hostNetwork : bool, default is Undefined, optional
-        Indicates if the pod uses the hosts' network IP address. The default value is true. Setting this to false enables the Kubernetes pod networking model. Most AWS Batch workloads are egress-only and don't require the overhead of IP allocation for each pod for incoming connections.
+        Whether the pod uses the hosts' network IP address. The default value is true. Setting this to false enables the Kubernetes pod networking model. Most AWS Batch workloads are egress-only and don't require the overhead of IP allocation for each pod for incoming connections.
     imagePullSecret : [BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderEksPropertiesItems0PodPropertiesItems0ImagePullSecretItems0], default is Undefined, optional
         List of Kubernetes secret resources. See image_pull_secret below.
     initContainers : [BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderEksPropertiesItems0PodPropertiesItems0InitContainersItems0], default is Undefined, optional
@@ -191,11 +188,11 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderEksPropertiesItems0Po
     metadata : [BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderEksPropertiesItems0PodPropertiesItems0MetadataItems0], default is Undefined, optional
         Metadata about the Kubernetes pod.
     serviceAccountName : str, default is Undefined, optional
-        The name of the service account that's used to run the pod.
+        Name of the service account that's used to run the pod.
     shareProcessNamespace : bool, default is Undefined, optional
         Indicates if the processes in a container are shared, or visible, to other containers in the same pod.
     volumes : [BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderEksPropertiesItems0PodPropertiesItems0VolumesItems0], default is Undefined, optional
-        Specifies the volumes for a job definition that uses Amazon EKS resources. AWS Batch supports emptyDir, hostPath, and secret volume types.
+        Volumes for a job definition that uses Amazon EKS resources. AWS Batch supports emptyDir, hostPath, and secret volume types.
     """
 
 
@@ -225,23 +222,23 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderEksPropertiesItems0Po
     Attributes
     ----------
     args : [str], default is Undefined, optional
-        An array of arguments to the entrypoint. If this isn't specified, the CMD of the container image is used. This corresponds to the args member in the Entrypoint portion of the Pod in Kubernetes. Environment variable references are expanded using the container's environment.
+        Array of arguments to the entrypoint. If this isn't specified, the CMD of the container image is used. This corresponds to the args member in the Entrypoint portion of the Pod in Kubernetes. Environment variable references are expanded using the container's environment.
     command : [str], default is Undefined, optional
-        The entrypoint for the container. This isn't run within a shell. If this isn't specified, the ENTRYPOINT of the container image is used. Environment variable references are expanded using the container's environment.
+        Entrypoint for the container. This isn't run within a shell. If this isn't specified, the ENTRYPOINT of the container image is used. Environment variable references are expanded using the container's environment.
     env : [BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderEksPropertiesItems0PodPropertiesItems0ContainersItems0EnvItems0], default is Undefined, optional
-        The environment variables to pass to a container. See EKS Environment below.
+        Environment variables to pass to a container. See EKS Environment below.
     image : str, default is Undefined, optional
-        The Docker image used to start the container.
+        Docker image used to start the container.
     imagePullPolicy : str, default is Undefined, optional
-        The image pull policy for the container. Supported values are Always, IfNotPresent, and Never.
+        Image pull policy for the container. Supported values are Always, IfNotPresent, and Never.
     name : str, default is Undefined, optional
-        The name of the container. If the name isn't specified, the default name "Default" is used. Each container in a pod must have a unique name.
+        Name of the container. If the name isn't specified, the default name "Default" is used. Each container in a pod must have a unique name.
     resources : [BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderEksPropertiesItems0PodPropertiesItems0ContainersItems0ResourcesItems0], default is Undefined, optional
-        The type and amount of resources to assign to a container. The supported resources include memory, cpu, and nvidia.com/gpu.
+        Type and amount of resources to assign to a container. The supported resources include memory, cpu, and nvidia.com/gpu.
     securityContext : [BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderEksPropertiesItems0PodPropertiesItems0ContainersItems0SecurityContextItems0], default is Undefined, optional
-        The security context for a job.
+        Security context for a job.
     volumeMounts : [BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderEksPropertiesItems0PodPropertiesItems0ContainersItems0VolumeMountsItems0], default is Undefined, optional
-        The volume mounts for the container.
+        Volume mounts for the container.
     """
 
 
@@ -271,9 +268,9 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderEksPropertiesItems0Po
     Attributes
     ----------
     name : str, default is Undefined, optional
-        Specifies the name of the job definition.
+        Name of the job definition.
     value : str, default is Undefined, optional
-        The value of the environment variable.
+        Value of the environment variable.
     """
 
 
@@ -337,9 +334,9 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderEksPropertiesItems0Po
     Attributes
     ----------
     mountPath : str, default is Undefined, optional
-        The path of the file or directory on the host to mount into containers on the pod.
+        Path of the file or directory on the host to mount into containers on the pod.
     name : str, default is Undefined, optional
-        Specifies the name of the job definition.
+        Name of the job definition.
     readOnly : bool, default is Undefined, optional
         read only
     """
@@ -507,7 +504,7 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderEksPropertiesItems0Po
     Attributes
     ----------
     labels : {str:str}, default is Undefined, optional
-        labels
+        Key-value pairs used to identify, sort, and organize cube resources.
     """
 
 
@@ -523,9 +520,9 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderEksPropertiesItems0Po
     emptyDir : [BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderEksPropertiesItems0PodPropertiesItems0VolumesItems0EmptyDirItems0], default is Undefined, optional
         empty dir
     hostPath : [BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderEksPropertiesItems0PodPropertiesItems0VolumesItems0HostPathItems0], default is Undefined, optional
-        The path of the file or directory on the host to mount into containers on the pod.
+        Path of the file or directory on the host to mount into containers on the pod.
     name : str, default is Undefined, optional
-        Specifies the name of the job definition.
+        Name of the job definition.
     secret : [BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderEksPropertiesItems0PodPropertiesItems0VolumesItems0SecretItems0], default is Undefined, optional
         secret
     """
@@ -547,9 +544,9 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderEksPropertiesItems0Po
     Attributes
     ----------
     medium : str, default is Undefined, optional
-        The medium to store the volume. The default value is an empty string, which uses the storage of the node.
+        Medium to store the volume. The default value is an empty string, which uses the storage of the node.
     sizeLimit : str, default is Undefined, optional
-        The maximum size of the volume. By default, there's no maximum size defined.
+        Maximum size of the volume. By default, there's no maximum size defined.
     """
 
 
@@ -565,7 +562,7 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderEksPropertiesItems0Po
     Attributes
     ----------
     path : str, default is Undefined, optional
-        The path of the file or directory on the host to mount into containers on the pod.
+        Path of the file or directory on the host to mount into containers on the pod.
     """
 
 
@@ -579,9 +576,9 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderEksPropertiesItems0Po
     Attributes
     ----------
     optional : bool, default is Undefined, optional
-        Specifies whether the secret or the secret's keys must be defined.
+        Whether the secret or the secret's keys must be defined.
     secretName : str, default is Undefined, optional
-        The name of the secret. The name must be allowed as a DNS subdomain name.
+        Name of the secret. The name must be allowed as a DNS subdomain name.
     """
 
 
@@ -597,9 +594,9 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderRetryStrategyItems0:
     Attributes
     ----------
     attempts : float, default is Undefined, optional
-        The number of times to move a job to the RUNNABLE status. You may specify between 1 and 10 attempts.
+        Number of times to move a job to the RUNNABLE status. You may specify between 1 and 10 attempts.
     evaluateOnExit : [BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderRetryStrategyItems0EvaluateOnExitItems0], default is Undefined, optional
-        The evaluate on exit conditions under which the job should be retried or failed. If this parameter is specified, then the attempts parameter must also be specified. You may specify up to 5 configuration blocks.
+        Evaluate on exit conditions under which the job should be retried or failed. If this parameter is specified, then the attempts parameter must also be specified. You may specify up to 5 configuration blocks.
     """
 
 
@@ -615,13 +612,13 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderRetryStrategyItems0Ev
     Attributes
     ----------
     action : str, default is Undefined, optional
-        Specifies the action to take if all of the specified conditions are met. The values are not case sensitive. Valid values: retry, exit.
+        Action to take if all of the specified conditions are met. The values are not case sensitive. Valid values: retry, exit.
     onExitCode : str, default is Undefined, optional
-        A glob pattern to match against the decimal representation of the exit code returned for a job.
+        Glob pattern to match against the decimal representation of the exit code returned for a job.
     onReason : str, default is Undefined, optional
-        A glob pattern to match against the reason returned for a job.
+        Glob pattern to match against the reason returned for a job.
     onStatusReason : str, default is Undefined, optional
-        A glob pattern to match against the status reason returned for a job.
+        Glob pattern to match against the status reason returned for a job.
     """
 
 
@@ -641,7 +638,7 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecForProviderTimeoutItems0:
     Attributes
     ----------
     attemptDurationSeconds : float, default is Undefined, optional
-        The time duration in seconds after which AWS Batch terminates your jobs if they have not finished. The minimum value for the timeout is 60 seconds.
+        Time duration in seconds after which AWS Batch terminates your jobs if they have not finished. The minimum value for the timeout is 60 seconds.
     """
 
 
@@ -664,33 +661,33 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProvider:
     Attributes
     ----------
     containerProperties : str, default is Undefined, optional
-        A valid container properties provided as a single valid JSON document. This parameter is only valid if the type parameter is container.
+        Valid container properties provided as a single valid JSON document. This parameter is only valid if the type parameter is container.
     deregisterOnNewRevision : bool, default is Undefined, optional
         When updating a job definition a new revision is created. This parameter determines if the previous version is deregistered (INACTIVE) or left  ACTIVE. Defaults to true.
     ecsProperties : str, default is Undefined, optional
         Valid ECS properties provided as a single valid JSON document. This parameter is only valid if the type parameter is container.
     eksProperties : [BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderEksPropertiesItems0], default is Undefined, optional
-        A valid eks properties. This parameter is only valid if the type parameter is container.
+        Valid eks properties. This parameter is only valid if the type parameter is container.
     name : str, default is Undefined, optional
-        Specifies the name of the job definition.
+        Name of the job definition.
     nodeProperties : str, default is Undefined, optional
-        A valid node properties provided as a single valid JSON document. This parameter is required if the type parameter is multinode.
+        Valid node properties provided as a single valid JSON document. This parameter is required if the type parameter is multinode.
     parameters : {str:str}, default is Undefined, optional
-        Specifies the parameter substitution placeholders to set in the job definition.
+        Parameter substitution placeholders to set in the job definition.
     platformCapabilities : [str], default is Undefined, optional
-        The platform capabilities required by the job definition. If no value is specified, it defaults to EC2. To run the job on Fargate resources, specify FARGATE.
+        Platform capabilities required by the job definition. If no value is specified, it defaults to EC2. To run the job on Fargate resources, specify FARGATE.
     propagateTags : bool, default is Undefined, optional
-        Specifies whether to propagate the tags from the job definition to the corresponding Amazon ECS task. Default is false.
+        Whether to propagate the tags from the job definition to the corresponding Amazon ECS task. Default is false.
     retryStrategy : [BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderRetryStrategyItems0], default is Undefined, optional
-        Specifies the retry strategy to use for failed jobs that are submitted with this job definition. Maximum number of retry_strategy is 1.  Defined below.
+        Retry strategy to use for failed jobs that are submitted with this job definition. Maximum number of retry_strategy is 1.  Defined below.
     schedulingPriority : float, default is Undefined, optional
-        The scheduling priority of the job definition. This only affects jobs in job queues with a fair share policy. Jobs with a higher scheduling priority are scheduled before jobs with a lower scheduling priority. Allowed values 0 through 9999.
+        Scheduling priority of the job definition. This only affects jobs in job queues with a fair share policy. Jobs with a higher scheduling priority are scheduled before jobs with a lower scheduling priority. Allowed values 0 through 9999.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     timeout : [BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderTimeoutItems0], default is Undefined, optional
-        Specifies the timeout for jobs so that if a job runs longer, AWS Batch terminates the job. Maximum number of timeout is 1. Defined below.
+        Timeout for jobs so that if a job runs longer, AWS Batch terminates the job. Maximum number of timeout is 1. Defined below.
     $type : str, default is Undefined, optional
-        The type of job definition. Must be container or multinode.
+        Type of job definition. Must be container or multinode.
     """
 
 
@@ -730,7 +727,7 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderEksPropertiesItems0:
     Attributes
     ----------
     podProperties : [BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderEksPropertiesItems0PodPropertiesItems0], default is Undefined, optional
-        The properties for the Kubernetes pod resources of a job. See pod_properties below.
+        Properties for the Kubernetes pod resources of a job. See pod_properties below.
     """
 
 
@@ -744,11 +741,11 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderEksPropertiesItems0P
     Attributes
     ----------
     containers : [BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderEksPropertiesItems0PodPropertiesItems0ContainersItems0], default is Undefined, optional
-        The properties of the container that's used on the Amazon EKS pod. See containers below.
+        Properties of the container that's used on the Amazon EKS pod. See containers below.
     dnsPolicy : str, default is Undefined, optional
-        The DNS policy for the pod. The default value is ClusterFirst. If the host_network argument is not specified, the default is ClusterFirstWithHostNet. ClusterFirst indicates that any DNS query that does not match the configured cluster domain suffix is forwarded to the upstream nameserver inherited from the node. For more information, see Pod's DNS policy in the Kubernetes documentation.
+        DNS policy for the pod. The default value is ClusterFirst. If the host_network argument is not specified, the default is ClusterFirstWithHostNet. ClusterFirst indicates that any DNS query that does not match the configured cluster domain suffix is forwarded to the upstream nameserver inherited from the node. For more information, see Pod's DNS policy in the Kubernetes documentation.
     hostNetwork : bool, default is Undefined, optional
-        Indicates if the pod uses the hosts' network IP address. The default value is true. Setting this to false enables the Kubernetes pod networking model. Most AWS Batch workloads are egress-only and don't require the overhead of IP allocation for each pod for incoming connections.
+        Whether the pod uses the hosts' network IP address. The default value is true. Setting this to false enables the Kubernetes pod networking model. Most AWS Batch workloads are egress-only and don't require the overhead of IP allocation for each pod for incoming connections.
     imagePullSecret : [BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderEksPropertiesItems0PodPropertiesItems0ImagePullSecretItems0], default is Undefined, optional
         List of Kubernetes secret resources. See image_pull_secret below.
     initContainers : [BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderEksPropertiesItems0PodPropertiesItems0InitContainersItems0], default is Undefined, optional
@@ -756,11 +753,11 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderEksPropertiesItems0P
     metadata : [BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderEksPropertiesItems0PodPropertiesItems0MetadataItems0], default is Undefined, optional
         Metadata about the Kubernetes pod.
     serviceAccountName : str, default is Undefined, optional
-        The name of the service account that's used to run the pod.
+        Name of the service account that's used to run the pod.
     shareProcessNamespace : bool, default is Undefined, optional
         Indicates if the processes in a container are shared, or visible, to other containers in the same pod.
     volumes : [BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderEksPropertiesItems0PodPropertiesItems0VolumesItems0], default is Undefined, optional
-        Specifies the volumes for a job definition that uses Amazon EKS resources. AWS Batch supports emptyDir, hostPath, and secret volume types.
+        Volumes for a job definition that uses Amazon EKS resources. AWS Batch supports emptyDir, hostPath, and secret volume types.
     """
 
 
@@ -790,23 +787,23 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderEksPropertiesItems0P
     Attributes
     ----------
     args : [str], default is Undefined, optional
-        An array of arguments to the entrypoint. If this isn't specified, the CMD of the container image is used. This corresponds to the args member in the Entrypoint portion of the Pod in Kubernetes. Environment variable references are expanded using the container's environment.
+        Array of arguments to the entrypoint. If this isn't specified, the CMD of the container image is used. This corresponds to the args member in the Entrypoint portion of the Pod in Kubernetes. Environment variable references are expanded using the container's environment.
     command : [str], default is Undefined, optional
-        The entrypoint for the container. This isn't run within a shell. If this isn't specified, the ENTRYPOINT of the container image is used. Environment variable references are expanded using the container's environment.
+        Entrypoint for the container. This isn't run within a shell. If this isn't specified, the ENTRYPOINT of the container image is used. Environment variable references are expanded using the container's environment.
     env : [BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderEksPropertiesItems0PodPropertiesItems0ContainersItems0EnvItems0], default is Undefined, optional
-        The environment variables to pass to a container. See EKS Environment below.
+        Environment variables to pass to a container. See EKS Environment below.
     image : str, default is Undefined, optional
-        The Docker image used to start the container.
+        Docker image used to start the container.
     imagePullPolicy : str, default is Undefined, optional
-        The image pull policy for the container. Supported values are Always, IfNotPresent, and Never.
+        Image pull policy for the container. Supported values are Always, IfNotPresent, and Never.
     name : str, default is Undefined, optional
-        The name of the container. If the name isn't specified, the default name "Default" is used. Each container in a pod must have a unique name.
+        Name of the container. If the name isn't specified, the default name "Default" is used. Each container in a pod must have a unique name.
     resources : [BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderEksPropertiesItems0PodPropertiesItems0ContainersItems0ResourcesItems0], default is Undefined, optional
-        The type and amount of resources to assign to a container. The supported resources include memory, cpu, and nvidia.com/gpu.
+        Type and amount of resources to assign to a container. The supported resources include memory, cpu, and nvidia.com/gpu.
     securityContext : [BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderEksPropertiesItems0PodPropertiesItems0ContainersItems0SecurityContextItems0], default is Undefined, optional
-        The security context for a job.
+        Security context for a job.
     volumeMounts : [BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderEksPropertiesItems0PodPropertiesItems0ContainersItems0VolumeMountsItems0], default is Undefined, optional
-        The volume mounts for the container.
+        Volume mounts for the container.
     """
 
 
@@ -836,9 +833,9 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderEksPropertiesItems0P
     Attributes
     ----------
     name : str, default is Undefined, optional
-        Specifies the name of the job definition.
+        Name of the job definition.
     value : str, default is Undefined, optional
-        The value of the environment variable.
+        Value of the environment variable.
     """
 
 
@@ -902,9 +899,9 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderEksPropertiesItems0P
     Attributes
     ----------
     mountPath : str, default is Undefined, optional
-        The path of the file or directory on the host to mount into containers on the pod.
+        Path of the file or directory on the host to mount into containers on the pod.
     name : str, default is Undefined, optional
-        Specifies the name of the job definition.
+        Name of the job definition.
     readOnly : bool, default is Undefined, optional
         read only
     """
@@ -1072,7 +1069,7 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderEksPropertiesItems0P
     Attributes
     ----------
     labels : {str:str}, default is Undefined, optional
-        labels
+        Key-value pairs used to identify, sort, and organize cube resources.
     """
 
 
@@ -1088,9 +1085,9 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderEksPropertiesItems0P
     emptyDir : [BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderEksPropertiesItems0PodPropertiesItems0VolumesItems0EmptyDirItems0], default is Undefined, optional
         empty dir
     hostPath : [BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderEksPropertiesItems0PodPropertiesItems0VolumesItems0HostPathItems0], default is Undefined, optional
-        The path of the file or directory on the host to mount into containers on the pod.
+        Path of the file or directory on the host to mount into containers on the pod.
     name : str, default is Undefined, optional
-        Specifies the name of the job definition.
+        Name of the job definition.
     secret : [BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderEksPropertiesItems0PodPropertiesItems0VolumesItems0SecretItems0], default is Undefined, optional
         secret
     """
@@ -1112,9 +1109,9 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderEksPropertiesItems0P
     Attributes
     ----------
     medium : str, default is Undefined, optional
-        The medium to store the volume. The default value is an empty string, which uses the storage of the node.
+        Medium to store the volume. The default value is an empty string, which uses the storage of the node.
     sizeLimit : str, default is Undefined, optional
-        The maximum size of the volume. By default, there's no maximum size defined.
+        Maximum size of the volume. By default, there's no maximum size defined.
     """
 
 
@@ -1130,7 +1127,7 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderEksPropertiesItems0P
     Attributes
     ----------
     path : str, default is Undefined, optional
-        The path of the file or directory on the host to mount into containers on the pod.
+        Path of the file or directory on the host to mount into containers on the pod.
     """
 
 
@@ -1144,9 +1141,9 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderEksPropertiesItems0P
     Attributes
     ----------
     optional : bool, default is Undefined, optional
-        Specifies whether the secret or the secret's keys must be defined.
+        Whether the secret or the secret's keys must be defined.
     secretName : str, default is Undefined, optional
-        The name of the secret. The name must be allowed as a DNS subdomain name.
+        Name of the secret. The name must be allowed as a DNS subdomain name.
     """
 
 
@@ -1162,9 +1159,9 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderRetryStrategyItems0:
     Attributes
     ----------
     attempts : float, default is Undefined, optional
-        The number of times to move a job to the RUNNABLE status. You may specify between 1 and 10 attempts.
+        Number of times to move a job to the RUNNABLE status. You may specify between 1 and 10 attempts.
     evaluateOnExit : [BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderRetryStrategyItems0EvaluateOnExitItems0], default is Undefined, optional
-        The evaluate on exit conditions under which the job should be retried or failed. If this parameter is specified, then the attempts parameter must also be specified. You may specify up to 5 configuration blocks.
+        Evaluate on exit conditions under which the job should be retried or failed. If this parameter is specified, then the attempts parameter must also be specified. You may specify up to 5 configuration blocks.
     """
 
 
@@ -1180,13 +1177,13 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderRetryStrategyItems0E
     Attributes
     ----------
     action : str, default is Undefined, optional
-        Specifies the action to take if all of the specified conditions are met. The values are not case sensitive. Valid values: retry, exit.
+        Action to take if all of the specified conditions are met. The values are not case sensitive. Valid values: retry, exit.
     onExitCode : str, default is Undefined, optional
-        A glob pattern to match against the decimal representation of the exit code returned for a job.
+        Glob pattern to match against the decimal representation of the exit code returned for a job.
     onReason : str, default is Undefined, optional
-        A glob pattern to match against the reason returned for a job.
+        Glob pattern to match against the reason returned for a job.
     onStatusReason : str, default is Undefined, optional
-        A glob pattern to match against the status reason returned for a job.
+        Glob pattern to match against the status reason returned for a job.
     """
 
 
@@ -1206,7 +1203,7 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecInitProviderTimeoutItems0:
     Attributes
     ----------
     attemptDurationSeconds : float, default is Undefined, optional
-        The time duration in seconds after which AWS Batch terminates your jobs if they have not finished. The minimum value for the timeout is 60 seconds.
+        Time duration in seconds after which AWS Batch terminates your jobs if they have not finished. The minimum value for the timeout is 60 seconds.
     """
 
 
@@ -1257,112 +1254,12 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema BatchAwsUpboundIoV1beta1JobDefinitionSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : BatchAwsUpboundIoV1beta1JobDefinitionSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : BatchAwsUpboundIoV1beta1JobDefinitionSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: BatchAwsUpboundIoV1beta1JobDefinitionSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: BatchAwsUpboundIoV1beta1JobDefinitionSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema BatchAwsUpboundIoV1beta1JobDefinitionSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : BatchAwsUpboundIoV1beta1JobDefinitionSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: BatchAwsUpboundIoV1beta1JobDefinitionSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema BatchAwsUpboundIoV1beta1JobDefinitionSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema BatchAwsUpboundIoV1beta1JobDefinitionSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema BatchAwsUpboundIoV1beta1JobDefinitionSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1409,43 +1306,46 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProvider:
     Attributes
     ----------
     arn : str, default is Undefined, optional
-        The Amazon Resource Name of the job definition, includes revision (:#).
+        ARN of the job definition, includes revision (:#).
     arnPrefix : str, default is Undefined, optional
-        The ARN without the revision number.
+        ARN without the revision number.
     containerProperties : str, default is Undefined, optional
-        A valid container properties provided as a single valid JSON document. This parameter is only valid if the type parameter is container.
+        Valid container properties provided as a single valid JSON document. This parameter is only valid if the type parameter is container.
     deregisterOnNewRevision : bool, default is Undefined, optional
         When updating a job definition a new revision is created. This parameter determines if the previous version is deregistered (INACTIVE) or left  ACTIVE. Defaults to true.
     ecsProperties : str, default is Undefined, optional
         Valid ECS properties provided as a single valid JSON document. This parameter is only valid if the type parameter is container.
     eksProperties : [BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderEksPropertiesItems0], default is Undefined, optional
-        A valid eks properties. This parameter is only valid if the type parameter is container.
+        Valid eks properties. This parameter is only valid if the type parameter is container.
     id : str, default is Undefined, optional
         id
     name : str, default is Undefined, optional
-        Specifies the name of the job definition.
+        Name of the job definition.
     nodeProperties : str, default is Undefined, optional
-        A valid node properties provided as a single valid JSON document. This parameter is required if the type parameter is multinode.
+        Valid node properties provided as a single valid JSON document. This parameter is required if the type parameter is multinode.
     parameters : {str:str}, default is Undefined, optional
-        Specifies the parameter substitution placeholders to set in the job definition.
+        Parameter substitution placeholders to set in the job definition.
     platformCapabilities : [str], default is Undefined, optional
-        The platform capabilities required by the job definition. If no value is specified, it defaults to EC2. To run the job on Fargate resources, specify FARGATE.
+        Platform capabilities required by the job definition. If no value is specified, it defaults to EC2. To run the job on Fargate resources, specify FARGATE.
     propagateTags : bool, default is Undefined, optional
-        Specifies whether to propagate the tags from the job definition to the corresponding Amazon ECS task. Default is false.
+        Whether to propagate the tags from the job definition to the corresponding Amazon ECS task. Default is false.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     retryStrategy : [BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderRetryStrategyItems0], default is Undefined, optional
-        Specifies the retry strategy to use for failed jobs that are submitted with this job definition. Maximum number of retry_strategy is 1.  Defined below.
+        Retry strategy to use for failed jobs that are submitted with this job definition. Maximum number of retry_strategy is 1.  Defined below.
     revision : float, default is Undefined, optional
-        The revision of the job definition.
+        Revision of the job definition.
     schedulingPriority : float, default is Undefined, optional
-        The scheduling priority of the job definition. This only affects jobs in job queues with a fair share policy. Jobs with a higher scheduling priority are scheduled before jobs with a lower scheduling priority. Allowed values 0 through 9999.
+        Scheduling priority of the job definition. This only affects jobs in job queues with a fair share policy. Jobs with a higher scheduling priority are scheduled before jobs with a lower scheduling priority. Allowed values 0 through 9999.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
-        A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
+        Map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     timeout : [BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderTimeoutItems0], default is Undefined, optional
-        Specifies the timeout for jobs so that if a job runs longer, AWS Batch terminates the job. Maximum number of timeout is 1. Defined below.
+        Timeout for jobs so that if a job runs longer, AWS Batch terminates the job. Maximum number of timeout is 1. Defined below.
     $type : str, default is Undefined, optional
-        The type of job definition. Must be container or multinode.
+        Type of job definition. Must be container or multinode.
     """
 
 
@@ -1473,6 +1373,8 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProvider:
 
     propagateTags?: bool
 
+    region?: str
+
     retryStrategy?: [BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderRetryStrategyItems0]
 
     revision?: float
@@ -1495,7 +1397,7 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderEksPropertiesItems0:
     Attributes
     ----------
     podProperties : [BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderEksPropertiesItems0PodPropertiesItems0], default is Undefined, optional
-        The properties for the Kubernetes pod resources of a job. See pod_properties below.
+        Properties for the Kubernetes pod resources of a job. See pod_properties below.
     """
 
 
@@ -1509,11 +1411,11 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderEksPropertiesItems0P
     Attributes
     ----------
     containers : [BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderEksPropertiesItems0PodPropertiesItems0ContainersItems0], default is Undefined, optional
-        The properties of the container that's used on the Amazon EKS pod. See containers below.
+        Properties of the container that's used on the Amazon EKS pod. See containers below.
     dnsPolicy : str, default is Undefined, optional
-        The DNS policy for the pod. The default value is ClusterFirst. If the host_network argument is not specified, the default is ClusterFirstWithHostNet. ClusterFirst indicates that any DNS query that does not match the configured cluster domain suffix is forwarded to the upstream nameserver inherited from the node. For more information, see Pod's DNS policy in the Kubernetes documentation.
+        DNS policy for the pod. The default value is ClusterFirst. If the host_network argument is not specified, the default is ClusterFirstWithHostNet. ClusterFirst indicates that any DNS query that does not match the configured cluster domain suffix is forwarded to the upstream nameserver inherited from the node. For more information, see Pod's DNS policy in the Kubernetes documentation.
     hostNetwork : bool, default is Undefined, optional
-        Indicates if the pod uses the hosts' network IP address. The default value is true. Setting this to false enables the Kubernetes pod networking model. Most AWS Batch workloads are egress-only and don't require the overhead of IP allocation for each pod for incoming connections.
+        Whether the pod uses the hosts' network IP address. The default value is true. Setting this to false enables the Kubernetes pod networking model. Most AWS Batch workloads are egress-only and don't require the overhead of IP allocation for each pod for incoming connections.
     imagePullSecret : [BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderEksPropertiesItems0PodPropertiesItems0ImagePullSecretItems0], default is Undefined, optional
         List of Kubernetes secret resources. See image_pull_secret below.
     initContainers : [BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderEksPropertiesItems0PodPropertiesItems0InitContainersItems0], default is Undefined, optional
@@ -1521,11 +1423,11 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderEksPropertiesItems0P
     metadata : [BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderEksPropertiesItems0PodPropertiesItems0MetadataItems0], default is Undefined, optional
         Metadata about the Kubernetes pod.
     serviceAccountName : str, default is Undefined, optional
-        The name of the service account that's used to run the pod.
+        Name of the service account that's used to run the pod.
     shareProcessNamespace : bool, default is Undefined, optional
         Indicates if the processes in a container are shared, or visible, to other containers in the same pod.
     volumes : [BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderEksPropertiesItems0PodPropertiesItems0VolumesItems0], default is Undefined, optional
-        Specifies the volumes for a job definition that uses Amazon EKS resources. AWS Batch supports emptyDir, hostPath, and secret volume types.
+        Volumes for a job definition that uses Amazon EKS resources. AWS Batch supports emptyDir, hostPath, and secret volume types.
     """
 
 
@@ -1555,23 +1457,23 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderEksPropertiesItems0P
     Attributes
     ----------
     args : [str], default is Undefined, optional
-        An array of arguments to the entrypoint. If this isn't specified, the CMD of the container image is used. This corresponds to the args member in the Entrypoint portion of the Pod in Kubernetes. Environment variable references are expanded using the container's environment.
+        Array of arguments to the entrypoint. If this isn't specified, the CMD of the container image is used. This corresponds to the args member in the Entrypoint portion of the Pod in Kubernetes. Environment variable references are expanded using the container's environment.
     command : [str], default is Undefined, optional
-        The entrypoint for the container. This isn't run within a shell. If this isn't specified, the ENTRYPOINT of the container image is used. Environment variable references are expanded using the container's environment.
+        Entrypoint for the container. This isn't run within a shell. If this isn't specified, the ENTRYPOINT of the container image is used. Environment variable references are expanded using the container's environment.
     env : [BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderEksPropertiesItems0PodPropertiesItems0ContainersItems0EnvItems0], default is Undefined, optional
-        The environment variables to pass to a container. See EKS Environment below.
+        Environment variables to pass to a container. See EKS Environment below.
     image : str, default is Undefined, optional
-        The Docker image used to start the container.
+        Docker image used to start the container.
     imagePullPolicy : str, default is Undefined, optional
-        The image pull policy for the container. Supported values are Always, IfNotPresent, and Never.
+        Image pull policy for the container. Supported values are Always, IfNotPresent, and Never.
     name : str, default is Undefined, optional
-        The name of the container. If the name isn't specified, the default name "Default" is used. Each container in a pod must have a unique name.
+        Name of the container. If the name isn't specified, the default name "Default" is used. Each container in a pod must have a unique name.
     resources : [BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderEksPropertiesItems0PodPropertiesItems0ContainersItems0ResourcesItems0], default is Undefined, optional
-        The type and amount of resources to assign to a container. The supported resources include memory, cpu, and nvidia.com/gpu.
+        Type and amount of resources to assign to a container. The supported resources include memory, cpu, and nvidia.com/gpu.
     securityContext : [BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderEksPropertiesItems0PodPropertiesItems0ContainersItems0SecurityContextItems0], default is Undefined, optional
-        The security context for a job.
+        Security context for a job.
     volumeMounts : [BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderEksPropertiesItems0PodPropertiesItems0ContainersItems0VolumeMountsItems0], default is Undefined, optional
-        The volume mounts for the container.
+        Volume mounts for the container.
     """
 
 
@@ -1601,9 +1503,9 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderEksPropertiesItems0P
     Attributes
     ----------
     name : str, default is Undefined, optional
-        Specifies the name of the job definition.
+        Name of the job definition.
     value : str, default is Undefined, optional
-        The value of the environment variable.
+        Value of the environment variable.
     """
 
 
@@ -1667,9 +1569,9 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderEksPropertiesItems0P
     Attributes
     ----------
     mountPath : str, default is Undefined, optional
-        The path of the file or directory on the host to mount into containers on the pod.
+        Path of the file or directory on the host to mount into containers on the pod.
     name : str, default is Undefined, optional
-        Specifies the name of the job definition.
+        Name of the job definition.
     readOnly : bool, default is Undefined, optional
         read only
     """
@@ -1837,7 +1739,7 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderEksPropertiesItems0P
     Attributes
     ----------
     labels : {str:str}, default is Undefined, optional
-        labels
+        Key-value pairs used to identify, sort, and organize cube resources.
     """
 
 
@@ -1853,9 +1755,9 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderEksPropertiesItems0P
     emptyDir : [BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderEksPropertiesItems0PodPropertiesItems0VolumesItems0EmptyDirItems0], default is Undefined, optional
         empty dir
     hostPath : [BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderEksPropertiesItems0PodPropertiesItems0VolumesItems0HostPathItems0], default is Undefined, optional
-        The path of the file or directory on the host to mount into containers on the pod.
+        Path of the file or directory on the host to mount into containers on the pod.
     name : str, default is Undefined, optional
-        Specifies the name of the job definition.
+        Name of the job definition.
     secret : [BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderEksPropertiesItems0PodPropertiesItems0VolumesItems0SecretItems0], default is Undefined, optional
         secret
     """
@@ -1877,9 +1779,9 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderEksPropertiesItems0P
     Attributes
     ----------
     medium : str, default is Undefined, optional
-        The medium to store the volume. The default value is an empty string, which uses the storage of the node.
+        Medium to store the volume. The default value is an empty string, which uses the storage of the node.
     sizeLimit : str, default is Undefined, optional
-        The maximum size of the volume. By default, there's no maximum size defined.
+        Maximum size of the volume. By default, there's no maximum size defined.
     """
 
 
@@ -1895,7 +1797,7 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderEksPropertiesItems0P
     Attributes
     ----------
     path : str, default is Undefined, optional
-        The path of the file or directory on the host to mount into containers on the pod.
+        Path of the file or directory on the host to mount into containers on the pod.
     """
 
 
@@ -1909,9 +1811,9 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderEksPropertiesItems0P
     Attributes
     ----------
     optional : bool, default is Undefined, optional
-        Specifies whether the secret or the secret's keys must be defined.
+        Whether the secret or the secret's keys must be defined.
     secretName : str, default is Undefined, optional
-        The name of the secret. The name must be allowed as a DNS subdomain name.
+        Name of the secret. The name must be allowed as a DNS subdomain name.
     """
 
 
@@ -1927,9 +1829,9 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderRetryStrategyItems0:
     Attributes
     ----------
     attempts : float, default is Undefined, optional
-        The number of times to move a job to the RUNNABLE status. You may specify between 1 and 10 attempts.
+        Number of times to move a job to the RUNNABLE status. You may specify between 1 and 10 attempts.
     evaluateOnExit : [BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderRetryStrategyItems0EvaluateOnExitItems0], default is Undefined, optional
-        The evaluate on exit conditions under which the job should be retried or failed. If this parameter is specified, then the attempts parameter must also be specified. You may specify up to 5 configuration blocks.
+        Evaluate on exit conditions under which the job should be retried or failed. If this parameter is specified, then the attempts parameter must also be specified. You may specify up to 5 configuration blocks.
     """
 
 
@@ -1945,13 +1847,13 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderRetryStrategyItems0E
     Attributes
     ----------
     action : str, default is Undefined, optional
-        Specifies the action to take if all of the specified conditions are met. The values are not case sensitive. Valid values: retry, exit.
+        Action to take if all of the specified conditions are met. The values are not case sensitive. Valid values: retry, exit.
     onExitCode : str, default is Undefined, optional
-        A glob pattern to match against the decimal representation of the exit code returned for a job.
+        Glob pattern to match against the decimal representation of the exit code returned for a job.
     onReason : str, default is Undefined, optional
-        A glob pattern to match against the reason returned for a job.
+        Glob pattern to match against the reason returned for a job.
     onStatusReason : str, default is Undefined, optional
-        A glob pattern to match against the status reason returned for a job.
+        Glob pattern to match against the status reason returned for a job.
     """
 
 
@@ -1971,7 +1873,7 @@ schema BatchAwsUpboundIoV1beta1JobDefinitionStatusAtProviderTimeoutItems0:
     Attributes
     ----------
     attemptDurationSeconds : float, default is Undefined, optional
-        The time duration in seconds after which AWS Batch terminates your jobs if they have not finished. The minimum value for the timeout is 60 seconds.
+        Time duration in seconds after which AWS Batch terminates your jobs if they have not finished. The minimum value for the timeout is 60 seconds.
     """
 
 

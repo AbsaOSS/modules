@@ -66,8 +66,6 @@ schema IamAwsUpboundIoV1beta1ServerCertificateSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : IamAwsUpboundIoV1beta1ServerCertificateSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : IamAwsUpboundIoV1beta1ServerCertificateSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : IamAwsUpboundIoV1beta1ServerCertificateSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema IamAwsUpboundIoV1beta1ServerCertificateSpec:
 
     providerConfigRef?: IamAwsUpboundIoV1beta1ServerCertificateSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: IamAwsUpboundIoV1beta1ServerCertificateSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: IamAwsUpboundIoV1beta1ServerCertificateSpecWriteConnectionSecretToRef
 
 
@@ -95,9 +91,11 @@ schema IamAwsUpboundIoV1beta1ServerCertificateSpecForProvider:
     Attributes
     ----------
     certificateBody : str, default is Undefined, optional
-        encoded format.
+        The contents of the public key certificate in
+        PEM-encoded format.
     certificateChain : str, default is Undefined, optional
-        encoded public key certificates
+        The contents of the certificate chain.
+        This is typically a concatenation of the PEM-encoded public key certificates
         of the chain.
     path : str, default is Undefined, optional
         The IAM path for the server certificate.  If it is not
@@ -124,7 +122,7 @@ schema IamAwsUpboundIoV1beta1ServerCertificateSpecForProvider:
 
 schema IamAwsUpboundIoV1beta1ServerCertificateSpecForProviderPrivateKeySecretRef:
     r"""
-    encoded format.
+    The contents of the private key in PEM-encoded format.
 
     Attributes
     ----------
@@ -160,9 +158,11 @@ schema IamAwsUpboundIoV1beta1ServerCertificateSpecInitProvider:
     Attributes
     ----------
     certificateBody : str, default is Undefined, optional
-        encoded format.
+        The contents of the public key certificate in
+        PEM-encoded format.
     certificateChain : str, default is Undefined, optional
-        encoded public key certificates
+        The contents of the certificate chain.
+        This is typically a concatenation of the PEM-encoded public key certificates
         of the chain.
     path : str, default is Undefined, optional
         The IAM path for the server certificate.  If it is not
@@ -189,7 +189,7 @@ schema IamAwsUpboundIoV1beta1ServerCertificateSpecInitProvider:
 
 schema IamAwsUpboundIoV1beta1ServerCertificateSpecInitProviderPrivateKeySecretRef:
     r"""
-    encoded format.
+    The contents of the private key in PEM-encoded format.
 
     Attributes
     ----------
@@ -253,112 +253,12 @@ schema IamAwsUpboundIoV1beta1ServerCertificateSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema IamAwsUpboundIoV1beta1ServerCertificateSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : IamAwsUpboundIoV1beta1ServerCertificateSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : IamAwsUpboundIoV1beta1ServerCertificateSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: IamAwsUpboundIoV1beta1ServerCertificateSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: IamAwsUpboundIoV1beta1ServerCertificateSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema IamAwsUpboundIoV1beta1ServerCertificateSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : IamAwsUpboundIoV1beta1ServerCertificateSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: IamAwsUpboundIoV1beta1ServerCertificateSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema IamAwsUpboundIoV1beta1ServerCertificateSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema IamAwsUpboundIoV1beta1ServerCertificateSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema IamAwsUpboundIoV1beta1ServerCertificateSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -407,9 +307,11 @@ schema IamAwsUpboundIoV1beta1ServerCertificateStatusAtProvider:
     arn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) specifying the server certificate.
     certificateBody : str, default is Undefined, optional
-        encoded format.
+        The contents of the public key certificate in
+        PEM-encoded format.
     certificateChain : str, default is Undefined, optional
-        encoded public key certificates
+        The contents of the certificate chain.
+        This is typically a concatenation of the PEM-encoded public key certificates
         of the chain.
     expiration : str, default is Undefined, optional
         Date and time in RFC3339 format on which the certificate is set to expire.

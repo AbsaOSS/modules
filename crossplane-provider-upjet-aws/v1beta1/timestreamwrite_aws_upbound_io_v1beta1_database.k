@@ -66,8 +66,6 @@ schema TimestreamwriteAwsUpboundIoV1beta1DatabaseSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : TimestreamwriteAwsUpboundIoV1beta1DatabaseSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : TimestreamwriteAwsUpboundIoV1beta1DatabaseSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : TimestreamwriteAwsUpboundIoV1beta1DatabaseSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema TimestreamwriteAwsUpboundIoV1beta1DatabaseSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: TimestreamwriteAwsUpboundIoV1beta1DatabaseSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: TimestreamwriteAwsUpboundIoV1beta1DatabaseSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: TimestreamwriteAwsUpboundIoV1beta1DatabaseSpecWriteConnectionSecretToRef
 
@@ -101,6 +97,7 @@ schema TimestreamwriteAwsUpboundIoV1beta1DatabaseSpecForProvider:
     kmsKeyIdSelector : TimestreamwriteAwsUpboundIoV1beta1DatabaseSpecForProviderKmsKeyIDSelector, default is Undefined, optional
         kms key Id selector
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
@@ -375,112 +372,12 @@ schema TimestreamwriteAwsUpboundIoV1beta1DatabaseSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema TimestreamwriteAwsUpboundIoV1beta1DatabaseSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : TimestreamwriteAwsUpboundIoV1beta1DatabaseSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : TimestreamwriteAwsUpboundIoV1beta1DatabaseSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: TimestreamwriteAwsUpboundIoV1beta1DatabaseSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: TimestreamwriteAwsUpboundIoV1beta1DatabaseSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema TimestreamwriteAwsUpboundIoV1beta1DatabaseSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : TimestreamwriteAwsUpboundIoV1beta1DatabaseSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: TimestreamwriteAwsUpboundIoV1beta1DatabaseSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema TimestreamwriteAwsUpboundIoV1beta1DatabaseSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema TimestreamwriteAwsUpboundIoV1beta1DatabaseSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema TimestreamwriteAwsUpboundIoV1beta1DatabaseSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -532,6 +429,9 @@ schema TimestreamwriteAwsUpboundIoV1beta1DatabaseStatusAtProvider:
         The name of the Timestream database.
     kmsKeyId : str, default is Undefined, optional
         The ARN (not Alias ARN) of the KMS key to be used to encrypt the data stored in the database. If the KMS key is not specified, the database will be encrypted with a Timestream managed KMS key located in your account. Refer to AWS managed KMS keys for more info.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     tableCount : float, default is Undefined, optional
         The total number of tables found within the Timestream database.
     tags : {str:str}, default is Undefined, optional
@@ -546,6 +446,8 @@ schema TimestreamwriteAwsUpboundIoV1beta1DatabaseStatusAtProvider:
     id?: str
 
     kmsKeyId?: str
+
+    region?: str
 
     tableCount?: float
 

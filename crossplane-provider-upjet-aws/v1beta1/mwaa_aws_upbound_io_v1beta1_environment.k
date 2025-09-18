@@ -66,8 +66,6 @@ schema MwaaAwsUpboundIoV1beta1EnvironmentSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : MwaaAwsUpboundIoV1beta1EnvironmentSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : MwaaAwsUpboundIoV1beta1EnvironmentSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : MwaaAwsUpboundIoV1beta1EnvironmentSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema MwaaAwsUpboundIoV1beta1EnvironmentSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: MwaaAwsUpboundIoV1beta1EnvironmentSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: MwaaAwsUpboundIoV1beta1EnvironmentSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: MwaaAwsUpboundIoV1beta1EnvironmentSpecWriteConnectionSecretToRef
 
@@ -103,7 +99,7 @@ schema MwaaAwsUpboundIoV1beta1EnvironmentSpecForProvider:
     endpointManagement : str, default is Undefined, optional
         Defines whether the VPC endpoints configured for the environment are created and managed by the customer or by AWS. If set to SERVICE, Amazon MWAA will create and manage the required VPC endpoints in your VPC. If set to CUSTOMER, you must create, and manage, the VPC endpoints for your VPC. Defaults to SERVICE if not set.
     environmentClass : str, default is Undefined, optional
-        Environment class for the cluster. Possible options are mw1.small, mw1.medium, mw1.large. Will be set by default to mw1.small. Please check the AWS Pricing for more information about the environment classes.
+        Environment class for the cluster. Possible options are mw1.micro, mw1.small, mw1.medium, mw1.large. Will be set by default to mw1.small. Please check the AWS Pricing for more information about the environment classes.
     executionRoleArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the task execution role that the Amazon MWAA and its environment can assume. Check the official AWS documentation for the detailed role specification.
     executionRoleArnRef : MwaaAwsUpboundIoV1beta1EnvironmentSpecForProviderExecutionRoleArnRef, default is Undefined, optional
@@ -119,11 +115,11 @@ schema MwaaAwsUpboundIoV1beta1EnvironmentSpecForProvider:
     loggingConfiguration : MwaaAwsUpboundIoV1beta1EnvironmentSpecForProviderLoggingConfiguration, default is Undefined, optional
         logging configuration
     maxWebservers : float, default is Undefined, optional
-        The maximum number of web servers that you want to run in your environment. Value need to be between 2 and 5. Will be 2 by default.
+        The maximum number of web servers that you want to run in your environment. Value need to be between 2 and 5 if environment_class is not mw1.micro, 1 otherwise.
     maxWorkers : float, default is Undefined, optional
         The maximum number of workers that can be automatically scaled up. Value need to be between 1 and 25. Will be 10 by default.
     minWebservers : float, default is Undefined, optional
-        The minimum number of web servers that you want to run in your environment. Value need to be between 2 and 5. Will be 2 by default.
+        The minimum number of web servers that you want to run in your environment. Value need to be between 2 and 5 if environment_class is not mw1.micro, 1 otherwise.
     minWorkers : float, default is Undefined, optional
         The minimum number of workers that you want to run in your environment. Will be 1 by default.
     networkConfiguration : MwaaAwsUpboundIoV1beta1EnvironmentSpecForProviderNetworkConfiguration, default is Undefined, optional
@@ -133,6 +129,7 @@ schema MwaaAwsUpboundIoV1beta1EnvironmentSpecForProvider:
     pluginsS3Path : str, default is Undefined, optional
         The relative path to the plugins.zip file on your Amazon S3 storage bucket. For example, plugins.zip. If a relative path is provided in the request, then plugins_s3_object_version is required. For more information, see Importing DAGs on Amazon MWAA.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     requirementsS3ObjectVersion : str, default is Undefined, optional
         The requirements.txt file version you want to use.
@@ -863,7 +860,7 @@ schema MwaaAwsUpboundIoV1beta1EnvironmentSpecInitProvider:
     endpointManagement : str, default is Undefined, optional
         Defines whether the VPC endpoints configured for the environment are created and managed by the customer or by AWS. If set to SERVICE, Amazon MWAA will create and manage the required VPC endpoints in your VPC. If set to CUSTOMER, you must create, and manage, the VPC endpoints for your VPC. Defaults to SERVICE if not set.
     environmentClass : str, default is Undefined, optional
-        Environment class for the cluster. Possible options are mw1.small, mw1.medium, mw1.large. Will be set by default to mw1.small. Please check the AWS Pricing for more information about the environment classes.
+        Environment class for the cluster. Possible options are mw1.micro, mw1.small, mw1.medium, mw1.large. Will be set by default to mw1.small. Please check the AWS Pricing for more information about the environment classes.
     executionRoleArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the task execution role that the Amazon MWAA and its environment can assume. Check the official AWS documentation for the detailed role specification.
     executionRoleArnRef : MwaaAwsUpboundIoV1beta1EnvironmentSpecInitProviderExecutionRoleArnRef, default is Undefined, optional
@@ -879,11 +876,11 @@ schema MwaaAwsUpboundIoV1beta1EnvironmentSpecInitProvider:
     loggingConfiguration : MwaaAwsUpboundIoV1beta1EnvironmentSpecInitProviderLoggingConfiguration, default is Undefined, optional
         logging configuration
     maxWebservers : float, default is Undefined, optional
-        The maximum number of web servers that you want to run in your environment. Value need to be between 2 and 5. Will be 2 by default.
+        The maximum number of web servers that you want to run in your environment. Value need to be between 2 and 5 if environment_class is not mw1.micro, 1 otherwise.
     maxWorkers : float, default is Undefined, optional
         The maximum number of workers that can be automatically scaled up. Value need to be between 1 and 25. Will be 10 by default.
     minWebservers : float, default is Undefined, optional
-        The minimum number of web servers that you want to run in your environment. Value need to be between 2 and 5. Will be 2 by default.
+        The minimum number of web servers that you want to run in your environment. Value need to be between 2 and 5 if environment_class is not mw1.micro, 1 otherwise.
     minWorkers : float, default is Undefined, optional
         The minimum number of workers that you want to run in your environment. Will be 1 by default.
     networkConfiguration : MwaaAwsUpboundIoV1beta1EnvironmentSpecInitProviderNetworkConfiguration, default is Undefined, optional
@@ -1621,112 +1618,12 @@ schema MwaaAwsUpboundIoV1beta1EnvironmentSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema MwaaAwsUpboundIoV1beta1EnvironmentSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : MwaaAwsUpboundIoV1beta1EnvironmentSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : MwaaAwsUpboundIoV1beta1EnvironmentSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: MwaaAwsUpboundIoV1beta1EnvironmentSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: MwaaAwsUpboundIoV1beta1EnvironmentSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema MwaaAwsUpboundIoV1beta1EnvironmentSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : MwaaAwsUpboundIoV1beta1EnvironmentSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: MwaaAwsUpboundIoV1beta1EnvironmentSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema MwaaAwsUpboundIoV1beta1EnvironmentSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema MwaaAwsUpboundIoV1beta1EnvironmentSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema MwaaAwsUpboundIoV1beta1EnvironmentSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1785,7 +1682,7 @@ schema MwaaAwsUpboundIoV1beta1EnvironmentStatusAtProvider:
     endpointManagement : str, default is Undefined, optional
         Defines whether the VPC endpoints configured for the environment are created and managed by the customer or by AWS. If set to SERVICE, Amazon MWAA will create and manage the required VPC endpoints in your VPC. If set to CUSTOMER, you must create, and manage, the VPC endpoints for your VPC. Defaults to SERVICE if not set.
     environmentClass : str, default is Undefined, optional
-        Environment class for the cluster. Possible options are mw1.small, mw1.medium, mw1.large. Will be set by default to mw1.small. Please check the AWS Pricing for more information about the environment classes.
+        Environment class for the cluster. Possible options are mw1.micro, mw1.small, mw1.medium, mw1.large. Will be set by default to mw1.small. Please check the AWS Pricing for more information about the environment classes.
     executionRoleArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the task execution role that the Amazon MWAA and its environment can assume. Check the official AWS documentation for the detailed role specification.
     id : str, default is Undefined, optional
@@ -1797,11 +1694,11 @@ schema MwaaAwsUpboundIoV1beta1EnvironmentStatusAtProvider:
     loggingConfiguration : MwaaAwsUpboundIoV1beta1EnvironmentStatusAtProviderLoggingConfiguration, default is Undefined, optional
         logging configuration
     maxWebservers : float, default is Undefined, optional
-        The maximum number of web servers that you want to run in your environment. Value need to be between 2 and 5. Will be 2 by default.
+        The maximum number of web servers that you want to run in your environment. Value need to be between 2 and 5 if environment_class is not mw1.micro, 1 otherwise.
     maxWorkers : float, default is Undefined, optional
         The maximum number of workers that can be automatically scaled up. Value need to be between 1 and 25. Will be 10 by default.
     minWebservers : float, default is Undefined, optional
-        The minimum number of web servers that you want to run in your environment. Value need to be between 2 and 5. Will be 2 by default.
+        The minimum number of web servers that you want to run in your environment. Value need to be between 2 and 5 if environment_class is not mw1.micro, 1 otherwise.
     minWorkers : float, default is Undefined, optional
         The minimum number of workers that you want to run in your environment. Will be 1 by default.
     networkConfiguration : MwaaAwsUpboundIoV1beta1EnvironmentStatusAtProviderNetworkConfiguration, default is Undefined, optional
@@ -1810,6 +1707,9 @@ schema MwaaAwsUpboundIoV1beta1EnvironmentStatusAtProvider:
         The plugins.zip file version you want to use.
     pluginsS3Path : str, default is Undefined, optional
         The relative path to the plugins.zip file on your Amazon S3 storage bucket. For example, plugins.zip. If a relative path is provided in the request, then plugins_s3_object_version is required. For more information, see Importing DAGs on Amazon MWAA.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     requirementsS3ObjectVersion : str, default is Undefined, optional
         The requirements.txt file version you want to use.
     requirementsS3Path : str, default is Undefined, optional
@@ -1878,6 +1778,8 @@ schema MwaaAwsUpboundIoV1beta1EnvironmentStatusAtProvider:
     pluginsS3ObjectVersion?: str
 
     pluginsS3Path?: str
+
+    region?: str
 
     requirementsS3ObjectVersion?: str
 

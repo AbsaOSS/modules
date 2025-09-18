@@ -66,8 +66,6 @@ schema Apigatewayv2AwsUpboundIoV1beta1APISpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : Apigatewayv2AwsUpboundIoV1beta1APISpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : Apigatewayv2AwsUpboundIoV1beta1APISpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : Apigatewayv2AwsUpboundIoV1beta1APISpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema Apigatewayv2AwsUpboundIoV1beta1APISpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: Apigatewayv2AwsUpboundIoV1beta1APISpecProviderConfigRef
-
-    publishConnectionDetailsTo?: Apigatewayv2AwsUpboundIoV1beta1APISpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: Apigatewayv2AwsUpboundIoV1beta1APISpecWriteConnectionSecretToRef
 
@@ -112,11 +108,14 @@ schema Apigatewayv2AwsUpboundIoV1beta1APISpecForProvider:
         To require that clients use a custom domain name to invoke the API, disable the default endpoint.
     failOnWarnings : bool, default is Undefined, optional
         Whether warnings should return an error while API Gateway is creating or updating the resource using an OpenAPI specification. Defaults to false. Applicable for HTTP APIs.
+    ipAddressType : str, default is Undefined, optional
+        The IP address types that can invoke the API. Valid values: ipv4, dualstack. Use ipv4 to allow only IPv4 addresses to invoke your API, or use dualstack to allow both IPv4 and IPv6 addresses to invoke your API. Defaults to ipv4.
     name : str, default is Undefined, optional
         Name of the API. Must be less than or equal to 128 characters in length.
     protocolType : str, default is Undefined, optional
         API protocol. Valid values: HTTP, WEBSOCKET.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     routeKey : str, default is Undefined, optional
         Part of quick create. Specifies any route key. Applicable for HTTP APIs.
@@ -147,6 +146,8 @@ schema Apigatewayv2AwsUpboundIoV1beta1APISpecForProvider:
     disableExecuteApiEndpoint?: bool
 
     failOnWarnings?: bool
+
+    ipAddressType?: str
 
     name?: str
 
@@ -232,6 +233,8 @@ schema Apigatewayv2AwsUpboundIoV1beta1APISpecInitProvider:
         To require that clients use a custom domain name to invoke the API, disable the default endpoint.
     failOnWarnings : bool, default is Undefined, optional
         Whether warnings should return an error while API Gateway is creating or updating the resource using an OpenAPI specification. Defaults to false. Applicable for HTTP APIs.
+    ipAddressType : str, default is Undefined, optional
+        The IP address types that can invoke the API. Valid values: ipv4, dualstack. Use ipv4 to allow only IPv4 addresses to invoke your API, or use dualstack to allow both IPv4 and IPv6 addresses to invoke your API. Defaults to ipv4.
     name : str, default is Undefined, optional
         Name of the API. Must be less than or equal to 128 characters in length.
     protocolType : str, default is Undefined, optional
@@ -265,6 +268,8 @@ schema Apigatewayv2AwsUpboundIoV1beta1APISpecInitProvider:
     disableExecuteApiEndpoint?: bool
 
     failOnWarnings?: bool
+
+    ipAddressType?: str
 
     name?: str
 
@@ -359,112 +364,12 @@ schema Apigatewayv2AwsUpboundIoV1beta1APISpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema Apigatewayv2AwsUpboundIoV1beta1APISpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : Apigatewayv2AwsUpboundIoV1beta1APISpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : Apigatewayv2AwsUpboundIoV1beta1APISpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: Apigatewayv2AwsUpboundIoV1beta1APISpecPublishConnectionDetailsToConfigRef
-
-    metadata?: Apigatewayv2AwsUpboundIoV1beta1APISpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema Apigatewayv2AwsUpboundIoV1beta1APISpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : Apigatewayv2AwsUpboundIoV1beta1APISpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: Apigatewayv2AwsUpboundIoV1beta1APISpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema Apigatewayv2AwsUpboundIoV1beta1APISpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema Apigatewayv2AwsUpboundIoV1beta1APISpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema Apigatewayv2AwsUpboundIoV1beta1APISpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -538,10 +443,15 @@ schema Apigatewayv2AwsUpboundIoV1beta1APIStatusAtProvider:
         Whether warnings should return an error while API Gateway is creating or updating the resource using an OpenAPI specification. Defaults to false. Applicable for HTTP APIs.
     id : str, default is Undefined, optional
         API identifier.
+    ipAddressType : str, default is Undefined, optional
+        The IP address types that can invoke the API. Valid values: ipv4, dualstack. Use ipv4 to allow only IPv4 addresses to invoke your API, or use dualstack to allow both IPv4 and IPv6 addresses to invoke your API. Defaults to ipv4.
     name : str, default is Undefined, optional
         Name of the API. Must be less than or equal to 128 characters in length.
     protocolType : str, default is Undefined, optional
         API protocol. Valid values: HTTP, WEBSOCKET.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     routeKey : str, default is Undefined, optional
         Part of quick create. Specifies any route key. Applicable for HTTP APIs.
     routeSelectionExpression : str, default is Undefined, optional
@@ -582,9 +492,13 @@ schema Apigatewayv2AwsUpboundIoV1beta1APIStatusAtProvider:
 
     id?: str
 
+    ipAddressType?: str
+
     name?: str
 
     protocolType?: str
+
+    region?: str
 
     routeKey?: str
 

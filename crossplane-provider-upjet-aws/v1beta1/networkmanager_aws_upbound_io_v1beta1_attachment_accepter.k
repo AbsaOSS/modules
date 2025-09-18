@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema AttachmentAccepter:
     r"""
-    AttachmentAccepter is the Schema for the AttachmentAccepters API.
+    AttachmentAccepter is the Schema for the AttachmentAccepters API. Manages an AWS Network Manager Attachment Accepter.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpec:
 
     providerConfigRef?: NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecWriteConnectionSecretToRef
 
 
@@ -95,19 +91,17 @@ schema NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecForProvider:
     Attributes
     ----------
     attachmentId : str, default is Undefined, optional
-        The ID of the attachment.
+        ID of the attachment.
     attachmentIdRef : NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecForProviderAttachmentIDRef, default is Undefined, optional
         attachment Id ref
     attachmentIdSelector : NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecForProviderAttachmentIDSelector, default is Undefined, optional
         attachment Id selector
     attachmentType : str, default is Undefined, optional
-        The type of attachment. Valid values can be found in the AWS Documentation
+        Type of attachment. Valid values: CONNECT, DIRECT_CONNECT_GATEWAY, SITE_TO_SITE_VPN, TRANSIT_GATEWAY_ROUTE_TABLE, VPC.
     attachmentTypeRef : NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecForProviderAttachmentTypeRef, default is Undefined, optional
         attachment type ref
     attachmentTypeSelector : NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecForProviderAttachmentTypeSelector, default is Undefined, optional
         attachment type selector
-    region : str, default is Undefined, required
-        Region is the region you'd like your resource to be created in.
     """
 
 
@@ -122,8 +116,6 @@ schema NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecForProvider:
     attachmentTypeRef?: NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecForProviderAttachmentTypeRef
 
     attachmentTypeSelector?: NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecForProviderAttachmentTypeSelector
-
-    region: str
 
 
 schema NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecForProviderAttachmentIDRef:
@@ -320,13 +312,13 @@ schema NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecInitProvider:
     Attributes
     ----------
     attachmentId : str, default is Undefined, optional
-        The ID of the attachment.
+        ID of the attachment.
     attachmentIdRef : NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecInitProviderAttachmentIDRef, default is Undefined, optional
         attachment Id ref
     attachmentIdSelector : NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecInitProviderAttachmentIDSelector, default is Undefined, optional
         attachment Id selector
     attachmentType : str, default is Undefined, optional
-        The type of attachment. Valid values can be found in the AWS Documentation
+        Type of attachment. Valid values: CONNECT, DIRECT_CONNECT_GATEWAY, SITE_TO_SITE_VPN, TRANSIT_GATEWAY_ROUTE_TABLE, VPC.
     attachmentTypeRef : NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecInitProviderAttachmentTypeRef, default is Undefined, optional
         attachment type ref
     attachmentTypeSelector : NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecInitProviderAttachmentTypeSelector, default is Undefined, optional
@@ -569,112 +561,12 @@ schema NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecProviderConfigRefP
     resolve?: "Always" | "IfNotPresent"
 
 
-schema NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -721,29 +613,29 @@ schema NetworkmanagerAwsUpboundIoV1beta1AttachmentAccepterStatusAtProvider:
     Attributes
     ----------
     attachmentId : str, default is Undefined, optional
-        The ID of the attachment.
+        ID of the attachment.
     attachmentPolicyRuleNumber : float, default is Undefined, optional
-        The policy rule number associated with the attachment.
+        Policy rule number associated with the attachment.
     attachmentType : str, default is Undefined, optional
-        The type of attachment. Valid values can be found in the AWS Documentation
+        Type of attachment. Valid values: CONNECT, DIRECT_CONNECT_GATEWAY, SITE_TO_SITE_VPN, TRANSIT_GATEWAY_ROUTE_TABLE, VPC.
     coreNetworkArn : str, default is Undefined, optional
-        The ARN of a core network.
+        ARN of the core network.
     coreNetworkId : str, default is Undefined, optional
-        The id of a core network.
+        ID of the core network.
     edgeLocation : str, default is Undefined, optional
-        The Region where the edge is located. This is returned for all attachment types except a Direct Connect gateway attachment, which instead returns edge_locations.
+        Region where the edge is located. This is returned for all attachment types except Direct Connect gateway attachments, which instead return edge_locations.
     edgeLocations : [str], default is Undefined, optional
-        The edge locations that the Direct Connect gateway is associated with. This is returned only for Direct Connect gateway attachments. All other attachment types return edge_location
+        Edge locations that the Direct Connect gateway is associated with. This is returned only for Direct Connect gateway attachments. All other attachment types return edge_location.
     id : str, default is Undefined, optional
         id
     ownerAccountId : str, default is Undefined, optional
-        The ID of the attachment account owner.
+        ID of the attachment account owner.
     resourceArn : str, default is Undefined, optional
-        The attachment resource ARN.
+        Attachment resource ARN.
     segmentName : str, default is Undefined, optional
-        The name of the segment attachment.
+        Name of the segment attachment.
     state : str, default is Undefined, optional
-        The state of the attachment.
+        State of the attachment.
     """
 
 

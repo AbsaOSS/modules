@@ -66,8 +66,6 @@ schema RdsAwsUpboundIoV1beta2ClusterSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : RdsAwsUpboundIoV1beta2ClusterSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : RdsAwsUpboundIoV1beta2ClusterSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : RdsAwsUpboundIoV1beta2ClusterSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema RdsAwsUpboundIoV1beta2ClusterSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: RdsAwsUpboundIoV1beta2ClusterSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: RdsAwsUpboundIoV1beta2ClusterSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: RdsAwsUpboundIoV1beta2ClusterSpecWriteConnectionSecretToRef
 
@@ -113,9 +109,13 @@ schema RdsAwsUpboundIoV1beta2ClusterSpecForProvider:
     caCertificateIdentifier : str, default is Undefined, optional
         The CA certificate identifier to use for the DB cluster's server certificate.
     clusterMembers : [str], default is Undefined, optional
-        – List of RDS Instances that are a part of this cluster
+        List of RDS Instances that are a part of this cluster
+    clusterScalabilityType : str, default is Undefined, optional
+        Specifies the scalability mode of the Aurora DB cluster. When set to limitless, the cluster operates as an Aurora Limitless Database. When set to standard (the default), the cluster uses normal DB instance creation. Valid values: limitless, standard.
     copyTagsToSnapshot : bool, default is Undefined, optional
-        –  Copy all Cluster tags to snapshots. Default is false.
+        Copy all Cluster tags to snapshots. Default is false.
+    databaseInsightsMode : str, default is Undefined, optional
+        The mode of Database Insights to enable for the DB cluster. Valid values: standard, advanced.
     databaseName : str, default is Undefined, optional
         Name for an automatically created database on cluster creation. There are different naming restrictions per database engine: RDS Naming Constraints
     dbClusterInstanceClass : str, default is Undefined, optional
@@ -158,13 +158,13 @@ schema RdsAwsUpboundIoV1beta2ClusterSpecForProvider:
     enableLocalWriteForwarding : bool, default is Undefined, optional
         Whether read replicas can forward write operations to the writer DB instance in the DB cluster. By default, write operations aren't allowed on reader DB instances.. See the User Guide for Aurora for more information. NOTE: Local write forwarding requires Aurora MySQL version 3.04 or higher.
     enabledCloudwatchLogsExports : [str], default is Undefined, optional
-        Set of log types to export to cloudwatch. If omitted, no logs will be exported. The following log types are supported: audit, error, general, slowquery, postgresql (PostgreSQL).
+        Set of log types to export to cloudwatch. If omitted, no logs will be exported. The following log types are supported: audit, error, general, slowquery, iam-db-auth-error, postgresql (PostgreSQL).
     engine : str, default is Undefined, optional
         Name of the database engine to be used for this DB cluster. Valid Values: aurora-mysql, aurora-postgresql, mysql, postgres. (Note that mysql and postgres are Multi-AZ RDS clusters).
     engineLifecycleSupport : str, default is Undefined, optional
         The life cycle type for this DB instance. This setting is valid for cluster types Aurora DB clusters and Multi-AZ DB clusters. Valid values are open-source-rds-extended-support, open-source-rds-extended-support-disabled. Default value is open-source-rds-extended-support. [Using Amazon RDS Extended Support]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/extended-support.html
     engineMode : str, default is Undefined, optional
-        Database engine mode. Valid values: global (only valid for Aurora MySQL 1.21 and earlier), parallelquery, provisioned, serverless. Defaults to: provisioned. See the RDS User Guide for limitations when using serverless.
+        Database engine mode. Valid values: global (only valid for Aurora MySQL 1.21 and earlier), parallelquery, provisioned, serverless. Defaults to: provisioned. Specify an empty value ("") for no engine mode. See the RDS User Guide for limitations when using serverless.
     engineVersion : str, default is Undefined, optional
         Database engine version. Updating this argument results in an outage. See the Aurora MySQL and Aurora Postgres documentation for your configured engine to determine this value, or by running aws rds describe-db-engine-versions. For example with Aurora MySQL 2, a potential value for this argument is 5.7.mysql_aurora.2.03.2. The value can contain a partial version where supported by the API. The actual engine version used is returned in the attribute engine_version_actual, , see Attribute Reference below.
     finalSnapshotIdentifier : str, default is Undefined, optional
@@ -185,6 +185,10 @@ schema RdsAwsUpboundIoV1beta2ClusterSpecForProvider:
         Set to true to allow RDS to manage the master user password in Secrets Manager. Cannot be set if master_password is provided.
     masterPasswordSecretRef : RdsAwsUpboundIoV1beta2ClusterSpecForProviderMasterPasswordSecretRef, default is Undefined, optional
         master password secret ref
+    masterPasswordWoSecretRef : RdsAwsUpboundIoV1beta2ClusterSpecForProviderMasterPasswordWoSecretRef, default is Undefined, optional
+        master password wo secret ref
+    masterPasswordWoVersion : float, default is Undefined, optional
+        Used together with master_password_wo to trigger an update. Increment this value when an update to the master_password_wo is required.
     masterUserSecretKmsKeyId : str, default is Undefined, optional
         Amazon Web Services KMS key identifier is the key ARN, key ID, alias ARN, or alias name for the KMS key. To use a KMS key in a different Amazon Web Services account, specify the key ARN or alias ARN. If not specified, the default KMS key for your Amazon Web Services account is used.
     masterUserSecretKmsKeyIdRef : RdsAwsUpboundIoV1beta2ClusterSpecForProviderMasterUserSecretKmsKeyIDRef, default is Undefined, optional
@@ -193,10 +197,18 @@ schema RdsAwsUpboundIoV1beta2ClusterSpecForProvider:
         master user secret kms key Id selector
     masterUsername : str, default is Undefined, optional
         Username for the master DB user. Please refer to the RDS Naming Constraints. This argument does not support in-place updates and cannot be changed during a restore from snapshot.
+    monitoringInterval : float, default is Undefined, optional
+        Interval, in seconds, in seconds, between points when Enhanced Monitoring metrics are collected for the DB cluster. To turn off collecting Enhanced Monitoring metrics, specify 0. The default is 0. Valid Values: 0, 1, 5, 10, 15, 30, 60.
+    monitoringRoleArn : str, default is Undefined, optional
+        ARN for the IAM role that permits RDS to send enhanced monitoring metrics to CloudWatch Logs. You can find more information on the AWS Documentation what IAM permissions are needed to allow Enhanced Monitoring for RDS Clusters.
+    monitoringRoleArnRef : RdsAwsUpboundIoV1beta2ClusterSpecForProviderMonitoringRoleArnRef, default is Undefined, optional
+        monitoring role arn ref
+    monitoringRoleArnSelector : RdsAwsUpboundIoV1beta2ClusterSpecForProviderMonitoringRoleArnSelector, default is Undefined, optional
+        monitoring role arn selector
     networkType : str, default is Undefined, optional
         Network type of the cluster. Valid values: IPV4, DUAL.
     performanceInsightsEnabled : bool, default is Undefined, optional
-        Enables Performance Insights for the RDS Cluster
+        Enables Performance Insights.
     performanceInsightsKmsKeyId : str, default is Undefined, optional
         Specifies the KMS Key ID to encrypt Performance Insights data. If not specified, the default RDS KMS key will be used (aws/rds).
     performanceInsightsRetentionPeriod : float, default is Undefined, optional
@@ -208,6 +220,7 @@ schema RdsAwsUpboundIoV1beta2ClusterSpecForProvider:
     preferredMaintenanceWindow : str, default is Undefined, optional
         Weekly time range during which system maintenance can occur, in (UTC) e.g., wed:04:00-wed:04:30
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     replicationSourceIdentifier : str, default is Undefined, optional
         ARN of a source DB cluster or DB instance if this DB cluster is to be created as a Read Replica. Note: Removing this attribute after creation will promote the read replica to a standalone cluster.
@@ -258,7 +271,11 @@ schema RdsAwsUpboundIoV1beta2ClusterSpecForProvider:
 
     clusterMembers?: [str]
 
+    clusterScalabilityType?: str
+
     copyTagsToSnapshot?: bool
+
+    databaseInsightsMode?: str
 
     databaseName?: str
 
@@ -326,6 +343,10 @@ schema RdsAwsUpboundIoV1beta2ClusterSpecForProvider:
 
     masterPasswordSecretRef?: RdsAwsUpboundIoV1beta2ClusterSpecForProviderMasterPasswordSecretRef
 
+    masterPasswordWoSecretRef?: RdsAwsUpboundIoV1beta2ClusterSpecForProviderMasterPasswordWoSecretRef
+
+    masterPasswordWoVersion?: float
+
     masterUserSecretKmsKeyId?: str
 
     masterUserSecretKmsKeyIdRef?: RdsAwsUpboundIoV1beta2ClusterSpecForProviderMasterUserSecretKmsKeyIDRef
@@ -333,6 +354,14 @@ schema RdsAwsUpboundIoV1beta2ClusterSpecForProvider:
     masterUserSecretKmsKeyIdSelector?: RdsAwsUpboundIoV1beta2ClusterSpecForProviderMasterUserSecretKmsKeyIDSelector
 
     masterUsername?: str
+
+    monitoringInterval?: float
+
+    monitoringRoleArn?: str
+
+    monitoringRoleArnRef?: RdsAwsUpboundIoV1beta2ClusterSpecForProviderMonitoringRoleArnRef
+
+    monitoringRoleArnSelector?: RdsAwsUpboundIoV1beta2ClusterSpecForProviderMonitoringRoleArnSelector
 
     networkType?: str
 
@@ -758,6 +787,28 @@ schema RdsAwsUpboundIoV1beta2ClusterSpecForProviderMasterPasswordSecretRef:
     namespace: str
 
 
+schema RdsAwsUpboundIoV1beta2ClusterSpecForProviderMasterPasswordWoSecretRef:
+    r"""
+    Only required unless manage_master_user_password is set to true, a snapshot_identifier, replication_source_identifier, or master_password is provided or unless a global_cluster_identifier is provided when the cluster is the "secondary" cluster of a global database) Password for the master DB user. Note that this may show up in logs. Please refer to the RDS Naming Constraints. Cannot be set if manage_master_user_password is set to true.
+
+    Attributes
+    ----------
+    key : str, default is Undefined, required
+        The key to select.
+    name : str, default is Undefined, required
+        Name of the secret.
+    namespace : str, default is Undefined, required
+        Namespace of the secret.
+    """
+
+
+    key: str
+
+    name: str
+
+    namespace: str
+
+
 schema RdsAwsUpboundIoV1beta2ClusterSpecForProviderMasterUserSecretKmsKeyIDRef:
     r"""
     Reference to a Key in kms to populate masterUserSecretKmsKeyId.
@@ -824,6 +875,95 @@ schema RdsAwsUpboundIoV1beta2ClusterSpecForProviderMasterUserSecretKmsKeyIDSelec
 
 
 schema RdsAwsUpboundIoV1beta2ClusterSpecForProviderMasterUserSecretKmsKeyIDSelectorPolicy:
+    r"""
+    Policies for selection.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema RdsAwsUpboundIoV1beta2ClusterSpecForProviderMonitoringRoleArnRef:
+    r"""
+    Reference to a Role in iam to populate monitoringRoleArn.
+
+    Attributes
+    ----------
+    name : str, default is Undefined, required
+        Name of the referenced object.
+    policy : RdsAwsUpboundIoV1beta2ClusterSpecForProviderMonitoringRoleArnRefPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    name: str
+
+    policy?: RdsAwsUpboundIoV1beta2ClusterSpecForProviderMonitoringRoleArnRefPolicy
+
+
+schema RdsAwsUpboundIoV1beta2ClusterSpecForProviderMonitoringRoleArnRefPolicy:
+    r"""
+    Policies for referencing.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema RdsAwsUpboundIoV1beta2ClusterSpecForProviderMonitoringRoleArnSelector:
+    r"""
+    Selector for a Role in iam to populate monitoringRoleArn.
+
+    Attributes
+    ----------
+    matchControllerRef : bool, default is Undefined, optional
+        MatchControllerRef ensures an object with the same controller reference
+        as the selecting object is selected.
+    matchLabels : {str:str}, default is Undefined, optional
+        MatchLabels ensures an object with matching labels is selected.
+    policy : RdsAwsUpboundIoV1beta2ClusterSpecForProviderMonitoringRoleArnSelectorPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    matchControllerRef?: bool
+
+    matchLabels?: {str:str}
+
+    policy?: RdsAwsUpboundIoV1beta2ClusterSpecForProviderMonitoringRoleArnSelectorPolicy
+
+
+schema RdsAwsUpboundIoV1beta2ClusterSpecForProviderMonitoringRoleArnSelectorPolicy:
     r"""
     Policies for selection.
 
@@ -1279,9 +1419,13 @@ schema RdsAwsUpboundIoV1beta2ClusterSpecInitProvider:
     caCertificateIdentifier : str, default is Undefined, optional
         The CA certificate identifier to use for the DB cluster's server certificate.
     clusterMembers : [str], default is Undefined, optional
-        – List of RDS Instances that are a part of this cluster
+        List of RDS Instances that are a part of this cluster
+    clusterScalabilityType : str, default is Undefined, optional
+        Specifies the scalability mode of the Aurora DB cluster. When set to limitless, the cluster operates as an Aurora Limitless Database. When set to standard (the default), the cluster uses normal DB instance creation. Valid values: limitless, standard.
     copyTagsToSnapshot : bool, default is Undefined, optional
-        –  Copy all Cluster tags to snapshots. Default is false.
+        Copy all Cluster tags to snapshots. Default is false.
+    databaseInsightsMode : str, default is Undefined, optional
+        The mode of Database Insights to enable for the DB cluster. Valid values: standard, advanced.
     databaseName : str, default is Undefined, optional
         Name for an automatically created database on cluster creation. There are different naming restrictions per database engine: RDS Naming Constraints
     dbClusterInstanceClass : str, default is Undefined, optional
@@ -1324,13 +1468,13 @@ schema RdsAwsUpboundIoV1beta2ClusterSpecInitProvider:
     enableLocalWriteForwarding : bool, default is Undefined, optional
         Whether read replicas can forward write operations to the writer DB instance in the DB cluster. By default, write operations aren't allowed on reader DB instances.. See the User Guide for Aurora for more information. NOTE: Local write forwarding requires Aurora MySQL version 3.04 or higher.
     enabledCloudwatchLogsExports : [str], default is Undefined, optional
-        Set of log types to export to cloudwatch. If omitted, no logs will be exported. The following log types are supported: audit, error, general, slowquery, postgresql (PostgreSQL).
+        Set of log types to export to cloudwatch. If omitted, no logs will be exported. The following log types are supported: audit, error, general, slowquery, iam-db-auth-error, postgresql (PostgreSQL).
     engine : str, default is Undefined, optional
         Name of the database engine to be used for this DB cluster. Valid Values: aurora-mysql, aurora-postgresql, mysql, postgres. (Note that mysql and postgres are Multi-AZ RDS clusters).
     engineLifecycleSupport : str, default is Undefined, optional
         The life cycle type for this DB instance. This setting is valid for cluster types Aurora DB clusters and Multi-AZ DB clusters. Valid values are open-source-rds-extended-support, open-source-rds-extended-support-disabled. Default value is open-source-rds-extended-support. [Using Amazon RDS Extended Support]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/extended-support.html
     engineMode : str, default is Undefined, optional
-        Database engine mode. Valid values: global (only valid for Aurora MySQL 1.21 and earlier), parallelquery, provisioned, serverless. Defaults to: provisioned. See the RDS User Guide for limitations when using serverless.
+        Database engine mode. Valid values: global (only valid for Aurora MySQL 1.21 and earlier), parallelquery, provisioned, serverless. Defaults to: provisioned. Specify an empty value ("") for no engine mode. See the RDS User Guide for limitations when using serverless.
     engineVersion : str, default is Undefined, optional
         Database engine version. Updating this argument results in an outage. See the Aurora MySQL and Aurora Postgres documentation for your configured engine to determine this value, or by running aws rds describe-db-engine-versions. For example with Aurora MySQL 2, a potential value for this argument is 5.7.mysql_aurora.2.03.2. The value can contain a partial version where supported by the API. The actual engine version used is returned in the attribute engine_version_actual, , see Attribute Reference below.
     finalSnapshotIdentifier : str, default is Undefined, optional
@@ -1351,6 +1495,10 @@ schema RdsAwsUpboundIoV1beta2ClusterSpecInitProvider:
         Set to true to allow RDS to manage the master user password in Secrets Manager. Cannot be set if master_password is provided.
     masterPasswordSecretRef : RdsAwsUpboundIoV1beta2ClusterSpecInitProviderMasterPasswordSecretRef, default is Undefined, optional
         master password secret ref
+    masterPasswordWoSecretRef : RdsAwsUpboundIoV1beta2ClusterSpecInitProviderMasterPasswordWoSecretRef, default is Undefined, optional
+        master password wo secret ref
+    masterPasswordWoVersion : float, default is Undefined, optional
+        Used together with master_password_wo to trigger an update. Increment this value when an update to the master_password_wo is required.
     masterUserSecretKmsKeyId : str, default is Undefined, optional
         Amazon Web Services KMS key identifier is the key ARN, key ID, alias ARN, or alias name for the KMS key. To use a KMS key in a different Amazon Web Services account, specify the key ARN or alias ARN. If not specified, the default KMS key for your Amazon Web Services account is used.
     masterUserSecretKmsKeyIdRef : RdsAwsUpboundIoV1beta2ClusterSpecInitProviderMasterUserSecretKmsKeyIDRef, default is Undefined, optional
@@ -1359,10 +1507,18 @@ schema RdsAwsUpboundIoV1beta2ClusterSpecInitProvider:
         master user secret kms key Id selector
     masterUsername : str, default is Undefined, optional
         Username for the master DB user. Please refer to the RDS Naming Constraints. This argument does not support in-place updates and cannot be changed during a restore from snapshot.
+    monitoringInterval : float, default is Undefined, optional
+        Interval, in seconds, in seconds, between points when Enhanced Monitoring metrics are collected for the DB cluster. To turn off collecting Enhanced Monitoring metrics, specify 0. The default is 0. Valid Values: 0, 1, 5, 10, 15, 30, 60.
+    monitoringRoleArn : str, default is Undefined, optional
+        ARN for the IAM role that permits RDS to send enhanced monitoring metrics to CloudWatch Logs. You can find more information on the AWS Documentation what IAM permissions are needed to allow Enhanced Monitoring for RDS Clusters.
+    monitoringRoleArnRef : RdsAwsUpboundIoV1beta2ClusterSpecInitProviderMonitoringRoleArnRef, default is Undefined, optional
+        monitoring role arn ref
+    monitoringRoleArnSelector : RdsAwsUpboundIoV1beta2ClusterSpecInitProviderMonitoringRoleArnSelector, default is Undefined, optional
+        monitoring role arn selector
     networkType : str, default is Undefined, optional
         Network type of the cluster. Valid values: IPV4, DUAL.
     performanceInsightsEnabled : bool, default is Undefined, optional
-        Enables Performance Insights for the RDS Cluster
+        Enables Performance Insights.
     performanceInsightsKmsKeyId : str, default is Undefined, optional
         Specifies the KMS Key ID to encrypt Performance Insights data. If not specified, the default RDS KMS key will be used (aws/rds).
     performanceInsightsRetentionPeriod : float, default is Undefined, optional
@@ -1420,7 +1576,11 @@ schema RdsAwsUpboundIoV1beta2ClusterSpecInitProvider:
 
     clusterMembers?: [str]
 
+    clusterScalabilityType?: str
+
     copyTagsToSnapshot?: bool
+
+    databaseInsightsMode?: str
 
     databaseName?: str
 
@@ -1488,6 +1648,10 @@ schema RdsAwsUpboundIoV1beta2ClusterSpecInitProvider:
 
     masterPasswordSecretRef?: RdsAwsUpboundIoV1beta2ClusterSpecInitProviderMasterPasswordSecretRef
 
+    masterPasswordWoSecretRef?: RdsAwsUpboundIoV1beta2ClusterSpecInitProviderMasterPasswordWoSecretRef
+
+    masterPasswordWoVersion?: float
+
     masterUserSecretKmsKeyId?: str
 
     masterUserSecretKmsKeyIdRef?: RdsAwsUpboundIoV1beta2ClusterSpecInitProviderMasterUserSecretKmsKeyIDRef
@@ -1495,6 +1659,14 @@ schema RdsAwsUpboundIoV1beta2ClusterSpecInitProvider:
     masterUserSecretKmsKeyIdSelector?: RdsAwsUpboundIoV1beta2ClusterSpecInitProviderMasterUserSecretKmsKeyIDSelector
 
     masterUsername?: str
+
+    monitoringInterval?: float
+
+    monitoringRoleArn?: str
+
+    monitoringRoleArnRef?: RdsAwsUpboundIoV1beta2ClusterSpecInitProviderMonitoringRoleArnRef
+
+    monitoringRoleArnSelector?: RdsAwsUpboundIoV1beta2ClusterSpecInitProviderMonitoringRoleArnSelector
 
     networkType?: str
 
@@ -1918,6 +2090,28 @@ schema RdsAwsUpboundIoV1beta2ClusterSpecInitProviderMasterPasswordSecretRef:
     namespace: str
 
 
+schema RdsAwsUpboundIoV1beta2ClusterSpecInitProviderMasterPasswordWoSecretRef:
+    r"""
+    Only required unless manage_master_user_password is set to true, a snapshot_identifier, replication_source_identifier, or master_password is provided or unless a global_cluster_identifier is provided when the cluster is the "secondary" cluster of a global database) Password for the master DB user. Note that this may show up in logs. Please refer to the RDS Naming Constraints. Cannot be set if manage_master_user_password is set to true.
+
+    Attributes
+    ----------
+    key : str, default is Undefined, required
+        The key to select.
+    name : str, default is Undefined, required
+        Name of the secret.
+    namespace : str, default is Undefined, required
+        Namespace of the secret.
+    """
+
+
+    key: str
+
+    name: str
+
+    namespace: str
+
+
 schema RdsAwsUpboundIoV1beta2ClusterSpecInitProviderMasterUserSecretKmsKeyIDRef:
     r"""
     Reference to a Key in kms to populate masterUserSecretKmsKeyId.
@@ -1984,6 +2178,95 @@ schema RdsAwsUpboundIoV1beta2ClusterSpecInitProviderMasterUserSecretKmsKeyIDSele
 
 
 schema RdsAwsUpboundIoV1beta2ClusterSpecInitProviderMasterUserSecretKmsKeyIDSelectorPolicy:
+    r"""
+    Policies for selection.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema RdsAwsUpboundIoV1beta2ClusterSpecInitProviderMonitoringRoleArnRef:
+    r"""
+    Reference to a Role in iam to populate monitoringRoleArn.
+
+    Attributes
+    ----------
+    name : str, default is Undefined, required
+        Name of the referenced object.
+    policy : RdsAwsUpboundIoV1beta2ClusterSpecInitProviderMonitoringRoleArnRefPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    name: str
+
+    policy?: RdsAwsUpboundIoV1beta2ClusterSpecInitProviderMonitoringRoleArnRefPolicy
+
+
+schema RdsAwsUpboundIoV1beta2ClusterSpecInitProviderMonitoringRoleArnRefPolicy:
+    r"""
+    Policies for referencing.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema RdsAwsUpboundIoV1beta2ClusterSpecInitProviderMonitoringRoleArnSelector:
+    r"""
+    Selector for a Role in iam to populate monitoringRoleArn.
+
+    Attributes
+    ----------
+    matchControllerRef : bool, default is Undefined, optional
+        MatchControllerRef ensures an object with the same controller reference
+        as the selecting object is selected.
+    matchLabels : {str:str}, default is Undefined, optional
+        MatchLabels ensures an object with matching labels is selected.
+    policy : RdsAwsUpboundIoV1beta2ClusterSpecInitProviderMonitoringRoleArnSelectorPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    matchControllerRef?: bool
+
+    matchLabels?: {str:str}
+
+    policy?: RdsAwsUpboundIoV1beta2ClusterSpecInitProviderMonitoringRoleArnSelectorPolicy
+
+
+schema RdsAwsUpboundIoV1beta2ClusterSpecInitProviderMonitoringRoleArnSelectorPolicy:
     r"""
     Policies for selection.
 
@@ -2451,112 +2734,12 @@ schema RdsAwsUpboundIoV1beta2ClusterSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema RdsAwsUpboundIoV1beta2ClusterSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : RdsAwsUpboundIoV1beta2ClusterSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : RdsAwsUpboundIoV1beta2ClusterSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: RdsAwsUpboundIoV1beta2ClusterSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: RdsAwsUpboundIoV1beta2ClusterSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema RdsAwsUpboundIoV1beta2ClusterSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : RdsAwsUpboundIoV1beta2ClusterSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: RdsAwsUpboundIoV1beta2ClusterSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema RdsAwsUpboundIoV1beta2ClusterSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema RdsAwsUpboundIoV1beta2ClusterSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema RdsAwsUpboundIoV1beta2ClusterSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -2623,11 +2806,15 @@ schema RdsAwsUpboundIoV1beta2ClusterStatusAtProvider:
     caCertificateValidTill : str, default is Undefined, optional
         Expiration date of the DB instance’s server certificate
     clusterMembers : [str], default is Undefined, optional
-        – List of RDS Instances that are a part of this cluster
+        List of RDS Instances that are a part of this cluster
     clusterResourceId : str, default is Undefined, optional
         RDS Cluster Resource ID
+    clusterScalabilityType : str, default is Undefined, optional
+        Specifies the scalability mode of the Aurora DB cluster. When set to limitless, the cluster operates as an Aurora Limitless Database. When set to standard (the default), the cluster uses normal DB instance creation. Valid values: limitless, standard.
     copyTagsToSnapshot : bool, default is Undefined, optional
-        –  Copy all Cluster tags to snapshots. Default is false.
+        Copy all Cluster tags to snapshots. Default is false.
+    databaseInsightsMode : str, default is Undefined, optional
+        The mode of Database Insights to enable for the DB cluster. Valid values: standard, advanced.
     databaseName : str, default is Undefined, optional
         Name for an automatically created database on cluster creation. There are different naming restrictions per database engine: RDS Naming Constraints
     dbClusterInstanceClass : str, default is Undefined, optional
@@ -2658,7 +2845,7 @@ schema RdsAwsUpboundIoV1beta2ClusterStatusAtProvider:
     enableLocalWriteForwarding : bool, default is Undefined, optional
         Whether read replicas can forward write operations to the writer DB instance in the DB cluster. By default, write operations aren't allowed on reader DB instances.. See the User Guide for Aurora for more information. NOTE: Local write forwarding requires Aurora MySQL version 3.04 or higher.
     enabledCloudwatchLogsExports : [str], default is Undefined, optional
-        Set of log types to export to cloudwatch. If omitted, no logs will be exported. The following log types are supported: audit, error, general, slowquery, postgresql (PostgreSQL).
+        Set of log types to export to cloudwatch. If omitted, no logs will be exported. The following log types are supported: audit, error, general, slowquery, iam-db-auth-error, postgresql (PostgreSQL).
     endpoint : str, default is Undefined, optional
         DNS address of the RDS instance
     engine : str, default is Undefined, optional
@@ -2666,7 +2853,7 @@ schema RdsAwsUpboundIoV1beta2ClusterStatusAtProvider:
     engineLifecycleSupport : str, default is Undefined, optional
         The life cycle type for this DB instance. This setting is valid for cluster types Aurora DB clusters and Multi-AZ DB clusters. Valid values are open-source-rds-extended-support, open-source-rds-extended-support-disabled. Default value is open-source-rds-extended-support. [Using Amazon RDS Extended Support]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/extended-support.html
     engineMode : str, default is Undefined, optional
-        Database engine mode. Valid values: global (only valid for Aurora MySQL 1.21 and earlier), parallelquery, provisioned, serverless. Defaults to: provisioned. See the RDS User Guide for limitations when using serverless.
+        Database engine mode. Valid values: global (only valid for Aurora MySQL 1.21 and earlier), parallelquery, provisioned, serverless. Defaults to: provisioned. Specify an empty value ("") for no engine mode. See the RDS User Guide for limitations when using serverless.
     engineVersion : str, default is Undefined, optional
         Database engine version. Updating this argument results in an outage. See the Aurora MySQL and Aurora Postgres documentation for your configured engine to determine this value, or by running aws rds describe-db-engine-versions. For example with Aurora MySQL 2, a potential value for this argument is 5.7.mysql_aurora.2.03.2. The value can contain a partial version where supported by the API. The actual engine version used is returned in the attribute engine_version_actual, , see Attribute Reference below.
     engineVersionActual : str, default is Undefined, optional
@@ -2689,16 +2876,22 @@ schema RdsAwsUpboundIoV1beta2ClusterStatusAtProvider:
         ARN for the KMS encryption key. When specifying kms_key_id, storage_encrypted needs to be set to true.
     manageMasterUserPassword : bool, default is Undefined, optional
         Set to true to allow RDS to manage the master user password in Secrets Manager. Cannot be set if master_password is provided.
+    masterPasswordWoVersion : float, default is Undefined, optional
+        Used together with master_password_wo to trigger an update. Increment this value when an update to the master_password_wo is required.
     masterUserSecret : [RdsAwsUpboundIoV1beta2ClusterStatusAtProviderMasterUserSecretItems0], default is Undefined, optional
         Block that specifies the master user secret. Only available when manage_master_user_password is set to true. Documented below.
     masterUserSecretKmsKeyId : str, default is Undefined, optional
         Amazon Web Services KMS key identifier is the key ARN, key ID, alias ARN, or alias name for the KMS key. To use a KMS key in a different Amazon Web Services account, specify the key ARN or alias ARN. If not specified, the default KMS key for your Amazon Web Services account is used.
     masterUsername : str, default is Undefined, optional
         Username for the master DB user. Please refer to the RDS Naming Constraints. This argument does not support in-place updates and cannot be changed during a restore from snapshot.
+    monitoringInterval : float, default is Undefined, optional
+        Interval, in seconds, in seconds, between points when Enhanced Monitoring metrics are collected for the DB cluster. To turn off collecting Enhanced Monitoring metrics, specify 0. The default is 0. Valid Values: 0, 1, 5, 10, 15, 30, 60.
+    monitoringRoleArn : str, default is Undefined, optional
+        ARN for the IAM role that permits RDS to send enhanced monitoring metrics to CloudWatch Logs. You can find more information on the AWS Documentation what IAM permissions are needed to allow Enhanced Monitoring for RDS Clusters.
     networkType : str, default is Undefined, optional
         Network type of the cluster. Valid values: IPV4, DUAL.
     performanceInsightsEnabled : bool, default is Undefined, optional
-        Enables Performance Insights for the RDS Cluster
+        Enables Performance Insights.
     performanceInsightsKmsKeyId : str, default is Undefined, optional
         Specifies the KMS Key ID to encrypt Performance Insights data. If not specified, the default RDS KMS key will be used (aws/rds).
     performanceInsightsRetentionPeriod : float, default is Undefined, optional
@@ -2712,6 +2905,9 @@ schema RdsAwsUpboundIoV1beta2ClusterStatusAtProvider:
     readerEndpoint : str, default is Undefined, optional
         Read-only endpoint for the Aurora cluster, automatically
         load-balanced across replicas
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     replicationSourceIdentifier : str, default is Undefined, optional
         ARN of a source DB cluster or DB instance if this DB cluster is to be created as a Read Replica. Note: Removing this attribute after creation will promote the read replica to a standalone cluster.
     restoreToPointInTime : RdsAwsUpboundIoV1beta2ClusterStatusAtProviderRestoreToPointInTime, default is Undefined, optional
@@ -2763,7 +2959,11 @@ schema RdsAwsUpboundIoV1beta2ClusterStatusAtProvider:
 
     clusterResourceId?: str
 
+    clusterScalabilityType?: str
+
     copyTagsToSnapshot?: bool
+
+    databaseInsightsMode?: str
 
     databaseName?: str
 
@@ -2823,11 +3023,17 @@ schema RdsAwsUpboundIoV1beta2ClusterStatusAtProvider:
 
     manageMasterUserPassword?: bool
 
+    masterPasswordWoVersion?: float
+
     masterUserSecret?: [RdsAwsUpboundIoV1beta2ClusterStatusAtProviderMasterUserSecretItems0]
 
     masterUserSecretKmsKeyId?: str
 
     masterUsername?: str
+
+    monitoringInterval?: float
+
+    monitoringRoleArn?: str
 
     networkType?: str
 
@@ -2844,6 +3050,8 @@ schema RdsAwsUpboundIoV1beta2ClusterStatusAtProvider:
     preferredMaintenanceWindow?: str
 
     readerEndpoint?: str
+
+    region?: str
 
     replicationSourceIdentifier?: str
 

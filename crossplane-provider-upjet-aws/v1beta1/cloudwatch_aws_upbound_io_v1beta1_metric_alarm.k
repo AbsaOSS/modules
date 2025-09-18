@@ -66,8 +66,6 @@ schema CloudwatchAwsUpboundIoV1beta1MetricAlarmSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : CloudwatchAwsUpboundIoV1beta1MetricAlarmSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : CloudwatchAwsUpboundIoV1beta1MetricAlarmSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : CloudwatchAwsUpboundIoV1beta1MetricAlarmSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema CloudwatchAwsUpboundIoV1beta1MetricAlarmSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: CloudwatchAwsUpboundIoV1beta1MetricAlarmSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: CloudwatchAwsUpboundIoV1beta1MetricAlarmSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: CloudwatchAwsUpboundIoV1beta1MetricAlarmSpecWriteConnectionSecretToRef
 
@@ -137,8 +133,9 @@ schema CloudwatchAwsUpboundIoV1beta1MetricAlarmSpecForProvider:
         ok actions selector
     period : float, default is Undefined, optional
         The period in seconds over which the specified statistic is applied.
-        Valid values are 10, 30, or any multiple of 60.
+        Valid values are 10, 20, 30, or any multiple of 60.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     statistic : str, default is Undefined, optional
         The statistic to apply to the alarm's associated metric.
@@ -317,7 +314,7 @@ schema CloudwatchAwsUpboundIoV1beta1MetricAlarmSpecForProviderMetricQueryItems0:
     period : float, default is Undefined, optional
         Granularity in seconds of returned data points.
         For metrics with regular resolution, valid values are any multiple of 60.
-        For high-resolution metrics, valid values are 1, 5, 10, 30, or any multiple of 60.
+        For high-resolution metrics, valid values are 1, 5, 10, 20, 30, or any multiple of 60.
     returnData : bool, default is Undefined, optional
         Specify exactly one metric_query to be true to use that metric_query result as the alarm.
     """
@@ -355,7 +352,7 @@ schema CloudwatchAwsUpboundIoV1beta1MetricAlarmSpecForProviderMetricQueryItems0M
     period : float, default is Undefined, optional
         Granularity in seconds of returned data points.
         For metrics with regular resolution, valid values are any multiple of 60.
-        For high-resolution metrics, valid values are 1, 5, 10, 30, or any multiple of 60.
+        For high-resolution metrics, valid values are 1, 5, 10, 20, 30, or any multiple of 60.
     stat : str, default is Undefined, optional
         The statistic to apply to this metric.
         See docs for supported statistics.
@@ -524,7 +521,7 @@ schema CloudwatchAwsUpboundIoV1beta1MetricAlarmSpecInitProvider:
         ok actions selector
     period : float, default is Undefined, optional
         The period in seconds over which the specified statistic is applied.
-        Valid values are 10, 30, or any multiple of 60.
+        Valid values are 10, 20, 30, or any multiple of 60.
     statistic : str, default is Undefined, optional
         The statistic to apply to the alarm's associated metric.
         Either of the following is supported: SampleCount, Average, Sum, Minimum, Maximum
@@ -700,7 +697,7 @@ schema CloudwatchAwsUpboundIoV1beta1MetricAlarmSpecInitProviderMetricQueryItems0
     period : float, default is Undefined, optional
         Granularity in seconds of returned data points.
         For metrics with regular resolution, valid values are any multiple of 60.
-        For high-resolution metrics, valid values are 1, 5, 10, 30, or any multiple of 60.
+        For high-resolution metrics, valid values are 1, 5, 10, 20, 30, or any multiple of 60.
     returnData : bool, default is Undefined, optional
         Specify exactly one metric_query to be true to use that metric_query result as the alarm.
     """
@@ -738,7 +735,7 @@ schema CloudwatchAwsUpboundIoV1beta1MetricAlarmSpecInitProviderMetricQueryItems0
     period : float, default is Undefined, optional
         Granularity in seconds of returned data points.
         For metrics with regular resolution, valid values are any multiple of 60.
-        For high-resolution metrics, valid values are 1, 5, 10, 30, or any multiple of 60.
+        For high-resolution metrics, valid values are 1, 5, 10, 20, 30, or any multiple of 60.
     stat : str, default is Undefined, optional
         The statistic to apply to this metric.
         See docs for supported statistics.
@@ -893,112 +890,12 @@ schema CloudwatchAwsUpboundIoV1beta1MetricAlarmSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema CloudwatchAwsUpboundIoV1beta1MetricAlarmSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : CloudwatchAwsUpboundIoV1beta1MetricAlarmSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : CloudwatchAwsUpboundIoV1beta1MetricAlarmSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: CloudwatchAwsUpboundIoV1beta1MetricAlarmSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: CloudwatchAwsUpboundIoV1beta1MetricAlarmSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema CloudwatchAwsUpboundIoV1beta1MetricAlarmSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : CloudwatchAwsUpboundIoV1beta1MetricAlarmSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: CloudwatchAwsUpboundIoV1beta1MetricAlarmSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema CloudwatchAwsUpboundIoV1beta1MetricAlarmSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema CloudwatchAwsUpboundIoV1beta1MetricAlarmSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema CloudwatchAwsUpboundIoV1beta1MetricAlarmSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1083,7 +980,10 @@ schema CloudwatchAwsUpboundIoV1beta1MetricAlarmStatusAtProvider:
         The list of actions to execute when this alarm transitions into an OK state from any other state. Each action is specified as an Amazon Resource Name (ARN).
     period : float, default is Undefined, optional
         The period in seconds over which the specified statistic is applied.
-        Valid values are 10, 30, or any multiple of 60.
+        Valid values are 10, 20, 30, or any multiple of 60.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     statistic : str, default is Undefined, optional
         The statistic to apply to the alarm's associated metric.
         Either of the following is supported: SampleCount, Average, Sum, Minimum, Maximum
@@ -1136,6 +1036,8 @@ schema CloudwatchAwsUpboundIoV1beta1MetricAlarmStatusAtProvider:
 
     period?: float
 
+    region?: str
+
     statistic?: str
 
     tags?: {str:str}
@@ -1170,7 +1072,7 @@ schema CloudwatchAwsUpboundIoV1beta1MetricAlarmStatusAtProviderMetricQueryItems0
     period : float, default is Undefined, optional
         Granularity in seconds of returned data points.
         For metrics with regular resolution, valid values are any multiple of 60.
-        For high-resolution metrics, valid values are 1, 5, 10, 30, or any multiple of 60.
+        For high-resolution metrics, valid values are 1, 5, 10, 20, 30, or any multiple of 60.
     returnData : bool, default is Undefined, optional
         Specify exactly one metric_query to be true to use that metric_query result as the alarm.
     """
@@ -1208,7 +1110,7 @@ schema CloudwatchAwsUpboundIoV1beta1MetricAlarmStatusAtProviderMetricQueryItems0
     period : float, default is Undefined, optional
         Granularity in seconds of returned data points.
         For metrics with regular resolution, valid values are any multiple of 60.
-        For high-resolution metrics, valid values are 1, 5, 10, 30, or any multiple of 60.
+        For high-resolution metrics, valid values are 1, 5, 10, 20, 30, or any multiple of 60.
     stat : str, default is Undefined, optional
         The statistic to apply to this metric.
         See docs for supported statistics.

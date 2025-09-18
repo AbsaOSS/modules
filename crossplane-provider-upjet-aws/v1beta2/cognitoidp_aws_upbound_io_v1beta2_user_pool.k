@@ -66,8 +66,6 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : CognitoidpAwsUpboundIoV1beta2UserPoolSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : CognitoidpAwsUpboundIoV1beta2UserPoolSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : CognitoidpAwsUpboundIoV1beta2UserPoolSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: CognitoidpAwsUpboundIoV1beta2UserPoolSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: CognitoidpAwsUpboundIoV1beta2UserPoolSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: CognitoidpAwsUpboundIoV1beta2UserPoolSpecWriteConnectionSecretToRef
 
@@ -108,6 +104,8 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProvider:
         device configuration
     emailConfiguration : CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderEmailConfiguration, default is Undefined, optional
         email configuration
+    emailMfaConfiguration : CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderEmailMfaConfiguration, default is Undefined, optional
+        email mfa configuration
     emailVerificationMessage : str, default is Undefined, optional
         String representing the email verification message. Conflicts with verification_message_template configuration block email_message argument.
     emailVerificationSubject : str, default is Undefined, optional
@@ -121,9 +119,12 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProvider:
     passwordPolicy : CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderPasswordPolicy, default is Undefined, optional
         password policy
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     $schema : [CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderSchemaItems0], default is Undefined, optional
         Configuration block for the schema attributes of a user pool. Detailed below. Schema attributes from the standard attribute set only need to be specified if they are different from the default configuration. Attributes can be added, but not modified or removed. Maximum of 50 attributes.
+    signInPolicy : CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderSignInPolicy, default is Undefined, optional
+        sign in policy
     smsAuthenticationMessage : str, default is Undefined, optional
         String representing the SMS authentication message. The Message must contain the {####} placeholder, which will be replaced with the code.
     smsConfiguration : CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderSmsConfiguration, default is Undefined, optional
@@ -138,12 +139,16 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProvider:
         user attribute update settings
     userPoolAddOns : CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderUserPoolAddOns, default is Undefined, optional
         user pool add ons
+    userPoolTier : str, default is Undefined, optional
+        The user pool feature plan, or tier. Valid values: LITE, ESSENTIALS, PLUS.
     usernameAttributes : [str], default is Undefined, optional
         Whether email addresses or phone numbers can be specified as usernames when a user signs up. Conflicts with alias_attributes.
     usernameConfiguration : CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderUsernameConfiguration, default is Undefined, optional
         username configuration
     verificationMessageTemplate : CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderVerificationMessageTemplate, default is Undefined, optional
         verification message template
+    webAuthnConfiguration : CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderWebAuthnConfiguration, default is Undefined, optional
+        web authn configuration
     """
 
 
@@ -161,6 +166,8 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProvider:
 
     emailConfiguration?: CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderEmailConfiguration
 
+    emailMfaConfiguration?: CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderEmailMfaConfiguration
+
     emailVerificationMessage?: str
 
     emailVerificationSubject?: str
@@ -177,6 +184,8 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProvider:
 
     $schema?: [CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderSchemaItems0]
 
+    signInPolicy?: CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderSignInPolicy
+
     smsAuthenticationMessage?: str
 
     smsConfiguration?: CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderSmsConfiguration
@@ -191,11 +200,15 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProvider:
 
     userPoolAddOns?: CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderUserPoolAddOns
 
+    userPoolTier?: str
+
     usernameAttributes?: [str]
 
     usernameConfiguration?: CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderUsernameConfiguration
 
     verificationMessageTemplate?: CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderVerificationMessageTemplate
+
+    webAuthnConfiguration?: CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderWebAuthnConfiguration
 
 
 schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderAccountRecoverySetting:
@@ -316,6 +329,24 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderEmailConfiguration:
     replyToEmailAddress?: str
 
     sourceArn?: str
+
+
+schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderEmailMfaConfiguration:
+    r"""
+    Configuration block for configuring email Multi-Factor Authentication (MFA); requires at least 2 account_recovery_setting entries; requires an email_configuration configuration block. Detailed below.
+
+    Attributes
+    ----------
+    message : str, default is Undefined, optional
+        The template for the email messages that your user pool sends to users with codes for MFA and sign-in with email OTPs. The message must contain the {####} placeholder. In the message, Amazon Cognito replaces this placeholder with the code. If you don't provide this parameter, Amazon Cognito sends messages in the default format.
+    subject : str, default is Undefined, optional
+        The subject of the email messages that your user pool sends to users with codes for MFA and email OTP sign-in.
+    """
+
+
+    message?: str
+
+    subject?: str
 
 
 schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderLambdaConfig:
@@ -1423,7 +1454,7 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderLambdaConfigPreTokenG
     lambdaArn : str, default is Undefined, optional
         The Lambda Amazon Resource Name of the Lambda function that Amazon Cognito triggers to send SMS notifications to users.
     lambdaVersion : str, default is Undefined, optional
-        The Lambda version represents the signature of the "version" attribute in the "event" information Amazon Cognito passes to your pre Token Generation Lambda function. The supported values are V1_0, V2_0.
+        The Lambda version represents the signature of the "version" attribute in the "event" information Amazon Cognito passes to your pre Token Generation Lambda function. The supported values are V1_0, V2_0, V3_0.
     """
 
 
@@ -1811,6 +1842,20 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderSchemaItems0StringAtt
     minLength?: str
 
 
+schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderSignInPolicy:
+    r"""
+    Configuration block for information about the user pool sign in policy. Detailed below.
+
+    Attributes
+    ----------
+    allowedFirstAuthFactors : [str], default is Undefined, optional
+        The sign in methods your user pool supports as the first factor. This is a list of strings, allowed values are PASSWORD, EMAIL_OTP, SMS_OTP, and WEB_AUTHN.
+    """
+
+
+    allowedFirstAuthFactors?: [str]
+
+
 schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderSmsConfiguration:
     r"""
     Configuration block for Short Message Service (SMS) settings. Detailed below. These settings apply to SMS user verification and SMS Multi-Factor Authentication (MFA). Due to Cognito API restrictions, the SMS configuration cannot be removed without recreating the Cognito User Pool. For user data safety, this resource will ignore the removal of this configuration by disabling drift detection. To force resource recreation after this configuration has been applied, see the taint command.
@@ -1964,12 +2009,30 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderUserPoolAddOns:
 
     Attributes
     ----------
+    advancedSecurityAdditionalFlows : CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderUserPoolAddOnsAdvancedSecurityAdditionalFlows, default is Undefined, optional
+        advanced security additional flows
     advancedSecurityMode : str, default is Undefined, optional
         Mode for advanced security, must be one of OFF, AUDIT or ENFORCED.
     """
 
 
+    advancedSecurityAdditionalFlows?: CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderUserPoolAddOnsAdvancedSecurityAdditionalFlows
+
     advancedSecurityMode?: str
+
+
+schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderUserPoolAddOnsAdvancedSecurityAdditionalFlows:
+    r"""
+    A block to specify the threat protection configuration options for additional authentication types in your user pool, including custom authentication. Detailed below.
+
+    Attributes
+    ----------
+    customAuthMode : str, default is Undefined, optional
+        Mode of threat protection operation in custom authentication. Valid values are AUDIT or ENFORCED. The default value is AUDIT.
+    """
+
+
+    customAuthMode?: str
 
 
 schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderUsernameConfiguration:
@@ -2020,6 +2083,24 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderVerificationMessageTe
     smsMessage?: str
 
 
+schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecForProviderWebAuthnConfiguration:
+    r"""
+    Configuration block for web authn configuration. Detailed below.
+
+    Attributes
+    ----------
+    relyingPartyId : str, default is Undefined, optional
+        The authentication domain that passkeys providers use as a relying party.
+    userVerification : str, default is Undefined, optional
+        If your user pool should require a passkey. Must be one of required or preferred.
+    """
+
+
+    relyingPartyId?: str
+
+    userVerification?: str
+
+
 schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProvider:
     r"""
     THIS IS A BETA FIELD. It will be honored
@@ -2049,6 +2130,8 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProvider:
         device configuration
     emailConfiguration : CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderEmailConfiguration, default is Undefined, optional
         email configuration
+    emailMfaConfiguration : CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderEmailMfaConfiguration, default is Undefined, optional
+        email mfa configuration
     emailVerificationMessage : str, default is Undefined, optional
         String representing the email verification message. Conflicts with verification_message_template configuration block email_message argument.
     emailVerificationSubject : str, default is Undefined, optional
@@ -2063,6 +2146,8 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProvider:
         password policy
     $schema : [CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderSchemaItems0], default is Undefined, optional
         Configuration block for the schema attributes of a user pool. Detailed below. Schema attributes from the standard attribute set only need to be specified if they are different from the default configuration. Attributes can be added, but not modified or removed. Maximum of 50 attributes.
+    signInPolicy : CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderSignInPolicy, default is Undefined, optional
+        sign in policy
     smsAuthenticationMessage : str, default is Undefined, optional
         String representing the SMS authentication message. The Message must contain the {####} placeholder, which will be replaced with the code.
     smsConfiguration : CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderSmsConfiguration, default is Undefined, optional
@@ -2077,12 +2162,16 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProvider:
         user attribute update settings
     userPoolAddOns : CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderUserPoolAddOns, default is Undefined, optional
         user pool add ons
+    userPoolTier : str, default is Undefined, optional
+        The user pool feature plan, or tier. Valid values: LITE, ESSENTIALS, PLUS.
     usernameAttributes : [str], default is Undefined, optional
         Whether email addresses or phone numbers can be specified as usernames when a user signs up. Conflicts with alias_attributes.
     usernameConfiguration : CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderUsernameConfiguration, default is Undefined, optional
         username configuration
     verificationMessageTemplate : CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderVerificationMessageTemplate, default is Undefined, optional
         verification message template
+    webAuthnConfiguration : CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderWebAuthnConfiguration, default is Undefined, optional
+        web authn configuration
     """
 
 
@@ -2100,6 +2189,8 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProvider:
 
     emailConfiguration?: CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderEmailConfiguration
 
+    emailMfaConfiguration?: CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderEmailMfaConfiguration
+
     emailVerificationMessage?: str
 
     emailVerificationSubject?: str
@@ -2113,6 +2204,8 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProvider:
     passwordPolicy?: CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderPasswordPolicy
 
     $schema?: [CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderSchemaItems0]
+
+    signInPolicy?: CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderSignInPolicy
 
     smsAuthenticationMessage?: str
 
@@ -2128,11 +2221,15 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProvider:
 
     userPoolAddOns?: CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderUserPoolAddOns
 
+    userPoolTier?: str
+
     usernameAttributes?: [str]
 
     usernameConfiguration?: CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderUsernameConfiguration
 
     verificationMessageTemplate?: CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderVerificationMessageTemplate
+
+    webAuthnConfiguration?: CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderWebAuthnConfiguration
 
 
 schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderAccountRecoverySetting:
@@ -2253,6 +2350,24 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderEmailConfiguration:
     replyToEmailAddress?: str
 
     sourceArn?: str
+
+
+schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderEmailMfaConfiguration:
+    r"""
+    Configuration block for configuring email Multi-Factor Authentication (MFA); requires at least 2 account_recovery_setting entries; requires an email_configuration configuration block. Detailed below.
+
+    Attributes
+    ----------
+    message : str, default is Undefined, optional
+        The template for the email messages that your user pool sends to users with codes for MFA and sign-in with email OTPs. The message must contain the {####} placeholder. In the message, Amazon Cognito replaces this placeholder with the code. If you don't provide this parameter, Amazon Cognito sends messages in the default format.
+    subject : str, default is Undefined, optional
+        The subject of the email messages that your user pool sends to users with codes for MFA and email OTP sign-in.
+    """
+
+
+    message?: str
+
+    subject?: str
 
 
 schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderLambdaConfig:
@@ -3360,7 +3475,7 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderLambdaConfigPreToken
     lambdaArn : str, default is Undefined, optional
         The Lambda Amazon Resource Name of the Lambda function that Amazon Cognito triggers to send SMS notifications to users.
     lambdaVersion : str, default is Undefined, optional
-        The Lambda version represents the signature of the "version" attribute in the "event" information Amazon Cognito passes to your pre Token Generation Lambda function. The supported values are V1_0, V2_0.
+        The Lambda version represents the signature of the "version" attribute in the "event" information Amazon Cognito passes to your pre Token Generation Lambda function. The supported values are V1_0, V2_0, V3_0.
     """
 
 
@@ -3748,6 +3863,20 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderSchemaItems0StringAt
     minLength?: str
 
 
+schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderSignInPolicy:
+    r"""
+    Configuration block for information about the user pool sign in policy. Detailed below.
+
+    Attributes
+    ----------
+    allowedFirstAuthFactors : [str], default is Undefined, optional
+        The sign in methods your user pool supports as the first factor. This is a list of strings, allowed values are PASSWORD, EMAIL_OTP, SMS_OTP, and WEB_AUTHN.
+    """
+
+
+    allowedFirstAuthFactors?: [str]
+
+
 schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderSmsConfiguration:
     r"""
     Configuration block for Short Message Service (SMS) settings. Detailed below. These settings apply to SMS user verification and SMS Multi-Factor Authentication (MFA). Due to Cognito API restrictions, the SMS configuration cannot be removed without recreating the Cognito User Pool. For user data safety, this resource will ignore the removal of this configuration by disabling drift detection. To force resource recreation after this configuration has been applied, see the taint command.
@@ -3901,12 +4030,30 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderUserPoolAddOns:
 
     Attributes
     ----------
+    advancedSecurityAdditionalFlows : CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderUserPoolAddOnsAdvancedSecurityAdditionalFlows, default is Undefined, optional
+        advanced security additional flows
     advancedSecurityMode : str, default is Undefined, optional
         Mode for advanced security, must be one of OFF, AUDIT or ENFORCED.
     """
 
 
+    advancedSecurityAdditionalFlows?: CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderUserPoolAddOnsAdvancedSecurityAdditionalFlows
+
     advancedSecurityMode?: str
+
+
+schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderUserPoolAddOnsAdvancedSecurityAdditionalFlows:
+    r"""
+    A block to specify the threat protection configuration options for additional authentication types in your user pool, including custom authentication. Detailed below.
+
+    Attributes
+    ----------
+    customAuthMode : str, default is Undefined, optional
+        Mode of threat protection operation in custom authentication. Valid values are AUDIT or ENFORCED. The default value is AUDIT.
+    """
+
+
+    customAuthMode?: str
 
 
 schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderUsernameConfiguration:
@@ -3957,6 +4104,24 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderVerificationMessageT
     smsMessage?: str
 
 
+schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecInitProviderWebAuthnConfiguration:
+    r"""
+    Configuration block for web authn configuration. Detailed below.
+
+    Attributes
+    ----------
+    relyingPartyId : str, default is Undefined, optional
+        The authentication domain that passkeys providers use as a relying party.
+    userVerification : str, default is Undefined, optional
+        If your user pool should require a passkey. Must be one of required or preferred.
+    """
+
+
+    relyingPartyId?: str
+
+    userVerification?: str
+
+
 schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecProviderConfigRef:
     r"""
     ProviderConfigReference specifies how the provider that will be used to
@@ -4001,112 +4166,12 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : CognitoidpAwsUpboundIoV1beta2UserPoolSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : CognitoidpAwsUpboundIoV1beta2UserPoolSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: CognitoidpAwsUpboundIoV1beta2UserPoolSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: CognitoidpAwsUpboundIoV1beta2UserPoolSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : CognitoidpAwsUpboundIoV1beta2UserPoolSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: CognitoidpAwsUpboundIoV1beta2UserPoolSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema CognitoidpAwsUpboundIoV1beta2UserPoolSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -4174,6 +4239,8 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProvider:
         Holds the domain prefix if the user pool has a domain associated with it.
     emailConfiguration : CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderEmailConfiguration, default is Undefined, optional
         email configuration
+    emailMfaConfiguration : CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderEmailMfaConfiguration, default is Undefined, optional
+        email mfa configuration
     emailVerificationMessage : str, default is Undefined, optional
         String representing the email verification message. Conflicts with verification_message_template configuration block email_message argument.
     emailVerificationSubject : str, default is Undefined, optional
@@ -4194,8 +4261,13 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProvider:
         Name of the user pool.
     passwordPolicy : CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderPasswordPolicy, default is Undefined, optional
         password policy
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     $schema : [CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderSchemaItems0], default is Undefined, optional
         Configuration block for the schema attributes of a user pool. Detailed below. Schema attributes from the standard attribute set only need to be specified if they are different from the default configuration. Attributes can be added, but not modified or removed. Maximum of 50 attributes.
+    signInPolicy : CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderSignInPolicy, default is Undefined, optional
+        sign in policy
     smsAuthenticationMessage : str, default is Undefined, optional
         String representing the SMS authentication message. The Message must contain the {####} placeholder, which will be replaced with the code.
     smsConfiguration : CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderSmsConfiguration, default is Undefined, optional
@@ -4212,12 +4284,16 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProvider:
         user attribute update settings
     userPoolAddOns : CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderUserPoolAddOns, default is Undefined, optional
         user pool add ons
+    userPoolTier : str, default is Undefined, optional
+        The user pool feature plan, or tier. Valid values: LITE, ESSENTIALS, PLUS.
     usernameAttributes : [str], default is Undefined, optional
         Whether email addresses or phone numbers can be specified as usernames when a user signs up. Conflicts with alias_attributes.
     usernameConfiguration : CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderUsernameConfiguration, default is Undefined, optional
         username configuration
     verificationMessageTemplate : CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderVerificationMessageTemplate, default is Undefined, optional
         verification message template
+    webAuthnConfiguration : CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderWebAuthnConfiguration, default is Undefined, optional
+        web authn configuration
     """
 
 
@@ -4243,6 +4319,8 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProvider:
 
     emailConfiguration?: CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderEmailConfiguration
 
+    emailMfaConfiguration?: CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderEmailMfaConfiguration
+
     emailVerificationMessage?: str
 
     emailVerificationSubject?: str
@@ -4263,7 +4341,11 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProvider:
 
     passwordPolicy?: CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderPasswordPolicy
 
+    region?: str
+
     $schema?: [CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderSchemaItems0]
+
+    signInPolicy?: CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderSignInPolicy
 
     smsAuthenticationMessage?: str
 
@@ -4281,11 +4363,15 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProvider:
 
     userPoolAddOns?: CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderUserPoolAddOns
 
+    userPoolTier?: str
+
     usernameAttributes?: [str]
 
     usernameConfiguration?: CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderUsernameConfiguration
 
     verificationMessageTemplate?: CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderVerificationMessageTemplate
+
+    webAuthnConfiguration?: CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderWebAuthnConfiguration
 
 
 schema CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderAccountRecoverySetting:
@@ -4408,6 +4494,24 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderEmailConfiguration:
     sourceArn?: str
 
 
+schema CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderEmailMfaConfiguration:
+    r"""
+    Configuration block for configuring email Multi-Factor Authentication (MFA); requires at least 2 account_recovery_setting entries; requires an email_configuration configuration block. Detailed below.
+
+    Attributes
+    ----------
+    message : str, default is Undefined, optional
+        The template for the email messages that your user pool sends to users with codes for MFA and sign-in with email OTPs. The message must contain the {####} placeholder. In the message, Amazon Cognito replaces this placeholder with the code. If you don't provide this parameter, Amazon Cognito sends messages in the default format.
+    subject : str, default is Undefined, optional
+        The subject of the email messages that your user pool sends to users with codes for MFA and email OTP sign-in.
+    """
+
+
+    message?: str
+
+    subject?: str
+
+
 schema CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderLambdaConfig:
     r"""
     Configuration block for the AWS Lambda triggers associated with the user pool. Detailed below.
@@ -4519,7 +4623,7 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderLambdaConfigPreToken
     lambdaArn : str, default is Undefined, optional
         The Lambda Amazon Resource Name of the Lambda function that Amazon Cognito triggers to send SMS notifications to users.
     lambdaVersion : str, default is Undefined, optional
-        The Lambda version represents the signature of the "version" attribute in the "event" information Amazon Cognito passes to your pre Token Generation Lambda function. The supported values are V1_0, V2_0.
+        The Lambda version represents the signature of the "version" attribute in the "event" information Amazon Cognito passes to your pre Token Generation Lambda function. The supported values are V1_0, V2_0, V3_0.
     """
 
 
@@ -4640,6 +4744,20 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderSchemaItems0StringAt
     minLength?: str
 
 
+schema CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderSignInPolicy:
+    r"""
+    Configuration block for information about the user pool sign in policy. Detailed below.
+
+    Attributes
+    ----------
+    allowedFirstAuthFactors : [str], default is Undefined, optional
+        The sign in methods your user pool supports as the first factor. This is a list of strings, allowed values are PASSWORD, EMAIL_OTP, SMS_OTP, and WEB_AUTHN.
+    """
+
+
+    allowedFirstAuthFactors?: [str]
+
+
 schema CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderSmsConfiguration:
     r"""
     Configuration block for Short Message Service (SMS) settings. Detailed below. These settings apply to SMS user verification and SMS Multi-Factor Authentication (MFA). Due to Cognito API restrictions, the SMS configuration cannot be removed without recreating the Cognito User Pool. For user data safety, this resource will ignore the removal of this configuration by disabling drift detection. To force resource recreation after this configuration has been applied, see the taint command.
@@ -4696,12 +4814,30 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderUserPoolAddOns:
 
     Attributes
     ----------
+    advancedSecurityAdditionalFlows : CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderUserPoolAddOnsAdvancedSecurityAdditionalFlows, default is Undefined, optional
+        advanced security additional flows
     advancedSecurityMode : str, default is Undefined, optional
         Mode for advanced security, must be one of OFF, AUDIT or ENFORCED.
     """
 
 
+    advancedSecurityAdditionalFlows?: CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderUserPoolAddOnsAdvancedSecurityAdditionalFlows
+
     advancedSecurityMode?: str
+
+
+schema CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderUserPoolAddOnsAdvancedSecurityAdditionalFlows:
+    r"""
+    A block to specify the threat protection configuration options for additional authentication types in your user pool, including custom authentication. Detailed below.
+
+    Attributes
+    ----------
+    customAuthMode : str, default is Undefined, optional
+        Mode of threat protection operation in custom authentication. Valid values are AUDIT or ENFORCED. The default value is AUDIT.
+    """
+
+
+    customAuthMode?: str
 
 
 schema CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderUsernameConfiguration:
@@ -4750,6 +4886,24 @@ schema CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderVerificationMessageT
     emailSubjectByLink?: str
 
     smsMessage?: str
+
+
+schema CognitoidpAwsUpboundIoV1beta2UserPoolStatusAtProviderWebAuthnConfiguration:
+    r"""
+    Configuration block for web authn configuration. Detailed below.
+
+    Attributes
+    ----------
+    relyingPartyId : str, default is Undefined, optional
+        The authentication domain that passkeys providers use as a relying party.
+    userVerification : str, default is Undefined, optional
+        If your user pool should require a passkey. Must be one of required or preferred.
+    """
+
+
+    relyingPartyId?: str
+
+    userVerification?: str
 
 
 schema CognitoidpAwsUpboundIoV1beta2UserPoolStatusConditionsItems0:

@@ -66,8 +66,6 @@ schema ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecWriteConnectionSecretToRef
 
@@ -101,7 +97,7 @@ schema ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecForProvider:
     description : str, default is Undefined, optional
         User-provided description for the serverless cache. The default is NULL.
     engine : str, default is Undefined, optional
-        –  Name of the cache engine to be used for this cache cluster. Valid values are memcached, redis or valkey.
+        Name of the cache engine to be used for this cache cluster. Valid values are memcached, redis or valkey.
     kmsKeyId : str, default is Undefined, optional
         ARN of the customer managed key for encrypting the data at rest. If no KMS key is provided, a default service key is used.
     kmsKeyIdRef : ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecForProviderKmsKeyIDRef, default is Undefined, optional
@@ -109,9 +105,10 @@ schema ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecForProvider:
     kmsKeyIdSelector : ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecForProviderKmsKeyIDSelector, default is Undefined, optional
         kms key Id selector
     majorEngineVersion : str, default is Undefined, optional
-        –  The version of the cache engine that will be used to create the serverless cache.
+        The version of the cache engine that will be used to create the serverless cache.
         See Describe Cache Engine Versions in the AWS Documentation for supported versions.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     securityGroupIdRefs : [ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecForProviderSecurityGroupIDRefsItems0], default is Undefined, optional
         References to SecurityGroup in ec2 to populate securityGroupIds.
@@ -128,7 +125,7 @@ schema ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecForProvider:
     subnetIdSelector : ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecForProviderSubnetIDSelector, default is Undefined, optional
         subnet Id selector
     subnetIds : [str], default is Undefined, optional
-        –  A list of the identifiers of the subnets where the VPC endpoint for the serverless cache will be deployed. All the subnetIds must belong to the same VPC.
+        A list of the identifiers of the subnets where the VPC endpoint for the serverless cache will be deployed. All the subnetIds must belong to the same VPC.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     userGroupId : str, default is Undefined, optional
@@ -522,7 +519,7 @@ schema ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecInitProvider:
     description : str, default is Undefined, optional
         User-provided description for the serverless cache. The default is NULL.
     engine : str, default is Undefined, optional
-        –  Name of the cache engine to be used for this cache cluster. Valid values are memcached, redis or valkey.
+        Name of the cache engine to be used for this cache cluster. Valid values are memcached, redis or valkey.
     kmsKeyId : str, default is Undefined, optional
         ARN of the customer managed key for encrypting the data at rest. If no KMS key is provided, a default service key is used.
     kmsKeyIdRef : ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecInitProviderKmsKeyIDRef, default is Undefined, optional
@@ -530,7 +527,7 @@ schema ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecInitProvider:
     kmsKeyIdSelector : ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecInitProviderKmsKeyIDSelector, default is Undefined, optional
         kms key Id selector
     majorEngineVersion : str, default is Undefined, optional
-        –  The version of the cache engine that will be used to create the serverless cache.
+        The version of the cache engine that will be used to create the serverless cache.
         See Describe Cache Engine Versions in the AWS Documentation for supported versions.
     securityGroupIdRefs : [ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecInitProviderSecurityGroupIDRefsItems0], default is Undefined, optional
         References to SecurityGroup in ec2 to populate securityGroupIds.
@@ -547,7 +544,7 @@ schema ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecInitProvider:
     subnetIdSelector : ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecInitProviderSubnetIDSelector, default is Undefined, optional
         subnet Id selector
     subnetIds : [str], default is Undefined, optional
-        –  A list of the identifiers of the subnets where the VPC endpoint for the serverless cache will be deployed. All the subnetIds must belong to the same VPC.
+        A list of the identifiers of the subnets where the VPC endpoint for the serverless cache will be deployed. All the subnetIds must belong to the same VPC.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     userGroupId : str, default is Undefined, optional
@@ -961,112 +958,12 @@ schema ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema ElasticacheAwsUpboundIoV1beta1ServerlessCacheSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1125,7 +1022,7 @@ schema ElasticacheAwsUpboundIoV1beta1ServerlessCacheStatusAtProvider:
     endpoint : [ElasticacheAwsUpboundIoV1beta1ServerlessCacheStatusAtProviderEndpointItems0], default is Undefined, optional
         Represents the information required for client programs to connect to a cache node. See endpoint Block for details.
     engine : str, default is Undefined, optional
-        –  Name of the cache engine to be used for this cache cluster. Valid values are memcached, redis or valkey.
+        Name of the cache engine to be used for this cache cluster. Valid values are memcached, redis or valkey.
     fullEngineVersion : str, default is Undefined, optional
         The name and version number of the engine the serverless cache is compatible with.
     id : str, default is Undefined, optional
@@ -1133,10 +1030,13 @@ schema ElasticacheAwsUpboundIoV1beta1ServerlessCacheStatusAtProvider:
     kmsKeyId : str, default is Undefined, optional
         ARN of the customer managed key for encrypting the data at rest. If no KMS key is provided, a default service key is used.
     majorEngineVersion : str, default is Undefined, optional
-        –  The version of the cache engine that will be used to create the serverless cache.
+        The version of the cache engine that will be used to create the serverless cache.
         See Describe Cache Engine Versions in the AWS Documentation for supported versions.
     readerEndpoint : [ElasticacheAwsUpboundIoV1beta1ServerlessCacheStatusAtProviderReaderEndpointItems0], default is Undefined, optional
         Represents the information required for client programs to connect to a cache node. See reader_endpoint Block for details.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     securityGroupIds : [str], default is Undefined, optional
         A list of the one or more VPC security groups to be associated with the serverless cache. The security group will authorize traffic access for the VPC end-point (private-link). If no other information is given this will be the VPC’s Default Security Group that is associated with the cluster VPC end-point.
     snapshotArnsToRestore : [str], default is Undefined, optional
@@ -1146,7 +1046,7 @@ schema ElasticacheAwsUpboundIoV1beta1ServerlessCacheStatusAtProvider:
     status : str, default is Undefined, optional
         The current status of the serverless cache. The allowed values are CREATING, AVAILABLE, DELETING, CREATE-FAILED and MODIFYING.
     subnetIds : [str], default is Undefined, optional
-        –  A list of the identifiers of the subnets where the VPC endpoint for the serverless cache will be deployed. All the subnetIds must belong to the same VPC.
+        A list of the identifiers of the subnets where the VPC endpoint for the serverless cache will be deployed. All the subnetIds must belong to the same VPC.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
@@ -1179,6 +1079,8 @@ schema ElasticacheAwsUpboundIoV1beta1ServerlessCacheStatusAtProvider:
     majorEngineVersion?: str
 
     readerEndpoint?: [ElasticacheAwsUpboundIoV1beta1ServerlessCacheStatusAtProviderReaderEndpointItems0]
+
+    region?: str
 
     securityGroupIds?: [str]
 

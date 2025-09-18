@@ -66,8 +66,6 @@ schema AppstreamAwsUpboundIoV1beta2FleetSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : AppstreamAwsUpboundIoV1beta2FleetSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : AppstreamAwsUpboundIoV1beta2FleetSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : AppstreamAwsUpboundIoV1beta2FleetSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema AppstreamAwsUpboundIoV1beta2FleetSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: AppstreamAwsUpboundIoV1beta2FleetSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: AppstreamAwsUpboundIoV1beta2FleetSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: AppstreamAwsUpboundIoV1beta2FleetSpecWriteConnectionSecretToRef
 
@@ -129,6 +125,7 @@ schema AppstreamAwsUpboundIoV1beta2FleetSpecForProvider:
     name : str, default is Undefined, optional
         Unique name for the fleet.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     streamView : str, default is Undefined, optional
         AppStream 2.0 view that is displayed to your users when they stream from the fleet. When APP is specified, only the windows of applications opened by users display. When DESKTOP is specified, the standard desktop that is provided by the operating system displays. If not specified, defaults to APP.
@@ -805,112 +802,12 @@ schema AppstreamAwsUpboundIoV1beta2FleetSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema AppstreamAwsUpboundIoV1beta2FleetSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : AppstreamAwsUpboundIoV1beta2FleetSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : AppstreamAwsUpboundIoV1beta2FleetSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: AppstreamAwsUpboundIoV1beta2FleetSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: AppstreamAwsUpboundIoV1beta2FleetSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema AppstreamAwsUpboundIoV1beta2FleetSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : AppstreamAwsUpboundIoV1beta2FleetSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: AppstreamAwsUpboundIoV1beta2FleetSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema AppstreamAwsUpboundIoV1beta2FleetSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema AppstreamAwsUpboundIoV1beta2FleetSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema AppstreamAwsUpboundIoV1beta2FleetSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -992,6 +889,9 @@ schema AppstreamAwsUpboundIoV1beta2FleetStatusAtProvider:
         Maximum amount of time that a streaming session can remain active, in seconds.
     name : str, default is Undefined, optional
         Unique name for the fleet.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     state : str, default is Undefined, optional
         State of the fleet. Can be STARTING, RUNNING, STOPPING or STOPPED
     streamView : str, default is Undefined, optional
@@ -1040,6 +940,8 @@ schema AppstreamAwsUpboundIoV1beta2FleetStatusAtProvider:
     maxUserDurationInSeconds?: float
 
     name?: str
+
+    region?: str
 
     state?: str
 

@@ -66,8 +66,6 @@ schema DirectconnectAwsUpboundIoV1beta1LagSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : DirectconnectAwsUpboundIoV1beta1LagSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : DirectconnectAwsUpboundIoV1beta1LagSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : DirectconnectAwsUpboundIoV1beta1LagSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema DirectconnectAwsUpboundIoV1beta1LagSpec:
 
     providerConfigRef?: DirectconnectAwsUpboundIoV1beta1LagSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: DirectconnectAwsUpboundIoV1beta1LagSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: DirectconnectAwsUpboundIoV1beta1LagSpecWriteConnectionSecretToRef
 
 
@@ -97,7 +93,7 @@ schema DirectconnectAwsUpboundIoV1beta1LagSpecForProvider:
     connectionId : str, default is Undefined, optional
         The ID of an existing dedicated connection to migrate to the LAG.
     connectionsBandwidth : str, default is Undefined, optional
-        The bandwidth of the individual physical connections bundled by the LAG. Valid values: 50Mbps, 100Mbps, 200Mbps, 300Mbps, 400Mbps, 500Mbps, 1Gbps, 2Gbps, 5Gbps, 10Gbps and 100Gbps. Case sensitive.
+        The bandwidth of the individual dedicated connections bundled by the LAG. Valid values: 1Gbps, 10Gbps, 100Gbps, and 400Gbps. Case sensitive. Refer to the AWS Direct Connection supported bandwidths for Dedicated Connections.
     forceDestroy : bool, default is Undefined, optional
         A boolean that indicates all connections associated with the LAG should be deleted so that the LAG can be destroyed without error. These objects are not recoverable.
     location : str, default is Undefined, optional
@@ -107,6 +103,7 @@ schema DirectconnectAwsUpboundIoV1beta1LagSpecForProvider:
     providerName : str, default is Undefined, optional
         The name of the service provider associated with the LAG.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
@@ -148,7 +145,7 @@ schema DirectconnectAwsUpboundIoV1beta1LagSpecInitProvider:
     connectionId : str, default is Undefined, optional
         The ID of an existing dedicated connection to migrate to the LAG.
     connectionsBandwidth : str, default is Undefined, optional
-        The bandwidth of the individual physical connections bundled by the LAG. Valid values: 50Mbps, 100Mbps, 200Mbps, 300Mbps, 400Mbps, 500Mbps, 1Gbps, 2Gbps, 5Gbps, 10Gbps and 100Gbps. Case sensitive.
+        The bandwidth of the individual dedicated connections bundled by the LAG. Valid values: 1Gbps, 10Gbps, 100Gbps, and 400Gbps. Case sensitive. Refer to the AWS Direct Connection supported bandwidths for Dedicated Connections.
     forceDestroy : bool, default is Undefined, optional
         A boolean that indicates all connections associated with the LAG should be deleted so that the LAG can be destroyed without error. These objects are not recoverable.
     location : str, default is Undefined, optional
@@ -221,112 +218,12 @@ schema DirectconnectAwsUpboundIoV1beta1LagSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema DirectconnectAwsUpboundIoV1beta1LagSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : DirectconnectAwsUpboundIoV1beta1LagSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : DirectconnectAwsUpboundIoV1beta1LagSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: DirectconnectAwsUpboundIoV1beta1LagSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: DirectconnectAwsUpboundIoV1beta1LagSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema DirectconnectAwsUpboundIoV1beta1LagSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : DirectconnectAwsUpboundIoV1beta1LagSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: DirectconnectAwsUpboundIoV1beta1LagSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema DirectconnectAwsUpboundIoV1beta1LagSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema DirectconnectAwsUpboundIoV1beta1LagSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema DirectconnectAwsUpboundIoV1beta1LagSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -377,7 +274,7 @@ schema DirectconnectAwsUpboundIoV1beta1LagStatusAtProvider:
     connectionId : str, default is Undefined, optional
         The ID of an existing dedicated connection to migrate to the LAG.
     connectionsBandwidth : str, default is Undefined, optional
-        The bandwidth of the individual physical connections bundled by the LAG. Valid values: 50Mbps, 100Mbps, 200Mbps, 300Mbps, 400Mbps, 500Mbps, 1Gbps, 2Gbps, 5Gbps, 10Gbps and 100Gbps. Case sensitive.
+        The bandwidth of the individual dedicated connections bundled by the LAG. Valid values: 1Gbps, 10Gbps, 100Gbps, and 400Gbps. Case sensitive. Refer to the AWS Direct Connection supported bandwidths for Dedicated Connections.
     forceDestroy : bool, default is Undefined, optional
         A boolean that indicates all connections associated with the LAG should be deleted so that the LAG can be destroyed without error. These objects are not recoverable.
     hasLogicalRedundancy : str, default is Undefined, optional
@@ -394,6 +291,9 @@ schema DirectconnectAwsUpboundIoV1beta1LagStatusAtProvider:
         The ID of the AWS account that owns the LAG.
     providerName : str, default is Undefined, optional
         The name of the service provider associated with the LAG.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
@@ -422,6 +322,8 @@ schema DirectconnectAwsUpboundIoV1beta1LagStatusAtProvider:
     ownerAccountId?: str
 
     providerName?: str
+
+    region?: str
 
     tags?: {str:str}
 

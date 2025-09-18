@@ -66,8 +66,6 @@ schema AppsyncAwsUpboundIoV1beta2DatasourceSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : AppsyncAwsUpboundIoV1beta2DatasourceSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : AppsyncAwsUpboundIoV1beta2DatasourceSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : AppsyncAwsUpboundIoV1beta2DatasourceSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema AppsyncAwsUpboundIoV1beta2DatasourceSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: AppsyncAwsUpboundIoV1beta2DatasourceSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: AppsyncAwsUpboundIoV1beta2DatasourceSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: AppsyncAwsUpboundIoV1beta2DatasourceSpecWriteConnectionSecretToRef
 
@@ -115,7 +111,7 @@ schema AppsyncAwsUpboundIoV1beta2DatasourceSpecForProvider:
     opensearchserviceConfig : AppsyncAwsUpboundIoV1beta2DatasourceSpecForProviderOpensearchserviceConfig, default is Undefined, optional
         opensearchservice config
     region : str, default is Undefined, required
-        AWS Region for RDS HTTP endpoint. Defaults to current region.
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     relationalDatabaseConfig : AppsyncAwsUpboundIoV1beta2DatasourceSpecForProviderRelationalDatabaseConfig, default is Undefined, optional
         relational database config
@@ -1155,112 +1151,12 @@ schema AppsyncAwsUpboundIoV1beta2DatasourceSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema AppsyncAwsUpboundIoV1beta2DatasourceSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : AppsyncAwsUpboundIoV1beta2DatasourceSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : AppsyncAwsUpboundIoV1beta2DatasourceSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: AppsyncAwsUpboundIoV1beta2DatasourceSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: AppsyncAwsUpboundIoV1beta2DatasourceSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema AppsyncAwsUpboundIoV1beta2DatasourceSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : AppsyncAwsUpboundIoV1beta2DatasourceSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: AppsyncAwsUpboundIoV1beta2DatasourceSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema AppsyncAwsUpboundIoV1beta2DatasourceSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema AppsyncAwsUpboundIoV1beta2DatasourceSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema AppsyncAwsUpboundIoV1beta2DatasourceSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1326,6 +1222,9 @@ schema AppsyncAwsUpboundIoV1beta2DatasourceStatusAtProvider:
         lambda config
     opensearchserviceConfig : AppsyncAwsUpboundIoV1beta2DatasourceStatusAtProviderOpensearchserviceConfig, default is Undefined, optional
         opensearchservice config
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     relationalDatabaseConfig : AppsyncAwsUpboundIoV1beta2DatasourceStatusAtProviderRelationalDatabaseConfig, default is Undefined, optional
         relational database config
     serviceRoleArn : str, default is Undefined, optional
@@ -1354,6 +1253,8 @@ schema AppsyncAwsUpboundIoV1beta2DatasourceStatusAtProvider:
     lambdaConfig?: AppsyncAwsUpboundIoV1beta2DatasourceStatusAtProviderLambdaConfig
 
     opensearchserviceConfig?: AppsyncAwsUpboundIoV1beta2DatasourceStatusAtProviderOpensearchserviceConfig
+
+    region?: str
 
     relationalDatabaseConfig?: AppsyncAwsUpboundIoV1beta2DatasourceStatusAtProviderRelationalDatabaseConfig
 

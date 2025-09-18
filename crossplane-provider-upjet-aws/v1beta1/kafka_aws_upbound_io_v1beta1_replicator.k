@@ -66,8 +66,6 @@ schema KafkaAwsUpboundIoV1beta1ReplicatorSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : KafkaAwsUpboundIoV1beta1ReplicatorSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : KafkaAwsUpboundIoV1beta1ReplicatorSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : KafkaAwsUpboundIoV1beta1ReplicatorSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema KafkaAwsUpboundIoV1beta1ReplicatorSpec:
 
     providerConfigRef?: KafkaAwsUpboundIoV1beta1ReplicatorSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: KafkaAwsUpboundIoV1beta1ReplicatorSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: KafkaAwsUpboundIoV1beta1ReplicatorSpecWriteConnectionSecretToRef
 
 
@@ -99,6 +95,7 @@ schema KafkaAwsUpboundIoV1beta1ReplicatorSpecForProvider:
     kafkaCluster : [KafkaAwsUpboundIoV1beta1ReplicatorSpecForProviderKafkaClusterItems0], default is Undefined, optional
         A list of Kafka clusters which are targets of the replicator.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     replicationInfoList : KafkaAwsUpboundIoV1beta1ReplicatorSpecForProviderReplicationInfoList, default is Undefined, optional
         replication info list
@@ -111,7 +108,7 @@ schema KafkaAwsUpboundIoV1beta1ReplicatorSpecForProvider:
     serviceExecutionRoleArnSelector : KafkaAwsUpboundIoV1beta1ReplicatorSpecForProviderServiceExecutionRoleArnSelector, default is Undefined, optional
         service execution role arn selector
     tags : {str:str}, default is Undefined, optional
-        tags
+        Key-value map of resource tags.
     """
 
 
@@ -779,7 +776,7 @@ schema KafkaAwsUpboundIoV1beta1ReplicatorSpecForProviderReplicationInfoListTopic
 
 schema KafkaAwsUpboundIoV1beta1ReplicatorSpecForProviderReplicationInfoListTopicReplicationItems0TopicNameConfiguration:
     r"""
-    kafka aws upbound io v1beta1 replicator spec for provider replication info list topic replication items0 topic name configuration
+    Configuration for specifying replicated topic names should be the same as their corresponding upstream topics or prefixed with source cluster alias.
 
     Attributes
     ----------
@@ -910,7 +907,7 @@ schema KafkaAwsUpboundIoV1beta1ReplicatorSpecInitProvider:
     serviceExecutionRoleArnSelector : KafkaAwsUpboundIoV1beta1ReplicatorSpecInitProviderServiceExecutionRoleArnSelector, default is Undefined, optional
         service execution role arn selector
     tags : {str:str}, default is Undefined, optional
-        tags
+        Key-value map of resource tags.
     """
 
 
@@ -1576,7 +1573,7 @@ schema KafkaAwsUpboundIoV1beta1ReplicatorSpecInitProviderReplicationInfoListTopi
 
 schema KafkaAwsUpboundIoV1beta1ReplicatorSpecInitProviderReplicationInfoListTopicReplicationItems0TopicNameConfiguration:
     r"""
-    kafka aws upbound io v1beta1 replicator spec init provider replication info list topic replication items0 topic name configuration
+    Configuration for specifying replicated topic names should be the same as their corresponding upstream topics or prefixed with source cluster alias.
 
     Attributes
     ----------
@@ -1721,112 +1718,12 @@ schema KafkaAwsUpboundIoV1beta1ReplicatorSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema KafkaAwsUpboundIoV1beta1ReplicatorSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : KafkaAwsUpboundIoV1beta1ReplicatorSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : KafkaAwsUpboundIoV1beta1ReplicatorSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: KafkaAwsUpboundIoV1beta1ReplicatorSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: KafkaAwsUpboundIoV1beta1ReplicatorSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema KafkaAwsUpboundIoV1beta1ReplicatorSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : KafkaAwsUpboundIoV1beta1ReplicatorSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: KafkaAwsUpboundIoV1beta1ReplicatorSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema KafkaAwsUpboundIoV1beta1ReplicatorSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema KafkaAwsUpboundIoV1beta1ReplicatorSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema KafkaAwsUpboundIoV1beta1ReplicatorSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1873,7 +1770,7 @@ schema KafkaAwsUpboundIoV1beta1ReplicatorStatusAtProvider:
     Attributes
     ----------
     arn : str, default is Undefined, optional
-        ARN of the Replicator. Do not begin the description with "An", "The", "Defines", "Indicates", or "Specifies," as these are verbose. In other words, "Indicates the amount of storage," can be rewritten as "Amount of storage," without losing any information.
+        ARN of the Replicator.
     currentVersion : str, default is Undefined, optional
         current version
     description : str, default is Undefined, optional
@@ -1882,6 +1779,9 @@ schema KafkaAwsUpboundIoV1beta1ReplicatorStatusAtProvider:
         id
     kafkaCluster : [KafkaAwsUpboundIoV1beta1ReplicatorStatusAtProviderKafkaClusterItems0], default is Undefined, optional
         A list of Kafka clusters which are targets of the replicator.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     replicationInfoList : KafkaAwsUpboundIoV1beta1ReplicatorStatusAtProviderReplicationInfoList, default is Undefined, optional
         replication info list
     replicatorName : str, default is Undefined, optional
@@ -1889,9 +1789,9 @@ schema KafkaAwsUpboundIoV1beta1ReplicatorStatusAtProvider:
     serviceExecutionRoleArn : str, default is Undefined, optional
         The ARN of the IAM role used by the replicator to access resources in the customer's account (e.g source and target clusters).
     tags : {str:str}, default is Undefined, optional
-        tags
+        Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
-        tags all
+        A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     """
 
 
@@ -1904,6 +1804,8 @@ schema KafkaAwsUpboundIoV1beta1ReplicatorStatusAtProvider:
     id?: str
 
     kafkaCluster?: [KafkaAwsUpboundIoV1beta1ReplicatorStatusAtProviderKafkaClusterItems0]
+
+    region?: str
 
     replicationInfoList?: KafkaAwsUpboundIoV1beta1ReplicatorStatusAtProviderReplicationInfoList
 
@@ -2084,7 +1986,7 @@ schema KafkaAwsUpboundIoV1beta1ReplicatorStatusAtProviderReplicationInfoListTopi
 
 schema KafkaAwsUpboundIoV1beta1ReplicatorStatusAtProviderReplicationInfoListTopicReplicationItems0TopicNameConfiguration:
     r"""
-    kafka aws upbound io v1beta1 replicator status at provider replication info list topic replication items0 topic name configuration
+    Configuration for specifying replicated topic names should be the same as their corresponding upstream topics or prefixed with source cluster alias.
 
     Attributes
     ----------

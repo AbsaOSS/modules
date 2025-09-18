@@ -66,8 +66,6 @@ schema RdsAwsUpboundIoV1beta2InstanceSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : RdsAwsUpboundIoV1beta2InstanceSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : RdsAwsUpboundIoV1beta2InstanceSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : RdsAwsUpboundIoV1beta2InstanceSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema RdsAwsUpboundIoV1beta2InstanceSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: RdsAwsUpboundIoV1beta2InstanceSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: RdsAwsUpboundIoV1beta2InstanceSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: RdsAwsUpboundIoV1beta2InstanceSpecWriteConnectionSecretToRef
 
@@ -144,6 +140,8 @@ schema RdsAwsUpboundIoV1beta2InstanceSpecForProvider:
         The instance profile associated with the underlying Amazon EC2 instance of an RDS Custom DB instance.
     customerOwnedIpEnabled : bool, default is Undefined, optional
         Indicates whether to enable a customer-owned IP address (CoIP) for an RDS on Outposts DB instance. See CoIP for RDS on Outposts for more information.
+    databaseInsightsMode : str, default is Undefined, optional
+        The mode of Database Insights that is enabled for the instance. Valid values: standard, advanced .
     dbName : str, default is Undefined, optional
         The name of the database to create when the DB instance is created. If this parameter is not specified, no database is created in the DB instance. Note that this does not apply for Oracle or SQL Server engines. See the AWS documentation for more details on what applies for those engines. If you are providing an Oracle db name, it needs to be in all upper case. Cannot be specified for a replica.
     dbSubnetGroupName : str, default is Undefined, optional
@@ -259,6 +257,10 @@ schema RdsAwsUpboundIoV1beta2InstanceSpecForProvider:
         parameter group name selector
     passwordSecretRef : RdsAwsUpboundIoV1beta2InstanceSpecForProviderPasswordSecretRef, default is Undefined, optional
         password secret ref
+    passwordWoSecretRef : RdsAwsUpboundIoV1beta2InstanceSpecForProviderPasswordWoSecretRef, default is Undefined, optional
+        password wo secret ref
+    passwordWoVersion : float, default is Undefined, optional
+        Used together with password_wo to trigger an update. Increment this value when an update to password_wo is required.
     performanceInsightsEnabled : bool, default is Undefined, optional
         Specifies whether Performance Insights are enabled. Defaults to false.
     performanceInsightsKmsKeyId : str, default is Undefined, optional
@@ -271,6 +273,7 @@ schema RdsAwsUpboundIoV1beta2InstanceSpecForProvider:
         Bool to control if instance is publicly
         accessible. Default is false.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     replicaMode : str, default is Undefined, optional
         Specifies whether the replica is in either mounted or open-read-only mode. This attribute
@@ -367,6 +370,8 @@ schema RdsAwsUpboundIoV1beta2InstanceSpecForProvider:
 
     customerOwnedIpEnabled?: bool
 
+    databaseInsightsMode?: str
+
     dbName?: str
 
     dbSubnetGroupName?: str
@@ -456,6 +461,10 @@ schema RdsAwsUpboundIoV1beta2InstanceSpecForProvider:
     parameterGroupNameSelector?: RdsAwsUpboundIoV1beta2InstanceSpecForProviderParameterGroupNameSelector
 
     passwordSecretRef?: RdsAwsUpboundIoV1beta2InstanceSpecForProviderPasswordSecretRef
+
+    passwordWoSecretRef?: RdsAwsUpboundIoV1beta2InstanceSpecForProviderPasswordWoSecretRef
+
+    passwordWoVersion?: float
 
     performanceInsightsEnabled?: bool
 
@@ -990,6 +999,28 @@ schema RdsAwsUpboundIoV1beta2InstanceSpecForProviderPasswordSecretRef:
     namespace: str
 
 
+schema RdsAwsUpboundIoV1beta2InstanceSpecForProviderPasswordWoSecretRef:
+    r"""
+    Password for the master DB user. Note that this may show up in logs, and it will be stored in the state file. Cannot be set if manage_master_user_password is set to true.
+
+    Attributes
+    ----------
+    key : str, default is Undefined, required
+        The key to select.
+    name : str, default is Undefined, required
+        Name of the secret.
+    namespace : str, default is Undefined, required
+        Namespace of the secret.
+    """
+
+
+    key: str
+
+    name: str
+
+    namespace: str
+
+
 schema RdsAwsUpboundIoV1beta2InstanceSpecForProviderReplicateSourceDbRef:
     r"""
     Reference to a Instance in rds to populate replicateSourceDb.
@@ -1289,6 +1320,8 @@ schema RdsAwsUpboundIoV1beta2InstanceSpecInitProvider:
         The instance profile associated with the underlying Amazon EC2 instance of an RDS Custom DB instance.
     customerOwnedIpEnabled : bool, default is Undefined, optional
         Indicates whether to enable a customer-owned IP address (CoIP) for an RDS on Outposts DB instance. See CoIP for RDS on Outposts for more information.
+    databaseInsightsMode : str, default is Undefined, optional
+        The mode of Database Insights that is enabled for the instance. Valid values: standard, advanced .
     dbName : str, default is Undefined, optional
         The name of the database to create when the DB instance is created. If this parameter is not specified, no database is created in the DB instance. Note that this does not apply for Oracle or SQL Server engines. See the AWS documentation for more details on what applies for those engines. If you are providing an Oracle db name, it needs to be in all upper case. Cannot be specified for a replica.
     dbSubnetGroupName : str, default is Undefined, optional
@@ -1404,6 +1437,10 @@ schema RdsAwsUpboundIoV1beta2InstanceSpecInitProvider:
         parameter group name selector
     passwordSecretRef : RdsAwsUpboundIoV1beta2InstanceSpecInitProviderPasswordSecretRef, default is Undefined, optional
         password secret ref
+    passwordWoSecretRef : RdsAwsUpboundIoV1beta2InstanceSpecInitProviderPasswordWoSecretRef, default is Undefined, optional
+        password wo secret ref
+    passwordWoVersion : float, default is Undefined, optional
+        Used together with password_wo to trigger an update. Increment this value when an update to password_wo is required.
     performanceInsightsEnabled : bool, default is Undefined, optional
         Specifies whether Performance Insights are enabled. Defaults to false.
     performanceInsightsKmsKeyId : str, default is Undefined, optional
@@ -1508,6 +1545,8 @@ schema RdsAwsUpboundIoV1beta2InstanceSpecInitProvider:
 
     customerOwnedIpEnabled?: bool
 
+    databaseInsightsMode?: str
+
     dbName?: str
 
     dbSubnetGroupName?: str
@@ -1597,6 +1636,10 @@ schema RdsAwsUpboundIoV1beta2InstanceSpecInitProvider:
     parameterGroupNameSelector?: RdsAwsUpboundIoV1beta2InstanceSpecInitProviderParameterGroupNameSelector
 
     passwordSecretRef?: RdsAwsUpboundIoV1beta2InstanceSpecInitProviderPasswordSecretRef
+
+    passwordWoSecretRef?: RdsAwsUpboundIoV1beta2InstanceSpecInitProviderPasswordWoSecretRef
+
+    passwordWoVersion?: float
 
     performanceInsightsEnabled?: bool
 
@@ -2129,6 +2172,28 @@ schema RdsAwsUpboundIoV1beta2InstanceSpecInitProviderPasswordSecretRef:
     namespace: str
 
 
+schema RdsAwsUpboundIoV1beta2InstanceSpecInitProviderPasswordWoSecretRef:
+    r"""
+    Password for the master DB user. Note that this may show up in logs, and it will be stored in the state file. Cannot be set if manage_master_user_password is set to true.
+
+    Attributes
+    ----------
+    key : str, default is Undefined, required
+        The key to select.
+    name : str, default is Undefined, required
+        Name of the secret.
+    namespace : str, default is Undefined, required
+        Namespace of the secret.
+    """
+
+
+    key: str
+
+    name: str
+
+    namespace: str
+
+
 schema RdsAwsUpboundIoV1beta2InstanceSpecInitProviderReplicateSourceDbRef:
     r"""
     Reference to a Instance in rds to populate replicateSourceDb.
@@ -2411,112 +2476,12 @@ schema RdsAwsUpboundIoV1beta2InstanceSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema RdsAwsUpboundIoV1beta2InstanceSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : RdsAwsUpboundIoV1beta2InstanceSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : RdsAwsUpboundIoV1beta2InstanceSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: RdsAwsUpboundIoV1beta2InstanceSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: RdsAwsUpboundIoV1beta2InstanceSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema RdsAwsUpboundIoV1beta2InstanceSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : RdsAwsUpboundIoV1beta2InstanceSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: RdsAwsUpboundIoV1beta2InstanceSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema RdsAwsUpboundIoV1beta2InstanceSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema RdsAwsUpboundIoV1beta2InstanceSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema RdsAwsUpboundIoV1beta2InstanceSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -2612,6 +2577,8 @@ schema RdsAwsUpboundIoV1beta2InstanceStatusAtProvider:
         The instance profile associated with the underlying Amazon EC2 instance of an RDS Custom DB instance.
     customerOwnedIpEnabled : bool, default is Undefined, optional
         Indicates whether to enable a customer-owned IP address (CoIP) for an RDS on Outposts DB instance. See CoIP for RDS on Outposts for more information.
+    databaseInsightsMode : str, default is Undefined, optional
+        The mode of Database Insights that is enabled for the instance. Valid values: standard, advanced .
     dbName : str, default is Undefined, optional
         The name of the database to create when the DB instance is created. If this parameter is not specified, no database is created in the DB instance. Note that this does not apply for Oracle or SQL Server engines. See the AWS documentation for more details on what applies for those engines. If you are providing an Oracle db name, it needs to be in all upper case. Cannot be specified for a replica.
     dbSubnetGroupName : str, default is Undefined, optional
@@ -2720,6 +2687,8 @@ schema RdsAwsUpboundIoV1beta2InstanceStatusAtProvider:
         Name of the DB option group to associate.
     parameterGroupName : str, default is Undefined, optional
         Name of the DB parameter group to associate.
+    passwordWoVersion : float, default is Undefined, optional
+        Used together with password_wo to trigger an update. Increment this value when an update to password_wo is required.
     performanceInsightsEnabled : bool, default is Undefined, optional
         Specifies whether Performance Insights are enabled. Defaults to false.
     performanceInsightsKmsKeyId : str, default is Undefined, optional
@@ -2731,6 +2700,9 @@ schema RdsAwsUpboundIoV1beta2InstanceStatusAtProvider:
     publiclyAccessible : bool, default is Undefined, optional
         Bool to control if instance is publicly
         accessible. Default is false.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     replicaMode : str, default is Undefined, optional
         Specifies whether the replica is in either mounted or open-read-only mode. This attribute
         is only supported by Oracle instances. Oracle replicas operate in open-read-only mode unless otherwise specified. See Working with Oracle Read Replicas for more information.
@@ -2828,6 +2800,8 @@ schema RdsAwsUpboundIoV1beta2InstanceStatusAtProvider:
 
     customerOwnedIpEnabled?: bool
 
+    databaseInsightsMode?: str
+
     dbName?: str
 
     dbSubnetGroupName?: str
@@ -2910,6 +2884,8 @@ schema RdsAwsUpboundIoV1beta2InstanceStatusAtProvider:
 
     parameterGroupName?: str
 
+    passwordWoVersion?: float
+
     performanceInsightsEnabled?: bool
 
     performanceInsightsKmsKeyId?: str
@@ -2919,6 +2895,8 @@ schema RdsAwsUpboundIoV1beta2InstanceStatusAtProvider:
     port?: float
 
     publiclyAccessible?: bool
+
+    region?: str
 
     replicaMode?: str
 

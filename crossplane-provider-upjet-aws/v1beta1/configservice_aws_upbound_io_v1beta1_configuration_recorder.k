@@ -66,8 +66,6 @@ schema ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpec:
 
     providerConfigRef?: ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpecWriteConnectionSecretToRef
 
 
@@ -99,6 +95,7 @@ schema ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpecForProvider:
     recordingMode : [ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpecForProviderRecordingModeItems0], default is Undefined, optional
         Recording mode - see below.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     roleArn : str, default is Undefined, optional
         Amazon Resource Name (ARN) of the IAM role. Used to make read or write requests to the delivery channel and to describe the AWS resources associated with the account. See AWS Docs for more details.
@@ -187,7 +184,7 @@ schema ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpecForProviderRecor
     Attributes
     ----------
     recordingFrequency : str, default is Undefined, optional
-        Default reecording frequency. CONTINUOUS or DAILY.
+        Default recording frequency. CONTINUOUS or DAILY.
     recordingModeOverride : [ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpecForProviderRecordingModeItems0RecordingModeOverrideItems0], default is Undefined, optional
         Recording mode overrides. Detailed below.
     """
@@ -207,7 +204,7 @@ schema ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpecForProviderRecor
     description : str, default is Undefined, optional
         A description you provide of the override.
     recordingFrequency : str, default is Undefined, optional
-        Default reecording frequency. CONTINUOUS or DAILY.
+        Default recording frequency. CONTINUOUS or DAILY.
     resourceTypes : [str], default is Undefined, optional
         A list that specifies the types of AWS resources for which AWS Config excludes records configuration changes. See relevant part of AWS Docs for available types.
     """
@@ -413,7 +410,7 @@ schema ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpecInitProviderReco
     Attributes
     ----------
     recordingFrequency : str, default is Undefined, optional
-        Default reecording frequency. CONTINUOUS or DAILY.
+        Default recording frequency. CONTINUOUS or DAILY.
     recordingModeOverride : [ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpecInitProviderRecordingModeItems0RecordingModeOverrideItems0], default is Undefined, optional
         Recording mode overrides. Detailed below.
     """
@@ -433,7 +430,7 @@ schema ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpecInitProviderReco
     description : str, default is Undefined, optional
         A description you provide of the override.
     recordingFrequency : str, default is Undefined, optional
-        Default reecording frequency. CONTINUOUS or DAILY.
+        Default recording frequency. CONTINUOUS or DAILY.
     resourceTypes : [str], default is Undefined, optional
         A list that specifies the types of AWS resources for which AWS Config excludes records configuration changes. See relevant part of AWS Docs for available types.
     """
@@ -579,112 +576,12 @@ schema ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpecProviderConfigRe
     resolve?: "Always" | "IfNotPresent"
 
 
-schema ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -736,6 +633,9 @@ schema ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderStatusAtProvider:
         Recording group - see below.
     recordingMode : [ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderStatusAtProviderRecordingModeItems0], default is Undefined, optional
         Recording mode - see below.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     roleArn : str, default is Undefined, optional
         Amazon Resource Name (ARN) of the IAM role. Used to make read or write requests to the delivery channel and to describe the AWS resources associated with the account. See AWS Docs for more details.
     """
@@ -746,6 +646,8 @@ schema ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderStatusAtProvider:
     recordingGroup?: [ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderStatusAtProviderRecordingGroupItems0]
 
     recordingMode?: [ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderStatusAtProviderRecordingModeItems0]
+
+    region?: str
 
     roleArn?: str
 
@@ -815,7 +717,7 @@ schema ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderStatusAtProviderReco
     Attributes
     ----------
     recordingFrequency : str, default is Undefined, optional
-        Default reecording frequency. CONTINUOUS or DAILY.
+        Default recording frequency. CONTINUOUS or DAILY.
     recordingModeOverride : [ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderStatusAtProviderRecordingModeItems0RecordingModeOverrideItems0], default is Undefined, optional
         Recording mode overrides. Detailed below.
     """
@@ -835,7 +737,7 @@ schema ConfigserviceAwsUpboundIoV1beta1ConfigurationRecorderStatusAtProviderReco
     description : str, default is Undefined, optional
         A description you provide of the override.
     recordingFrequency : str, default is Undefined, optional
-        Default reecording frequency. CONTINUOUS or DAILY.
+        Default recording frequency. CONTINUOUS or DAILY.
     resourceTypes : [str], default is Undefined, optional
         A list that specifies the types of AWS resources for which AWS Config excludes records configuration changes. See relevant part of AWS Docs for available types.
     """

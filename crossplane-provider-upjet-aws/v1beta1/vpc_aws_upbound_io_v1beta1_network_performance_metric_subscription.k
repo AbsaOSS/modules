@@ -66,8 +66,6 @@ schema VpcAwsUpboundIoV1beta1NetworkPerformanceMetricSubscriptionSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : VpcAwsUpboundIoV1beta1NetworkPerformanceMetricSubscriptionSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : VpcAwsUpboundIoV1beta1NetworkPerformanceMetricSubscriptionSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : VpcAwsUpboundIoV1beta1NetworkPerformanceMetricSubscriptionSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema VpcAwsUpboundIoV1beta1NetworkPerformanceMetricSubscriptionSpec:
 
     providerConfigRef?: VpcAwsUpboundIoV1beta1NetworkPerformanceMetricSubscriptionSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: VpcAwsUpboundIoV1beta1NetworkPerformanceMetricSubscriptionSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: VpcAwsUpboundIoV1beta1NetworkPerformanceMetricSubscriptionSpecWriteConnectionSecretToRef
 
 
@@ -99,6 +95,7 @@ schema VpcAwsUpboundIoV1beta1NetworkPerformanceMetricSubscriptionSpecForProvider
     metric : str, default is Undefined, optional
         The metric used for the enabled subscription. Valid values: aggregate-latency. Default: aggregate-latency.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     source : str, default is Undefined, optional
         The source Region or Availability Zone that the metric subscription is enabled for. For example, us-east-1.
@@ -197,112 +194,12 @@ schema VpcAwsUpboundIoV1beta1NetworkPerformanceMetricSubscriptionSpecProviderCon
     resolve?: "Always" | "IfNotPresent"
 
 
-schema VpcAwsUpboundIoV1beta1NetworkPerformanceMetricSubscriptionSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : VpcAwsUpboundIoV1beta1NetworkPerformanceMetricSubscriptionSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : VpcAwsUpboundIoV1beta1NetworkPerformanceMetricSubscriptionSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: VpcAwsUpboundIoV1beta1NetworkPerformanceMetricSubscriptionSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: VpcAwsUpboundIoV1beta1NetworkPerformanceMetricSubscriptionSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema VpcAwsUpboundIoV1beta1NetworkPerformanceMetricSubscriptionSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : VpcAwsUpboundIoV1beta1NetworkPerformanceMetricSubscriptionSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: VpcAwsUpboundIoV1beta1NetworkPerformanceMetricSubscriptionSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema VpcAwsUpboundIoV1beta1NetworkPerformanceMetricSubscriptionSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema VpcAwsUpboundIoV1beta1NetworkPerformanceMetricSubscriptionSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema VpcAwsUpboundIoV1beta1NetworkPerformanceMetricSubscriptionSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -356,6 +253,9 @@ schema VpcAwsUpboundIoV1beta1NetworkPerformanceMetricSubscriptionStatusAtProvide
         The metric used for the enabled subscription. Valid values: aggregate-latency. Default: aggregate-latency.
     period : str, default is Undefined, optional
         The data aggregation time for the subscription.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     source : str, default is Undefined, optional
         The source Region or Availability Zone that the metric subscription is enabled for. For example, us-east-1.
     statistic : str, default is Undefined, optional
@@ -370,6 +270,8 @@ schema VpcAwsUpboundIoV1beta1NetworkPerformanceMetricSubscriptionStatusAtProvide
     metric?: str
 
     period?: str
+
+    region?: str
 
     source?: str
 

@@ -66,8 +66,6 @@ schema Ec2AwsUpboundIoV1beta2VPCEndpointSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : Ec2AwsUpboundIoV1beta2VPCEndpointSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : Ec2AwsUpboundIoV1beta2VPCEndpointSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : Ec2AwsUpboundIoV1beta2VPCEndpointSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema Ec2AwsUpboundIoV1beta2VPCEndpointSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: Ec2AwsUpboundIoV1beta2VPCEndpointSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: Ec2AwsUpboundIoV1beta2VPCEndpointSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: Ec2AwsUpboundIoV1beta2VPCEndpointSpecWriteConnectionSecretToRef
 
@@ -106,13 +102,18 @@ schema Ec2AwsUpboundIoV1beta2VPCEndpointSpecForProvider:
         Whether or not to associate a private hosted zone with the specified VPC. Applicable for endpoints of type Interface. Most users will want this enabled to allow services within the VPC to automatically use the endpoint.
         Defaults to false.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
+    resourceConfigurationArn : str, default is Undefined, optional
+        The ARN of a Resource Configuration to connect this VPC Endpoint to. Exactly one of resource_configuration_arn, service_name or service_network_arn is required.
     serviceName : str, default is Undefined, optional
-        The service name. For AWS services the service name is usually in the form com.amazonaws.<region>.<service> (the SageMaker Notebook service is an exception to this rule, the service name is in the form aws.sagemaker.<region>.notebook).
+        The service name. For AWS services the service name is usually in the form com.amazonaws.<region>.<service> (the SageMaker AI Notebook service is an exception to this rule, the service name is in the form aws.sagemaker.<region>.notebook). Exactly one of resource_configuration_arn, service_name or service_network_arn is required.
     serviceNameRef : Ec2AwsUpboundIoV1beta2VPCEndpointSpecForProviderServiceNameRef, default is Undefined, optional
         service name ref
     serviceNameSelector : Ec2AwsUpboundIoV1beta2VPCEndpointSpecForProviderServiceNameSelector, default is Undefined, optional
         service name selector
+    serviceNetworkArn : str, default is Undefined, optional
+        The ARN of a Service Network to connect this VPC Endpoint to. Exactly one of resource_configuration_arn, service_name or service_network_arn is required.
     serviceRegion : str, default is Undefined, optional
         - The AWS region of the VPC Endpoint Service. If specified, the VPC endpoint will connect to the service in the provided region. Applicable for endpoints of type Interface.
     subnetConfiguration : [Ec2AwsUpboundIoV1beta2VPCEndpointSpecForProviderSubnetConfigurationItems0], default is Undefined, optional
@@ -120,7 +121,7 @@ schema Ec2AwsUpboundIoV1beta2VPCEndpointSpecForProvider:
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     vpcEndpointType : str, default is Undefined, optional
-        The VPC endpoint type, Gateway, GatewayLoadBalancer, or Interface. Defaults to Gateway.
+        The VPC endpoint type, Gateway, GatewayLoadBalancer,Interface, Resource or ServiceNetwork. Defaults to Gateway.
     vpcId : str, default is Undefined, optional
         The ID of the VPC in which the endpoint will be used.
     vpcIdRef : Ec2AwsUpboundIoV1beta2VPCEndpointSpecForProviderVpcIDRef, default is Undefined, optional
@@ -142,11 +143,15 @@ schema Ec2AwsUpboundIoV1beta2VPCEndpointSpecForProvider:
 
     region: str
 
+    resourceConfigurationArn?: str
+
     serviceName?: str
 
     serviceNameRef?: Ec2AwsUpboundIoV1beta2VPCEndpointSpecForProviderServiceNameRef
 
     serviceNameSelector?: Ec2AwsUpboundIoV1beta2VPCEndpointSpecForProviderServiceNameSelector
+
+    serviceNetworkArn?: str
 
     serviceRegion?: str
 
@@ -504,12 +509,16 @@ schema Ec2AwsUpboundIoV1beta2VPCEndpointSpecInitProvider:
     privateDnsEnabled : bool, default is Undefined, optional
         Whether or not to associate a private hosted zone with the specified VPC. Applicable for endpoints of type Interface. Most users will want this enabled to allow services within the VPC to automatically use the endpoint.
         Defaults to false.
+    resourceConfigurationArn : str, default is Undefined, optional
+        The ARN of a Resource Configuration to connect this VPC Endpoint to. Exactly one of resource_configuration_arn, service_name or service_network_arn is required.
     serviceName : str, default is Undefined, optional
-        The service name. For AWS services the service name is usually in the form com.amazonaws.<region>.<service> (the SageMaker Notebook service is an exception to this rule, the service name is in the form aws.sagemaker.<region>.notebook).
+        The service name. For AWS services the service name is usually in the form com.amazonaws.<region>.<service> (the SageMaker AI Notebook service is an exception to this rule, the service name is in the form aws.sagemaker.<region>.notebook). Exactly one of resource_configuration_arn, service_name or service_network_arn is required.
     serviceNameRef : Ec2AwsUpboundIoV1beta2VPCEndpointSpecInitProviderServiceNameRef, default is Undefined, optional
         service name ref
     serviceNameSelector : Ec2AwsUpboundIoV1beta2VPCEndpointSpecInitProviderServiceNameSelector, default is Undefined, optional
         service name selector
+    serviceNetworkArn : str, default is Undefined, optional
+        The ARN of a Service Network to connect this VPC Endpoint to. Exactly one of resource_configuration_arn, service_name or service_network_arn is required.
     serviceRegion : str, default is Undefined, optional
         - The AWS region of the VPC Endpoint Service. If specified, the VPC endpoint will connect to the service in the provided region. Applicable for endpoints of type Interface.
     subnetConfiguration : [Ec2AwsUpboundIoV1beta2VPCEndpointSpecInitProviderSubnetConfigurationItems0], default is Undefined, optional
@@ -517,7 +526,7 @@ schema Ec2AwsUpboundIoV1beta2VPCEndpointSpecInitProvider:
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     vpcEndpointType : str, default is Undefined, optional
-        The VPC endpoint type, Gateway, GatewayLoadBalancer, or Interface. Defaults to Gateway.
+        The VPC endpoint type, Gateway, GatewayLoadBalancer,Interface, Resource or ServiceNetwork. Defaults to Gateway.
     vpcId : str, default is Undefined, optional
         The ID of the VPC in which the endpoint will be used.
     vpcIdRef : Ec2AwsUpboundIoV1beta2VPCEndpointSpecInitProviderVpcIDRef, default is Undefined, optional
@@ -537,11 +546,15 @@ schema Ec2AwsUpboundIoV1beta2VPCEndpointSpecInitProvider:
 
     privateDnsEnabled?: bool
 
+    resourceConfigurationArn?: str
+
     serviceName?: str
 
     serviceNameRef?: Ec2AwsUpboundIoV1beta2VPCEndpointSpecInitProviderServiceNameRef
 
     serviceNameSelector?: Ec2AwsUpboundIoV1beta2VPCEndpointSpecInitProviderServiceNameSelector
+
+    serviceNetworkArn?: str
 
     serviceRegion?: str
 
@@ -917,112 +930,12 @@ schema Ec2AwsUpboundIoV1beta2VPCEndpointSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema Ec2AwsUpboundIoV1beta2VPCEndpointSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : Ec2AwsUpboundIoV1beta2VPCEndpointSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : Ec2AwsUpboundIoV1beta2VPCEndpointSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: Ec2AwsUpboundIoV1beta2VPCEndpointSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: Ec2AwsUpboundIoV1beta2VPCEndpointSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema Ec2AwsUpboundIoV1beta2VPCEndpointSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : Ec2AwsUpboundIoV1beta2VPCEndpointSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: Ec2AwsUpboundIoV1beta2VPCEndpointSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema Ec2AwsUpboundIoV1beta2VPCEndpointSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema Ec2AwsUpboundIoV1beta2VPCEndpointSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema Ec2AwsUpboundIoV1beta2VPCEndpointSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1093,15 +1006,22 @@ schema Ec2AwsUpboundIoV1beta2VPCEndpointStatusAtProvider:
     privateDnsEnabled : bool, default is Undefined, optional
         Whether or not to associate a private hosted zone with the specified VPC. Applicable for endpoints of type Interface. Most users will want this enabled to allow services within the VPC to automatically use the endpoint.
         Defaults to false.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     requesterManaged : bool, default is Undefined, optional
         Whether or not the VPC Endpoint is being managed by its service - true or false.
+    resourceConfigurationArn : str, default is Undefined, optional
+        The ARN of a Resource Configuration to connect this VPC Endpoint to. Exactly one of resource_configuration_arn, service_name or service_network_arn is required.
     routeTableIds : [str], default is Undefined, optional
         One or more route table IDs. Applicable for endpoints of type Gateway.
     securityGroupIds : [str], default is Undefined, optional
         The ID of one or more security groups to associate with the network interface. Applicable for endpoints of type Interface.
         If no security groups are specified, the VPC's default security group is associated with the endpoint.
     serviceName : str, default is Undefined, optional
-        The service name. For AWS services the service name is usually in the form com.amazonaws.<region>.<service> (the SageMaker Notebook service is an exception to this rule, the service name is in the form aws.sagemaker.<region>.notebook).
+        The service name. For AWS services the service name is usually in the form com.amazonaws.<region>.<service> (the SageMaker AI Notebook service is an exception to this rule, the service name is in the form aws.sagemaker.<region>.notebook). Exactly one of resource_configuration_arn, service_name or service_network_arn is required.
+    serviceNetworkArn : str, default is Undefined, optional
+        The ARN of a Service Network to connect this VPC Endpoint to. Exactly one of resource_configuration_arn, service_name or service_network_arn is required.
     serviceRegion : str, default is Undefined, optional
         - The AWS region of the VPC Endpoint Service. If specified, the VPC endpoint will connect to the service in the provided region. Applicable for endpoints of type Interface.
     state : str, default is Undefined, optional
@@ -1115,7 +1035,7 @@ schema Ec2AwsUpboundIoV1beta2VPCEndpointStatusAtProvider:
     tagsAll : {str:str}, default is Undefined, optional
         A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     vpcEndpointType : str, default is Undefined, optional
-        The VPC endpoint type, Gateway, GatewayLoadBalancer, or Interface. Defaults to Gateway.
+        The VPC endpoint type, Gateway, GatewayLoadBalancer,Interface, Resource or ServiceNetwork. Defaults to Gateway.
     vpcId : str, default is Undefined, optional
         The ID of the VPC in which the endpoint will be used.
     """
@@ -1145,13 +1065,19 @@ schema Ec2AwsUpboundIoV1beta2VPCEndpointStatusAtProvider:
 
     privateDnsEnabled?: bool
 
+    region?: str
+
     requesterManaged?: bool
+
+    resourceConfigurationArn?: str
 
     routeTableIds?: [str]
 
     securityGroupIds?: [str]
 
     serviceName?: str
+
+    serviceNetworkArn?: str
 
     serviceRegion?: str
 

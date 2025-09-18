@@ -66,8 +66,6 @@ schema Route53resolverAwsUpboundIoV1beta1RuleSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : Route53resolverAwsUpboundIoV1beta1RuleSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : Route53resolverAwsUpboundIoV1beta1RuleSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : Route53resolverAwsUpboundIoV1beta1RuleSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema Route53resolverAwsUpboundIoV1beta1RuleSpec:
 
     providerConfigRef?: Route53resolverAwsUpboundIoV1beta1RuleSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: Route53resolverAwsUpboundIoV1beta1RuleSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: Route53resolverAwsUpboundIoV1beta1RuleSpecWriteConnectionSecretToRef
 
 
@@ -99,6 +95,7 @@ schema Route53resolverAwsUpboundIoV1beta1RuleSpecForProvider:
     name : str, default is Undefined, optional
         Friendly name that lets you easily find a rule in the Resolver dashboard in the Route 53 console.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     resolverEndpointId : str, default is Undefined, optional
         ID of the outbound resolver endpoint that you want to use to route DNS queries to the IP addresses that you specify using target_ip.
@@ -232,7 +229,7 @@ schema Route53resolverAwsUpboundIoV1beta1RuleSpecForProviderTargetIPItems0:
     Attributes
     ----------
     ip : str, default is Undefined, optional
-        One IP address that you want to forward DNS queries to. You can specify only IPv4 addresses.
+        One IPv4 address that you want to forward DNS queries to.
     ipv6 : str, default is Undefined, optional
         One IPv6 address that you want to forward DNS queries to.
     port : float, default is Undefined, optional
@@ -400,7 +397,7 @@ schema Route53resolverAwsUpboundIoV1beta1RuleSpecInitProviderTargetIPItems0:
     Attributes
     ----------
     ip : str, default is Undefined, optional
-        One IP address that you want to forward DNS queries to. You can specify only IPv4 addresses.
+        One IPv4 address that you want to forward DNS queries to.
     ipv6 : str, default is Undefined, optional
         One IPv6 address that you want to forward DNS queries to.
     port : float, default is Undefined, optional
@@ -463,112 +460,12 @@ schema Route53resolverAwsUpboundIoV1beta1RuleSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema Route53resolverAwsUpboundIoV1beta1RuleSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : Route53resolverAwsUpboundIoV1beta1RuleSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : Route53resolverAwsUpboundIoV1beta1RuleSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: Route53resolverAwsUpboundIoV1beta1RuleSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: Route53resolverAwsUpboundIoV1beta1RuleSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema Route53resolverAwsUpboundIoV1beta1RuleSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : Route53resolverAwsUpboundIoV1beta1RuleSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: Route53resolverAwsUpboundIoV1beta1RuleSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema Route53resolverAwsUpboundIoV1beta1RuleSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema Route53resolverAwsUpboundIoV1beta1RuleSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema Route53resolverAwsUpboundIoV1beta1RuleSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -624,6 +521,9 @@ schema Route53resolverAwsUpboundIoV1beta1RuleStatusAtProvider:
         Friendly name that lets you easily find a rule in the Resolver dashboard in the Route 53 console.
     ownerId : str, default is Undefined, optional
         When a rule is shared with another AWS account, the account ID of the account that the rule is shared with.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     resolverEndpointId : str, default is Undefined, optional
         ID of the outbound resolver endpoint that you want to use to route DNS queries to the IP addresses that you specify using target_ip.
         This argument should only be specified for FORWARD type rules.
@@ -652,6 +552,8 @@ schema Route53resolverAwsUpboundIoV1beta1RuleStatusAtProvider:
 
     ownerId?: str
 
+    region?: str
+
     resolverEndpointId?: str
 
     ruleType?: str
@@ -672,7 +574,7 @@ schema Route53resolverAwsUpboundIoV1beta1RuleStatusAtProviderTargetIPItems0:
     Attributes
     ----------
     ip : str, default is Undefined, optional
-        One IP address that you want to forward DNS queries to. You can specify only IPv4 addresses.
+        One IPv4 address that you want to forward DNS queries to.
     ipv6 : str, default is Undefined, optional
         One IPv6 address that you want to forward DNS queries to.
     port : float, default is Undefined, optional

@@ -66,8 +66,6 @@ schema CognitoidpAwsUpboundIoV1beta1UserPoolDomainSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : CognitoidpAwsUpboundIoV1beta1UserPoolDomainSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : CognitoidpAwsUpboundIoV1beta1UserPoolDomainSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : CognitoidpAwsUpboundIoV1beta1UserPoolDomainSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema CognitoidpAwsUpboundIoV1beta1UserPoolDomainSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: CognitoidpAwsUpboundIoV1beta1UserPoolDomainSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: CognitoidpAwsUpboundIoV1beta1UserPoolDomainSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: CognitoidpAwsUpboundIoV1beta1UserPoolDomainSpecWriteConnectionSecretToRef
 
@@ -102,7 +98,10 @@ schema CognitoidpAwsUpboundIoV1beta1UserPoolDomainSpecForProvider:
         certificate arn selector
     domain : str, default is Undefined, optional
         For custom domains, this is the fully-qualified domain name, such as auth.example.com. For Amazon Cognito prefix domains, this is the prefix alone, such as auth.
+    managedLoginVersion : float, default is Undefined, optional
+        A version number that indicates the state of managed login for your domain. Valid values: 1 for hosted UI (classic), 2 for the newer managed login with the branding designer.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     userPoolId : str, default is Undefined, optional
         The user pool ID.
@@ -120,6 +119,8 @@ schema CognitoidpAwsUpboundIoV1beta1UserPoolDomainSpecForProvider:
     certificateArnSelector?: CognitoidpAwsUpboundIoV1beta1UserPoolDomainSpecForProviderCertificateArnSelector
 
     domain?: str
+
+    managedLoginVersion?: float
 
     region: str
 
@@ -331,6 +332,8 @@ schema CognitoidpAwsUpboundIoV1beta1UserPoolDomainSpecInitProvider:
         certificate arn selector
     domain : str, default is Undefined, optional
         For custom domains, this is the fully-qualified domain name, such as auth.example.com. For Amazon Cognito prefix domains, this is the prefix alone, such as auth.
+    managedLoginVersion : float, default is Undefined, optional
+        A version number that indicates the state of managed login for your domain. Valid values: 1 for hosted UI (classic), 2 for the newer managed login with the branding designer.
     userPoolId : str, default is Undefined, optional
         The user pool ID.
     userPoolIdRef : CognitoidpAwsUpboundIoV1beta1UserPoolDomainSpecInitProviderUserPoolIDRef, default is Undefined, optional
@@ -347,6 +350,8 @@ schema CognitoidpAwsUpboundIoV1beta1UserPoolDomainSpecInitProvider:
     certificateArnSelector?: CognitoidpAwsUpboundIoV1beta1UserPoolDomainSpecInitProviderCertificateArnSelector
 
     domain?: str
+
+    managedLoginVersion?: float
 
     userPoolId?: str
 
@@ -577,112 +582,12 @@ schema CognitoidpAwsUpboundIoV1beta1UserPoolDomainSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema CognitoidpAwsUpboundIoV1beta1UserPoolDomainSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : CognitoidpAwsUpboundIoV1beta1UserPoolDomainSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : CognitoidpAwsUpboundIoV1beta1UserPoolDomainSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: CognitoidpAwsUpboundIoV1beta1UserPoolDomainSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: CognitoidpAwsUpboundIoV1beta1UserPoolDomainSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema CognitoidpAwsUpboundIoV1beta1UserPoolDomainSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : CognitoidpAwsUpboundIoV1beta1UserPoolDomainSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: CognitoidpAwsUpboundIoV1beta1UserPoolDomainSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema CognitoidpAwsUpboundIoV1beta1UserPoolDomainSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema CognitoidpAwsUpboundIoV1beta1UserPoolDomainSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema CognitoidpAwsUpboundIoV1beta1UserPoolDomainSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -742,6 +647,11 @@ schema CognitoidpAwsUpboundIoV1beta1UserPoolDomainStatusAtProvider:
         For custom domains, this is the fully-qualified domain name, such as auth.example.com. For Amazon Cognito prefix domains, this is the prefix alone, such as auth.
     id : str, default is Undefined, optional
         id
+    managedLoginVersion : float, default is Undefined, optional
+        A version number that indicates the state of managed login for your domain. Valid values: 1 for hosted UI (classic), 2 for the newer managed login with the branding designer.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     s3Bucket : str, default is Undefined, optional
         The S3 bucket where the static files for this domain are stored.
     userPoolId : str, default is Undefined, optional
@@ -764,6 +674,10 @@ schema CognitoidpAwsUpboundIoV1beta1UserPoolDomainStatusAtProvider:
     domain?: str
 
     id?: str
+
+    managedLoginVersion?: float
+
+    region?: str
 
     s3Bucket?: str
 

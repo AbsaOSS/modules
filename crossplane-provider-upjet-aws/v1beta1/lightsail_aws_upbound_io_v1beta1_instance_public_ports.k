@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema InstancePublicPorts:
     r"""
-    InstancePublicPorts is the Schema for the InstancePublicPortss API. Provides an Lightsail Instance
+    InstancePublicPorts is the Schema for the InstancePublicPortss API. Manages public ports for a Lightsail instance.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema LightsailAwsUpboundIoV1beta1InstancePublicPortsSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema LightsailAwsUpboundIoV1beta1InstancePublicPortsSpec:
 
     providerConfigRef?: LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecWriteConnectionSecretToRef
 
 
@@ -95,14 +91,15 @@ schema LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecForProvider:
     Attributes
     ----------
     instanceName : str, default is Undefined, optional
-        Name of the Lightsail Instance.
+        Name of the instance for which to open ports.
     instanceNameRef : LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecForProviderInstanceNameRef, default is Undefined, optional
         instance name ref
     instanceNameSelector : LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecForProviderInstanceNameSelector, default is Undefined, optional
         instance name selector
     portInfo : [LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecForProviderPortInfoItems0], default is Undefined, optional
-        Configuration block with port information. AWS closes all currently open ports that are not included in the port_info. Detailed below.
+        Descriptor of the ports to open for the specified instance. AWS closes all currently open ports that are not included in this argument. See port_info Block for details.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     """
 
@@ -216,15 +213,15 @@ schema LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecForProviderPortInfoIte
     cidrListAliases : [str], default is Undefined, optional
         Set of CIDR aliases that define access for a preconfigured range of IP addresses.
     cidrs : [str], default is Undefined, optional
-        Set of CIDR blocks.
+        Set of IPv4 addresses or ranges of IPv4 addresses (in CIDR notation) that are allowed to connect to an instance through the ports, and the protocol.
     fromPort : float, default is Undefined, optional
-        First port in a range of open ports on an instance.
+        First port in a range of open ports on an instance. See PortInfo for details.
     ipv6Cidrs : [str], default is Undefined, optional
-        ipv6 cidrs
+        Set of IPv6 addresses or ranges of IPv6 addresses (in CIDR notation) that are allowed to connect to an instance through the ports, and the protocol.
     $protocol : str, default is Undefined, optional
-        IP protocol name. Valid values are tcp, all, udp, and icmp.
+        IP protocol name. Valid values: tcp, all, udp, icmp, icmpv6. See PortInfo for details.
     toPort : float, default is Undefined, optional
-        Last port in a range of open ports on an instance.
+        Last port in a range of open ports on an instance. See PortInfo for details.
     """
 
 
@@ -257,13 +254,13 @@ schema LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecInitProvider:
     Attributes
     ----------
     instanceName : str, default is Undefined, optional
-        Name of the Lightsail Instance.
+        Name of the instance for which to open ports.
     instanceNameRef : LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecInitProviderInstanceNameRef, default is Undefined, optional
         instance name ref
     instanceNameSelector : LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecInitProviderInstanceNameSelector, default is Undefined, optional
         instance name selector
     portInfo : [LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecInitProviderPortInfoItems0], default is Undefined, optional
-        Configuration block with port information. AWS closes all currently open ports that are not included in the port_info. Detailed below.
+        Descriptor of the ports to open for the specified instance. AWS closes all currently open ports that are not included in this argument. See port_info Block for details.
     """
 
 
@@ -374,15 +371,15 @@ schema LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecInitProviderPortInfoIt
     cidrListAliases : [str], default is Undefined, optional
         Set of CIDR aliases that define access for a preconfigured range of IP addresses.
     cidrs : [str], default is Undefined, optional
-        Set of CIDR blocks.
+        Set of IPv4 addresses or ranges of IPv4 addresses (in CIDR notation) that are allowed to connect to an instance through the ports, and the protocol.
     fromPort : float, default is Undefined, optional
-        First port in a range of open ports on an instance.
+        First port in a range of open ports on an instance. See PortInfo for details.
     ipv6Cidrs : [str], default is Undefined, optional
-        ipv6 cidrs
+        Set of IPv6 addresses or ranges of IPv6 addresses (in CIDR notation) that are allowed to connect to an instance through the ports, and the protocol.
     $protocol : str, default is Undefined, optional
-        IP protocol name. Valid values are tcp, all, udp, and icmp.
+        IP protocol name. Valid values: tcp, all, udp, icmp, icmpv6. See PortInfo for details.
     toPort : float, default is Undefined, optional
-        Last port in a range of open ports on an instance.
+        Last port in a range of open ports on an instance. See PortInfo for details.
     """
 
 
@@ -443,112 +440,12 @@ schema LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecProviderConfigRefPolic
     resolve?: "Always" | "IfNotPresent"
 
 
-schema LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema LightsailAwsUpboundIoV1beta1InstancePublicPortsSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -597,9 +494,12 @@ schema LightsailAwsUpboundIoV1beta1InstancePublicPortsStatusAtProvider:
     id : str, default is Undefined, optional
         ID of the resource.
     instanceName : str, default is Undefined, optional
-        Name of the Lightsail Instance.
+        Name of the instance for which to open ports.
     portInfo : [LightsailAwsUpboundIoV1beta1InstancePublicPortsStatusAtProviderPortInfoItems0], default is Undefined, optional
-        Configuration block with port information. AWS closes all currently open ports that are not included in the port_info. Detailed below.
+        Descriptor of the ports to open for the specified instance. AWS closes all currently open ports that are not included in this argument. See port_info Block for details.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     """
 
 
@@ -608,6 +508,8 @@ schema LightsailAwsUpboundIoV1beta1InstancePublicPortsStatusAtProvider:
     instanceName?: str
 
     portInfo?: [LightsailAwsUpboundIoV1beta1InstancePublicPortsStatusAtProviderPortInfoItems0]
+
+    region?: str
 
 
 schema LightsailAwsUpboundIoV1beta1InstancePublicPortsStatusAtProviderPortInfoItems0:
@@ -619,15 +521,15 @@ schema LightsailAwsUpboundIoV1beta1InstancePublicPortsStatusAtProviderPortInfoIt
     cidrListAliases : [str], default is Undefined, optional
         Set of CIDR aliases that define access for a preconfigured range of IP addresses.
     cidrs : [str], default is Undefined, optional
-        Set of CIDR blocks.
+        Set of IPv4 addresses or ranges of IPv4 addresses (in CIDR notation) that are allowed to connect to an instance through the ports, and the protocol.
     fromPort : float, default is Undefined, optional
-        First port in a range of open ports on an instance.
+        First port in a range of open ports on an instance. See PortInfo for details.
     ipv6Cidrs : [str], default is Undefined, optional
-        ipv6 cidrs
+        Set of IPv6 addresses or ranges of IPv6 addresses (in CIDR notation) that are allowed to connect to an instance through the ports, and the protocol.
     $protocol : str, default is Undefined, optional
-        IP protocol name. Valid values are tcp, all, udp, and icmp.
+        IP protocol name. Valid values: tcp, all, udp, icmp, icmpv6. See PortInfo for details.
     toPort : float, default is Undefined, optional
-        Last port in a range of open ports on an instance.
+        Last port in a range of open ports on an instance. See PortInfo for details.
     """
 
 

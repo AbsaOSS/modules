@@ -66,8 +66,6 @@ schema SsmAwsUpboundIoV1beta1ParameterSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : SsmAwsUpboundIoV1beta1ParameterSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : SsmAwsUpboundIoV1beta1ParameterSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : SsmAwsUpboundIoV1beta1ParameterSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema SsmAwsUpboundIoV1beta1ParameterSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: SsmAwsUpboundIoV1beta1ParameterSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: SsmAwsUpboundIoV1beta1ParameterSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: SsmAwsUpboundIoV1beta1ParameterSpecWriteConnectionSecretToRef
 
@@ -107,8 +103,9 @@ schema SsmAwsUpboundIoV1beta1ParameterSpecForProvider:
     keyId : str, default is Undefined, optional
         KMS key ID or ARN for encrypting a SecureString.
     overwrite : bool, default is Undefined, optional
-        Overwrite an existing parameter.
+        Overwrite an existing parameter. Lifecycle rules should be used to manage non-standard update behavior.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
@@ -118,6 +115,10 @@ schema SsmAwsUpboundIoV1beta1ParameterSpecForProvider:
         Type of the parameter. Valid types are String, StringList and SecureString.
     valueSecretRef : SsmAwsUpboundIoV1beta1ParameterSpecForProviderValueSecretRef, default is Undefined, optional
         value secret ref
+    valueWoSecretRef : SsmAwsUpboundIoV1beta1ParameterSpecForProviderValueWoSecretRef, default is Undefined, optional
+        value wo secret ref
+    valueWoVersion : float, default is Undefined, optional
+        Used together with value_wo to trigger an update. Increment this value when an update to the value_wo is required.
     """
 
 
@@ -145,10 +146,36 @@ schema SsmAwsUpboundIoV1beta1ParameterSpecForProvider:
 
     valueSecretRef?: SsmAwsUpboundIoV1beta1ParameterSpecForProviderValueSecretRef
 
+    valueWoSecretRef?: SsmAwsUpboundIoV1beta1ParameterSpecForProviderValueWoSecretRef
+
+    valueWoVersion?: float
+
 
 schema SsmAwsUpboundIoV1beta1ParameterSpecForProviderValueSecretRef:
     r"""
     Value of the parameter.15 and later, this may require additional configuration handling for certain scenarios.15 Upgrade Guide.
+
+    Attributes
+    ----------
+    key : str, default is Undefined, required
+        The key to select.
+    name : str, default is Undefined, required
+        Name of the secret.
+    namespace : str, default is Undefined, required
+        Namespace of the secret.
+    """
+
+
+    key: str
+
+    name: str
+
+    namespace: str
+
+
+schema SsmAwsUpboundIoV1beta1ParameterSpecForProviderValueWoSecretRef:
+    r"""
+    Value of the parameter. Additionally, write-only values are never stored to state. value_wo_version can be used to trigger an update and is required with this argument.15 and later, this may require additional configuration handling for certain scenarios.15 Upgrade Guide.
 
     Attributes
     ----------
@@ -196,7 +223,7 @@ schema SsmAwsUpboundIoV1beta1ParameterSpecInitProvider:
     keyId : str, default is Undefined, optional
         KMS key ID or ARN for encrypting a SecureString.
     overwrite : bool, default is Undefined, optional
-        Overwrite an existing parameter.
+        Overwrite an existing parameter. Lifecycle rules should be used to manage non-standard update behavior.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tier : str, default is Undefined, optional
@@ -205,6 +232,10 @@ schema SsmAwsUpboundIoV1beta1ParameterSpecInitProvider:
         Type of the parameter. Valid types are String, StringList and SecureString.
     valueSecretRef : SsmAwsUpboundIoV1beta1ParameterSpecInitProviderValueSecretRef, default is Undefined, optional
         value secret ref
+    valueWoSecretRef : SsmAwsUpboundIoV1beta1ParameterSpecInitProviderValueWoSecretRef, default is Undefined, optional
+        value wo secret ref
+    valueWoVersion : float, default is Undefined, optional
+        Used together with value_wo to trigger an update. Increment this value when an update to the value_wo is required.
     """
 
 
@@ -230,10 +261,36 @@ schema SsmAwsUpboundIoV1beta1ParameterSpecInitProvider:
 
     valueSecretRef?: SsmAwsUpboundIoV1beta1ParameterSpecInitProviderValueSecretRef
 
+    valueWoSecretRef?: SsmAwsUpboundIoV1beta1ParameterSpecInitProviderValueWoSecretRef
+
+    valueWoVersion?: float
+
 
 schema SsmAwsUpboundIoV1beta1ParameterSpecInitProviderValueSecretRef:
     r"""
     Value of the parameter.15 and later, this may require additional configuration handling for certain scenarios.15 Upgrade Guide.
+
+    Attributes
+    ----------
+    key : str, default is Undefined, required
+        The key to select.
+    name : str, default is Undefined, required
+        Name of the secret.
+    namespace : str, default is Undefined, required
+        Namespace of the secret.
+    """
+
+
+    key: str
+
+    name: str
+
+    namespace: str
+
+
+schema SsmAwsUpboundIoV1beta1ParameterSpecInitProviderValueWoSecretRef:
+    r"""
+    Value of the parameter. Additionally, write-only values are never stored to state. value_wo_version can be used to trigger an update and is required with this argument.15 and later, this may require additional configuration handling for certain scenarios.15 Upgrade Guide.
 
     Attributes
     ----------
@@ -297,112 +354,12 @@ schema SsmAwsUpboundIoV1beta1ParameterSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema SsmAwsUpboundIoV1beta1ParameterSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : SsmAwsUpboundIoV1beta1ParameterSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : SsmAwsUpboundIoV1beta1ParameterSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: SsmAwsUpboundIoV1beta1ParameterSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: SsmAwsUpboundIoV1beta1ParameterSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema SsmAwsUpboundIoV1beta1ParameterSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : SsmAwsUpboundIoV1beta1ParameterSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: SsmAwsUpboundIoV1beta1ParameterSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema SsmAwsUpboundIoV1beta1ParameterSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema SsmAwsUpboundIoV1beta1ParameterSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema SsmAwsUpboundIoV1beta1ParameterSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -456,6 +413,8 @@ schema SsmAwsUpboundIoV1beta1ParameterStatusAtProvider:
         Data type of the parameter. Valid values: text, aws:ssm:integration and aws:ec2:image for AMI format, see the Native parameter support for Amazon Machine Image IDs.
     description : str, default is Undefined, optional
         Description of the parameter.
+    hasValueWo : bool, default is Undefined, optional
+        Indicates whether the resource has a value_wo set.
     id : str, default is Undefined, optional
         id
     insecureValue : str, default is Undefined, optional
@@ -463,7 +422,10 @@ schema SsmAwsUpboundIoV1beta1ParameterStatusAtProvider:
     keyId : str, default is Undefined, optional
         KMS key ID or ARN for encrypting a SecureString.
     overwrite : bool, default is Undefined, optional
-        Overwrite an existing parameter.
+        Overwrite an existing parameter. Lifecycle rules should be used to manage non-standard update behavior.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
@@ -472,6 +434,8 @@ schema SsmAwsUpboundIoV1beta1ParameterStatusAtProvider:
         Parameter tier to assign to the parameter. If not specified, will use the default parameter tier for the region. Valid tiers are Standard, Advanced, and Intelligent-Tiering. Downgrading an Advanced tier parameter to Standard will recreate the resource. For more information on parameter tiers, see the AWS SSM Parameter tier comparison and guide.
     $type : str, default is Undefined, optional
         Type of the parameter. Valid types are String, StringList and SecureString.
+    valueWoVersion : float, default is Undefined, optional
+        Used together with value_wo to trigger an update. Increment this value when an update to the value_wo is required.
     version : float, default is Undefined, optional
         Version of the parameter.
     """
@@ -485,6 +449,8 @@ schema SsmAwsUpboundIoV1beta1ParameterStatusAtProvider:
 
     description?: str
 
+    hasValueWo?: bool
+
     id?: str
 
     insecureValue?: str
@@ -493,6 +459,8 @@ schema SsmAwsUpboundIoV1beta1ParameterStatusAtProvider:
 
     overwrite?: bool
 
+    region?: str
+
     tags?: {str:str}
 
     tagsAll?: {str:str}
@@ -500,6 +468,8 @@ schema SsmAwsUpboundIoV1beta1ParameterStatusAtProvider:
     tier?: str
 
     $type?: str
+
+    valueWoVersion?: float
 
     version?: float
 

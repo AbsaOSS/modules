@@ -66,8 +66,6 @@ schema BatchAwsUpboundIoV1beta1JobQueueSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : BatchAwsUpboundIoV1beta1JobQueueSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : BatchAwsUpboundIoV1beta1JobQueueSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : BatchAwsUpboundIoV1beta1JobQueueSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema BatchAwsUpboundIoV1beta1JobQueueSpec:
 
     providerConfigRef?: BatchAwsUpboundIoV1beta1JobQueueSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: BatchAwsUpboundIoV1beta1JobQueueSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: BatchAwsUpboundIoV1beta1JobQueueSpecWriteConnectionSecretToRef
 
 
@@ -96,14 +92,13 @@ schema BatchAwsUpboundIoV1beta1JobQueueSpecForProvider:
     ----------
     computeEnvironmentOrder : [BatchAwsUpboundIoV1beta1JobQueueSpecForProviderComputeEnvironmentOrderItems0], default is Undefined, optional
         The set of compute environments mapped to a job queue and their order relative to each other. The job scheduler uses this parameter to determine which compute environment runs a specific job. Compute environments must be in the VALID state before you can associate them with a job queue. You can associate up to three compute environments with a job queue.
-    computeEnvironments : [str], default is Undefined, optional
-        (Deprecated)  This parameter is deprecated, please use compute_environment_order instead. List of compute environment ARNs mapped to a job queue. The position of the compute environments in the list will dictate the order. When importing a AWS Batch Job Queue, the parameter compute_environments will always be used over compute_environment_order. Please adjust your HCL accordingly.
     jobStateTimeLimitAction : [BatchAwsUpboundIoV1beta1JobQueueSpecForProviderJobStateTimeLimitActionItems0], default is Undefined, optional
         The set of job state time limit actions mapped to a job queue. Specifies an action that AWS Batch will take after the job has remained at the head of the queue in the specified state for longer than the specified time.
     priority : float, default is Undefined, optional
         The priority of the job queue. Job queues with a higher priority
         are evaluated first when associated with the same compute environment.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     schedulingPolicyArn : str, default is Undefined, optional
         The ARN of the fair share scheduling policy. If this parameter is specified, the job queue uses a fair share scheduling policy. If this parameter isn't specified, the job queue uses a first in, first out (FIFO) scheduling policy. After a job queue is created, you can replace but can't remove the fair share scheduling policy.
@@ -119,8 +114,6 @@ schema BatchAwsUpboundIoV1beta1JobQueueSpecForProvider:
 
 
     computeEnvironmentOrder?: [BatchAwsUpboundIoV1beta1JobQueueSpecForProviderComputeEnvironmentOrderItems0]
-
-    computeEnvironments?: [str]
 
     jobStateTimeLimitAction?: [BatchAwsUpboundIoV1beta1JobQueueSpecForProviderJobStateTimeLimitActionItems0]
 
@@ -386,8 +379,6 @@ schema BatchAwsUpboundIoV1beta1JobQueueSpecInitProvider:
     ----------
     computeEnvironmentOrder : [BatchAwsUpboundIoV1beta1JobQueueSpecInitProviderComputeEnvironmentOrderItems0], default is Undefined, optional
         The set of compute environments mapped to a job queue and their order relative to each other. The job scheduler uses this parameter to determine which compute environment runs a specific job. Compute environments must be in the VALID state before you can associate them with a job queue. You can associate up to three compute environments with a job queue.
-    computeEnvironments : [str], default is Undefined, optional
-        (Deprecated)  This parameter is deprecated, please use compute_environment_order instead. List of compute environment ARNs mapped to a job queue. The position of the compute environments in the list will dictate the order. When importing a AWS Batch Job Queue, the parameter compute_environments will always be used over compute_environment_order. Please adjust your HCL accordingly.
     jobStateTimeLimitAction : [BatchAwsUpboundIoV1beta1JobQueueSpecInitProviderJobStateTimeLimitActionItems0], default is Undefined, optional
         The set of job state time limit actions mapped to a job queue. Specifies an action that AWS Batch will take after the job has remained at the head of the queue in the specified state for longer than the specified time.
     priority : float, default is Undefined, optional
@@ -407,8 +398,6 @@ schema BatchAwsUpboundIoV1beta1JobQueueSpecInitProvider:
 
 
     computeEnvironmentOrder?: [BatchAwsUpboundIoV1beta1JobQueueSpecInitProviderComputeEnvironmentOrderItems0]
-
-    computeEnvironments?: [str]
 
     jobStateTimeLimitAction?: [BatchAwsUpboundIoV1beta1JobQueueSpecInitProviderJobStateTimeLimitActionItems0]
 
@@ -699,112 +688,12 @@ schema BatchAwsUpboundIoV1beta1JobQueueSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema BatchAwsUpboundIoV1beta1JobQueueSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : BatchAwsUpboundIoV1beta1JobQueueSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : BatchAwsUpboundIoV1beta1JobQueueSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: BatchAwsUpboundIoV1beta1JobQueueSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: BatchAwsUpboundIoV1beta1JobQueueSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema BatchAwsUpboundIoV1beta1JobQueueSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : BatchAwsUpboundIoV1beta1JobQueueSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: BatchAwsUpboundIoV1beta1JobQueueSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema BatchAwsUpboundIoV1beta1JobQueueSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema BatchAwsUpboundIoV1beta1JobQueueSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema BatchAwsUpboundIoV1beta1JobQueueSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -854,8 +743,6 @@ schema BatchAwsUpboundIoV1beta1JobQueueStatusAtProvider:
         The Amazon Resource Name of the job queue.
     computeEnvironmentOrder : [BatchAwsUpboundIoV1beta1JobQueueStatusAtProviderComputeEnvironmentOrderItems0], default is Undefined, optional
         The set of compute environments mapped to a job queue and their order relative to each other. The job scheduler uses this parameter to determine which compute environment runs a specific job. Compute environments must be in the VALID state before you can associate them with a job queue. You can associate up to three compute environments with a job queue.
-    computeEnvironments : [str], default is Undefined, optional
-        (Deprecated)  This parameter is deprecated, please use compute_environment_order instead. List of compute environment ARNs mapped to a job queue. The position of the compute environments in the list will dictate the order. When importing a AWS Batch Job Queue, the parameter compute_environments will always be used over compute_environment_order. Please adjust your HCL accordingly.
     id : str, default is Undefined, optional
         id
     jobStateTimeLimitAction : [BatchAwsUpboundIoV1beta1JobQueueStatusAtProviderJobStateTimeLimitActionItems0], default is Undefined, optional
@@ -863,6 +750,9 @@ schema BatchAwsUpboundIoV1beta1JobQueueStatusAtProvider:
     priority : float, default is Undefined, optional
         The priority of the job queue. Job queues with a higher priority
         are evaluated first when associated with the same compute environment.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     schedulingPolicyArn : str, default is Undefined, optional
         The ARN of the fair share scheduling policy. If this parameter is specified, the job queue uses a fair share scheduling policy. If this parameter isn't specified, the job queue uses a first in, first out (FIFO) scheduling policy. After a job queue is created, you can replace but can't remove the fair share scheduling policy.
     state : str, default is Undefined, optional
@@ -878,13 +768,13 @@ schema BatchAwsUpboundIoV1beta1JobQueueStatusAtProvider:
 
     computeEnvironmentOrder?: [BatchAwsUpboundIoV1beta1JobQueueStatusAtProviderComputeEnvironmentOrderItems0]
 
-    computeEnvironments?: [str]
-
     id?: str
 
     jobStateTimeLimitAction?: [BatchAwsUpboundIoV1beta1JobQueueStatusAtProviderJobStateTimeLimitActionItems0]
 
     priority?: float
+
+    region?: str
 
     schedulingPolicyArn?: str
 

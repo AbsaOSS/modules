@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema UserProfile:
     r"""
-    UserProfile is the Schema for the UserProfiles API. Provides a SageMaker User Profile resource.
+    UserProfile is the Schema for the UserProfiles API. Provides a SageMaker AI User Profile resource.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : SagemakerAwsUpboundIoV1beta1UserProfileSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : SagemakerAwsUpboundIoV1beta1UserProfileSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : SagemakerAwsUpboundIoV1beta1UserProfileSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: SagemakerAwsUpboundIoV1beta1UserProfileSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: SagemakerAwsUpboundIoV1beta1UserProfileSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: SagemakerAwsUpboundIoV1beta1UserProfileSpecWriteConnectionSecretToRef
 
@@ -101,6 +97,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecForProvider:
     domainIdSelector : SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderDomainIDSelector, default is Undefined, optional
         domain Id selector
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     singleSignOnUserIdentifier : str, default is Undefined, optional
         A specifier for the type of value specified in single_sign_on_user_value. Currently, the only supported value is UserName. If the Domain's AuthMode is SSO, this field is required. If the Domain's AuthMode is not SSO, this field cannot be specified.
@@ -236,7 +233,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0:
     codeEditorAppSettings : [SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0CodeEditorAppSettingsItems0], default is Undefined, optional
         The Code Editor application settings. See Code Editor App Settings below.
     customFileSystemConfig : [SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0CustomFileSystemConfigItems0], default is Undefined, optional
-        The settings for assigning a custom file system to a user profile. Permitted users can access this file system in Amazon SageMaker Studio. See Custom File System Config below.
+        The settings for assigning a custom file system to a user profile. Permitted users can access this file system in Amazon SageMaker AI Studio. See Custom File System Config below.
     customPosixUserConfig : [SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0CustomPosixUserConfigItems0], default is Undefined, optional
         Details about the POSIX identity that is used for file system operations. See Custom Posix User Config below.
     defaultLandingUri : str, default is Undefined, optional
@@ -312,21 +309,21 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0C
     Attributes
     ----------
     directDeploySettings : [SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0CanvasAppSettingsItems0DirectDeploySettingsItems0], default is Undefined, optional
-        The model deployment settings for the SageMaker Canvas application. See Direct Deploy Settings below.
+        The model deployment settings for the SageMaker AI Canvas application. See Direct Deploy Settings below.
     emrServerlessSettings : [SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0CanvasAppSettingsItems0EmrServerlessSettingsItems0], default is Undefined, optional
-        The settings for running Amazon EMR Serverless jobs in SageMaker Canvas. See emr_serverless_settings Block below.
-    generativeAiSettings : SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0CanvasAppSettingsItems0GenerativeAiSettings, default is Undefined, optional
+        The settings for running Amazon EMR Serverless jobs in SageMaker AI Canvas. See emr_serverless_settings Block below.
+    generativeAiSettings : [SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0CanvasAppSettingsItems0GenerativeAiSettingsItems0], default is Undefined, optional
         generative ai settings
     identityProviderOauthSettings : [SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0CanvasAppSettingsItems0IdentityProviderOauthSettingsItems0], default is Undefined, optional
         The settings for connecting to an external data source with OAuth. See Identity Provider OAuth Settings below.
     kendraSettings : [SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0CanvasAppSettingsItems0KendraSettingsItems0], default is Undefined, optional
         The settings for document querying. See Kendra Settings below.
     modelRegisterSettings : [SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0CanvasAppSettingsItems0ModelRegisterSettingsItems0], default is Undefined, optional
-        The model registry settings for the SageMaker Canvas application. See Model Register Settings below.
+        The model registry settings for the SageMaker AI Canvas application. See Model Register Settings below.
     timeSeriesForecastingSettings : [SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0CanvasAppSettingsItems0TimeSeriesForecastingSettingsItems0], default is Undefined, optional
         Time series forecast settings for the Canvas app. See Time Series Forecasting Settings below.
     workspaceSettings : [SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0CanvasAppSettingsItems0WorkspaceSettingsItems0], default is Undefined, optional
-        The workspace settings for the SageMaker Canvas application. See Workspace Settings below.
+        The workspace settings for the SageMaker AI Canvas application. See Workspace Settings below.
     """
 
 
@@ -334,7 +331,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0C
 
     emrServerlessSettings?: [SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0CanvasAppSettingsItems0EmrServerlessSettingsItems0]
 
-    generativeAiSettings?: SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0CanvasAppSettingsItems0GenerativeAiSettings
+    generativeAiSettings?: [SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0CanvasAppSettingsItems0GenerativeAiSettingsItems0]
 
     identityProviderOauthSettings?: [SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0CanvasAppSettingsItems0IdentityProviderOauthSettingsItems0]
 
@@ -368,7 +365,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0C
     Attributes
     ----------
     executionRoleArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the AWS IAM role that is assumed for running Amazon EMR Serverless jobs in SageMaker Canvas. This role should have the necessary permissions to read and write data attached and a trust relationship with EMR Serverless.
+        The Amazon Resource Name (ARN) of the AWS IAM role that is assumed for running Amazon EMR Serverless jobs in SageMaker AI Canvas. This role should have the necessary permissions to read and write data attached and a trust relationship with EMR Serverless.
     status : str, default is Undefined, optional
         Describes whether time series forecasting is enabled or disabled in the Canvas app. Valid values are ENABLED and DISABLED.
     """
@@ -379,9 +376,9 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0C
     status?: str
 
 
-schema SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0CanvasAppSettingsItems0GenerativeAiSettings:
+schema SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0CanvasAppSettingsItems0GenerativeAiSettingsItems0:
     r"""
-    sagemaker aws upbound io v1beta1 user profile spec for provider user settings items0 canvas app settings items0 generative ai settings
+    sagemaker aws upbound io v1beta1 user profile spec for provider user settings items0 canvas app settings items0 generative ai settings items0
 
     Attributes
     ----------
@@ -436,7 +433,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0C
     Attributes
     ----------
     crossAccountModelRegisterRoleArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the SageMaker model registry account. Required only to register model versions created by a different SageMaker Canvas AWS account than the AWS account in which SageMaker model registry is set up.
+        The Amazon Resource Name (ARN) of the SageMaker AI model registry account. Required only to register model versions created by a different SageMaker AI Canvas AWS account than the AWS account in which SageMaker AI model registry is set up.
     status : str, default is Undefined, optional
         Describes whether the integration to the model registry is enabled or disabled in the Canvas application. Valid values are ENABLED and DISABLED.
     """
@@ -494,9 +491,9 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0C
     builtInLifecycleConfigArn : str, default is Undefined, optional
         The lifecycle configuration that runs before the default lifecycle configuration. It can override changes made in the default lifecycle configuration.
     customImage : [SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0CodeEditorAppSettingsItems0CustomImageItems0], default is Undefined, optional
-        A list of custom SageMaker images that are configured to run as a CodeEditor app. see Custom Image below.
+        A list of custom SageMaker AI images that are configured to run as a CodeEditor app. see Custom Image below.
     defaultResourceSpec : [SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0CodeEditorAppSettingsItems0DefaultResourceSpecItems0], default is Undefined, optional
-        The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. see Default Resource Spec below.
+        The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. see Default Resource Spec below.
     lifecycleConfigArns : [str], default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configurations.
     """
@@ -534,7 +531,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0C
     Attributes
     ----------
     idleTimeoutInMinutes : float, default is Undefined, optional
-        The time that SageMaker waits after the application becomes idle before shutting it down. Valid values are between 60 and 525600.
+        The time that SageMaker AI waits after the application becomes idle before shutting it down. Valid values are between 60 and 525600.
     lifecycleManagement : str, default is Undefined, optional
         Indicates whether idle shutdown is activated for the application type. Valid values are ENABLED and DISABLED.
     maxIdleTimeoutInMinutes : float, default is Undefined, optional
@@ -582,13 +579,13 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0C
     Attributes
     ----------
     instanceType : str, default is Undefined, optional
-        The instance type that the image version runs on.. For valid values see SageMaker Instance Types.
+        The instance type that the image version runs on.. For valid values see SageMaker AI Instance Types.
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The ARN of the SageMaker image that the image version belongs to.
+        The ARN of the SageMaker AI image that the image version belongs to.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -628,7 +625,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0C
     fileSystemId : str, default is Undefined, optional
         The ID of your Amazon EFS file system.
     fileSystemPath : str, default is Undefined, optional
-        The path to the file system directory that is accessible in Amazon SageMaker Studio. Permitted users can access only this directory and below.
+        The path to the file system directory that is accessible in Amazon SageMaker AI Studio. Permitted users can access only this directory and below.
     """
 
 
@@ -666,13 +663,13 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0J
     builtInLifecycleConfigArn : str, default is Undefined, optional
         The lifecycle configuration that runs before the default lifecycle configuration. It can override changes made in the default lifecycle configuration.
     codeRepository : [SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0JupyterLabAppSettingsItems0CodeRepositoryItems0], default is Undefined, optional
-        A list of Git repositories that SageMaker automatically displays to users for cloning in the JupyterServer application. see Code Repository below.
+        A list of Git repositories that SageMaker AI automatically displays to users for cloning in the JupyterServer application. see Code Repository below.
     customImage : [SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0JupyterLabAppSettingsItems0CustomImageItems0], default is Undefined, optional
-        A list of custom SageMaker images that are configured to run as a KernelGateway app. see Custom Image below.
+        A list of custom SageMaker AI images that are configured to run as a KernelGateway app. see Custom Image below.
     defaultResourceSpec : [SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0JupyterLabAppSettingsItems0DefaultResourceSpecItems0], default is Undefined, optional
-        The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. see Default Resource Spec below.
+        The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. see Default Resource Spec below.
     emrSettings : [SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0JupyterLabAppSettingsItems0EmrSettingsItems0], default is Undefined, optional
-        The configuration parameters that specify the IAM roles assumed by the execution role of SageMaker (assumable roles) and the cluster instances or job execution environments (execution roles or runtime roles) to manage and access resources required for running Amazon EMR clusters or Amazon EMR Serverless applications. see emr_settings Block below.
+        The configuration parameters that specify the IAM roles assumed by the execution role of SageMaker AI (assumable roles) and the cluster instances or job execution environments (execution roles or runtime roles) to manage and access resources required for running Amazon EMR clusters or Amazon EMR Serverless applications. see emr_settings Block below.
     lifecycleConfigArns : [str], default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configurations.
     """
@@ -714,7 +711,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0J
     Attributes
     ----------
     idleTimeoutInMinutes : float, default is Undefined, optional
-        The time that SageMaker waits after the application becomes idle before shutting it down. Valid values are between 60 and 525600.
+        The time that SageMaker AI waits after the application becomes idle before shutting it down. Valid values are between 60 and 525600.
     lifecycleManagement : str, default is Undefined, optional
         Indicates whether idle shutdown is activated for the application type. Valid values are ENABLED and DISABLED.
     maxIdleTimeoutInMinutes : float, default is Undefined, optional
@@ -776,13 +773,13 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0J
     Attributes
     ----------
     instanceType : str, default is Undefined, optional
-        The instance type that the image version runs on.. For valid values see SageMaker Instance Types.
+        The instance type that the image version runs on.. For valid values see SageMaker AI Instance Types.
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The ARN of the SageMaker image that the image version belongs to.
+        The ARN of the SageMaker AI image that the image version belongs to.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -806,7 +803,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0J
     Attributes
     ----------
     assumableRoleArns : [str], default is Undefined, optional
-        An array of Amazon Resource Names (ARNs) of the IAM roles that the execution role of SageMaker can assume for performing operations or tasks related to Amazon EMR clusters or Amazon EMR Serverless applications. These roles define the permissions and access policies required when performing Amazon EMR-related operations, such as listing, connecting to, or terminating Amazon EMR clusters or Amazon EMR Serverless applications. They are typically used in cross-account access scenarios, where the Amazon EMR resources (clusters or serverless applications) are located in a different AWS account than the SageMaker domain.
+        An array of Amazon Resource Names (ARNs) of the IAM roles that the execution role of SageMaker AI can assume for performing operations or tasks related to Amazon EMR clusters or Amazon EMR Serverless applications. These roles define the permissions and access policies required when performing Amazon EMR-related operations, such as listing, connecting to, or terminating Amazon EMR clusters or Amazon EMR Serverless applications. They are typically used in cross-account access scenarios, where the Amazon EMR resources (clusters or serverless applications) are located in a different AWS account than the SageMaker AI domain.
     executionRoleArns : [str], default is Undefined, optional
         An array of Amazon Resource Names (ARNs) of the IAM roles used by the Amazon EMR cluster instances or job execution environments to access other AWS services and resources needed during the runtime of your Amazon EMR or Amazon EMR Serverless workloads, such as Amazon S3 for data access, Amazon CloudWatch for logging, or other AWS services based on the particular workload requirements.
     """
@@ -824,9 +821,9 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0J
     Attributes
     ----------
     codeRepository : [SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0JupyterServerAppSettingsItems0CodeRepositoryItems0], default is Undefined, optional
-        A list of Git repositories that SageMaker automatically displays to users for cloning in the JupyterServer application. see Code Repository below.
+        A list of Git repositories that SageMaker AI automatically displays to users for cloning in the JupyterServer application. see Code Repository below.
     defaultResourceSpec : [SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0JupyterServerAppSettingsItems0DefaultResourceSpecItems0], default is Undefined, optional
-        The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. see Default Resource Spec below.
+        The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. see Default Resource Spec below.
     lifecycleConfigArns : [str], default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configurations.
     """
@@ -860,13 +857,13 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0J
     Attributes
     ----------
     instanceType : str, default is Undefined, optional
-        The instance type that the image version runs on.. For valid values see SageMaker Instance Types.
+        The instance type that the image version runs on.. For valid values see SageMaker AI Instance Types.
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The ARN of the SageMaker image that the image version belongs to.
+        The ARN of the SageMaker AI image that the image version belongs to.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -890,9 +887,9 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0K
     Attributes
     ----------
     customImage : [SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0KernelGatewayAppSettingsItems0CustomImageItems0], default is Undefined, optional
-        A list of custom SageMaker images that are configured to run as a KernelGateway app. see Custom Image below.
+        A list of custom SageMaker AI images that are configured to run as a KernelGateway app. see Custom Image below.
     defaultResourceSpec : [SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0KernelGatewayAppSettingsItems0DefaultResourceSpecItems0], default is Undefined, optional
-        The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. see Default Resource Spec below.
+        The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. see Default Resource Spec below.
     lifecycleConfigArns : [str], default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configurations.
     """
@@ -934,13 +931,13 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0K
     Attributes
     ----------
     instanceType : str, default is Undefined, optional
-        The instance type that the image version runs on.. For valid values see SageMaker Instance Types.
+        The instance type that the image version runs on.. For valid values see SageMaker AI Instance Types.
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The ARN of the SageMaker image that the image version belongs to.
+        The ARN of the SageMaker AI image that the image version belongs to.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -964,9 +961,9 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0R
     Attributes
     ----------
     customImage : [SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0RSessionAppSettingsItems0CustomImageItems0], default is Undefined, optional
-        A list of custom SageMaker images that are configured to run as a KernelGateway app. see Custom Image below.
+        A list of custom SageMaker AI images that are configured to run as a KernelGateway app. see Custom Image below.
     defaultResourceSpec : [SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0RSessionAppSettingsItems0DefaultResourceSpecItems0], default is Undefined, optional
-        The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. see Default Resource Spec below.
+        The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. see Default Resource Spec below.
     """
 
 
@@ -1004,13 +1001,13 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0R
     Attributes
     ----------
     instanceType : str, default is Undefined, optional
-        The instance type that the image version runs on.. For valid values see SageMaker Instance Types.
+        The instance type that the image version runs on.. For valid values see SageMaker AI Instance Types.
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The ARN of the SageMaker image that the image version belongs to.
+        The ARN of the SageMaker AI image that the image version belongs to.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -1128,7 +1125,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0T
     Attributes
     ----------
     defaultResourceSpec : [SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0TensorBoardAppSettingsItems0DefaultResourceSpecItems0], default is Undefined, optional
-        The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. see Default Resource Spec below.
+        The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. see Default Resource Spec below.
     """
 
 
@@ -1142,13 +1139,13 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecForProviderUserSettingsItems0T
     Attributes
     ----------
     instanceType : str, default is Undefined, optional
-        The instance type that the image version runs on.. For valid values see SageMaker Instance Types.
+        The instance type that the image version runs on.. For valid values see SageMaker AI Instance Types.
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The ARN of the SageMaker image that the image version belongs to.
+        The ARN of the SageMaker AI image that the image version belongs to.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -1318,7 +1315,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0
     codeEditorAppSettings : [SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0CodeEditorAppSettingsItems0], default is Undefined, optional
         The Code Editor application settings. See Code Editor App Settings below.
     customFileSystemConfig : [SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0CustomFileSystemConfigItems0], default is Undefined, optional
-        The settings for assigning a custom file system to a user profile. Permitted users can access this file system in Amazon SageMaker Studio. See Custom File System Config below.
+        The settings for assigning a custom file system to a user profile. Permitted users can access this file system in Amazon SageMaker AI Studio. See Custom File System Config below.
     customPosixUserConfig : [SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0CustomPosixUserConfigItems0], default is Undefined, optional
         Details about the POSIX identity that is used for file system operations. See Custom Posix User Config below.
     defaultLandingUri : str, default is Undefined, optional
@@ -1394,21 +1391,21 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0
     Attributes
     ----------
     directDeploySettings : [SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0CanvasAppSettingsItems0DirectDeploySettingsItems0], default is Undefined, optional
-        The model deployment settings for the SageMaker Canvas application. See Direct Deploy Settings below.
+        The model deployment settings for the SageMaker AI Canvas application. See Direct Deploy Settings below.
     emrServerlessSettings : [SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0CanvasAppSettingsItems0EmrServerlessSettingsItems0], default is Undefined, optional
-        The settings for running Amazon EMR Serverless jobs in SageMaker Canvas. See emr_serverless_settings Block below.
-    generativeAiSettings : SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0CanvasAppSettingsItems0GenerativeAiSettings, default is Undefined, optional
+        The settings for running Amazon EMR Serverless jobs in SageMaker AI Canvas. See emr_serverless_settings Block below.
+    generativeAiSettings : [SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0CanvasAppSettingsItems0GenerativeAiSettingsItems0], default is Undefined, optional
         generative ai settings
     identityProviderOauthSettings : [SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0CanvasAppSettingsItems0IdentityProviderOauthSettingsItems0], default is Undefined, optional
         The settings for connecting to an external data source with OAuth. See Identity Provider OAuth Settings below.
     kendraSettings : [SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0CanvasAppSettingsItems0KendraSettingsItems0], default is Undefined, optional
         The settings for document querying. See Kendra Settings below.
     modelRegisterSettings : [SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0CanvasAppSettingsItems0ModelRegisterSettingsItems0], default is Undefined, optional
-        The model registry settings for the SageMaker Canvas application. See Model Register Settings below.
+        The model registry settings for the SageMaker AI Canvas application. See Model Register Settings below.
     timeSeriesForecastingSettings : [SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0CanvasAppSettingsItems0TimeSeriesForecastingSettingsItems0], default is Undefined, optional
         Time series forecast settings for the Canvas app. See Time Series Forecasting Settings below.
     workspaceSettings : [SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0CanvasAppSettingsItems0WorkspaceSettingsItems0], default is Undefined, optional
-        The workspace settings for the SageMaker Canvas application. See Workspace Settings below.
+        The workspace settings for the SageMaker AI Canvas application. See Workspace Settings below.
     """
 
 
@@ -1416,7 +1413,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0
 
     emrServerlessSettings?: [SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0CanvasAppSettingsItems0EmrServerlessSettingsItems0]
 
-    generativeAiSettings?: SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0CanvasAppSettingsItems0GenerativeAiSettings
+    generativeAiSettings?: [SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0CanvasAppSettingsItems0GenerativeAiSettingsItems0]
 
     identityProviderOauthSettings?: [SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0CanvasAppSettingsItems0IdentityProviderOauthSettingsItems0]
 
@@ -1450,7 +1447,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0
     Attributes
     ----------
     executionRoleArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the AWS IAM role that is assumed for running Amazon EMR Serverless jobs in SageMaker Canvas. This role should have the necessary permissions to read and write data attached and a trust relationship with EMR Serverless.
+        The Amazon Resource Name (ARN) of the AWS IAM role that is assumed for running Amazon EMR Serverless jobs in SageMaker AI Canvas. This role should have the necessary permissions to read and write data attached and a trust relationship with EMR Serverless.
     status : str, default is Undefined, optional
         Describes whether time series forecasting is enabled or disabled in the Canvas app. Valid values are ENABLED and DISABLED.
     """
@@ -1461,9 +1458,9 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0
     status?: str
 
 
-schema SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0CanvasAppSettingsItems0GenerativeAiSettings:
+schema SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0CanvasAppSettingsItems0GenerativeAiSettingsItems0:
     r"""
-    sagemaker aws upbound io v1beta1 user profile spec init provider user settings items0 canvas app settings items0 generative ai settings
+    sagemaker aws upbound io v1beta1 user profile spec init provider user settings items0 canvas app settings items0 generative ai settings items0
 
     Attributes
     ----------
@@ -1518,7 +1515,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0
     Attributes
     ----------
     crossAccountModelRegisterRoleArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the SageMaker model registry account. Required only to register model versions created by a different SageMaker Canvas AWS account than the AWS account in which SageMaker model registry is set up.
+        The Amazon Resource Name (ARN) of the SageMaker AI model registry account. Required only to register model versions created by a different SageMaker AI Canvas AWS account than the AWS account in which SageMaker AI model registry is set up.
     status : str, default is Undefined, optional
         Describes whether the integration to the model registry is enabled or disabled in the Canvas application. Valid values are ENABLED and DISABLED.
     """
@@ -1576,9 +1573,9 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0
     builtInLifecycleConfigArn : str, default is Undefined, optional
         The lifecycle configuration that runs before the default lifecycle configuration. It can override changes made in the default lifecycle configuration.
     customImage : [SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0CodeEditorAppSettingsItems0CustomImageItems0], default is Undefined, optional
-        A list of custom SageMaker images that are configured to run as a CodeEditor app. see Custom Image below.
+        A list of custom SageMaker AI images that are configured to run as a CodeEditor app. see Custom Image below.
     defaultResourceSpec : [SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0CodeEditorAppSettingsItems0DefaultResourceSpecItems0], default is Undefined, optional
-        The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. see Default Resource Spec below.
+        The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. see Default Resource Spec below.
     lifecycleConfigArns : [str], default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configurations.
     """
@@ -1616,7 +1613,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0
     Attributes
     ----------
     idleTimeoutInMinutes : float, default is Undefined, optional
-        The time that SageMaker waits after the application becomes idle before shutting it down. Valid values are between 60 and 525600.
+        The time that SageMaker AI waits after the application becomes idle before shutting it down. Valid values are between 60 and 525600.
     lifecycleManagement : str, default is Undefined, optional
         Indicates whether idle shutdown is activated for the application type. Valid values are ENABLED and DISABLED.
     maxIdleTimeoutInMinutes : float, default is Undefined, optional
@@ -1664,13 +1661,13 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0
     Attributes
     ----------
     instanceType : str, default is Undefined, optional
-        The instance type that the image version runs on.. For valid values see SageMaker Instance Types.
+        The instance type that the image version runs on.. For valid values see SageMaker AI Instance Types.
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The ARN of the SageMaker image that the image version belongs to.
+        The ARN of the SageMaker AI image that the image version belongs to.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -1710,7 +1707,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0
     fileSystemId : str, default is Undefined, optional
         The ID of your Amazon EFS file system.
     fileSystemPath : str, default is Undefined, optional
-        The path to the file system directory that is accessible in Amazon SageMaker Studio. Permitted users can access only this directory and below.
+        The path to the file system directory that is accessible in Amazon SageMaker AI Studio. Permitted users can access only this directory and below.
     """
 
 
@@ -1748,13 +1745,13 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0
     builtInLifecycleConfigArn : str, default is Undefined, optional
         The lifecycle configuration that runs before the default lifecycle configuration. It can override changes made in the default lifecycle configuration.
     codeRepository : [SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0JupyterLabAppSettingsItems0CodeRepositoryItems0], default is Undefined, optional
-        A list of Git repositories that SageMaker automatically displays to users for cloning in the JupyterServer application. see Code Repository below.
+        A list of Git repositories that SageMaker AI automatically displays to users for cloning in the JupyterServer application. see Code Repository below.
     customImage : [SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0JupyterLabAppSettingsItems0CustomImageItems0], default is Undefined, optional
-        A list of custom SageMaker images that are configured to run as a KernelGateway app. see Custom Image below.
+        A list of custom SageMaker AI images that are configured to run as a KernelGateway app. see Custom Image below.
     defaultResourceSpec : [SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0JupyterLabAppSettingsItems0DefaultResourceSpecItems0], default is Undefined, optional
-        The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. see Default Resource Spec below.
+        The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. see Default Resource Spec below.
     emrSettings : [SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0JupyterLabAppSettingsItems0EmrSettingsItems0], default is Undefined, optional
-        The configuration parameters that specify the IAM roles assumed by the execution role of SageMaker (assumable roles) and the cluster instances or job execution environments (execution roles or runtime roles) to manage and access resources required for running Amazon EMR clusters or Amazon EMR Serverless applications. see emr_settings Block below.
+        The configuration parameters that specify the IAM roles assumed by the execution role of SageMaker AI (assumable roles) and the cluster instances or job execution environments (execution roles or runtime roles) to manage and access resources required for running Amazon EMR clusters or Amazon EMR Serverless applications. see emr_settings Block below.
     lifecycleConfigArns : [str], default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configurations.
     """
@@ -1796,7 +1793,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0
     Attributes
     ----------
     idleTimeoutInMinutes : float, default is Undefined, optional
-        The time that SageMaker waits after the application becomes idle before shutting it down. Valid values are between 60 and 525600.
+        The time that SageMaker AI waits after the application becomes idle before shutting it down. Valid values are between 60 and 525600.
     lifecycleManagement : str, default is Undefined, optional
         Indicates whether idle shutdown is activated for the application type. Valid values are ENABLED and DISABLED.
     maxIdleTimeoutInMinutes : float, default is Undefined, optional
@@ -1858,13 +1855,13 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0
     Attributes
     ----------
     instanceType : str, default is Undefined, optional
-        The instance type that the image version runs on.. For valid values see SageMaker Instance Types.
+        The instance type that the image version runs on.. For valid values see SageMaker AI Instance Types.
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The ARN of the SageMaker image that the image version belongs to.
+        The ARN of the SageMaker AI image that the image version belongs to.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -1888,7 +1885,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0
     Attributes
     ----------
     assumableRoleArns : [str], default is Undefined, optional
-        An array of Amazon Resource Names (ARNs) of the IAM roles that the execution role of SageMaker can assume for performing operations or tasks related to Amazon EMR clusters or Amazon EMR Serverless applications. These roles define the permissions and access policies required when performing Amazon EMR-related operations, such as listing, connecting to, or terminating Amazon EMR clusters or Amazon EMR Serverless applications. They are typically used in cross-account access scenarios, where the Amazon EMR resources (clusters or serverless applications) are located in a different AWS account than the SageMaker domain.
+        An array of Amazon Resource Names (ARNs) of the IAM roles that the execution role of SageMaker AI can assume for performing operations or tasks related to Amazon EMR clusters or Amazon EMR Serverless applications. These roles define the permissions and access policies required when performing Amazon EMR-related operations, such as listing, connecting to, or terminating Amazon EMR clusters or Amazon EMR Serverless applications. They are typically used in cross-account access scenarios, where the Amazon EMR resources (clusters or serverless applications) are located in a different AWS account than the SageMaker AI domain.
     executionRoleArns : [str], default is Undefined, optional
         An array of Amazon Resource Names (ARNs) of the IAM roles used by the Amazon EMR cluster instances or job execution environments to access other AWS services and resources needed during the runtime of your Amazon EMR or Amazon EMR Serverless workloads, such as Amazon S3 for data access, Amazon CloudWatch for logging, or other AWS services based on the particular workload requirements.
     """
@@ -1906,9 +1903,9 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0
     Attributes
     ----------
     codeRepository : [SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0JupyterServerAppSettingsItems0CodeRepositoryItems0], default is Undefined, optional
-        A list of Git repositories that SageMaker automatically displays to users for cloning in the JupyterServer application. see Code Repository below.
+        A list of Git repositories that SageMaker AI automatically displays to users for cloning in the JupyterServer application. see Code Repository below.
     defaultResourceSpec : [SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0JupyterServerAppSettingsItems0DefaultResourceSpecItems0], default is Undefined, optional
-        The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. see Default Resource Spec below.
+        The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. see Default Resource Spec below.
     lifecycleConfigArns : [str], default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configurations.
     """
@@ -1942,13 +1939,13 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0
     Attributes
     ----------
     instanceType : str, default is Undefined, optional
-        The instance type that the image version runs on.. For valid values see SageMaker Instance Types.
+        The instance type that the image version runs on.. For valid values see SageMaker AI Instance Types.
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The ARN of the SageMaker image that the image version belongs to.
+        The ARN of the SageMaker AI image that the image version belongs to.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -1972,9 +1969,9 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0
     Attributes
     ----------
     customImage : [SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0KernelGatewayAppSettingsItems0CustomImageItems0], default is Undefined, optional
-        A list of custom SageMaker images that are configured to run as a KernelGateway app. see Custom Image below.
+        A list of custom SageMaker AI images that are configured to run as a KernelGateway app. see Custom Image below.
     defaultResourceSpec : [SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0KernelGatewayAppSettingsItems0DefaultResourceSpecItems0], default is Undefined, optional
-        The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. see Default Resource Spec below.
+        The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. see Default Resource Spec below.
     lifecycleConfigArns : [str], default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configurations.
     """
@@ -2016,13 +2013,13 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0
     Attributes
     ----------
     instanceType : str, default is Undefined, optional
-        The instance type that the image version runs on.. For valid values see SageMaker Instance Types.
+        The instance type that the image version runs on.. For valid values see SageMaker AI Instance Types.
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The ARN of the SageMaker image that the image version belongs to.
+        The ARN of the SageMaker AI image that the image version belongs to.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -2046,9 +2043,9 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0
     Attributes
     ----------
     customImage : [SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0RSessionAppSettingsItems0CustomImageItems0], default is Undefined, optional
-        A list of custom SageMaker images that are configured to run as a KernelGateway app. see Custom Image below.
+        A list of custom SageMaker AI images that are configured to run as a KernelGateway app. see Custom Image below.
     defaultResourceSpec : [SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0RSessionAppSettingsItems0DefaultResourceSpecItems0], default is Undefined, optional
-        The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. see Default Resource Spec below.
+        The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. see Default Resource Spec below.
     """
 
 
@@ -2086,13 +2083,13 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0
     Attributes
     ----------
     instanceType : str, default is Undefined, optional
-        The instance type that the image version runs on.. For valid values see SageMaker Instance Types.
+        The instance type that the image version runs on.. For valid values see SageMaker AI Instance Types.
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The ARN of the SageMaker image that the image version belongs to.
+        The ARN of the SageMaker AI image that the image version belongs to.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -2210,7 +2207,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0
     Attributes
     ----------
     defaultResourceSpec : [SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0TensorBoardAppSettingsItems0DefaultResourceSpecItems0], default is Undefined, optional
-        The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. see Default Resource Spec below.
+        The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. see Default Resource Spec below.
     """
 
 
@@ -2224,13 +2221,13 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecInitProviderUserSettingsItems0
     Attributes
     ----------
     instanceType : str, default is Undefined, optional
-        The instance type that the image version runs on.. For valid values see SageMaker Instance Types.
+        The instance type that the image version runs on.. For valid values see SageMaker AI Instance Types.
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The ARN of the SageMaker image that the image version belongs to.
+        The ARN of the SageMaker AI image that the image version belongs to.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -2291,112 +2288,12 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema SagemakerAwsUpboundIoV1beta1UserProfileSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : SagemakerAwsUpboundIoV1beta1UserProfileSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : SagemakerAwsUpboundIoV1beta1UserProfileSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: SagemakerAwsUpboundIoV1beta1UserProfileSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: SagemakerAwsUpboundIoV1beta1UserProfileSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema SagemakerAwsUpboundIoV1beta1UserProfileSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : SagemakerAwsUpboundIoV1beta1UserProfileSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: SagemakerAwsUpboundIoV1beta1UserProfileSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema SagemakerAwsUpboundIoV1beta1UserProfileSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema SagemakerAwsUpboundIoV1beta1UserProfileSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema SagemakerAwsUpboundIoV1beta1UserProfileSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -2449,7 +2346,10 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProvider:
     homeEfsFileSystemUid : str, default is Undefined, optional
         The ID of the user's profile in the Amazon Elastic File System (EFS) volume.
     id : str, default is Undefined, optional
-        The user profile Amazon Resource Name (ARN).
+        id
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     singleSignOnUserIdentifier : str, default is Undefined, optional
         A specifier for the type of value specified in single_sign_on_user_value. Currently, the only supported value is UserName. If the Domain's AuthMode is SSO, this field is required. If the Domain's AuthMode is not SSO, this field cannot be specified.
     singleSignOnUserValue : str, default is Undefined, optional
@@ -2472,6 +2372,8 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProvider:
     homeEfsFileSystemUid?: str
 
     id?: str
+
+    region?: str
 
     singleSignOnUserIdentifier?: str
 
@@ -2499,7 +2401,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0
     codeEditorAppSettings : [SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0CodeEditorAppSettingsItems0], default is Undefined, optional
         The Code Editor application settings. See Code Editor App Settings below.
     customFileSystemConfig : [SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0CustomFileSystemConfigItems0], default is Undefined, optional
-        The settings for assigning a custom file system to a user profile. Permitted users can access this file system in Amazon SageMaker Studio. See Custom File System Config below.
+        The settings for assigning a custom file system to a user profile. Permitted users can access this file system in Amazon SageMaker AI Studio. See Custom File System Config below.
     customPosixUserConfig : [SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0CustomPosixUserConfigItems0], default is Undefined, optional
         Details about the POSIX identity that is used for file system operations. See Custom Posix User Config below.
     defaultLandingUri : str, default is Undefined, optional
@@ -2575,21 +2477,21 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0
     Attributes
     ----------
     directDeploySettings : [SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0CanvasAppSettingsItems0DirectDeploySettingsItems0], default is Undefined, optional
-        The model deployment settings for the SageMaker Canvas application. See Direct Deploy Settings below.
+        The model deployment settings for the SageMaker AI Canvas application. See Direct Deploy Settings below.
     emrServerlessSettings : [SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0CanvasAppSettingsItems0EmrServerlessSettingsItems0], default is Undefined, optional
-        The settings for running Amazon EMR Serverless jobs in SageMaker Canvas. See emr_serverless_settings Block below.
-    generativeAiSettings : SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0CanvasAppSettingsItems0GenerativeAiSettings, default is Undefined, optional
+        The settings for running Amazon EMR Serverless jobs in SageMaker AI Canvas. See emr_serverless_settings Block below.
+    generativeAiSettings : [SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0CanvasAppSettingsItems0GenerativeAiSettingsItems0], default is Undefined, optional
         generative ai settings
     identityProviderOauthSettings : [SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0CanvasAppSettingsItems0IdentityProviderOauthSettingsItems0], default is Undefined, optional
         The settings for connecting to an external data source with OAuth. See Identity Provider OAuth Settings below.
     kendraSettings : [SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0CanvasAppSettingsItems0KendraSettingsItems0], default is Undefined, optional
         The settings for document querying. See Kendra Settings below.
     modelRegisterSettings : [SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0CanvasAppSettingsItems0ModelRegisterSettingsItems0], default is Undefined, optional
-        The model registry settings for the SageMaker Canvas application. See Model Register Settings below.
+        The model registry settings for the SageMaker AI Canvas application. See Model Register Settings below.
     timeSeriesForecastingSettings : [SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0CanvasAppSettingsItems0TimeSeriesForecastingSettingsItems0], default is Undefined, optional
         Time series forecast settings for the Canvas app. See Time Series Forecasting Settings below.
     workspaceSettings : [SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0CanvasAppSettingsItems0WorkspaceSettingsItems0], default is Undefined, optional
-        The workspace settings for the SageMaker Canvas application. See Workspace Settings below.
+        The workspace settings for the SageMaker AI Canvas application. See Workspace Settings below.
     """
 
 
@@ -2597,7 +2499,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0
 
     emrServerlessSettings?: [SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0CanvasAppSettingsItems0EmrServerlessSettingsItems0]
 
-    generativeAiSettings?: SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0CanvasAppSettingsItems0GenerativeAiSettings
+    generativeAiSettings?: [SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0CanvasAppSettingsItems0GenerativeAiSettingsItems0]
 
     identityProviderOauthSettings?: [SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0CanvasAppSettingsItems0IdentityProviderOauthSettingsItems0]
 
@@ -2631,7 +2533,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0
     Attributes
     ----------
     executionRoleArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the AWS IAM role that is assumed for running Amazon EMR Serverless jobs in SageMaker Canvas. This role should have the necessary permissions to read and write data attached and a trust relationship with EMR Serverless.
+        The Amazon Resource Name (ARN) of the AWS IAM role that is assumed for running Amazon EMR Serverless jobs in SageMaker AI Canvas. This role should have the necessary permissions to read and write data attached and a trust relationship with EMR Serverless.
     status : str, default is Undefined, optional
         Describes whether time series forecasting is enabled or disabled in the Canvas app. Valid values are ENABLED and DISABLED.
     """
@@ -2642,9 +2544,9 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0
     status?: str
 
 
-schema SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0CanvasAppSettingsItems0GenerativeAiSettings:
+schema SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0CanvasAppSettingsItems0GenerativeAiSettingsItems0:
     r"""
-    sagemaker aws upbound io v1beta1 user profile status at provider user settings items0 canvas app settings items0 generative ai settings
+    sagemaker aws upbound io v1beta1 user profile status at provider user settings items0 canvas app settings items0 generative ai settings items0
 
     Attributes
     ----------
@@ -2699,7 +2601,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0
     Attributes
     ----------
     crossAccountModelRegisterRoleArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the SageMaker model registry account. Required only to register model versions created by a different SageMaker Canvas AWS account than the AWS account in which SageMaker model registry is set up.
+        The Amazon Resource Name (ARN) of the SageMaker AI model registry account. Required only to register model versions created by a different SageMaker AI Canvas AWS account than the AWS account in which SageMaker AI model registry is set up.
     status : str, default is Undefined, optional
         Describes whether the integration to the model registry is enabled or disabled in the Canvas application. Valid values are ENABLED and DISABLED.
     """
@@ -2757,9 +2659,9 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0
     builtInLifecycleConfigArn : str, default is Undefined, optional
         The lifecycle configuration that runs before the default lifecycle configuration. It can override changes made in the default lifecycle configuration.
     customImage : [SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0CodeEditorAppSettingsItems0CustomImageItems0], default is Undefined, optional
-        A list of custom SageMaker images that are configured to run as a CodeEditor app. see Custom Image below.
+        A list of custom SageMaker AI images that are configured to run as a CodeEditor app. see Custom Image below.
     defaultResourceSpec : [SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0CodeEditorAppSettingsItems0DefaultResourceSpecItems0], default is Undefined, optional
-        The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. see Default Resource Spec below.
+        The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. see Default Resource Spec below.
     lifecycleConfigArns : [str], default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configurations.
     """
@@ -2797,7 +2699,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0
     Attributes
     ----------
     idleTimeoutInMinutes : float, default is Undefined, optional
-        The time that SageMaker waits after the application becomes idle before shutting it down. Valid values are between 60 and 525600.
+        The time that SageMaker AI waits after the application becomes idle before shutting it down. Valid values are between 60 and 525600.
     lifecycleManagement : str, default is Undefined, optional
         Indicates whether idle shutdown is activated for the application type. Valid values are ENABLED and DISABLED.
     maxIdleTimeoutInMinutes : float, default is Undefined, optional
@@ -2845,13 +2747,13 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0
     Attributes
     ----------
     instanceType : str, default is Undefined, optional
-        The instance type that the image version runs on.. For valid values see SageMaker Instance Types.
+        The instance type that the image version runs on.. For valid values see SageMaker AI Instance Types.
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The ARN of the SageMaker image that the image version belongs to.
+        The ARN of the SageMaker AI image that the image version belongs to.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -2891,7 +2793,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0
     fileSystemId : str, default is Undefined, optional
         The ID of your Amazon EFS file system.
     fileSystemPath : str, default is Undefined, optional
-        The path to the file system directory that is accessible in Amazon SageMaker Studio. Permitted users can access only this directory and below.
+        The path to the file system directory that is accessible in Amazon SageMaker AI Studio. Permitted users can access only this directory and below.
     """
 
 
@@ -2929,13 +2831,13 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0
     builtInLifecycleConfigArn : str, default is Undefined, optional
         The lifecycle configuration that runs before the default lifecycle configuration. It can override changes made in the default lifecycle configuration.
     codeRepository : [SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0JupyterLabAppSettingsItems0CodeRepositoryItems0], default is Undefined, optional
-        A list of Git repositories that SageMaker automatically displays to users for cloning in the JupyterServer application. see Code Repository below.
+        A list of Git repositories that SageMaker AI automatically displays to users for cloning in the JupyterServer application. see Code Repository below.
     customImage : [SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0JupyterLabAppSettingsItems0CustomImageItems0], default is Undefined, optional
-        A list of custom SageMaker images that are configured to run as a KernelGateway app. see Custom Image below.
+        A list of custom SageMaker AI images that are configured to run as a KernelGateway app. see Custom Image below.
     defaultResourceSpec : [SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0JupyterLabAppSettingsItems0DefaultResourceSpecItems0], default is Undefined, optional
-        The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. see Default Resource Spec below.
+        The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. see Default Resource Spec below.
     emrSettings : [SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0JupyterLabAppSettingsItems0EmrSettingsItems0], default is Undefined, optional
-        The configuration parameters that specify the IAM roles assumed by the execution role of SageMaker (assumable roles) and the cluster instances or job execution environments (execution roles or runtime roles) to manage and access resources required for running Amazon EMR clusters or Amazon EMR Serverless applications. see emr_settings Block below.
+        The configuration parameters that specify the IAM roles assumed by the execution role of SageMaker AI (assumable roles) and the cluster instances or job execution environments (execution roles or runtime roles) to manage and access resources required for running Amazon EMR clusters or Amazon EMR Serverless applications. see emr_settings Block below.
     lifecycleConfigArns : [str], default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configurations.
     """
@@ -2977,7 +2879,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0
     Attributes
     ----------
     idleTimeoutInMinutes : float, default is Undefined, optional
-        The time that SageMaker waits after the application becomes idle before shutting it down. Valid values are between 60 and 525600.
+        The time that SageMaker AI waits after the application becomes idle before shutting it down. Valid values are between 60 and 525600.
     lifecycleManagement : str, default is Undefined, optional
         Indicates whether idle shutdown is activated for the application type. Valid values are ENABLED and DISABLED.
     maxIdleTimeoutInMinutes : float, default is Undefined, optional
@@ -3039,13 +2941,13 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0
     Attributes
     ----------
     instanceType : str, default is Undefined, optional
-        The instance type that the image version runs on.. For valid values see SageMaker Instance Types.
+        The instance type that the image version runs on.. For valid values see SageMaker AI Instance Types.
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The ARN of the SageMaker image that the image version belongs to.
+        The ARN of the SageMaker AI image that the image version belongs to.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -3069,7 +2971,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0
     Attributes
     ----------
     assumableRoleArns : [str], default is Undefined, optional
-        An array of Amazon Resource Names (ARNs) of the IAM roles that the execution role of SageMaker can assume for performing operations or tasks related to Amazon EMR clusters or Amazon EMR Serverless applications. These roles define the permissions and access policies required when performing Amazon EMR-related operations, such as listing, connecting to, or terminating Amazon EMR clusters or Amazon EMR Serverless applications. They are typically used in cross-account access scenarios, where the Amazon EMR resources (clusters or serverless applications) are located in a different AWS account than the SageMaker domain.
+        An array of Amazon Resource Names (ARNs) of the IAM roles that the execution role of SageMaker AI can assume for performing operations or tasks related to Amazon EMR clusters or Amazon EMR Serverless applications. These roles define the permissions and access policies required when performing Amazon EMR-related operations, such as listing, connecting to, or terminating Amazon EMR clusters or Amazon EMR Serverless applications. They are typically used in cross-account access scenarios, where the Amazon EMR resources (clusters or serverless applications) are located in a different AWS account than the SageMaker AI domain.
     executionRoleArns : [str], default is Undefined, optional
         An array of Amazon Resource Names (ARNs) of the IAM roles used by the Amazon EMR cluster instances or job execution environments to access other AWS services and resources needed during the runtime of your Amazon EMR or Amazon EMR Serverless workloads, such as Amazon S3 for data access, Amazon CloudWatch for logging, or other AWS services based on the particular workload requirements.
     """
@@ -3087,9 +2989,9 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0
     Attributes
     ----------
     codeRepository : [SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0JupyterServerAppSettingsItems0CodeRepositoryItems0], default is Undefined, optional
-        A list of Git repositories that SageMaker automatically displays to users for cloning in the JupyterServer application. see Code Repository below.
+        A list of Git repositories that SageMaker AI automatically displays to users for cloning in the JupyterServer application. see Code Repository below.
     defaultResourceSpec : [SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0JupyterServerAppSettingsItems0DefaultResourceSpecItems0], default is Undefined, optional
-        The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. see Default Resource Spec below.
+        The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. see Default Resource Spec below.
     lifecycleConfigArns : [str], default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configurations.
     """
@@ -3123,13 +3025,13 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0
     Attributes
     ----------
     instanceType : str, default is Undefined, optional
-        The instance type that the image version runs on.. For valid values see SageMaker Instance Types.
+        The instance type that the image version runs on.. For valid values see SageMaker AI Instance Types.
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The ARN of the SageMaker image that the image version belongs to.
+        The ARN of the SageMaker AI image that the image version belongs to.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -3153,9 +3055,9 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0
     Attributes
     ----------
     customImage : [SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0KernelGatewayAppSettingsItems0CustomImageItems0], default is Undefined, optional
-        A list of custom SageMaker images that are configured to run as a KernelGateway app. see Custom Image below.
+        A list of custom SageMaker AI images that are configured to run as a KernelGateway app. see Custom Image below.
     defaultResourceSpec : [SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0KernelGatewayAppSettingsItems0DefaultResourceSpecItems0], default is Undefined, optional
-        The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. see Default Resource Spec below.
+        The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. see Default Resource Spec below.
     lifecycleConfigArns : [str], default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configurations.
     """
@@ -3197,13 +3099,13 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0
     Attributes
     ----------
     instanceType : str, default is Undefined, optional
-        The instance type that the image version runs on.. For valid values see SageMaker Instance Types.
+        The instance type that the image version runs on.. For valid values see SageMaker AI Instance Types.
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The ARN of the SageMaker image that the image version belongs to.
+        The ARN of the SageMaker AI image that the image version belongs to.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -3227,9 +3129,9 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0
     Attributes
     ----------
     customImage : [SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0RSessionAppSettingsItems0CustomImageItems0], default is Undefined, optional
-        A list of custom SageMaker images that are configured to run as a KernelGateway app. see Custom Image below.
+        A list of custom SageMaker AI images that are configured to run as a KernelGateway app. see Custom Image below.
     defaultResourceSpec : [SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0RSessionAppSettingsItems0DefaultResourceSpecItems0], default is Undefined, optional
-        The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. see Default Resource Spec below.
+        The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. see Default Resource Spec below.
     """
 
 
@@ -3267,13 +3169,13 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0
     Attributes
     ----------
     instanceType : str, default is Undefined, optional
-        The instance type that the image version runs on.. For valid values see SageMaker Instance Types.
+        The instance type that the image version runs on.. For valid values see SageMaker AI Instance Types.
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The ARN of the SageMaker image that the image version belongs to.
+        The ARN of the SageMaker AI image that the image version belongs to.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """
@@ -3391,7 +3293,7 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0
     Attributes
     ----------
     defaultResourceSpec : [SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0TensorBoardAppSettingsItems0DefaultResourceSpecItems0], default is Undefined, optional
-        The default instance type and the Amazon Resource Name (ARN) of the SageMaker image created on the instance. see Default Resource Spec below.
+        The default instance type and the Amazon Resource Name (ARN) of the SageMaker AI image created on the instance. see Default Resource Spec below.
     """
 
 
@@ -3405,13 +3307,13 @@ schema SagemakerAwsUpboundIoV1beta1UserProfileStatusAtProviderUserSettingsItems0
     Attributes
     ----------
     instanceType : str, default is Undefined, optional
-        The instance type that the image version runs on.. For valid values see SageMaker Instance Types.
+        The instance type that the image version runs on.. For valid values see SageMaker AI Instance Types.
     lifecycleConfigArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.
     sagemakerImageArn : str, default is Undefined, optional
-        The ARN of the SageMaker image that the image version belongs to.
+        The ARN of the SageMaker AI image that the image version belongs to.
     sagemakerImageVersionAlias : str, default is Undefined, optional
-        The SageMaker Image Version Alias.
+        The SageMaker AI Image Version Alias.
     sagemakerImageVersionArn : str, default is Undefined, optional
         The ARN of the image version created on the instance.
     """

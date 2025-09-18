@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema EventSourceMapping:
     r"""
-    EventSourceMapping is the Schema for the EventSourceMappings API. Provides a Lambda event source mapping. This allows Lambda functions to get events from Kinesis, DynamoDB, SQS, Amazon MQ and Managed Streaming for Apache Kafka (MSK).
+    EventSourceMapping is the Schema for the EventSourceMappings API. Manages an AWS Lambda Event Source Mapping.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpec:
 
     providerConfigRef?: LambdaAwsUpboundIoV1beta2EventSourceMappingSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: LambdaAwsUpboundIoV1beta2EventSourceMappingSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: LambdaAwsUpboundIoV1beta2EventSourceMappingSpecWriteConnectionSecretToRef
 
 
@@ -97,48 +93,49 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProvider:
     amazonManagedKafkaEventSourceConfig : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderAmazonManagedKafkaEventSourceConfig, default is Undefined, optional
         amazon managed kafka event source config
     batchSize : float, default is Undefined, optional
-        The largest number of records that Lambda will retrieve from your event source at the time of invocation. Defaults to 100 for DynamoDB, Kinesis, MQ and MSK, 10 for SQS.
+        Largest number of records that Lambda will retrieve from your event source at the time of invocation. Defaults to 100 for DynamoDB, Kinesis, MQ and MSK, 10 for SQS.
     bisectBatchOnFunctionError : bool, default is Undefined, optional
-        If the function returns an error, split the batch in two and retry. Only available for stream sources (DynamoDB and Kinesis). Defaults to false.
+        Whether to split the batch in two and retry if the function returns an error. Only available for stream sources (DynamoDB and Kinesis). Defaults to false.
     destinationConfig : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderDestinationConfig, default is Undefined, optional
         destination config
     documentDbEventSourceConfig : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderDocumentDbEventSourceConfig, default is Undefined, optional
         document db event source config
     enabled : bool, default is Undefined, optional
-        Determines if the mapping will be enabled on creation. Defaults to true.
+        Whether the mapping is enabled. Defaults to true.
     eventSourceArn : str, default is Undefined, optional
-        The event source ARN - this is required for Kinesis stream, DynamoDB stream, SQS queue, MQ broker, MSK cluster or DocumentDB change stream.  It is incompatible with a Self Managed Kafka source.
+        Event source ARN - required for Kinesis stream, DynamoDB stream, SQS queue, MQ broker, MSK cluster or DocumentDB change stream. Incompatible with Self Managed Kafka source.
     filterCriteria : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderFilterCriteria, default is Undefined, optional
         filter criteria
     functionName : str, default is Undefined, optional
-        The name or the ARN of the Lambda function that will be subscribing to events.
+        Name or ARN of the Lambda function that will be subscribing to events.
     functionNameRef : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderFunctionNameRef, default is Undefined, optional
         function name ref
     functionNameSelector : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderFunctionNameSelector, default is Undefined, optional
         function name selector
     functionResponseTypes : [str], default is Undefined, optional
-        A list of current response type enums applied to the event source mapping for AWS Lambda checkpointing. Only available for SQS and stream sources (DynamoDB and Kinesis). Valid values: ReportBatchItemFailures.
+        List of current response type enums applied to the event source mapping for AWS Lambda checkpointing. Only available for SQS and stream sources (DynamoDB and Kinesis). Valid values: ReportBatchItemFailures.
     kmsKeyArn : str, default is Undefined, optional
-        The ARN of the Key Management Service (KMS) customer managed key that Lambda uses to encrypt your function's filter criteria.
+        ARN of the Key Management Service (KMS) customer managed key that Lambda uses to encrypt your function's filter criteria.
     kmsKeyArnRef : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderKmsKeyArnRef, default is Undefined, optional
         kms key arn ref
     kmsKeyArnSelector : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderKmsKeyArnSelector, default is Undefined, optional
         kms key arn selector
     maximumBatchingWindowInSeconds : float, default is Undefined, optional
-        The maximum amount of time to gather records before invoking the function, in seconds (between 0 and 300). Records will continue to buffer (or accumulate in the case of an SQS queue event source) until either maximum_batching_window_in_seconds expires or batch_size has been met. For streaming event sources, defaults to as soon as records are available in the stream. If the batch it reads from the stream/queue only has one record in it, Lambda only sends one record to the function. Only available for stream sources (DynamoDB and Kinesis) and SQS standard queues.
+        Maximum amount of time to gather records before invoking the function, in seconds (between 0 and 300). Records will continue to buffer until either maximum_batching_window_in_seconds expires or batch_size has been met. For streaming event sources, defaults to as soon as records are available in the stream. Only available for stream sources (DynamoDB and Kinesis) and SQS standard queues.
     maximumRecordAgeInSeconds : float, default is Undefined, optional
-        The maximum age of a record that Lambda sends to a function for processing. Only available for stream sources (DynamoDB and Kinesis). Must be either -1 (forever, and the default value) or between 60 and 604800 (inclusive).
+        Maximum age of a record that Lambda sends to a function for processing. Only available for stream sources (DynamoDB and Kinesis). Must be either -1 (forever, and the default value) or between 60 and 604800 (inclusive).
     maximumRetryAttempts : float, default is Undefined, optional
-        The maximum number of times to retry when the function returns an error. Only available for stream sources (DynamoDB and Kinesis). Minimum and default of -1 (forever), maximum of 10000.
+        Maximum number of times to retry when the function returns an error. Only available for stream sources (DynamoDB and Kinesis). Minimum and default of -1 (forever), maximum of 10000.
     metricsConfig : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderMetricsConfig, default is Undefined, optional
         metrics config
     parallelizationFactor : float, default is Undefined, optional
-        The number of batches to process from each shard concurrently. Only available for stream sources (DynamoDB and Kinesis). Minimum and default of 1, maximum of 10.
+        Number of batches to process from each shard concurrently. Only available for stream sources (DynamoDB and Kinesis). Minimum and default of 1, maximum of 10.
     provisionedPollerConfig : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderProvisionedPollerConfig, default is Undefined, optional
         provisioned poller config
     queues : [str], default is Undefined, optional
-        The name of the Amazon MQ broker destination queue to consume. Only available for MQ sources. The list must contain exactly one queue name.
+        Name of the Amazon MQ broker destination queue to consume. Only available for MQ sources. The list must contain exactly one queue name.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     scalingConfig : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderScalingConfig, default is Undefined, optional
         scaling config
@@ -147,17 +144,17 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProvider:
     selfManagedKafkaEventSourceConfig : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderSelfManagedKafkaEventSourceConfig, default is Undefined, optional
         self managed kafka event source config
     sourceAccessConfiguration : [LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderSourceAccessConfigurationItems0], default is Undefined, optional
-        :  For Self Managed Kafka sources, the access configuration for the source. If set, configuration must also include self_managed_event_source. Detailed below.
+        For Self Managed Kafka sources, the access configuration for the source. If set, configuration must also include self_managed_event_source. See below.
     startingPosition : str, default is Undefined, optional
-        The position in the stream where AWS Lambda should start reading. Must be one of AT_TIMESTAMP (Kinesis only), LATEST or TRIM_HORIZON if getting events from Kinesis, DynamoDB, MSK or Self Managed Apache Kafka. Must not be provided if getting events from SQS. More information about these positions can be found in the AWS DynamoDB Streams API Reference and AWS Kinesis API Reference.
+        Position in the stream where AWS Lambda should start reading. Must be one of AT_TIMESTAMP (Kinesis only), LATEST or TRIM_HORIZON if getting events from Kinesis, DynamoDB, MSK or Self Managed Apache Kafka. Must not be provided if getting events from SQS. More information about these positions can be found in the AWS DynamoDB Streams API Reference and AWS Kinesis API Reference.
     startingPositionTimestamp : str, default is Undefined, optional
-        A timestamp in RFC3339 format of the data record which to start reading when using starting_position set to AT_TIMESTAMP. If a record with this exact timestamp does not exist, the next later record is chosen. If the timestamp is older than the current trim horizon, the oldest available record is chosen.
+        Timestamp in RFC3339 format of the data record which to start reading when using starting_position set to AT_TIMESTAMP. If a record with this exact timestamp does not exist, the next later record is chosen. If the timestamp is older than the current trim horizon, the oldest available record is chosen.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     topics : [str], default is Undefined, optional
-        The name of the Kafka topics. Only available for MSK sources. A single topic name must be specified.
+        Name of the Kafka topics. Only available for MSK sources. A single topic name must be specified.
     tumblingWindowInSeconds : float, default is Undefined, optional
-        The duration in seconds of a processing window for AWS Lambda streaming analytics. The range is between 1 second up to 900 seconds. Only available for stream sources (DynamoDB and Kinesis).
+        Duration in seconds of a processing window for AWS Lambda streaming analytics. The range is between 1 second up to 900 seconds. Only available for stream sources (DynamoDB and Kinesis).
     """
 
 
@@ -228,12 +225,12 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProvider:
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderAmazonManagedKafkaEventSourceConfig:
     r"""
-    Additional configuration block for Amazon Managed Kafka sources. Incompatible with "self_managed_event_source" and "self_managed_kafka_event_source_config". Detailed below.
+    Additional configuration block for Amazon Managed Kafka sources. Incompatible with self_managed_event_source and self_managed_kafka_event_source_config. See below.
 
     Attributes
     ----------
     consumerGroupId : str, default is Undefined, optional
-        A Kafka consumer group ID between 1 and 200 characters for use when creating this event source mapping. If one is not specified, this value will be automatically generated. See AmazonManagedKafkaEventSourceConfig Syntax.
+        Kafka consumer group ID between 1 and 200 characters for use when creating this event source mapping. If one is not specified, this value will be automatically generated. See AmazonManagedKafkaEventSourceConfig Syntax.
     """
 
 
@@ -242,7 +239,7 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderAmazonManagedKa
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderDestinationConfig:
     r"""
-    An Amazon SQS queue, Amazon SNS topic or Amazon S3 bucket (only available for Kafka sources) destination for failed records. Only available for stream sources (DynamoDB and Kinesis) and Kafka sources (Amazon MSK and Self-managed Apache Kafka). Detailed below.
+    Amazon SQS queue, Amazon SNS topic or Amazon S3 bucket (only available for Kafka sources) destination for failed records. Only available for stream sources (DynamoDB and Kinesis) and Kafka sources (Amazon MSK and Self-managed Apache Kafka). See below.
 
     Attributes
     ----------
@@ -256,28 +253,125 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderDestinationConf
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderDestinationConfigOnFailure:
     r"""
-    The destination configuration for failed invocations. Detailed below.
+    Destination configuration for failed invocations. See below.
 
     Attributes
     ----------
     destinationArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the destination resource.
+        ARN of the destination resource.
+    destinationArnRef : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderDestinationConfigOnFailureDestinationArnRef, default is Undefined, optional
+        destination arn ref
+    destinationArnSelector : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderDestinationConfigOnFailureDestinationArnSelector, default is Undefined, optional
+        destination arn selector
     """
 
 
     destinationArn?: str
 
+    destinationArnRef?: LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderDestinationConfigOnFailureDestinationArnRef
+
+    destinationArnSelector?: LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderDestinationConfigOnFailureDestinationArnSelector
+
+
+schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderDestinationConfigOnFailureDestinationArnRef:
+    r"""
+    Reference to a Queue in sqs to populate destinationArn.
+
+    Attributes
+    ----------
+    name : str, default is Undefined, required
+        Name of the referenced object.
+    policy : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderDestinationConfigOnFailureDestinationArnRefPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    name: str
+
+    policy?: LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderDestinationConfigOnFailureDestinationArnRefPolicy
+
+
+schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderDestinationConfigOnFailureDestinationArnRefPolicy:
+    r"""
+    Policies for referencing.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderDestinationConfigOnFailureDestinationArnSelector:
+    r"""
+    Selector for a Queue in sqs to populate destinationArn.
+
+    Attributes
+    ----------
+    matchControllerRef : bool, default is Undefined, optional
+        MatchControllerRef ensures an object with the same controller reference
+        as the selecting object is selected.
+    matchLabels : {str:str}, default is Undefined, optional
+        MatchLabels ensures an object with matching labels is selected.
+    policy : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderDestinationConfigOnFailureDestinationArnSelectorPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    matchControllerRef?: bool
+
+    matchLabels?: {str:str}
+
+    policy?: LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderDestinationConfigOnFailureDestinationArnSelectorPolicy
+
+
+schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderDestinationConfigOnFailureDestinationArnSelectorPolicy:
+    r"""
+    Policies for selection.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderDocumentDbEventSourceConfig:
     r"""
-    Configuration settings for a DocumentDB event source. Detailed below.
+    Configuration settings for a DocumentDB event source. See below.
 
     Attributes
     ----------
     collectionName : str, default is Undefined, optional
-        The name of the collection to consume within the database. If you do not specify a collection, Lambda consumes all collections.
+        Name of the collection to consume within the database. If you do not specify a collection, Lambda consumes all collections.
     databaseName : str, default is Undefined, optional
-        The name of the database to consume within the DocumentDB cluster.
+        Name of the database to consume within the DocumentDB cluster.
     fullDocument : str, default is Undefined, optional
         Determines what DocumentDB sends to your event stream during document update operations. If set to UpdateLookup, DocumentDB sends a delta describing the changes, along with a copy of the entire document. Otherwise, DocumentDB sends only a partial document that contains the changes. Valid values: UpdateLookup, Default.
     """
@@ -292,12 +386,12 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderDocumentDbEvent
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderFilterCriteria:
     r"""
-    The criteria to use for event filtering Kinesis stream, DynamoDB stream, SQS queue event sources. Detailed below.
+    Criteria to use for event filtering Kinesis stream, DynamoDB stream, SQS queue event sources. See below.
 
     Attributes
     ----------
     $filter : [LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderFilterCriteriaFilterItems0], default is Undefined, optional
-        A set of up to 5 filter. If an event satisfies at least one, Lambda sends the event to the function or adds it to the next batch. Detailed below.
+        Set of up to 5 filter. If an event satisfies at least one, Lambda sends the event to the function or adds it to the next batch. See below.
     """
 
 
@@ -311,7 +405,7 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderFilterCriteriaF
     Attributes
     ----------
     pattern : str, default is Undefined, optional
-        A filter pattern up to 4096 characters. See Filter Rule Syntax.
+        Filter pattern up to 4096 characters. See Filter Rule Syntax.
     """
 
 
@@ -498,12 +592,12 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderKmsKeyArnSelect
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderMetricsConfig:
     r"""
-    CloudWatch metrics configuration of the event source. Only available for stream sources (DynamoDB and Kinesis) and SQS queues. Detailed below.
+    CloudWatch metrics configuration of the event source. Only available for stream sources (DynamoDB and Kinesis) and SQS queues. See below.
 
     Attributes
     ----------
     metrics : [str], default is Undefined, optional
-        A list containing the metrics to be produced by the event source mapping. Valid values: EventCount.
+        List containing the metrics to be produced by the event source mapping. Valid values: EventCount.
     """
 
 
@@ -512,14 +606,14 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderMetricsConfig:
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderProvisionedPollerConfig:
     r"""
-    Event poller configuration for the event source. Only valid for Amazon MSK or self-managed Apache Kafka sources. Detailed below.
+    Event poller configuration for the event source. Only valid for Amazon MSK or self-managed Apache Kafka sources. See below.
 
     Attributes
     ----------
     maximumPollers : float, default is Undefined, optional
-        The maximum number of event pollers this event source can scale up to. The range is between 1 and 2000.
+        Maximum number of event pollers this event source can scale up to. The range is between 1 and 2000.
     minimumPollers : float, default is Undefined, optional
-        The minimum number of event pollers this event source can scale down to. The range is between 1 and 200.
+        Minimum number of event pollers this event source can scale down to. The range is between 1 and 200.
     """
 
 
@@ -530,7 +624,7 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderProvisionedPoll
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderScalingConfig:
     r"""
-    Scaling configuration of the event source. Only available for SQS queues. Detailed below.
+    Scaling configuration of the event source. Only available for SQS queues. See below.
 
     Attributes
     ----------
@@ -544,12 +638,12 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderScalingConfig:
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderSelfManagedEventSource:
     r"""
-    For Self Managed Kafka sources, the location of the self managed cluster. If set, configuration must also include source_access_configuration. Detailed below.
+    For Self Managed Kafka sources, the location of the self managed cluster. If set, configuration must also include source_access_configuration. See below.
 
     Attributes
     ----------
     endpoints : {str:str}, default is Undefined, optional
-        A map of endpoints for the self managed source.  For Kafka self-managed sources, the key should be KAFKA_BOOTSTRAP_SERVERS and the value should be a string with a comma separated list of broker endpoints.
+        Map of endpoints for the self managed source. For Kafka self-managed sources, the key should be KAFKA_BOOTSTRAP_SERVERS and the value should be a string with a comma separated list of broker endpoints.
     """
 
 
@@ -558,12 +652,12 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderSelfManagedEven
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderSelfManagedKafkaEventSourceConfig:
     r"""
-    Additional configuration block for Self Managed Kafka sources. Incompatible with "event_source_arn" and "amazon_managed_kafka_event_source_config". Detailed below.
+    Additional configuration block for Self Managed Kafka sources. Incompatible with event_source_arn and amazon_managed_kafka_event_source_config. See below.
 
     Attributes
     ----------
     consumerGroupId : str, default is Undefined, optional
-        A Kafka consumer group ID between 1 and 200 characters for use when creating this event source mapping. If one is not specified, this value will be automatically generated. See SelfManagedKafkaEventSourceConfig Syntax.
+        Kafka consumer group ID between 1 and 200 characters for use when creating this event source mapping. If one is not specified, this value will be automatically generated. See SelfManagedKafkaEventSourceConfig Syntax.
     """
 
 
@@ -577,9 +671,9 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecForProviderSourceAccessCon
     Attributes
     ----------
     $type : str, default is Undefined, optional
-        The type of authentication protocol, VPC components, or virtual host for your event source. For valid values, refer to the AWS documentation.
+        Type of authentication protocol, VPC components, or virtual host for your event source. For valid values, refer to the AWS documentation.
     uri : str, default is Undefined, optional
-        The URI for this configuration.  For type VPC_SUBNET the value should be subnet:subnet_id where subnet_id is the value you would find in an aws_subnet resource's id attribute.  For type VPC_SECURITY_GROUP the value should be security_group:security_group_id where security_group_id is the value you would find in an aws_security_group resource's id attribute.
+        URI for this configuration. For type VPC_SUBNET the value should be subnet:subnet_id where subnet_id is the value you would find in an aws_subnet resource's id attribute. For type VPC_SECURITY_GROUP the value should be security_group:security_group_id where security_group_id is the value you would find in an aws_security_group resource's id attribute.
     """
 
 
@@ -606,47 +700,47 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProvider:
     amazonManagedKafkaEventSourceConfig : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderAmazonManagedKafkaEventSourceConfig, default is Undefined, optional
         amazon managed kafka event source config
     batchSize : float, default is Undefined, optional
-        The largest number of records that Lambda will retrieve from your event source at the time of invocation. Defaults to 100 for DynamoDB, Kinesis, MQ and MSK, 10 for SQS.
+        Largest number of records that Lambda will retrieve from your event source at the time of invocation. Defaults to 100 for DynamoDB, Kinesis, MQ and MSK, 10 for SQS.
     bisectBatchOnFunctionError : bool, default is Undefined, optional
-        If the function returns an error, split the batch in two and retry. Only available for stream sources (DynamoDB and Kinesis). Defaults to false.
+        Whether to split the batch in two and retry if the function returns an error. Only available for stream sources (DynamoDB and Kinesis). Defaults to false.
     destinationConfig : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderDestinationConfig, default is Undefined, optional
         destination config
     documentDbEventSourceConfig : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderDocumentDbEventSourceConfig, default is Undefined, optional
         document db event source config
     enabled : bool, default is Undefined, optional
-        Determines if the mapping will be enabled on creation. Defaults to true.
+        Whether the mapping is enabled. Defaults to true.
     eventSourceArn : str, default is Undefined, optional
-        The event source ARN - this is required for Kinesis stream, DynamoDB stream, SQS queue, MQ broker, MSK cluster or DocumentDB change stream.  It is incompatible with a Self Managed Kafka source.
+        Event source ARN - required for Kinesis stream, DynamoDB stream, SQS queue, MQ broker, MSK cluster or DocumentDB change stream. Incompatible with Self Managed Kafka source.
     filterCriteria : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderFilterCriteria, default is Undefined, optional
         filter criteria
     functionName : str, default is Undefined, optional
-        The name or the ARN of the Lambda function that will be subscribing to events.
+        Name or ARN of the Lambda function that will be subscribing to events.
     functionNameRef : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderFunctionNameRef, default is Undefined, optional
         function name ref
     functionNameSelector : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderFunctionNameSelector, default is Undefined, optional
         function name selector
     functionResponseTypes : [str], default is Undefined, optional
-        A list of current response type enums applied to the event source mapping for AWS Lambda checkpointing. Only available for SQS and stream sources (DynamoDB and Kinesis). Valid values: ReportBatchItemFailures.
+        List of current response type enums applied to the event source mapping for AWS Lambda checkpointing. Only available for SQS and stream sources (DynamoDB and Kinesis). Valid values: ReportBatchItemFailures.
     kmsKeyArn : str, default is Undefined, optional
-        The ARN of the Key Management Service (KMS) customer managed key that Lambda uses to encrypt your function's filter criteria.
+        ARN of the Key Management Service (KMS) customer managed key that Lambda uses to encrypt your function's filter criteria.
     kmsKeyArnRef : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderKmsKeyArnRef, default is Undefined, optional
         kms key arn ref
     kmsKeyArnSelector : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderKmsKeyArnSelector, default is Undefined, optional
         kms key arn selector
     maximumBatchingWindowInSeconds : float, default is Undefined, optional
-        The maximum amount of time to gather records before invoking the function, in seconds (between 0 and 300). Records will continue to buffer (or accumulate in the case of an SQS queue event source) until either maximum_batching_window_in_seconds expires or batch_size has been met. For streaming event sources, defaults to as soon as records are available in the stream. If the batch it reads from the stream/queue only has one record in it, Lambda only sends one record to the function. Only available for stream sources (DynamoDB and Kinesis) and SQS standard queues.
+        Maximum amount of time to gather records before invoking the function, in seconds (between 0 and 300). Records will continue to buffer until either maximum_batching_window_in_seconds expires or batch_size has been met. For streaming event sources, defaults to as soon as records are available in the stream. Only available for stream sources (DynamoDB and Kinesis) and SQS standard queues.
     maximumRecordAgeInSeconds : float, default is Undefined, optional
-        The maximum age of a record that Lambda sends to a function for processing. Only available for stream sources (DynamoDB and Kinesis). Must be either -1 (forever, and the default value) or between 60 and 604800 (inclusive).
+        Maximum age of a record that Lambda sends to a function for processing. Only available for stream sources (DynamoDB and Kinesis). Must be either -1 (forever, and the default value) or between 60 and 604800 (inclusive).
     maximumRetryAttempts : float, default is Undefined, optional
-        The maximum number of times to retry when the function returns an error. Only available for stream sources (DynamoDB and Kinesis). Minimum and default of -1 (forever), maximum of 10000.
+        Maximum number of times to retry when the function returns an error. Only available for stream sources (DynamoDB and Kinesis). Minimum and default of -1 (forever), maximum of 10000.
     metricsConfig : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderMetricsConfig, default is Undefined, optional
         metrics config
     parallelizationFactor : float, default is Undefined, optional
-        The number of batches to process from each shard concurrently. Only available for stream sources (DynamoDB and Kinesis). Minimum and default of 1, maximum of 10.
+        Number of batches to process from each shard concurrently. Only available for stream sources (DynamoDB and Kinesis). Minimum and default of 1, maximum of 10.
     provisionedPollerConfig : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderProvisionedPollerConfig, default is Undefined, optional
         provisioned poller config
     queues : [str], default is Undefined, optional
-        The name of the Amazon MQ broker destination queue to consume. Only available for MQ sources. The list must contain exactly one queue name.
+        Name of the Amazon MQ broker destination queue to consume. Only available for MQ sources. The list must contain exactly one queue name.
     scalingConfig : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderScalingConfig, default is Undefined, optional
         scaling config
     selfManagedEventSource : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderSelfManagedEventSource, default is Undefined, optional
@@ -654,17 +748,17 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProvider:
     selfManagedKafkaEventSourceConfig : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderSelfManagedKafkaEventSourceConfig, default is Undefined, optional
         self managed kafka event source config
     sourceAccessConfiguration : [LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderSourceAccessConfigurationItems0], default is Undefined, optional
-        :  For Self Managed Kafka sources, the access configuration for the source. If set, configuration must also include self_managed_event_source. Detailed below.
+        For Self Managed Kafka sources, the access configuration for the source. If set, configuration must also include self_managed_event_source. See below.
     startingPosition : str, default is Undefined, optional
-        The position in the stream where AWS Lambda should start reading. Must be one of AT_TIMESTAMP (Kinesis only), LATEST or TRIM_HORIZON if getting events from Kinesis, DynamoDB, MSK or Self Managed Apache Kafka. Must not be provided if getting events from SQS. More information about these positions can be found in the AWS DynamoDB Streams API Reference and AWS Kinesis API Reference.
+        Position in the stream where AWS Lambda should start reading. Must be one of AT_TIMESTAMP (Kinesis only), LATEST or TRIM_HORIZON if getting events from Kinesis, DynamoDB, MSK or Self Managed Apache Kafka. Must not be provided if getting events from SQS. More information about these positions can be found in the AWS DynamoDB Streams API Reference and AWS Kinesis API Reference.
     startingPositionTimestamp : str, default is Undefined, optional
-        A timestamp in RFC3339 format of the data record which to start reading when using starting_position set to AT_TIMESTAMP. If a record with this exact timestamp does not exist, the next later record is chosen. If the timestamp is older than the current trim horizon, the oldest available record is chosen.
+        Timestamp in RFC3339 format of the data record which to start reading when using starting_position set to AT_TIMESTAMP. If a record with this exact timestamp does not exist, the next later record is chosen. If the timestamp is older than the current trim horizon, the oldest available record is chosen.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     topics : [str], default is Undefined, optional
-        The name of the Kafka topics. Only available for MSK sources. A single topic name must be specified.
+        Name of the Kafka topics. Only available for MSK sources. A single topic name must be specified.
     tumblingWindowInSeconds : float, default is Undefined, optional
-        The duration in seconds of a processing window for AWS Lambda streaming analytics. The range is between 1 second up to 900 seconds. Only available for stream sources (DynamoDB and Kinesis).
+        Duration in seconds of a processing window for AWS Lambda streaming analytics. The range is between 1 second up to 900 seconds. Only available for stream sources (DynamoDB and Kinesis).
     """
 
 
@@ -733,12 +827,12 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProvider:
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderAmazonManagedKafkaEventSourceConfig:
     r"""
-    Additional configuration block for Amazon Managed Kafka sources. Incompatible with "self_managed_event_source" and "self_managed_kafka_event_source_config". Detailed below.
+    Additional configuration block for Amazon Managed Kafka sources. Incompatible with self_managed_event_source and self_managed_kafka_event_source_config. See below.
 
     Attributes
     ----------
     consumerGroupId : str, default is Undefined, optional
-        A Kafka consumer group ID between 1 and 200 characters for use when creating this event source mapping. If one is not specified, this value will be automatically generated. See AmazonManagedKafkaEventSourceConfig Syntax.
+        Kafka consumer group ID between 1 and 200 characters for use when creating this event source mapping. If one is not specified, this value will be automatically generated. See AmazonManagedKafkaEventSourceConfig Syntax.
     """
 
 
@@ -747,7 +841,7 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderAmazonManagedK
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderDestinationConfig:
     r"""
-    An Amazon SQS queue, Amazon SNS topic or Amazon S3 bucket (only available for Kafka sources) destination for failed records. Only available for stream sources (DynamoDB and Kinesis) and Kafka sources (Amazon MSK and Self-managed Apache Kafka). Detailed below.
+    Amazon SQS queue, Amazon SNS topic or Amazon S3 bucket (only available for Kafka sources) destination for failed records. Only available for stream sources (DynamoDB and Kinesis) and Kafka sources (Amazon MSK and Self-managed Apache Kafka). See below.
 
     Attributes
     ----------
@@ -761,28 +855,125 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderDestinationCon
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderDestinationConfigOnFailure:
     r"""
-    The destination configuration for failed invocations. Detailed below.
+    Destination configuration for failed invocations. See below.
 
     Attributes
     ----------
     destinationArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the destination resource.
+        ARN of the destination resource.
+    destinationArnRef : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderDestinationConfigOnFailureDestinationArnRef, default is Undefined, optional
+        destination arn ref
+    destinationArnSelector : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderDestinationConfigOnFailureDestinationArnSelector, default is Undefined, optional
+        destination arn selector
     """
 
 
     destinationArn?: str
 
+    destinationArnRef?: LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderDestinationConfigOnFailureDestinationArnRef
+
+    destinationArnSelector?: LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderDestinationConfigOnFailureDestinationArnSelector
+
+
+schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderDestinationConfigOnFailureDestinationArnRef:
+    r"""
+    Reference to a Queue in sqs to populate destinationArn.
+
+    Attributes
+    ----------
+    name : str, default is Undefined, required
+        Name of the referenced object.
+    policy : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderDestinationConfigOnFailureDestinationArnRefPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    name: str
+
+    policy?: LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderDestinationConfigOnFailureDestinationArnRefPolicy
+
+
+schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderDestinationConfigOnFailureDestinationArnRefPolicy:
+    r"""
+    Policies for referencing.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderDestinationConfigOnFailureDestinationArnSelector:
+    r"""
+    Selector for a Queue in sqs to populate destinationArn.
+
+    Attributes
+    ----------
+    matchControllerRef : bool, default is Undefined, optional
+        MatchControllerRef ensures an object with the same controller reference
+        as the selecting object is selected.
+    matchLabels : {str:str}, default is Undefined, optional
+        MatchLabels ensures an object with matching labels is selected.
+    policy : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderDestinationConfigOnFailureDestinationArnSelectorPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    matchControllerRef?: bool
+
+    matchLabels?: {str:str}
+
+    policy?: LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderDestinationConfigOnFailureDestinationArnSelectorPolicy
+
+
+schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderDestinationConfigOnFailureDestinationArnSelectorPolicy:
+    r"""
+    Policies for selection.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderDocumentDbEventSourceConfig:
     r"""
-    Configuration settings for a DocumentDB event source. Detailed below.
+    Configuration settings for a DocumentDB event source. See below.
 
     Attributes
     ----------
     collectionName : str, default is Undefined, optional
-        The name of the collection to consume within the database. If you do not specify a collection, Lambda consumes all collections.
+        Name of the collection to consume within the database. If you do not specify a collection, Lambda consumes all collections.
     databaseName : str, default is Undefined, optional
-        The name of the database to consume within the DocumentDB cluster.
+        Name of the database to consume within the DocumentDB cluster.
     fullDocument : str, default is Undefined, optional
         Determines what DocumentDB sends to your event stream during document update operations. If set to UpdateLookup, DocumentDB sends a delta describing the changes, along with a copy of the entire document. Otherwise, DocumentDB sends only a partial document that contains the changes. Valid values: UpdateLookup, Default.
     """
@@ -797,12 +988,12 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderDocumentDbEven
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderFilterCriteria:
     r"""
-    The criteria to use for event filtering Kinesis stream, DynamoDB stream, SQS queue event sources. Detailed below.
+    Criteria to use for event filtering Kinesis stream, DynamoDB stream, SQS queue event sources. See below.
 
     Attributes
     ----------
     $filter : [LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderFilterCriteriaFilterItems0], default is Undefined, optional
-        A set of up to 5 filter. If an event satisfies at least one, Lambda sends the event to the function or adds it to the next batch. Detailed below.
+        Set of up to 5 filter. If an event satisfies at least one, Lambda sends the event to the function or adds it to the next batch. See below.
     """
 
 
@@ -816,7 +1007,7 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderFilterCriteria
     Attributes
     ----------
     pattern : str, default is Undefined, optional
-        A filter pattern up to 4096 characters. See Filter Rule Syntax.
+        Filter pattern up to 4096 characters. See Filter Rule Syntax.
     """
 
 
@@ -1003,12 +1194,12 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderKmsKeyArnSelec
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderMetricsConfig:
     r"""
-    CloudWatch metrics configuration of the event source. Only available for stream sources (DynamoDB and Kinesis) and SQS queues. Detailed below.
+    CloudWatch metrics configuration of the event source. Only available for stream sources (DynamoDB and Kinesis) and SQS queues. See below.
 
     Attributes
     ----------
     metrics : [str], default is Undefined, optional
-        A list containing the metrics to be produced by the event source mapping. Valid values: EventCount.
+        List containing the metrics to be produced by the event source mapping. Valid values: EventCount.
     """
 
 
@@ -1017,14 +1208,14 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderMetricsConfig:
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderProvisionedPollerConfig:
     r"""
-    Event poller configuration for the event source. Only valid for Amazon MSK or self-managed Apache Kafka sources. Detailed below.
+    Event poller configuration for the event source. Only valid for Amazon MSK or self-managed Apache Kafka sources. See below.
 
     Attributes
     ----------
     maximumPollers : float, default is Undefined, optional
-        The maximum number of event pollers this event source can scale up to. The range is between 1 and 2000.
+        Maximum number of event pollers this event source can scale up to. The range is between 1 and 2000.
     minimumPollers : float, default is Undefined, optional
-        The minimum number of event pollers this event source can scale down to. The range is between 1 and 200.
+        Minimum number of event pollers this event source can scale down to. The range is between 1 and 200.
     """
 
 
@@ -1035,7 +1226,7 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderProvisionedPol
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderScalingConfig:
     r"""
-    Scaling configuration of the event source. Only available for SQS queues. Detailed below.
+    Scaling configuration of the event source. Only available for SQS queues. See below.
 
     Attributes
     ----------
@@ -1049,12 +1240,12 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderScalingConfig:
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderSelfManagedEventSource:
     r"""
-    For Self Managed Kafka sources, the location of the self managed cluster. If set, configuration must also include source_access_configuration. Detailed below.
+    For Self Managed Kafka sources, the location of the self managed cluster. If set, configuration must also include source_access_configuration. See below.
 
     Attributes
     ----------
     endpoints : {str:str}, default is Undefined, optional
-        A map of endpoints for the self managed source.  For Kafka self-managed sources, the key should be KAFKA_BOOTSTRAP_SERVERS and the value should be a string with a comma separated list of broker endpoints.
+        Map of endpoints for the self managed source. For Kafka self-managed sources, the key should be KAFKA_BOOTSTRAP_SERVERS and the value should be a string with a comma separated list of broker endpoints.
     """
 
 
@@ -1063,12 +1254,12 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderSelfManagedEve
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderSelfManagedKafkaEventSourceConfig:
     r"""
-    Additional configuration block for Self Managed Kafka sources. Incompatible with "event_source_arn" and "amazon_managed_kafka_event_source_config". Detailed below.
+    Additional configuration block for Self Managed Kafka sources. Incompatible with event_source_arn and amazon_managed_kafka_event_source_config. See below.
 
     Attributes
     ----------
     consumerGroupId : str, default is Undefined, optional
-        A Kafka consumer group ID between 1 and 200 characters for use when creating this event source mapping. If one is not specified, this value will be automatically generated. See SelfManagedKafkaEventSourceConfig Syntax.
+        Kafka consumer group ID between 1 and 200 characters for use when creating this event source mapping. If one is not specified, this value will be automatically generated. See SelfManagedKafkaEventSourceConfig Syntax.
     """
 
 
@@ -1082,9 +1273,9 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecInitProviderSourceAccessCo
     Attributes
     ----------
     $type : str, default is Undefined, optional
-        The type of authentication protocol, VPC components, or virtual host for your event source. For valid values, refer to the AWS documentation.
+        Type of authentication protocol, VPC components, or virtual host for your event source. For valid values, refer to the AWS documentation.
     uri : str, default is Undefined, optional
-        The URI for this configuration.  For type VPC_SUBNET the value should be subnet:subnet_id where subnet_id is the value you would find in an aws_subnet resource's id attribute.  For type VPC_SECURITY_GROUP the value should be security_group:security_group_id where security_group_id is the value you would find in an aws_security_group resource's id attribute.
+        URI for this configuration. For type VPC_SUBNET the value should be subnet:subnet_id where subnet_id is the value you would find in an aws_subnet resource's id attribute. For type VPC_SECURITY_GROUP the value should be security_group:security_group_id where security_group_id is the value you would find in an aws_security_group resource's id attribute.
     """
 
 
@@ -1137,112 +1328,12 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: LambdaAwsUpboundIoV1beta2EventSourceMappingSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: LambdaAwsUpboundIoV1beta2EventSourceMappingSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : LambdaAwsUpboundIoV1beta2EventSourceMappingSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: LambdaAwsUpboundIoV1beta2EventSourceMappingSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1291,49 +1382,52 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProvider:
     amazonManagedKafkaEventSourceConfig : LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderAmazonManagedKafkaEventSourceConfig, default is Undefined, optional
         amazon managed kafka event source config
     arn : str, default is Undefined, optional
-        The event source mapping ARN.
+        Event source mapping ARN.
     batchSize : float, default is Undefined, optional
-        The largest number of records that Lambda will retrieve from your event source at the time of invocation. Defaults to 100 for DynamoDB, Kinesis, MQ and MSK, 10 for SQS.
+        Largest number of records that Lambda will retrieve from your event source at the time of invocation. Defaults to 100 for DynamoDB, Kinesis, MQ and MSK, 10 for SQS.
     bisectBatchOnFunctionError : bool, default is Undefined, optional
-        If the function returns an error, split the batch in two and retry. Only available for stream sources (DynamoDB and Kinesis). Defaults to false.
+        Whether to split the batch in two and retry if the function returns an error. Only available for stream sources (DynamoDB and Kinesis). Defaults to false.
     destinationConfig : LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderDestinationConfig, default is Undefined, optional
         destination config
     documentDbEventSourceConfig : LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderDocumentDbEventSourceConfig, default is Undefined, optional
         document db event source config
     enabled : bool, default is Undefined, optional
-        Determines if the mapping will be enabled on creation. Defaults to true.
+        Whether the mapping is enabled. Defaults to true.
     eventSourceArn : str, default is Undefined, optional
-        The event source ARN - this is required for Kinesis stream, DynamoDB stream, SQS queue, MQ broker, MSK cluster or DocumentDB change stream.  It is incompatible with a Self Managed Kafka source.
+        Event source ARN - required for Kinesis stream, DynamoDB stream, SQS queue, MQ broker, MSK cluster or DocumentDB change stream. Incompatible with Self Managed Kafka source.
     filterCriteria : LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderFilterCriteria, default is Undefined, optional
         filter criteria
     functionArn : str, default is Undefined, optional
-        The ARN of the Lambda function the event source mapping is sending events to. (Note: this is a computed value that differs from function_name above.)
+        ARN of the Lambda function the event source mapping is sending events to. (Note: this is a computed value that differs from function_name above.)
     functionName : str, default is Undefined, optional
-        The name or the ARN of the Lambda function that will be subscribing to events.
+        Name or ARN of the Lambda function that will be subscribing to events.
     functionResponseTypes : [str], default is Undefined, optional
-        A list of current response type enums applied to the event source mapping for AWS Lambda checkpointing. Only available for SQS and stream sources (DynamoDB and Kinesis). Valid values: ReportBatchItemFailures.
+        List of current response type enums applied to the event source mapping for AWS Lambda checkpointing. Only available for SQS and stream sources (DynamoDB and Kinesis). Valid values: ReportBatchItemFailures.
     id : str, default is Undefined, optional
         id
     kmsKeyArn : str, default is Undefined, optional
-        The ARN of the Key Management Service (KMS) customer managed key that Lambda uses to encrypt your function's filter criteria.
+        ARN of the Key Management Service (KMS) customer managed key that Lambda uses to encrypt your function's filter criteria.
     lastModified : str, default is Undefined, optional
-        The date this resource was last modified.
+        Date this resource was last modified.
     lastProcessingResult : str, default is Undefined, optional
-        The result of the last AWS Lambda invocation of your Lambda function.
+        Result of the last AWS Lambda invocation of your Lambda function.
     maximumBatchingWindowInSeconds : float, default is Undefined, optional
-        The maximum amount of time to gather records before invoking the function, in seconds (between 0 and 300). Records will continue to buffer (or accumulate in the case of an SQS queue event source) until either maximum_batching_window_in_seconds expires or batch_size has been met. For streaming event sources, defaults to as soon as records are available in the stream. If the batch it reads from the stream/queue only has one record in it, Lambda only sends one record to the function. Only available for stream sources (DynamoDB and Kinesis) and SQS standard queues.
+        Maximum amount of time to gather records before invoking the function, in seconds (between 0 and 300). Records will continue to buffer until either maximum_batching_window_in_seconds expires or batch_size has been met. For streaming event sources, defaults to as soon as records are available in the stream. Only available for stream sources (DynamoDB and Kinesis) and SQS standard queues.
     maximumRecordAgeInSeconds : float, default is Undefined, optional
-        The maximum age of a record that Lambda sends to a function for processing. Only available for stream sources (DynamoDB and Kinesis). Must be either -1 (forever, and the default value) or between 60 and 604800 (inclusive).
+        Maximum age of a record that Lambda sends to a function for processing. Only available for stream sources (DynamoDB and Kinesis). Must be either -1 (forever, and the default value) or between 60 and 604800 (inclusive).
     maximumRetryAttempts : float, default is Undefined, optional
-        The maximum number of times to retry when the function returns an error. Only available for stream sources (DynamoDB and Kinesis). Minimum and default of -1 (forever), maximum of 10000.
+        Maximum number of times to retry when the function returns an error. Only available for stream sources (DynamoDB and Kinesis). Minimum and default of -1 (forever), maximum of 10000.
     metricsConfig : LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderMetricsConfig, default is Undefined, optional
         metrics config
     parallelizationFactor : float, default is Undefined, optional
-        The number of batches to process from each shard concurrently. Only available for stream sources (DynamoDB and Kinesis). Minimum and default of 1, maximum of 10.
+        Number of batches to process from each shard concurrently. Only available for stream sources (DynamoDB and Kinesis). Minimum and default of 1, maximum of 10.
     provisionedPollerConfig : LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderProvisionedPollerConfig, default is Undefined, optional
         provisioned poller config
     queues : [str], default is Undefined, optional
-        The name of the Amazon MQ broker destination queue to consume. Only available for MQ sources. The list must contain exactly one queue name.
+        Name of the Amazon MQ broker destination queue to consume. Only available for MQ sources. The list must contain exactly one queue name.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     scalingConfig : LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderScalingConfig, default is Undefined, optional
         scaling config
     selfManagedEventSource : LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderSelfManagedEventSource, default is Undefined, optional
@@ -1341,25 +1435,25 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProvider:
     selfManagedKafkaEventSourceConfig : LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderSelfManagedKafkaEventSourceConfig, default is Undefined, optional
         self managed kafka event source config
     sourceAccessConfiguration : [LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderSourceAccessConfigurationItems0], default is Undefined, optional
-        :  For Self Managed Kafka sources, the access configuration for the source. If set, configuration must also include self_managed_event_source. Detailed below.
+        For Self Managed Kafka sources, the access configuration for the source. If set, configuration must also include self_managed_event_source. See below.
     startingPosition : str, default is Undefined, optional
-        The position in the stream where AWS Lambda should start reading. Must be one of AT_TIMESTAMP (Kinesis only), LATEST or TRIM_HORIZON if getting events from Kinesis, DynamoDB, MSK or Self Managed Apache Kafka. Must not be provided if getting events from SQS. More information about these positions can be found in the AWS DynamoDB Streams API Reference and AWS Kinesis API Reference.
+        Position in the stream where AWS Lambda should start reading. Must be one of AT_TIMESTAMP (Kinesis only), LATEST or TRIM_HORIZON if getting events from Kinesis, DynamoDB, MSK or Self Managed Apache Kafka. Must not be provided if getting events from SQS. More information about these positions can be found in the AWS DynamoDB Streams API Reference and AWS Kinesis API Reference.
     startingPositionTimestamp : str, default is Undefined, optional
-        A timestamp in RFC3339 format of the data record which to start reading when using starting_position set to AT_TIMESTAMP. If a record with this exact timestamp does not exist, the next later record is chosen. If the timestamp is older than the current trim horizon, the oldest available record is chosen.
+        Timestamp in RFC3339 format of the data record which to start reading when using starting_position set to AT_TIMESTAMP. If a record with this exact timestamp does not exist, the next later record is chosen. If the timestamp is older than the current trim horizon, the oldest available record is chosen.
     state : str, default is Undefined, optional
-        The state of the event source mapping.
+        State of the event source mapping.
     stateTransitionReason : str, default is Undefined, optional
-        The reason the event source mapping is in its current state.
+        Reason the event source mapping is in its current state.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
-        A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
+        Map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     topics : [str], default is Undefined, optional
-        The name of the Kafka topics. Only available for MSK sources. A single topic name must be specified.
+        Name of the Kafka topics. Only available for MSK sources. A single topic name must be specified.
     tumblingWindowInSeconds : float, default is Undefined, optional
-        The duration in seconds of a processing window for AWS Lambda streaming analytics. The range is between 1 second up to 900 seconds. Only available for stream sources (DynamoDB and Kinesis).
+        Duration in seconds of a processing window for AWS Lambda streaming analytics. The range is between 1 second up to 900 seconds. Only available for stream sources (DynamoDB and Kinesis).
     uuid : str, default is Undefined, optional
-        The UUID of the created event source mapping.
+        UUID of the created event source mapping.
     """
 
 
@@ -1409,6 +1503,8 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProvider:
 
     queues?: [str]
 
+    region?: str
+
     scalingConfig?: LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderScalingConfig
 
     selfManagedEventSource?: LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderSelfManagedEventSource
@@ -1438,12 +1534,12 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProvider:
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderAmazonManagedKafkaEventSourceConfig:
     r"""
-    Additional configuration block for Amazon Managed Kafka sources. Incompatible with "self_managed_event_source" and "self_managed_kafka_event_source_config". Detailed below.
+    Additional configuration block for Amazon Managed Kafka sources. Incompatible with self_managed_event_source and self_managed_kafka_event_source_config. See below.
 
     Attributes
     ----------
     consumerGroupId : str, default is Undefined, optional
-        A Kafka consumer group ID between 1 and 200 characters for use when creating this event source mapping. If one is not specified, this value will be automatically generated. See AmazonManagedKafkaEventSourceConfig Syntax.
+        Kafka consumer group ID between 1 and 200 characters for use when creating this event source mapping. If one is not specified, this value will be automatically generated. See AmazonManagedKafkaEventSourceConfig Syntax.
     """
 
 
@@ -1452,7 +1548,7 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderAmazonManagedK
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderDestinationConfig:
     r"""
-    An Amazon SQS queue, Amazon SNS topic or Amazon S3 bucket (only available for Kafka sources) destination for failed records. Only available for stream sources (DynamoDB and Kinesis) and Kafka sources (Amazon MSK and Self-managed Apache Kafka). Detailed below.
+    Amazon SQS queue, Amazon SNS topic or Amazon S3 bucket (only available for Kafka sources) destination for failed records. Only available for stream sources (DynamoDB and Kinesis) and Kafka sources (Amazon MSK and Self-managed Apache Kafka). See below.
 
     Attributes
     ----------
@@ -1466,12 +1562,12 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderDestinationCon
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderDestinationConfigOnFailure:
     r"""
-    The destination configuration for failed invocations. Detailed below.
+    Destination configuration for failed invocations. See below.
 
     Attributes
     ----------
     destinationArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the destination resource.
+        ARN of the destination resource.
     """
 
 
@@ -1480,14 +1576,14 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderDestinationCon
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderDocumentDbEventSourceConfig:
     r"""
-    Configuration settings for a DocumentDB event source. Detailed below.
+    Configuration settings for a DocumentDB event source. See below.
 
     Attributes
     ----------
     collectionName : str, default is Undefined, optional
-        The name of the collection to consume within the database. If you do not specify a collection, Lambda consumes all collections.
+        Name of the collection to consume within the database. If you do not specify a collection, Lambda consumes all collections.
     databaseName : str, default is Undefined, optional
-        The name of the database to consume within the DocumentDB cluster.
+        Name of the database to consume within the DocumentDB cluster.
     fullDocument : str, default is Undefined, optional
         Determines what DocumentDB sends to your event stream during document update operations. If set to UpdateLookup, DocumentDB sends a delta describing the changes, along with a copy of the entire document. Otherwise, DocumentDB sends only a partial document that contains the changes. Valid values: UpdateLookup, Default.
     """
@@ -1502,12 +1598,12 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderDocumentDbEven
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderFilterCriteria:
     r"""
-    The criteria to use for event filtering Kinesis stream, DynamoDB stream, SQS queue event sources. Detailed below.
+    Criteria to use for event filtering Kinesis stream, DynamoDB stream, SQS queue event sources. See below.
 
     Attributes
     ----------
     $filter : [LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderFilterCriteriaFilterItems0], default is Undefined, optional
-        A set of up to 5 filter. If an event satisfies at least one, Lambda sends the event to the function or adds it to the next batch. Detailed below.
+        Set of up to 5 filter. If an event satisfies at least one, Lambda sends the event to the function or adds it to the next batch. See below.
     """
 
 
@@ -1521,7 +1617,7 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderFilterCriteria
     Attributes
     ----------
     pattern : str, default is Undefined, optional
-        A filter pattern up to 4096 characters. See Filter Rule Syntax.
+        Filter pattern up to 4096 characters. See Filter Rule Syntax.
     """
 
 
@@ -1530,12 +1626,12 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderFilterCriteria
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderMetricsConfig:
     r"""
-    CloudWatch metrics configuration of the event source. Only available for stream sources (DynamoDB and Kinesis) and SQS queues. Detailed below.
+    CloudWatch metrics configuration of the event source. Only available for stream sources (DynamoDB and Kinesis) and SQS queues. See below.
 
     Attributes
     ----------
     metrics : [str], default is Undefined, optional
-        A list containing the metrics to be produced by the event source mapping. Valid values: EventCount.
+        List containing the metrics to be produced by the event source mapping. Valid values: EventCount.
     """
 
 
@@ -1544,14 +1640,14 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderMetricsConfig:
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderProvisionedPollerConfig:
     r"""
-    Event poller configuration for the event source. Only valid for Amazon MSK or self-managed Apache Kafka sources. Detailed below.
+    Event poller configuration for the event source. Only valid for Amazon MSK or self-managed Apache Kafka sources. See below.
 
     Attributes
     ----------
     maximumPollers : float, default is Undefined, optional
-        The maximum number of event pollers this event source can scale up to. The range is between 1 and 2000.
+        Maximum number of event pollers this event source can scale up to. The range is between 1 and 2000.
     minimumPollers : float, default is Undefined, optional
-        The minimum number of event pollers this event source can scale down to. The range is between 1 and 200.
+        Minimum number of event pollers this event source can scale down to. The range is between 1 and 200.
     """
 
 
@@ -1562,7 +1658,7 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderProvisionedPol
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderScalingConfig:
     r"""
-    Scaling configuration of the event source. Only available for SQS queues. Detailed below.
+    Scaling configuration of the event source. Only available for SQS queues. See below.
 
     Attributes
     ----------
@@ -1576,12 +1672,12 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderScalingConfig:
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderSelfManagedEventSource:
     r"""
-    For Self Managed Kafka sources, the location of the self managed cluster. If set, configuration must also include source_access_configuration. Detailed below.
+    For Self Managed Kafka sources, the location of the self managed cluster. If set, configuration must also include source_access_configuration. See below.
 
     Attributes
     ----------
     endpoints : {str:str}, default is Undefined, optional
-        A map of endpoints for the self managed source.  For Kafka self-managed sources, the key should be KAFKA_BOOTSTRAP_SERVERS and the value should be a string with a comma separated list of broker endpoints.
+        Map of endpoints for the self managed source. For Kafka self-managed sources, the key should be KAFKA_BOOTSTRAP_SERVERS and the value should be a string with a comma separated list of broker endpoints.
     """
 
 
@@ -1590,12 +1686,12 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderSelfManagedEve
 
 schema LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderSelfManagedKafkaEventSourceConfig:
     r"""
-    Additional configuration block for Self Managed Kafka sources. Incompatible with "event_source_arn" and "amazon_managed_kafka_event_source_config". Detailed below.
+    Additional configuration block for Self Managed Kafka sources. Incompatible with event_source_arn and amazon_managed_kafka_event_source_config. See below.
 
     Attributes
     ----------
     consumerGroupId : str, default is Undefined, optional
-        A Kafka consumer group ID between 1 and 200 characters for use when creating this event source mapping. If one is not specified, this value will be automatically generated. See SelfManagedKafkaEventSourceConfig Syntax.
+        Kafka consumer group ID between 1 and 200 characters for use when creating this event source mapping. If one is not specified, this value will be automatically generated. See SelfManagedKafkaEventSourceConfig Syntax.
     """
 
 
@@ -1609,9 +1705,9 @@ schema LambdaAwsUpboundIoV1beta2EventSourceMappingStatusAtProviderSourceAccessCo
     Attributes
     ----------
     $type : str, default is Undefined, optional
-        The type of authentication protocol, VPC components, or virtual host for your event source. For valid values, refer to the AWS documentation.
+        Type of authentication protocol, VPC components, or virtual host for your event source. For valid values, refer to the AWS documentation.
     uri : str, default is Undefined, optional
-        The URI for this configuration.  For type VPC_SUBNET the value should be subnet:subnet_id where subnet_id is the value you would find in an aws_subnet resource's id attribute.  For type VPC_SECURITY_GROUP the value should be security_group:security_group_id where security_group_id is the value you would find in an aws_security_group resource's id attribute.
+        URI for this configuration. For type VPC_SUBNET the value should be subnet:subnet_id where subnet_id is the value you would find in an aws_subnet resource's id attribute. For type VPC_SECURITY_GROUP the value should be security_group:security_group_id where security_group_id is the value you would find in an aws_security_group resource's id attribute.
     """
 
 

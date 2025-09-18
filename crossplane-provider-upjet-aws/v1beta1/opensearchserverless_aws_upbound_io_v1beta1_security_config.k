@@ -66,8 +66,6 @@ schema OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigSpec:
 
     providerConfigRef?: OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigSpecWriteConnectionSecretToRef
 
 
@@ -96,12 +92,15 @@ schema OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigSpecForProvider:
     ----------
     description : str, default is Undefined, optional
         Description of the security configuration.
+        Description of the security configuration.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     samlOptions : OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigSpecForProviderSamlOptions, default is Undefined, optional
         saml options
     $type : str, default is Undefined, required
         Type of configuration. Must be saml.
+        Type of configuration. Must be `saml`.
     """
 
 
@@ -122,11 +121,15 @@ schema OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigSpecForProviderSamlO
     ----------
     groupAttribute : str, default is Undefined, optional
         Group attribute for this SAML integration.
+        Group attribute for this SAML integration.
     metadata : str, default is Undefined, optional
+        The XML IdP metadata file generated from your identity provider.
         The XML IdP metadata file generated from your identity provider.
     sessionTimeout : float, default is Undefined, optional
         Session timeout, in minutes. Minimum is 5 minutes and maximum is 720 minutes (12 hours). Default is 60 minutes.
+        Session timeout, in minutes. Minimum is 5 minutes and maximum is 720 minutes (12 hours). Default is 60 minutes.
     userAttribute : str, default is Undefined, optional
+        User attribute for this SAML integration.
         User attribute for this SAML integration.
     """
 
@@ -157,6 +160,7 @@ schema OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigSpecInitProvider:
     ----------
     description : str, default is Undefined, optional
         Description of the security configuration.
+        Description of the security configuration.
     samlOptions : OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigSpecInitProviderSamlOptions, default is Undefined, optional
         saml options
     """
@@ -175,11 +179,15 @@ schema OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigSpecInitProviderSaml
     ----------
     groupAttribute : str, default is Undefined, optional
         Group attribute for this SAML integration.
+        Group attribute for this SAML integration.
     metadata : str, default is Undefined, optional
+        The XML IdP metadata file generated from your identity provider.
         The XML IdP metadata file generated from your identity provider.
     sessionTimeout : float, default is Undefined, optional
         Session timeout, in minutes. Minimum is 5 minutes and maximum is 720 minutes (12 hours). Default is 60 minutes.
+        Session timeout, in minutes. Minimum is 5 minutes and maximum is 720 minutes (12 hours). Default is 60 minutes.
     userAttribute : str, default is Undefined, optional
+        User attribute for this SAML integration.
         User attribute for this SAML integration.
     """
 
@@ -237,112 +245,12 @@ schema OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigSpecProviderConfigRe
     resolve?: "Always" | "IfNotPresent"
 
 
-schema OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -390,14 +298,20 @@ schema OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigStatusAtProvider:
     ----------
     configVersion : str, default is Undefined, optional
         Version of the configuration.
+        Version of the configuration.
     description : str, default is Undefined, optional
+        Description of the security configuration.
         Description of the security configuration.
     id : str, default is Undefined, optional
         id
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     samlOptions : OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigStatusAtProviderSamlOptions, default is Undefined, optional
         saml options
     $type : str, default is Undefined, optional
         Type of configuration. Must be saml.
+        Type of configuration. Must be `saml`.
     """
 
 
@@ -406,6 +320,8 @@ schema OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigStatusAtProvider:
     description?: str
 
     id?: str
+
+    region?: str
 
     samlOptions?: OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigStatusAtProviderSamlOptions
 
@@ -420,11 +336,15 @@ schema OpensearchserverlessAwsUpboundIoV1beta1SecurityConfigStatusAtProviderSaml
     ----------
     groupAttribute : str, default is Undefined, optional
         Group attribute for this SAML integration.
+        Group attribute for this SAML integration.
     metadata : str, default is Undefined, optional
+        The XML IdP metadata file generated from your identity provider.
         The XML IdP metadata file generated from your identity provider.
     sessionTimeout : float, default is Undefined, optional
         Session timeout, in minutes. Minimum is 5 minutes and maximum is 720 minutes (12 hours). Default is 60 minutes.
+        Session timeout, in minutes. Minimum is 5 minutes and maximum is 720 minutes (12 hours). Default is 60 minutes.
     userAttribute : str, default is Undefined, optional
+        User attribute for this SAML integration.
         User attribute for this SAML integration.
     """
 

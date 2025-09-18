@@ -66,8 +66,6 @@ schema Wafv2AwsUpboundIoV1beta1RegexPatternSetSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : Wafv2AwsUpboundIoV1beta1RegexPatternSetSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : Wafv2AwsUpboundIoV1beta1RegexPatternSetSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : Wafv2AwsUpboundIoV1beta1RegexPatternSetSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema Wafv2AwsUpboundIoV1beta1RegexPatternSetSpec:
 
     providerConfigRef?: Wafv2AwsUpboundIoV1beta1RegexPatternSetSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: Wafv2AwsUpboundIoV1beta1RegexPatternSetSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: Wafv2AwsUpboundIoV1beta1RegexPatternSetSpecWriteConnectionSecretToRef
 
 
@@ -97,8 +93,9 @@ schema Wafv2AwsUpboundIoV1beta1RegexPatternSetSpecForProvider:
     description : str, default is Undefined, optional
         A friendly description of the regular expression pattern set.
     name : str, default is Undefined, optional
-        A friendly name of the regular expression pattern set.
+        A friendly name of the regular expression pattern set. Conflicts with name_prefix.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     regularExpression : [Wafv2AwsUpboundIoV1beta1RegexPatternSetSpecForProviderRegularExpressionItems0], default is Undefined, optional
         One or more blocks of regular expression patterns that you want AWS WAF to search for, such as B[a@]dB[o0]t. See Regular Expression below for details. A maximum of 10 regular_expression blocks may be specified.
@@ -154,7 +151,7 @@ schema Wafv2AwsUpboundIoV1beta1RegexPatternSetSpecInitProvider:
     description : str, default is Undefined, optional
         A friendly description of the regular expression pattern set.
     name : str, default is Undefined, optional
-        A friendly name of the regular expression pattern set.
+        A friendly name of the regular expression pattern set. Conflicts with name_prefix.
     regularExpression : [Wafv2AwsUpboundIoV1beta1RegexPatternSetSpecInitProviderRegularExpressionItems0], default is Undefined, optional
         One or more blocks of regular expression patterns that you want AWS WAF to search for, such as B[a@]dB[o0]t. See Regular Expression below for details. A maximum of 10 regular_expression blocks may be specified.
     scope : str, default is Undefined, optional
@@ -233,112 +230,12 @@ schema Wafv2AwsUpboundIoV1beta1RegexPatternSetSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema Wafv2AwsUpboundIoV1beta1RegexPatternSetSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : Wafv2AwsUpboundIoV1beta1RegexPatternSetSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : Wafv2AwsUpboundIoV1beta1RegexPatternSetSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: Wafv2AwsUpboundIoV1beta1RegexPatternSetSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: Wafv2AwsUpboundIoV1beta1RegexPatternSetSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema Wafv2AwsUpboundIoV1beta1RegexPatternSetSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : Wafv2AwsUpboundIoV1beta1RegexPatternSetSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: Wafv2AwsUpboundIoV1beta1RegexPatternSetSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema Wafv2AwsUpboundIoV1beta1RegexPatternSetSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema Wafv2AwsUpboundIoV1beta1RegexPatternSetSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema Wafv2AwsUpboundIoV1beta1RegexPatternSetSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -393,7 +290,10 @@ schema Wafv2AwsUpboundIoV1beta1RegexPatternSetStatusAtProvider:
     lockToken : str, default is Undefined, optional
         lock token
     name : str, default is Undefined, optional
-        A friendly name of the regular expression pattern set.
+        A friendly name of the regular expression pattern set. Conflicts with name_prefix.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     regularExpression : [Wafv2AwsUpboundIoV1beta1RegexPatternSetStatusAtProviderRegularExpressionItems0], default is Undefined, optional
         One or more blocks of regular expression patterns that you want AWS WAF to search for, such as B[a@]dB[o0]t. See Regular Expression below for details. A maximum of 10 regular_expression blocks may be specified.
     scope : str, default is Undefined, optional
@@ -414,6 +314,8 @@ schema Wafv2AwsUpboundIoV1beta1RegexPatternSetStatusAtProvider:
     lockToken?: str
 
     name?: str
+
+    region?: str
 
     regularExpression?: [Wafv2AwsUpboundIoV1beta1RegexPatternSetStatusAtProviderRegularExpressionItems0]
 

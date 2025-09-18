@@ -66,8 +66,6 @@ schema Macie2AwsUpboundIoV1beta1InvitationAccepterSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : Macie2AwsUpboundIoV1beta1InvitationAccepterSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : Macie2AwsUpboundIoV1beta1InvitationAccepterSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : Macie2AwsUpboundIoV1beta1InvitationAccepterSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema Macie2AwsUpboundIoV1beta1InvitationAccepterSpec:
 
     providerConfigRef?: Macie2AwsUpboundIoV1beta1InvitationAccepterSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: Macie2AwsUpboundIoV1beta1InvitationAccepterSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: Macie2AwsUpboundIoV1beta1InvitationAccepterSpecWriteConnectionSecretToRef
 
 
@@ -97,6 +93,7 @@ schema Macie2AwsUpboundIoV1beta1InvitationAccepterSpecForProvider:
     administratorAccountId : str, default is Undefined, optional
         The AWS account ID for the account that sent the invitation.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     """
 
@@ -173,112 +170,12 @@ schema Macie2AwsUpboundIoV1beta1InvitationAccepterSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema Macie2AwsUpboundIoV1beta1InvitationAccepterSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : Macie2AwsUpboundIoV1beta1InvitationAccepterSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : Macie2AwsUpboundIoV1beta1InvitationAccepterSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: Macie2AwsUpboundIoV1beta1InvitationAccepterSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: Macie2AwsUpboundIoV1beta1InvitationAccepterSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema Macie2AwsUpboundIoV1beta1InvitationAccepterSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : Macie2AwsUpboundIoV1beta1InvitationAccepterSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: Macie2AwsUpboundIoV1beta1InvitationAccepterSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema Macie2AwsUpboundIoV1beta1InvitationAccepterSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema Macie2AwsUpboundIoV1beta1InvitationAccepterSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema Macie2AwsUpboundIoV1beta1InvitationAccepterSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -330,6 +227,9 @@ schema Macie2AwsUpboundIoV1beta1InvitationAccepterStatusAtProvider:
         The unique identifier (ID) of the macie invitation accepter.
     invitationId : str, default is Undefined, optional
         The unique identifier for the invitation.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     """
 
 
@@ -338,6 +238,8 @@ schema Macie2AwsUpboundIoV1beta1InvitationAccepterStatusAtProvider:
     id?: str
 
     invitationId?: str
+
+    region?: str
 
 
 schema Macie2AwsUpboundIoV1beta1InvitationAccepterStatusConditionsItems0:

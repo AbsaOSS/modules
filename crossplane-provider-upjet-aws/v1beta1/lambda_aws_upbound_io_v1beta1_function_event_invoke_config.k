@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema FunctionEventInvokeConfig:
     r"""
-    FunctionEventInvokeConfig is the Schema for the FunctionEventInvokeConfigs API. Manages an asynchronous invocation configuration for a Lambda Function or Alias.
+    FunctionEventInvokeConfig is the Schema for the FunctionEventInvokeConfigs API. Manages an AWS Lambda Function Event Invoke Config.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpec:
 
     providerConfigRef?: LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecWriteConnectionSecretToRef
 
 
@@ -95,9 +91,9 @@ schema LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecForProvider:
     Attributes
     ----------
     destinationConfig : [LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecForProviderDestinationConfigItems0], default is Undefined, optional
-        Configuration block with destination configuration. See below for details.
+        Configuration block with destination configuration. See below.
     functionName : str, default is Undefined, optional
-        Name or Amazon Resource Name (ARN) of the Lambda Function, omitting any version or alias qualifier.
+        Name or ARN of the Lambda Function, omitting any version or alias qualifier.
     maximumEventAgeInSeconds : float, default is Undefined, optional
         Maximum age of a request that Lambda sends to a function for processing in seconds. Valid values between 60 and 21600.
     maximumRetryAttempts : float, default is Undefined, optional
@@ -105,6 +101,7 @@ schema LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecForProvider:
     qualifier : str, default is Undefined, optional
         Lambda Function published version, $LATEST, or Lambda Alias name.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     """
 
@@ -129,9 +126,9 @@ schema LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecForProviderDestinat
     Attributes
     ----------
     onFailure : [LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecForProviderDestinationConfigItems0OnFailureItems0], default is Undefined, optional
-        Configuration block with destination configuration for failed asynchronous invocations. See below for details.
+        Configuration block with destination configuration for failed asynchronous invocations. See below.
     onSuccess : [LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecForProviderDestinationConfigItems0OnSuccessItems0], default is Undefined, optional
-        Configuration block with destination configuration for successful asynchronous invocations. See below for details.
+        Configuration block with destination configuration for successful asynchronous invocations. See below.
     """
 
 
@@ -147,7 +144,7 @@ schema LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecForProviderDestinat
     Attributes
     ----------
     destination : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of the destination resource. See the Lambda Developer Guide for acceptable resource types and associated IAM permissions.
+        ARN of the destination resource. See the Lambda Developer Guide for acceptable resource types and associated IAM permissions.
     destinationRef : LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecForProviderDestinationConfigItems0OnFailureItems0DestinationRef, default is Undefined, optional
         destination ref
     destinationSelector : LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecForProviderDestinationConfigItems0OnFailureItems0DestinationSelector, default is Undefined, optional
@@ -258,7 +255,7 @@ schema LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecForProviderDestinat
     Attributes
     ----------
     destination : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of the destination resource. See the Lambda Developer Guide for acceptable resource types and associated IAM permissions.
+        ARN of the destination resource. See the Lambda Developer Guide for acceptable resource types and associated IAM permissions.
     destinationRef : LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecForProviderDestinationConfigItems0OnSuccessItems0DestinationRef, default is Undefined, optional
         destination ref
     destinationSelector : LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecForProviderDestinationConfigItems0OnSuccessItems0DestinationSelector, default is Undefined, optional
@@ -378,9 +375,9 @@ schema LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecInitProvider:
     Attributes
     ----------
     destinationConfig : [LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecInitProviderDestinationConfigItems0], default is Undefined, optional
-        Configuration block with destination configuration. See below for details.
+        Configuration block with destination configuration. See below.
     functionName : str, default is Undefined, optional
-        Name or Amazon Resource Name (ARN) of the Lambda Function, omitting any version or alias qualifier.
+        Name or ARN of the Lambda Function, omitting any version or alias qualifier.
     maximumEventAgeInSeconds : float, default is Undefined, optional
         Maximum age of a request that Lambda sends to a function for processing in seconds. Valid values between 60 and 21600.
     maximumRetryAttempts : float, default is Undefined, optional
@@ -408,9 +405,9 @@ schema LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecInitProviderDestina
     Attributes
     ----------
     onFailure : [LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecInitProviderDestinationConfigItems0OnFailureItems0], default is Undefined, optional
-        Configuration block with destination configuration for failed asynchronous invocations. See below for details.
+        Configuration block with destination configuration for failed asynchronous invocations. See below.
     onSuccess : [LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecInitProviderDestinationConfigItems0OnSuccessItems0], default is Undefined, optional
-        Configuration block with destination configuration for successful asynchronous invocations. See below for details.
+        Configuration block with destination configuration for successful asynchronous invocations. See below.
     """
 
 
@@ -426,7 +423,7 @@ schema LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecInitProviderDestina
     Attributes
     ----------
     destination : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of the destination resource. See the Lambda Developer Guide for acceptable resource types and associated IAM permissions.
+        ARN of the destination resource. See the Lambda Developer Guide for acceptable resource types and associated IAM permissions.
     destinationRef : LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecInitProviderDestinationConfigItems0OnFailureItems0DestinationRef, default is Undefined, optional
         destination ref
     destinationSelector : LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecInitProviderDestinationConfigItems0OnFailureItems0DestinationSelector, default is Undefined, optional
@@ -537,7 +534,7 @@ schema LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecInitProviderDestina
     Attributes
     ----------
     destination : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of the destination resource. See the Lambda Developer Guide for acceptable resource types and associated IAM permissions.
+        ARN of the destination resource. See the Lambda Developer Guide for acceptable resource types and associated IAM permissions.
     destinationRef : LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecInitProviderDestinationConfigItems0OnSuccessItems0DestinationRef, default is Undefined, optional
         destination ref
     destinationSelector : LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecInitProviderDestinationConfigItems0OnSuccessItems0DestinationSelector, default is Undefined, optional
@@ -685,112 +682,12 @@ schema LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecProviderConfigRefPo
     resolve?: "Always" | "IfNotPresent"
 
 
-schema LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -837,17 +734,20 @@ schema LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigStatusAtProvider:
     Attributes
     ----------
     destinationConfig : [LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigStatusAtProviderDestinationConfigItems0], default is Undefined, optional
-        Configuration block with destination configuration. See below for details.
+        Configuration block with destination configuration. See below.
     functionName : str, default is Undefined, optional
-        Name or Amazon Resource Name (ARN) of the Lambda Function, omitting any version or alias qualifier.
+        Name or ARN of the Lambda Function, omitting any version or alias qualifier.
     id : str, default is Undefined, optional
-        Fully qualified Lambda Function name or Amazon Resource Name (ARN)
+        Fully qualified Lambda Function name or ARN.
     maximumEventAgeInSeconds : float, default is Undefined, optional
         Maximum age of a request that Lambda sends to a function for processing in seconds. Valid values between 60 and 21600.
     maximumRetryAttempts : float, default is Undefined, optional
         Maximum number of times to retry when the function returns an error. Valid values between 0 and 2. Defaults to 2.
     qualifier : str, default is Undefined, optional
         Lambda Function published version, $LATEST, or Lambda Alias name.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     """
 
 
@@ -863,6 +763,8 @@ schema LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigStatusAtProvider:
 
     qualifier?: str
 
+    region?: str
+
 
 schema LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigStatusAtProviderDestinationConfigItems0:
     r"""
@@ -871,9 +773,9 @@ schema LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigStatusAtProviderDestina
     Attributes
     ----------
     onFailure : [LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigStatusAtProviderDestinationConfigItems0OnFailureItems0], default is Undefined, optional
-        Configuration block with destination configuration for failed asynchronous invocations. See below for details.
+        Configuration block with destination configuration for failed asynchronous invocations. See below.
     onSuccess : [LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigStatusAtProviderDestinationConfigItems0OnSuccessItems0], default is Undefined, optional
-        Configuration block with destination configuration for successful asynchronous invocations. See below for details.
+        Configuration block with destination configuration for successful asynchronous invocations. See below.
     """
 
 
@@ -889,7 +791,7 @@ schema LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigStatusAtProviderDestina
     Attributes
     ----------
     destination : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of the destination resource. See the Lambda Developer Guide for acceptable resource types and associated IAM permissions.
+        ARN of the destination resource. See the Lambda Developer Guide for acceptable resource types and associated IAM permissions.
     """
 
 
@@ -903,7 +805,7 @@ schema LambdaAwsUpboundIoV1beta1FunctionEventInvokeConfigStatusAtProviderDestina
     Attributes
     ----------
     destination : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of the destination resource. See the Lambda Developer Guide for acceptable resource types and associated IAM permissions.
+        ARN of the destination resource. See the Lambda Developer Guide for acceptable resource types and associated IAM permissions.
     """
 
 

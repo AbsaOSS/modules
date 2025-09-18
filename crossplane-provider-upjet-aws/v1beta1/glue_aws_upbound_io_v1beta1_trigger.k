@@ -66,8 +66,6 @@ schema GlueAwsUpboundIoV1beta1TriggerSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : GlueAwsUpboundIoV1beta1TriggerSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : GlueAwsUpboundIoV1beta1TriggerSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : GlueAwsUpboundIoV1beta1TriggerSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema GlueAwsUpboundIoV1beta1TriggerSpec:
 
     providerConfigRef?: GlueAwsUpboundIoV1beta1TriggerSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: GlueAwsUpboundIoV1beta1TriggerSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: GlueAwsUpboundIoV1beta1TriggerSpecWriteConnectionSecretToRef
 
 
@@ -95,25 +91,26 @@ schema GlueAwsUpboundIoV1beta1TriggerSpecForProvider:
     Attributes
     ----------
     actions : [GlueAwsUpboundIoV1beta1TriggerSpecForProviderActionsItems0], default is Undefined, optional
-        –  List of actions initiated by this trigger when it fires. See Actions Below.
+        List of actions initiated by this trigger when it fires. See Actions Below.
     description : str, default is Undefined, optional
-        –  A description of the new trigger.
+        A description of the new trigger.
     enabled : bool, default is Undefined, optional
-        –  Start the trigger. Defaults to true.
+        Start the trigger. Defaults to true.
     eventBatchingCondition : [GlueAwsUpboundIoV1beta1TriggerSpecForProviderEventBatchingConditionItems0], default is Undefined, optional
         Batch condition that must be met (specified number of events received or batch time window expired) before EventBridge event trigger fires. See Event Batching Condition.
     predicate : [GlueAwsUpboundIoV1beta1TriggerSpecForProviderPredicateItems0], default is Undefined, optional
-        –  A predicate to specify when the new trigger should fire. Required when trigger type is CONDITIONAL. See Predicate Below.
+        A predicate to specify when the new trigger should fire. Required when trigger type is CONDITIONAL. See Predicate Below.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     schedule : str, default is Undefined, optional
-        Based Schedules for Jobs and Crawlers
+        A cron expression used to specify the schedule. Time-Based Schedules for Jobs and Crawlers
     startOnCreation : bool, default is Undefined, optional
-        –  Set to true to start SCHEDULED and CONDITIONAL triggers when created. True is not supported for ON_DEMAND triggers.
+        Set to true to start SCHEDULED and CONDITIONAL triggers when created. True is not supported for ON_DEMAND triggers.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     $type : str, default is Undefined, optional
-        –  The type of trigger. Valid values are CONDITIONAL, EVENT, ON_DEMAND, and SCHEDULED.
+        The type of trigger. Valid values are CONDITIONAL, EVENT, ON_DEMAND, and SCHEDULED.
     workflowName : str, default is Undefined, optional
         A workflow to which the trigger should be associated to. Every workflow graph (DAG) needs a starting trigger (ON_DEMAND or SCHEDULED type) and can contain multiple additional CONDITIONAL triggers.
     """
@@ -660,23 +657,23 @@ schema GlueAwsUpboundIoV1beta1TriggerSpecInitProvider:
     Attributes
     ----------
     actions : [GlueAwsUpboundIoV1beta1TriggerSpecInitProviderActionsItems0], default is Undefined, optional
-        –  List of actions initiated by this trigger when it fires. See Actions Below.
+        List of actions initiated by this trigger when it fires. See Actions Below.
     description : str, default is Undefined, optional
-        –  A description of the new trigger.
+        A description of the new trigger.
     enabled : bool, default is Undefined, optional
-        –  Start the trigger. Defaults to true.
+        Start the trigger. Defaults to true.
     eventBatchingCondition : [GlueAwsUpboundIoV1beta1TriggerSpecInitProviderEventBatchingConditionItems0], default is Undefined, optional
         Batch condition that must be met (specified number of events received or batch time window expired) before EventBridge event trigger fires. See Event Batching Condition.
     predicate : [GlueAwsUpboundIoV1beta1TriggerSpecInitProviderPredicateItems0], default is Undefined, optional
-        –  A predicate to specify when the new trigger should fire. Required when trigger type is CONDITIONAL. See Predicate Below.
+        A predicate to specify when the new trigger should fire. Required when trigger type is CONDITIONAL. See Predicate Below.
     schedule : str, default is Undefined, optional
-        Based Schedules for Jobs and Crawlers
+        A cron expression used to specify the schedule. Time-Based Schedules for Jobs and Crawlers
     startOnCreation : bool, default is Undefined, optional
-        –  Set to true to start SCHEDULED and CONDITIONAL triggers when created. True is not supported for ON_DEMAND triggers.
+        Set to true to start SCHEDULED and CONDITIONAL triggers when created. True is not supported for ON_DEMAND triggers.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     $type : str, default is Undefined, optional
-        –  The type of trigger. Valid values are CONDITIONAL, EVENT, ON_DEMAND, and SCHEDULED.
+        The type of trigger. Valid values are CONDITIONAL, EVENT, ON_DEMAND, and SCHEDULED.
     workflowName : str, default is Undefined, optional
         A workflow to which the trigger should be associated to. Every workflow graph (DAG) needs a starting trigger (ON_DEMAND or SCHEDULED type) and can contain multiple additional CONDITIONAL triggers.
     """
@@ -1249,112 +1246,12 @@ schema GlueAwsUpboundIoV1beta1TriggerSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema GlueAwsUpboundIoV1beta1TriggerSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : GlueAwsUpboundIoV1beta1TriggerSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : GlueAwsUpboundIoV1beta1TriggerSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: GlueAwsUpboundIoV1beta1TriggerSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: GlueAwsUpboundIoV1beta1TriggerSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema GlueAwsUpboundIoV1beta1TriggerSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : GlueAwsUpboundIoV1beta1TriggerSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: GlueAwsUpboundIoV1beta1TriggerSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema GlueAwsUpboundIoV1beta1TriggerSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema GlueAwsUpboundIoV1beta1TriggerSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema GlueAwsUpboundIoV1beta1TriggerSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1401,23 +1298,26 @@ schema GlueAwsUpboundIoV1beta1TriggerStatusAtProvider:
     Attributes
     ----------
     actions : [GlueAwsUpboundIoV1beta1TriggerStatusAtProviderActionsItems0], default is Undefined, optional
-        –  List of actions initiated by this trigger when it fires. See Actions Below.
+        List of actions initiated by this trigger when it fires. See Actions Below.
     arn : str, default is Undefined, optional
         Amazon Resource Name (ARN) of Glue Trigger
     description : str, default is Undefined, optional
-        –  A description of the new trigger.
+        A description of the new trigger.
     enabled : bool, default is Undefined, optional
-        –  Start the trigger. Defaults to true.
+        Start the trigger. Defaults to true.
     eventBatchingCondition : [GlueAwsUpboundIoV1beta1TriggerStatusAtProviderEventBatchingConditionItems0], default is Undefined, optional
         Batch condition that must be met (specified number of events received or batch time window expired) before EventBridge event trigger fires. See Event Batching Condition.
     id : str, default is Undefined, optional
         Trigger name
     predicate : [GlueAwsUpboundIoV1beta1TriggerStatusAtProviderPredicateItems0], default is Undefined, optional
-        –  A predicate to specify when the new trigger should fire. Required when trigger type is CONDITIONAL. See Predicate Below.
+        A predicate to specify when the new trigger should fire. Required when trigger type is CONDITIONAL. See Predicate Below.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     schedule : str, default is Undefined, optional
-        Based Schedules for Jobs and Crawlers
+        A cron expression used to specify the schedule. Time-Based Schedules for Jobs and Crawlers
     startOnCreation : bool, default is Undefined, optional
-        –  Set to true to start SCHEDULED and CONDITIONAL triggers when created. True is not supported for ON_DEMAND triggers.
+        Set to true to start SCHEDULED and CONDITIONAL triggers when created. True is not supported for ON_DEMAND triggers.
     state : str, default is Undefined, optional
         The condition job state. Currently, the values supported are SUCCEEDED, STOPPED, TIMEOUT and FAILED. If this is specified, job_name must also be specified. Conflicts with crawler_state.
     tags : {str:str}, default is Undefined, optional
@@ -1425,7 +1325,7 @@ schema GlueAwsUpboundIoV1beta1TriggerStatusAtProvider:
     tagsAll : {str:str}, default is Undefined, optional
         A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     $type : str, default is Undefined, optional
-        –  The type of trigger. Valid values are CONDITIONAL, EVENT, ON_DEMAND, and SCHEDULED.
+        The type of trigger. Valid values are CONDITIONAL, EVENT, ON_DEMAND, and SCHEDULED.
     workflowName : str, default is Undefined, optional
         A workflow to which the trigger should be associated to. Every workflow graph (DAG) needs a starting trigger (ON_DEMAND or SCHEDULED type) and can contain multiple additional CONDITIONAL triggers.
     """
@@ -1444,6 +1344,8 @@ schema GlueAwsUpboundIoV1beta1TriggerStatusAtProvider:
     id?: str
 
     predicate?: [GlueAwsUpboundIoV1beta1TriggerStatusAtProviderPredicateItems0]
+
+    region?: str
 
     schedule?: str
 

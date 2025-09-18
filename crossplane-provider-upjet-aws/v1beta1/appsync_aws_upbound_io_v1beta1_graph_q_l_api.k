@@ -66,8 +66,6 @@ schema AppsyncAwsUpboundIoV1beta1GraphQLAPISpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : AppsyncAwsUpboundIoV1beta1GraphQLAPISpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : AppsyncAwsUpboundIoV1beta1GraphQLAPISpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : AppsyncAwsUpboundIoV1beta1GraphQLAPISpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema AppsyncAwsUpboundIoV1beta1GraphQLAPISpec:
 
     providerConfigRef?: AppsyncAwsUpboundIoV1beta1GraphQLAPISpecProviderConfigRef
 
-    publishConnectionDetailsTo?: AppsyncAwsUpboundIoV1beta1GraphQLAPISpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: AppsyncAwsUpboundIoV1beta1GraphQLAPISpecWriteConnectionSecretToRef
 
 
@@ -95,7 +91,7 @@ schema AppsyncAwsUpboundIoV1beta1GraphQLAPISpecForProvider:
     Attributes
     ----------
     additionalAuthenticationProvider : [AppsyncAwsUpboundIoV1beta1GraphQLAPISpecForProviderAdditionalAuthenticationProviderItems0], default is Undefined, optional
-        One or more additional authentication providers for the GraphqlApi. Defined below.
+        One or more additional authentication providers for the GraphQL API. See additional_authentication_provider Block for details.
     apiType : str, default is Undefined, optional
         API type. Valid values are GRAPHQL or MERGED. A MERGED type requires merged_api_execution_role_arn to be set.
     authenticationType : str, default is Undefined, optional
@@ -105,9 +101,9 @@ schema AppsyncAwsUpboundIoV1beta1GraphQLAPISpecForProvider:
     introspectionConfig : str, default is Undefined, optional
         Sets the value of the GraphQL API to enable (ENABLED) or disable (DISABLED) introspection. If no value is provided, the introspection configuration will be set to ENABLED by default. This field will produce an error if the operation attempts to use the introspection feature while this field is disabled. For more information about introspection, see GraphQL introspection.
     lambdaAuthorizerConfig : [AppsyncAwsUpboundIoV1beta1GraphQLAPISpecForProviderLambdaAuthorizerConfigItems0], default is Undefined, optional
-        Nested argument containing Lambda authorizer configuration. Defined below.
+        Nested argument containing Lambda authorizer configuration. See lambda_authorizer_config Block for details.
     logConfig : [AppsyncAwsUpboundIoV1beta1GraphQLAPISpecForProviderLogConfigItems0], default is Undefined, optional
-        Nested argument containing logging configuration. Defined below.
+        Nested argument containing logging configuration. See log_config Block for details.
     mergedApiExecutionRoleArn : str, default is Undefined, optional
         ARN of the execution role when api_type is set to MERGED.
     mergedApiExecutionRoleArnRef : AppsyncAwsUpboundIoV1beta1GraphQLAPISpecForProviderMergedAPIExecutionRoleArnRef, default is Undefined, optional
@@ -115,12 +111,13 @@ schema AppsyncAwsUpboundIoV1beta1GraphQLAPISpecForProvider:
     mergedApiExecutionRoleArnSelector : AppsyncAwsUpboundIoV1beta1GraphQLAPISpecForProviderMergedAPIExecutionRoleArnSelector, default is Undefined, optional
         merged Api execution role arn selector
     name : str, default is Undefined, optional
-        User-supplied name for the GraphqlApi.
+        User-supplied name for the GraphQL API.
     openidConnectConfig : [AppsyncAwsUpboundIoV1beta1GraphQLAPISpecForProviderOpenidConnectConfigItems0], default is Undefined, optional
-        Nested argument containing OpenID Connect configuration. Defined below.
+        Nested argument containing OpenID Connect configuration. See openid_connect_config Block for details.
     queryDepthLimit : float, default is Undefined, optional
         The maximum depth a query can have in a single request. Depth refers to the amount of nested levels allowed in the body of query. The default value is 0 (or unspecified), which indicates there's no depth limit. If you set a limit, it can be between 1 and 75 nested levels. This field will produce a limit error if the operation falls out of bounds.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     resolverCountLimit : float, default is Undefined, optional
         The maximum number of resolvers that can be invoked in a single request. The default value is 0 (or unspecified), which will set the limit to 10000. When specified, the limit value can be between 1 and 10000. This field will produce a limit error if the operation falls out of bounds.
@@ -129,7 +126,7 @@ schema AppsyncAwsUpboundIoV1beta1GraphQLAPISpecForProvider:
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     userPoolConfig : [AppsyncAwsUpboundIoV1beta1GraphQLAPISpecForProviderUserPoolConfigItems0], default is Undefined, optional
-        Amazon Cognito User Pool configuration. Defined below.
+        Amazon Cognito User Pool configuration. See user_pool_config Block for details.
     visibility : str, default is Undefined, optional
         Sets the value of the GraphQL API to public (GLOBAL) or private (PRIVATE). If no value is provided, the visibility will be set to GLOBAL by default. This value cannot be changed once the API has been created.
     xrayEnabled : bool, default is Undefined, optional
@@ -187,11 +184,11 @@ schema AppsyncAwsUpboundIoV1beta1GraphQLAPISpecForProviderAdditionalAuthenticati
     authenticationType : str, default is Undefined, optional
         Authentication type. Valid values: API_KEY, AWS_IAM, AMAZON_COGNITO_USER_POOLS, OPENID_CONNECT, AWS_LAMBDA
     lambdaAuthorizerConfig : [AppsyncAwsUpboundIoV1beta1GraphQLAPISpecForProviderAdditionalAuthenticationProviderItems0LambdaAuthorizerConfigItems0], default is Undefined, optional
-        Nested argument containing Lambda authorizer configuration. Defined below.
+        Nested argument containing Lambda authorizer configuration. See lambda_authorizer_config Block for details.
     openidConnectConfig : [AppsyncAwsUpboundIoV1beta1GraphQLAPISpecForProviderAdditionalAuthenticationProviderItems0OpenidConnectConfigItems0], default is Undefined, optional
-        Nested argument containing OpenID Connect configuration. Defined below.
+        Nested argument containing OpenID Connect configuration. See openid_connect_config Block for details.
     userPoolConfig : [AppsyncAwsUpboundIoV1beta1GraphQLAPISpecForProviderAdditionalAuthenticationProviderItems0UserPoolConfigItems0], default is Undefined, optional
-        Amazon Cognito User Pool configuration. Defined below.
+        Amazon Cognito User Pool configuration. See user_pool_config Block for details.
     """
 
 
@@ -691,7 +688,7 @@ schema AppsyncAwsUpboundIoV1beta1GraphQLAPISpecInitProvider:
     Attributes
     ----------
     additionalAuthenticationProvider : [AppsyncAwsUpboundIoV1beta1GraphQLAPISpecInitProviderAdditionalAuthenticationProviderItems0], default is Undefined, optional
-        One or more additional authentication providers for the GraphqlApi. Defined below.
+        One or more additional authentication providers for the GraphQL API. See additional_authentication_provider Block for details.
     apiType : str, default is Undefined, optional
         API type. Valid values are GRAPHQL or MERGED. A MERGED type requires merged_api_execution_role_arn to be set.
     authenticationType : str, default is Undefined, optional
@@ -701,9 +698,9 @@ schema AppsyncAwsUpboundIoV1beta1GraphQLAPISpecInitProvider:
     introspectionConfig : str, default is Undefined, optional
         Sets the value of the GraphQL API to enable (ENABLED) or disable (DISABLED) introspection. If no value is provided, the introspection configuration will be set to ENABLED by default. This field will produce an error if the operation attempts to use the introspection feature while this field is disabled. For more information about introspection, see GraphQL introspection.
     lambdaAuthorizerConfig : [AppsyncAwsUpboundIoV1beta1GraphQLAPISpecInitProviderLambdaAuthorizerConfigItems0], default is Undefined, optional
-        Nested argument containing Lambda authorizer configuration. Defined below.
+        Nested argument containing Lambda authorizer configuration. See lambda_authorizer_config Block for details.
     logConfig : [AppsyncAwsUpboundIoV1beta1GraphQLAPISpecInitProviderLogConfigItems0], default is Undefined, optional
-        Nested argument containing logging configuration. Defined below.
+        Nested argument containing logging configuration. See log_config Block for details.
     mergedApiExecutionRoleArn : str, default is Undefined, optional
         ARN of the execution role when api_type is set to MERGED.
     mergedApiExecutionRoleArnRef : AppsyncAwsUpboundIoV1beta1GraphQLAPISpecInitProviderMergedAPIExecutionRoleArnRef, default is Undefined, optional
@@ -711,9 +708,9 @@ schema AppsyncAwsUpboundIoV1beta1GraphQLAPISpecInitProvider:
     mergedApiExecutionRoleArnSelector : AppsyncAwsUpboundIoV1beta1GraphQLAPISpecInitProviderMergedAPIExecutionRoleArnSelector, default is Undefined, optional
         merged Api execution role arn selector
     name : str, default is Undefined, optional
-        User-supplied name for the GraphqlApi.
+        User-supplied name for the GraphQL API.
     openidConnectConfig : [AppsyncAwsUpboundIoV1beta1GraphQLAPISpecInitProviderOpenidConnectConfigItems0], default is Undefined, optional
-        Nested argument containing OpenID Connect configuration. Defined below.
+        Nested argument containing OpenID Connect configuration. See openid_connect_config Block for details.
     queryDepthLimit : float, default is Undefined, optional
         The maximum depth a query can have in a single request. Depth refers to the amount of nested levels allowed in the body of query. The default value is 0 (or unspecified), which indicates there's no depth limit. If you set a limit, it can be between 1 and 75 nested levels. This field will produce a limit error if the operation falls out of bounds.
     resolverCountLimit : float, default is Undefined, optional
@@ -723,7 +720,7 @@ schema AppsyncAwsUpboundIoV1beta1GraphQLAPISpecInitProvider:
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     userPoolConfig : [AppsyncAwsUpboundIoV1beta1GraphQLAPISpecInitProviderUserPoolConfigItems0], default is Undefined, optional
-        Amazon Cognito User Pool configuration. Defined below.
+        Amazon Cognito User Pool configuration. See user_pool_config Block for details.
     visibility : str, default is Undefined, optional
         Sets the value of the GraphQL API to public (GLOBAL) or private (PRIVATE). If no value is provided, the visibility will be set to GLOBAL by default. This value cannot be changed once the API has been created.
     xrayEnabled : bool, default is Undefined, optional
@@ -779,11 +776,11 @@ schema AppsyncAwsUpboundIoV1beta1GraphQLAPISpecInitProviderAdditionalAuthenticat
     authenticationType : str, default is Undefined, optional
         Authentication type. Valid values: API_KEY, AWS_IAM, AMAZON_COGNITO_USER_POOLS, OPENID_CONNECT, AWS_LAMBDA
     lambdaAuthorizerConfig : [AppsyncAwsUpboundIoV1beta1GraphQLAPISpecInitProviderAdditionalAuthenticationProviderItems0LambdaAuthorizerConfigItems0], default is Undefined, optional
-        Nested argument containing Lambda authorizer configuration. Defined below.
+        Nested argument containing Lambda authorizer configuration. See lambda_authorizer_config Block for details.
     openidConnectConfig : [AppsyncAwsUpboundIoV1beta1GraphQLAPISpecInitProviderAdditionalAuthenticationProviderItems0OpenidConnectConfigItems0], default is Undefined, optional
-        Nested argument containing OpenID Connect configuration. Defined below.
+        Nested argument containing OpenID Connect configuration. See openid_connect_config Block for details.
     userPoolConfig : [AppsyncAwsUpboundIoV1beta1GraphQLAPISpecInitProviderAdditionalAuthenticationProviderItems0UserPoolConfigItems0], default is Undefined, optional
-        Amazon Cognito User Pool configuration. Defined below.
+        Amazon Cognito User Pool configuration. See user_pool_config Block for details.
     """
 
 
@@ -1311,112 +1308,12 @@ schema AppsyncAwsUpboundIoV1beta1GraphQLAPISpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema AppsyncAwsUpboundIoV1beta1GraphQLAPISpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : AppsyncAwsUpboundIoV1beta1GraphQLAPISpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : AppsyncAwsUpboundIoV1beta1GraphQLAPISpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: AppsyncAwsUpboundIoV1beta1GraphQLAPISpecPublishConnectionDetailsToConfigRef
-
-    metadata?: AppsyncAwsUpboundIoV1beta1GraphQLAPISpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema AppsyncAwsUpboundIoV1beta1GraphQLAPISpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : AppsyncAwsUpboundIoV1beta1GraphQLAPISpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: AppsyncAwsUpboundIoV1beta1GraphQLAPISpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema AppsyncAwsUpboundIoV1beta1GraphQLAPISpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema AppsyncAwsUpboundIoV1beta1GraphQLAPISpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema AppsyncAwsUpboundIoV1beta1GraphQLAPISpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1463,7 +1360,7 @@ schema AppsyncAwsUpboundIoV1beta1GraphQLAPIStatusAtProvider:
     Attributes
     ----------
     additionalAuthenticationProvider : [AppsyncAwsUpboundIoV1beta1GraphQLAPIStatusAtProviderAdditionalAuthenticationProviderItems0], default is Undefined, optional
-        One or more additional authentication providers for the GraphqlApi. Defined below.
+        One or more additional authentication providers for the GraphQL API. See additional_authentication_provider Block for details.
     apiType : str, default is Undefined, optional
         API type. Valid values are GRAPHQL or MERGED. A MERGED type requires merged_api_execution_role_arn to be set.
     arn : str, default is Undefined, optional
@@ -1477,17 +1374,20 @@ schema AppsyncAwsUpboundIoV1beta1GraphQLAPIStatusAtProvider:
     introspectionConfig : str, default is Undefined, optional
         Sets the value of the GraphQL API to enable (ENABLED) or disable (DISABLED) introspection. If no value is provided, the introspection configuration will be set to ENABLED by default. This field will produce an error if the operation attempts to use the introspection feature while this field is disabled. For more information about introspection, see GraphQL introspection.
     lambdaAuthorizerConfig : [AppsyncAwsUpboundIoV1beta1GraphQLAPIStatusAtProviderLambdaAuthorizerConfigItems0], default is Undefined, optional
-        Nested argument containing Lambda authorizer configuration. Defined below.
+        Nested argument containing Lambda authorizer configuration. See lambda_authorizer_config Block for details.
     logConfig : [AppsyncAwsUpboundIoV1beta1GraphQLAPIStatusAtProviderLogConfigItems0], default is Undefined, optional
-        Nested argument containing logging configuration. Defined below.
+        Nested argument containing logging configuration. See log_config Block for details.
     mergedApiExecutionRoleArn : str, default is Undefined, optional
         ARN of the execution role when api_type is set to MERGED.
     name : str, default is Undefined, optional
-        User-supplied name for the GraphqlApi.
+        User-supplied name for the GraphQL API.
     openidConnectConfig : [AppsyncAwsUpboundIoV1beta1GraphQLAPIStatusAtProviderOpenidConnectConfigItems0], default is Undefined, optional
-        Nested argument containing OpenID Connect configuration. Defined below.
+        Nested argument containing OpenID Connect configuration. See openid_connect_config Block for details.
     queryDepthLimit : float, default is Undefined, optional
         The maximum depth a query can have in a single request. Depth refers to the amount of nested levels allowed in the body of query. The default value is 0 (or unspecified), which indicates there's no depth limit. If you set a limit, it can be between 1 and 75 nested levels. This field will produce a limit error if the operation falls out of bounds.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     resolverCountLimit : float, default is Undefined, optional
         The maximum number of resolvers that can be invoked in a single request. The default value is 0 (or unspecified), which will set the limit to 10000. When specified, the limit value can be between 1 and 10000. This field will produce a limit error if the operation falls out of bounds.
     $schema : str, default is Undefined, optional
@@ -1497,9 +1397,9 @@ schema AppsyncAwsUpboundIoV1beta1GraphQLAPIStatusAtProvider:
     tagsAll : {str:str}, default is Undefined, optional
         Map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     uris : {str:str}, default is Undefined, optional
-        Map of URIs associated with the APIE.g., uris["GRAPHQL"] = https://ID.appsync-api.REGION.amazonaws.com/graphql
+        Map of URIs associated with the API E.g., uris["GRAPHQL"] = https://ID.appsync-api.REGION.amazonaws.com/graphql
     userPoolConfig : [AppsyncAwsUpboundIoV1beta1GraphQLAPIStatusAtProviderUserPoolConfigItems0], default is Undefined, optional
-        Amazon Cognito User Pool configuration. Defined below.
+        Amazon Cognito User Pool configuration. See user_pool_config Block for details.
     visibility : str, default is Undefined, optional
         Sets the value of the GraphQL API to public (GLOBAL) or private (PRIVATE). If no value is provided, the visibility will be set to GLOBAL by default. This value cannot be changed once the API has been created.
     xrayEnabled : bool, default is Undefined, optional
@@ -1533,6 +1433,8 @@ schema AppsyncAwsUpboundIoV1beta1GraphQLAPIStatusAtProvider:
 
     queryDepthLimit?: float
 
+    region?: str
+
     resolverCountLimit?: float
 
     $schema?: str
@@ -1559,11 +1461,11 @@ schema AppsyncAwsUpboundIoV1beta1GraphQLAPIStatusAtProviderAdditionalAuthenticat
     authenticationType : str, default is Undefined, optional
         Authentication type. Valid values: API_KEY, AWS_IAM, AMAZON_COGNITO_USER_POOLS, OPENID_CONNECT, AWS_LAMBDA
     lambdaAuthorizerConfig : [AppsyncAwsUpboundIoV1beta1GraphQLAPIStatusAtProviderAdditionalAuthenticationProviderItems0LambdaAuthorizerConfigItems0], default is Undefined, optional
-        Nested argument containing Lambda authorizer configuration. Defined below.
+        Nested argument containing Lambda authorizer configuration. See lambda_authorizer_config Block for details.
     openidConnectConfig : [AppsyncAwsUpboundIoV1beta1GraphQLAPIStatusAtProviderAdditionalAuthenticationProviderItems0OpenidConnectConfigItems0], default is Undefined, optional
-        Nested argument containing OpenID Connect configuration. Defined below.
+        Nested argument containing OpenID Connect configuration. See openid_connect_config Block for details.
     userPoolConfig : [AppsyncAwsUpboundIoV1beta1GraphQLAPIStatusAtProviderAdditionalAuthenticationProviderItems0UserPoolConfigItems0], default is Undefined, optional
-        Amazon Cognito User Pool configuration. Defined below.
+        Amazon Cognito User Pool configuration. See user_pool_config Block for details.
     """
 
 

@@ -66,8 +66,6 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : LakeformationAwsUpboundIoV1beta2PermissionsSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : LakeformationAwsUpboundIoV1beta2PermissionsSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : LakeformationAwsUpboundIoV1beta2PermissionsSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsSpec:
 
     providerConfigRef?: LakeformationAwsUpboundIoV1beta2PermissionsSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: LakeformationAwsUpboundIoV1beta2PermissionsSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: LakeformationAwsUpboundIoV1beta2PermissionsSpecWriteConnectionSecretToRef
 
 
@@ -95,7 +91,7 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsSpecForProvider:
     Attributes
     ----------
     catalogId : str, default is Undefined, optional
-        –  Identifier for the Data Catalog. By default, the account ID. The Data Catalog is the persistent metadata store. It contains database definitions, table definitions, and other control information to manage your Lake Formation environment.
+        Identifier for the Data Catalog. By default, the account ID. The Data Catalog is the persistent metadata store. It contains database definitions, table definitions, and other control information to manage your Lake Formation environment.
     catalogResource : bool, default is Undefined, optional
         Whether the permissions are to be granted for the Data Catalog. Defaults to false.
     dataCellsFilter : LakeformationAwsUpboundIoV1beta2PermissionsSpecForProviderDataCellsFilter, default is Undefined, optional
@@ -109,12 +105,13 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsSpecForProvider:
     lfTagPolicy : LakeformationAwsUpboundIoV1beta2PermissionsSpecForProviderLfTagPolicy, default is Undefined, optional
         lf tag policy
     permissions : [str], default is Undefined, optional
-        –  List of permissions granted to the principal. Valid values may include ALL, ALTER, ASSOCIATE, CREATE_DATABASE, CREATE_TABLE, DATA_LOCATION_ACCESS, DELETE, DESCRIBE, DROP, INSERT, and SELECT. For details on each permission, see Lake Formation Permissions Reference.
+        List of permissions granted to the principal. Valid values may include ALL, ALTER, ASSOCIATE, CREATE_DATABASE, CREATE_TABLE, DATA_LOCATION_ACCESS, DELETE, DESCRIBE, DROP, INSERT, and SELECT. For details on each permission, see Lake Formation Permissions Reference.
     permissionsWithGrantOption : [str], default is Undefined, optional
         Subset of permissions which the principal can pass.
     principal : str, default is Undefined, optional
-        account permissions. For more information, see Lake Formation Permissions Reference.
+        Principal to be granted the permissions on the resource. Supported principals include IAM_ALLOWED_PRINCIPALS (see Default Behavior and  above), IAM roles, users, groups, Federated Users, SAML groups and users, QuickSight groups, OUs, and organizations as well as AWS account IDs for cross-account permissions. For more information, see Lake Formation Permissions Reference.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     table : LakeformationAwsUpboundIoV1beta2PermissionsSpecForProviderTable, default is Undefined, optional
         table
@@ -183,7 +180,7 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsSpecForProviderDataLocation:
     Attributes
     ----------
     arn : str, default is Undefined, optional
-        –  Amazon Resource Name (ARN) that uniquely identifies the data location resource.
+        Amazon Resource Name (ARN) that uniquely identifies the data location resource.
     arnRef : LakeformationAwsUpboundIoV1beta2PermissionsSpecForProviderDataLocationArnRef, default is Undefined, optional
         arn ref
     arnSelector : LakeformationAwsUpboundIoV1beta2PermissionsSpecForProviderDataLocationArnSelector, default is Undefined, optional
@@ -300,7 +297,7 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsSpecForProviderDatabase:
     catalogId : str, default is Undefined, optional
         Identifier for the Data Catalog. By default, it is the account ID of the caller.
     name : str, default is Undefined, optional
-        –  Name of the database resource. Unique to the Data Catalog.
+        Name of the database resource. Unique to the Data Catalog.
     nameRef : LakeformationAwsUpboundIoV1beta2PermissionsSpecForProviderDatabaseNameRef, default is Undefined, optional
         name ref
     nameSelector : LakeformationAwsUpboundIoV1beta2PermissionsSpecForProviderDatabaseNameSelector, default is Undefined, optional
@@ -415,7 +412,7 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsSpecForProviderLfTag:
     catalogId : str, default is Undefined, optional
         Identifier for the Data Catalog. By default, it is the account ID of the caller.
     key : str, default is Undefined, optional
-        name for the tag.
+        The key-name for the tag.
     values : [str], default is Undefined, optional
         A list of possible values an attribute can take.
     """
@@ -439,7 +436,7 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsSpecForProviderLfTagPolicy:
     expression : [LakeformationAwsUpboundIoV1beta2PermissionsSpecForProviderLfTagPolicyExpressionItems0], default is Undefined, optional
         A list of tag conditions that apply to the resource's tag policy. Configuration block for tag conditions that apply to the policy. See expression below.
     resourceType : str, default is Undefined, optional
-        –  The resource type for which the tag policy applies. Valid values are DATABASE and TABLE.
+        The resource type for which the tag policy applies. Valid values are DATABASE and TABLE.
     """
 
 
@@ -457,7 +454,7 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsSpecForProviderLfTagPolicyExpr
     Attributes
     ----------
     key : str, default is Undefined, optional
-        name of an LF-Tag.
+        The key-name of an LF-Tag.
     values : [str], default is Undefined, optional
         A list of possible values of an LF-Tag.
     """
@@ -477,7 +474,7 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsSpecForProviderTable:
     catalogId : str, default is Undefined, optional
         Identifier for the Data Catalog. By default, it is the account ID of the caller.
     databaseName : str, default is Undefined, optional
-        –  Name of the database for the table. Unique to a Data Catalog.
+        Name of the database for the table. Unique to a Data Catalog.
     name : str, default is Undefined, optional
         Name of the table.
     wildcard : bool, default is Undefined, optional
@@ -505,11 +502,11 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsSpecForProviderTableWithColumn
     columnNames : [str], default is Undefined, optional
         Set of column names for the table.
     databaseName : str, default is Undefined, optional
-        –  Name of the database for the table with columns resource. Unique to the Data Catalog.
+        Name of the database for the table with columns resource. Unique to the Data Catalog.
     excludedColumnNames : [str], default is Undefined, optional
         Set of column names for the table to exclude.
     name : str, default is Undefined, optional
-        –  Name of the table resource.
+        Name of the table resource.
     nameRef : LakeformationAwsUpboundIoV1beta2PermissionsSpecForProviderTableWithColumnsNameRef, default is Undefined, optional
         name ref
     nameSelector : LakeformationAwsUpboundIoV1beta2PermissionsSpecForProviderTableWithColumnsNameSelector, default is Undefined, optional
@@ -641,7 +638,7 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsSpecInitProvider:
     Attributes
     ----------
     catalogId : str, default is Undefined, optional
-        –  Identifier for the Data Catalog. By default, the account ID. The Data Catalog is the persistent metadata store. It contains database definitions, table definitions, and other control information to manage your Lake Formation environment.
+        Identifier for the Data Catalog. By default, the account ID. The Data Catalog is the persistent metadata store. It contains database definitions, table definitions, and other control information to manage your Lake Formation environment.
     catalogResource : bool, default is Undefined, optional
         Whether the permissions are to be granted for the Data Catalog. Defaults to false.
     dataCellsFilter : LakeformationAwsUpboundIoV1beta2PermissionsSpecInitProviderDataCellsFilter, default is Undefined, optional
@@ -655,11 +652,11 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsSpecInitProvider:
     lfTagPolicy : LakeformationAwsUpboundIoV1beta2PermissionsSpecInitProviderLfTagPolicy, default is Undefined, optional
         lf tag policy
     permissions : [str], default is Undefined, optional
-        –  List of permissions granted to the principal. Valid values may include ALL, ALTER, ASSOCIATE, CREATE_DATABASE, CREATE_TABLE, DATA_LOCATION_ACCESS, DELETE, DESCRIBE, DROP, INSERT, and SELECT. For details on each permission, see Lake Formation Permissions Reference.
+        List of permissions granted to the principal. Valid values may include ALL, ALTER, ASSOCIATE, CREATE_DATABASE, CREATE_TABLE, DATA_LOCATION_ACCESS, DELETE, DESCRIBE, DROP, INSERT, and SELECT. For details on each permission, see Lake Formation Permissions Reference.
     permissionsWithGrantOption : [str], default is Undefined, optional
         Subset of permissions which the principal can pass.
     principal : str, default is Undefined, optional
-        account permissions. For more information, see Lake Formation Permissions Reference.
+        Principal to be granted the permissions on the resource. Supported principals include IAM_ALLOWED_PRINCIPALS (see Default Behavior and  above), IAM roles, users, groups, Federated Users, SAML groups and users, QuickSight groups, OUs, and organizations as well as AWS account IDs for cross-account permissions. For more information, see Lake Formation Permissions Reference.
     table : LakeformationAwsUpboundIoV1beta2PermissionsSpecInitProviderTable, default is Undefined, optional
         table
     tableWithColumns : LakeformationAwsUpboundIoV1beta2PermissionsSpecInitProviderTableWithColumns, default is Undefined, optional
@@ -725,7 +722,7 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsSpecInitProviderDataLocation:
     Attributes
     ----------
     arn : str, default is Undefined, optional
-        –  Amazon Resource Name (ARN) that uniquely identifies the data location resource.
+        Amazon Resource Name (ARN) that uniquely identifies the data location resource.
     arnRef : LakeformationAwsUpboundIoV1beta2PermissionsSpecInitProviderDataLocationArnRef, default is Undefined, optional
         arn ref
     arnSelector : LakeformationAwsUpboundIoV1beta2PermissionsSpecInitProviderDataLocationArnSelector, default is Undefined, optional
@@ -842,7 +839,7 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsSpecInitProviderDatabase:
     catalogId : str, default is Undefined, optional
         Identifier for the Data Catalog. By default, it is the account ID of the caller.
     name : str, default is Undefined, optional
-        –  Name of the database resource. Unique to the Data Catalog.
+        Name of the database resource. Unique to the Data Catalog.
     nameRef : LakeformationAwsUpboundIoV1beta2PermissionsSpecInitProviderDatabaseNameRef, default is Undefined, optional
         name ref
     nameSelector : LakeformationAwsUpboundIoV1beta2PermissionsSpecInitProviderDatabaseNameSelector, default is Undefined, optional
@@ -957,7 +954,7 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsSpecInitProviderLfTag:
     catalogId : str, default is Undefined, optional
         Identifier for the Data Catalog. By default, it is the account ID of the caller.
     key : str, default is Undefined, optional
-        name for the tag.
+        The key-name for the tag.
     values : [str], default is Undefined, optional
         A list of possible values an attribute can take.
     """
@@ -981,7 +978,7 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsSpecInitProviderLfTagPolicy:
     expression : [LakeformationAwsUpboundIoV1beta2PermissionsSpecInitProviderLfTagPolicyExpressionItems0], default is Undefined, optional
         A list of tag conditions that apply to the resource's tag policy. Configuration block for tag conditions that apply to the policy. See expression below.
     resourceType : str, default is Undefined, optional
-        –  The resource type for which the tag policy applies. Valid values are DATABASE and TABLE.
+        The resource type for which the tag policy applies. Valid values are DATABASE and TABLE.
     """
 
 
@@ -999,7 +996,7 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsSpecInitProviderLfTagPolicyExp
     Attributes
     ----------
     key : str, default is Undefined, optional
-        name of an LF-Tag.
+        The key-name of an LF-Tag.
     values : [str], default is Undefined, optional
         A list of possible values of an LF-Tag.
     """
@@ -1019,7 +1016,7 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsSpecInitProviderTable:
     catalogId : str, default is Undefined, optional
         Identifier for the Data Catalog. By default, it is the account ID of the caller.
     databaseName : str, default is Undefined, optional
-        –  Name of the database for the table. Unique to a Data Catalog.
+        Name of the database for the table. Unique to a Data Catalog.
     name : str, default is Undefined, optional
         Name of the table.
     wildcard : bool, default is Undefined, optional
@@ -1047,11 +1044,11 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsSpecInitProviderTableWithColum
     columnNames : [str], default is Undefined, optional
         Set of column names for the table.
     databaseName : str, default is Undefined, optional
-        –  Name of the database for the table with columns resource. Unique to the Data Catalog.
+        Name of the database for the table with columns resource. Unique to the Data Catalog.
     excludedColumnNames : [str], default is Undefined, optional
         Set of column names for the table to exclude.
     name : str, default is Undefined, optional
-        –  Name of the table resource.
+        Name of the table resource.
     nameRef : LakeformationAwsUpboundIoV1beta2PermissionsSpecInitProviderTableWithColumnsNameRef, default is Undefined, optional
         name ref
     nameSelector : LakeformationAwsUpboundIoV1beta2PermissionsSpecInitProviderTableWithColumnsNameSelector, default is Undefined, optional
@@ -1211,112 +1208,12 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema LakeformationAwsUpboundIoV1beta2PermissionsSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : LakeformationAwsUpboundIoV1beta2PermissionsSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : LakeformationAwsUpboundIoV1beta2PermissionsSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: LakeformationAwsUpboundIoV1beta2PermissionsSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: LakeformationAwsUpboundIoV1beta2PermissionsSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema LakeformationAwsUpboundIoV1beta2PermissionsSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : LakeformationAwsUpboundIoV1beta2PermissionsSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: LakeformationAwsUpboundIoV1beta2PermissionsSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema LakeformationAwsUpboundIoV1beta2PermissionsSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema LakeformationAwsUpboundIoV1beta2PermissionsSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema LakeformationAwsUpboundIoV1beta2PermissionsSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1363,7 +1260,7 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsStatusAtProvider:
     Attributes
     ----------
     catalogId : str, default is Undefined, optional
-        –  Identifier for the Data Catalog. By default, the account ID. The Data Catalog is the persistent metadata store. It contains database definitions, table definitions, and other control information to manage your Lake Formation environment.
+        Identifier for the Data Catalog. By default, the account ID. The Data Catalog is the persistent metadata store. It contains database definitions, table definitions, and other control information to manage your Lake Formation environment.
     catalogResource : bool, default is Undefined, optional
         Whether the permissions are to be granted for the Data Catalog. Defaults to false.
     dataCellsFilter : LakeformationAwsUpboundIoV1beta2PermissionsStatusAtProviderDataCellsFilter, default is Undefined, optional
@@ -1379,11 +1276,14 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsStatusAtProvider:
     lfTagPolicy : LakeformationAwsUpboundIoV1beta2PermissionsStatusAtProviderLfTagPolicy, default is Undefined, optional
         lf tag policy
     permissions : [str], default is Undefined, optional
-        –  List of permissions granted to the principal. Valid values may include ALL, ALTER, ASSOCIATE, CREATE_DATABASE, CREATE_TABLE, DATA_LOCATION_ACCESS, DELETE, DESCRIBE, DROP, INSERT, and SELECT. For details on each permission, see Lake Formation Permissions Reference.
+        List of permissions granted to the principal. Valid values may include ALL, ALTER, ASSOCIATE, CREATE_DATABASE, CREATE_TABLE, DATA_LOCATION_ACCESS, DELETE, DESCRIBE, DROP, INSERT, and SELECT. For details on each permission, see Lake Formation Permissions Reference.
     permissionsWithGrantOption : [str], default is Undefined, optional
         Subset of permissions which the principal can pass.
     principal : str, default is Undefined, optional
-        account permissions. For more information, see Lake Formation Permissions Reference.
+        Principal to be granted the permissions on the resource. Supported principals include IAM_ALLOWED_PRINCIPALS (see Default Behavior and  above), IAM roles, users, groups, Federated Users, SAML groups and users, QuickSight groups, OUs, and organizations as well as AWS account IDs for cross-account permissions. For more information, see Lake Formation Permissions Reference.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     table : LakeformationAwsUpboundIoV1beta2PermissionsStatusAtProviderTable, default is Undefined, optional
         table
     tableWithColumns : LakeformationAwsUpboundIoV1beta2PermissionsStatusAtProviderTableWithColumns, default is Undefined, optional
@@ -1412,6 +1312,8 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsStatusAtProvider:
     permissionsWithGrantOption?: [str]
 
     principal?: str
+
+    region?: str
 
     table?: LakeformationAwsUpboundIoV1beta2PermissionsStatusAtProviderTable
 
@@ -1451,7 +1353,7 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsStatusAtProviderDataLocation:
     Attributes
     ----------
     arn : str, default is Undefined, optional
-        –  Amazon Resource Name (ARN) that uniquely identifies the data location resource.
+        Amazon Resource Name (ARN) that uniquely identifies the data location resource.
     catalogId : str, default is Undefined, optional
         Identifier for the Data Catalog where the location is registered with Lake Formation. By default, it is the account ID of the caller.
     """
@@ -1471,7 +1373,7 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsStatusAtProviderDatabase:
     catalogId : str, default is Undefined, optional
         Identifier for the Data Catalog. By default, it is the account ID of the caller.
     name : str, default is Undefined, optional
-        –  Name of the database resource. Unique to the Data Catalog.
+        Name of the database resource. Unique to the Data Catalog.
     """
 
 
@@ -1489,7 +1391,7 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsStatusAtProviderLfTag:
     catalogId : str, default is Undefined, optional
         Identifier for the Data Catalog. By default, it is the account ID of the caller.
     key : str, default is Undefined, optional
-        name for the tag.
+        The key-name for the tag.
     values : [str], default is Undefined, optional
         A list of possible values an attribute can take.
     """
@@ -1513,7 +1415,7 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsStatusAtProviderLfTagPolicy:
     expression : [LakeformationAwsUpboundIoV1beta2PermissionsStatusAtProviderLfTagPolicyExpressionItems0], default is Undefined, optional
         A list of tag conditions that apply to the resource's tag policy. Configuration block for tag conditions that apply to the policy. See expression below.
     resourceType : str, default is Undefined, optional
-        –  The resource type for which the tag policy applies. Valid values are DATABASE and TABLE.
+        The resource type for which the tag policy applies. Valid values are DATABASE and TABLE.
     """
 
 
@@ -1531,7 +1433,7 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsStatusAtProviderLfTagPolicyExp
     Attributes
     ----------
     key : str, default is Undefined, optional
-        name of an LF-Tag.
+        The key-name of an LF-Tag.
     values : [str], default is Undefined, optional
         A list of possible values of an LF-Tag.
     """
@@ -1551,7 +1453,7 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsStatusAtProviderTable:
     catalogId : str, default is Undefined, optional
         Identifier for the Data Catalog. By default, it is the account ID of the caller.
     databaseName : str, default is Undefined, optional
-        –  Name of the database for the table. Unique to a Data Catalog.
+        Name of the database for the table. Unique to a Data Catalog.
     name : str, default is Undefined, optional
         Name of the table.
     wildcard : bool, default is Undefined, optional
@@ -1579,11 +1481,11 @@ schema LakeformationAwsUpboundIoV1beta2PermissionsStatusAtProviderTableWithColum
     columnNames : [str], default is Undefined, optional
         Set of column names for the table.
     databaseName : str, default is Undefined, optional
-        –  Name of the database for the table with columns resource. Unique to the Data Catalog.
+        Name of the database for the table with columns resource. Unique to the Data Catalog.
     excludedColumnNames : [str], default is Undefined, optional
         Set of column names for the table to exclude.
     name : str, default is Undefined, optional
-        –  Name of the table resource.
+        Name of the table resource.
     wildcard : bool, default is Undefined, optional
         Whether to use a column wildcard.
     """

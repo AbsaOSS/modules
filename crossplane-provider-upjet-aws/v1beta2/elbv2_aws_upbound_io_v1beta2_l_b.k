@@ -66,8 +66,6 @@ schema Elbv2AwsUpboundIoV1beta2LBSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : Elbv2AwsUpboundIoV1beta2LBSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : Elbv2AwsUpboundIoV1beta2LBSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : Elbv2AwsUpboundIoV1beta2LBSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema Elbv2AwsUpboundIoV1beta2LBSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: Elbv2AwsUpboundIoV1beta2LBSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: Elbv2AwsUpboundIoV1beta2LBSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: Elbv2AwsUpboundIoV1beta2LBSpecWriteConnectionSecretToRef
 
@@ -130,13 +126,18 @@ schema Elbv2AwsUpboundIoV1beta2LBSpecForProvider:
         If true, the LB will be internal. Defaults to false.
     ipAddressType : str, default is Undefined, optional
         Type of IP addresses used by the subnets for your load balancer. The possible values depend upon the load balancer type: ipv4 (all load balancer types), dualstack (all load balancer types), and dualstack-without-public-ipv4 (type application only).
+    ipamPools : Elbv2AwsUpboundIoV1beta2LBSpecForProviderIpamPools, default is Undefined, optional
+        ipam pools
     loadBalancerType : str, default is Undefined, optional
         Type of load balancer to create. Possible values are application, gateway, or network. The default value is application.
+    minimumLoadBalancerCapacity : Elbv2AwsUpboundIoV1beta2LBSpecForProviderMinimumLoadBalancerCapacity, default is Undefined, optional
+        minimum load balancer capacity
     name : str, default is Undefined, optional
         Name of the LB. This name must be unique within your AWS account, can have a maximum of 32 characters, must contain only alphanumeric characters or hyphens, and must not begin or end with a hyphen.
     preserveHostHeader : bool, default is Undefined, optional
         Whether the Application Load Balancer should preserve the Host header in the HTTP request and send it to the target without any change. Defaults to false.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     securityGroupRefs : [Elbv2AwsUpboundIoV1beta2LBSpecForProviderSecurityGroupRefsItems0], default is Undefined, optional
         References to SecurityGroup in ec2 to populate securityGroups.
@@ -195,7 +196,11 @@ schema Elbv2AwsUpboundIoV1beta2LBSpecForProvider:
 
     ipAddressType?: str
 
+    ipamPools?: Elbv2AwsUpboundIoV1beta2LBSpecForProviderIpamPools
+
     loadBalancerType?: str
+
+    minimumLoadBalancerCapacity?: Elbv2AwsUpboundIoV1beta2LBSpecForProviderMinimumLoadBalancerCapacity
 
     name?: str
 
@@ -361,6 +366,34 @@ schema Elbv2AwsUpboundIoV1beta2LBSpecForProviderConnectionLogs:
     enabled?: bool
 
     prefix?: str
+
+
+schema Elbv2AwsUpboundIoV1beta2LBSpecForProviderIpamPools:
+    r"""
+    . The IPAM pools to use with the load balancer.  Only valid for Load Balancers of type application. See ipam_pools for more information.
+
+    Attributes
+    ----------
+    ipv4IpamPoolId : str, default is Undefined, optional
+        The ID of the IPv4 IPAM pool.
+    """
+
+
+    ipv4IpamPoolId?: str
+
+
+schema Elbv2AwsUpboundIoV1beta2LBSpecForProviderMinimumLoadBalancerCapacity:
+    r"""
+    Minimum capacity for a load balancer. Only valid for Load Balancers of type application or network.
+
+    Attributes
+    ----------
+    capacityUnits : float, default is Undefined, optional
+        The number of capacity units.
+    """
+
+
+    capacityUnits?: float
 
 
 schema Elbv2AwsUpboundIoV1beta2LBSpecForProviderSecurityGroupRefsItems0:
@@ -715,8 +748,12 @@ schema Elbv2AwsUpboundIoV1beta2LBSpecInitProvider:
         If true, the LB will be internal. Defaults to false.
     ipAddressType : str, default is Undefined, optional
         Type of IP addresses used by the subnets for your load balancer. The possible values depend upon the load balancer type: ipv4 (all load balancer types), dualstack (all load balancer types), and dualstack-without-public-ipv4 (type application only).
+    ipamPools : Elbv2AwsUpboundIoV1beta2LBSpecInitProviderIpamPools, default is Undefined, optional
+        ipam pools
     loadBalancerType : str, default is Undefined, optional
         Type of load balancer to create. Possible values are application, gateway, or network. The default value is application.
+    minimumLoadBalancerCapacity : Elbv2AwsUpboundIoV1beta2LBSpecInitProviderMinimumLoadBalancerCapacity, default is Undefined, optional
+        minimum load balancer capacity
     name : str, default is Undefined, optional
         Name of the LB. This name must be unique within your AWS account, can have a maximum of 32 characters, must contain only alphanumeric characters or hyphens, and must not begin or end with a hyphen.
     preserveHostHeader : bool, default is Undefined, optional
@@ -778,7 +815,11 @@ schema Elbv2AwsUpboundIoV1beta2LBSpecInitProvider:
 
     ipAddressType?: str
 
+    ipamPools?: Elbv2AwsUpboundIoV1beta2LBSpecInitProviderIpamPools
+
     loadBalancerType?: str
+
+    minimumLoadBalancerCapacity?: Elbv2AwsUpboundIoV1beta2LBSpecInitProviderMinimumLoadBalancerCapacity
 
     name?: str
 
@@ -942,6 +983,34 @@ schema Elbv2AwsUpboundIoV1beta2LBSpecInitProviderConnectionLogs:
     enabled?: bool
 
     prefix?: str
+
+
+schema Elbv2AwsUpboundIoV1beta2LBSpecInitProviderIpamPools:
+    r"""
+    . The IPAM pools to use with the load balancer.  Only valid for Load Balancers of type application. See ipam_pools for more information.
+
+    Attributes
+    ----------
+    ipv4IpamPoolId : str, default is Undefined, optional
+        The ID of the IPv4 IPAM pool.
+    """
+
+
+    ipv4IpamPoolId?: str
+
+
+schema Elbv2AwsUpboundIoV1beta2LBSpecInitProviderMinimumLoadBalancerCapacity:
+    r"""
+    Minimum capacity for a load balancer. Only valid for Load Balancers of type application or network.
+
+    Attributes
+    ----------
+    capacityUnits : float, default is Undefined, optional
+        The number of capacity units.
+    """
+
+
+    capacityUnits?: float
 
 
 schema Elbv2AwsUpboundIoV1beta2LBSpecInitProviderSecurityGroupRefsItems0:
@@ -1289,112 +1358,12 @@ schema Elbv2AwsUpboundIoV1beta2LBSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema Elbv2AwsUpboundIoV1beta2LBSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : Elbv2AwsUpboundIoV1beta2LBSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : Elbv2AwsUpboundIoV1beta2LBSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: Elbv2AwsUpboundIoV1beta2LBSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: Elbv2AwsUpboundIoV1beta2LBSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema Elbv2AwsUpboundIoV1beta2LBSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : Elbv2AwsUpboundIoV1beta2LBSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: Elbv2AwsUpboundIoV1beta2LBSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema Elbv2AwsUpboundIoV1beta2LBSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema Elbv2AwsUpboundIoV1beta2LBSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema Elbv2AwsUpboundIoV1beta2LBSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1443,7 +1412,7 @@ schema Elbv2AwsUpboundIoV1beta2LBStatusAtProvider:
     accessLogs : Elbv2AwsUpboundIoV1beta2LBStatusAtProviderAccessLogs, default is Undefined, optional
         access logs
     arn : str, default is Undefined, optional
-        ARN of the load balancer (matches id).
+        ARN of the load balancer.
     arnSuffix : str, default is Undefined, optional
         ARN suffix for use with CloudWatch Metrics.
     clientKeepAlive : float, default is Undefined, optional
@@ -1477,19 +1446,26 @@ schema Elbv2AwsUpboundIoV1beta2LBStatusAtProvider:
     enforceSecurityGroupInboundRulesOnPrivateLinkTraffic : str, default is Undefined, optional
         Whether inbound security group rules are enforced for traffic originating from a PrivateLink. Only valid for Load Balancers of type network. The possible values are on and off.
     id : str, default is Undefined, optional
-        ARN of the load balancer (matches arn).
+        id
     idleTimeout : float, default is Undefined, optional
         Time in seconds that the connection is allowed to be idle. Only valid for Load Balancers of type application. Default: 60.
     internal : bool, default is Undefined, optional
         If true, the LB will be internal. Defaults to false.
     ipAddressType : str, default is Undefined, optional
         Type of IP addresses used by the subnets for your load balancer. The possible values depend upon the load balancer type: ipv4 (all load balancer types), dualstack (all load balancer types), and dualstack-without-public-ipv4 (type application only).
+    ipamPools : Elbv2AwsUpboundIoV1beta2LBStatusAtProviderIpamPools, default is Undefined, optional
+        ipam pools
     loadBalancerType : str, default is Undefined, optional
         Type of load balancer to create. Possible values are application, gateway, or network. The default value is application.
+    minimumLoadBalancerCapacity : Elbv2AwsUpboundIoV1beta2LBStatusAtProviderMinimumLoadBalancerCapacity, default is Undefined, optional
+        minimum load balancer capacity
     name : str, default is Undefined, optional
         Name of the LB. This name must be unique within your AWS account, can have a maximum of 32 characters, must contain only alphanumeric characters or hyphens, and must not begin or end with a hyphen.
     preserveHostHeader : bool, default is Undefined, optional
         Whether the Application Load Balancer should preserve the Host header in the HTTP request and send it to the target without any change. Defaults to false.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     securityGroups : [str], default is Undefined, optional
         List of security group IDs to assign to the LB. Only valid for Load Balancers of type application or network. For load balancers of type network security groups cannot be added if none are currently present, and cannot all be removed once added. If either of these conditions are met, this will force a recreation of the resource.
     subnetMapping : [Elbv2AwsUpboundIoV1beta2LBStatusAtProviderSubnetMappingItems0], default is Undefined, optional
@@ -1501,7 +1477,7 @@ schema Elbv2AwsUpboundIoV1beta2LBStatusAtProvider:
     tagsAll : {str:str}, default is Undefined, optional
         Map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     vpcId : str, default is Undefined, optional
-        ARN of the load balancer (matches arn).
+        vpc Id
     xffHeaderProcessingMode : str, default is Undefined, optional
         Determines how the load balancer modifies the X-Forwarded-For header in the HTTP request before sending the request to the target. The possible values are append, preserve, and remove. Only valid for Load Balancers of type application. The default is append.
     zoneId : str, default is Undefined, optional
@@ -1553,11 +1529,17 @@ schema Elbv2AwsUpboundIoV1beta2LBStatusAtProvider:
 
     ipAddressType?: str
 
+    ipamPools?: Elbv2AwsUpboundIoV1beta2LBStatusAtProviderIpamPools
+
     loadBalancerType?: str
+
+    minimumLoadBalancerCapacity?: Elbv2AwsUpboundIoV1beta2LBStatusAtProviderMinimumLoadBalancerCapacity
 
     name?: str
 
     preserveHostHeader?: bool
+
+    region?: str
 
     securityGroups?: [str]
 
@@ -1618,6 +1600,34 @@ schema Elbv2AwsUpboundIoV1beta2LBStatusAtProviderConnectionLogs:
     enabled?: bool
 
     prefix?: str
+
+
+schema Elbv2AwsUpboundIoV1beta2LBStatusAtProviderIpamPools:
+    r"""
+    . The IPAM pools to use with the load balancer.  Only valid for Load Balancers of type application. See ipam_pools for more information.
+
+    Attributes
+    ----------
+    ipv4IpamPoolId : str, default is Undefined, optional
+        The ID of the IPv4 IPAM pool.
+    """
+
+
+    ipv4IpamPoolId?: str
+
+
+schema Elbv2AwsUpboundIoV1beta2LBStatusAtProviderMinimumLoadBalancerCapacity:
+    r"""
+    Minimum capacity for a load balancer. Only valid for Load Balancers of type application or network.
+
+    Attributes
+    ----------
+    capacityUnits : float, default is Undefined, optional
+        The number of capacity units.
+    """
+
+
+    capacityUnits?: float
 
 
 schema Elbv2AwsUpboundIoV1beta2LBStatusAtProviderSubnetMappingItems0:

@@ -66,8 +66,6 @@ schema TimestreamwriteAwsUpboundIoV1beta1TableSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : TimestreamwriteAwsUpboundIoV1beta1TableSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : TimestreamwriteAwsUpboundIoV1beta1TableSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : TimestreamwriteAwsUpboundIoV1beta1TableSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema TimestreamwriteAwsUpboundIoV1beta1TableSpec:
 
     providerConfigRef?: TimestreamwriteAwsUpboundIoV1beta1TableSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: TimestreamwriteAwsUpboundIoV1beta1TableSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: TimestreamwriteAwsUpboundIoV1beta1TableSpecWriteConnectionSecretToRef
 
 
@@ -95,7 +91,7 @@ schema TimestreamwriteAwsUpboundIoV1beta1TableSpecForProvider:
     Attributes
     ----------
     databaseName : str, default is Undefined, optional
-        –  The name of the Timestream database.
+        The name of the Timestream database.
     databaseNameRef : TimestreamwriteAwsUpboundIoV1beta1TableSpecForProviderDatabaseNameRef, default is Undefined, optional
         database name ref
     databaseNameSelector : TimestreamwriteAwsUpboundIoV1beta1TableSpecForProviderDatabaseNameSelector, default is Undefined, optional
@@ -103,6 +99,7 @@ schema TimestreamwriteAwsUpboundIoV1beta1TableSpecForProvider:
     magneticStoreWriteProperties : [TimestreamwriteAwsUpboundIoV1beta1TableSpecForProviderMagneticStoreWritePropertiesItems0], default is Undefined, optional
         Contains properties to set on the table when enabling magnetic store writes. See Magnetic Store Write Properties below for more details.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     retentionProperties : [TimestreamwriteAwsUpboundIoV1beta1TableSpecForProviderRetentionPropertiesItems0], default is Undefined, optional
         The retention duration for the memory store and magnetic store. See Retention Properties below for more details. If not provided, magnetic_store_retention_period_in_days default to 73000 and memory_store_retention_period_in_hours defaults to 6.
@@ -526,112 +523,12 @@ schema TimestreamwriteAwsUpboundIoV1beta1TableSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema TimestreamwriteAwsUpboundIoV1beta1TableSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : TimestreamwriteAwsUpboundIoV1beta1TableSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : TimestreamwriteAwsUpboundIoV1beta1TableSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: TimestreamwriteAwsUpboundIoV1beta1TableSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: TimestreamwriteAwsUpboundIoV1beta1TableSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema TimestreamwriteAwsUpboundIoV1beta1TableSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : TimestreamwriteAwsUpboundIoV1beta1TableSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: TimestreamwriteAwsUpboundIoV1beta1TableSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema TimestreamwriteAwsUpboundIoV1beta1TableSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema TimestreamwriteAwsUpboundIoV1beta1TableSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema TimestreamwriteAwsUpboundIoV1beta1TableSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -680,11 +577,14 @@ schema TimestreamwriteAwsUpboundIoV1beta1TableStatusAtProvider:
     arn : str, default is Undefined, optional
         The ARN that uniquely identifies this table.
     databaseName : str, default is Undefined, optional
-        –  The name of the Timestream database.
+        The name of the Timestream database.
     id : str, default is Undefined, optional
         The table_name and database_name separated by a colon (:).
     magneticStoreWriteProperties : [TimestreamwriteAwsUpboundIoV1beta1TableStatusAtProviderMagneticStoreWritePropertiesItems0], default is Undefined, optional
         Contains properties to set on the table when enabling magnetic store writes. See Magnetic Store Write Properties below for more details.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     retentionProperties : [TimestreamwriteAwsUpboundIoV1beta1TableStatusAtProviderRetentionPropertiesItems0], default is Undefined, optional
         The retention duration for the memory store and magnetic store. See Retention Properties below for more details. If not provided, magnetic_store_retention_period_in_days default to 73000 and memory_store_retention_period_in_hours defaults to 6.
     $schema : [TimestreamwriteAwsUpboundIoV1beta1TableStatusAtProviderSchemaItems0], default is Undefined, optional
@@ -705,6 +605,8 @@ schema TimestreamwriteAwsUpboundIoV1beta1TableStatusAtProvider:
     id?: str
 
     magneticStoreWriteProperties?: [TimestreamwriteAwsUpboundIoV1beta1TableStatusAtProviderMagneticStoreWritePropertiesItems0]
+
+    region?: str
 
     retentionProperties?: [TimestreamwriteAwsUpboundIoV1beta1TableStatusAtProviderRetentionPropertiesItems0]
 

@@ -66,8 +66,6 @@ schema GuarddutyAwsUpboundIoV1beta1FilterSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : GuarddutyAwsUpboundIoV1beta1FilterSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : GuarddutyAwsUpboundIoV1beta1FilterSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : GuarddutyAwsUpboundIoV1beta1FilterSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema GuarddutyAwsUpboundIoV1beta1FilterSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: GuarddutyAwsUpboundIoV1beta1FilterSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: GuarddutyAwsUpboundIoV1beta1FilterSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: GuarddutyAwsUpboundIoV1beta1FilterSpecWriteConnectionSecretToRef
 
@@ -109,6 +105,7 @@ schema GuarddutyAwsUpboundIoV1beta1FilterSpecForProvider:
     rank : float, default is Undefined, optional
         Specifies the position of the filter in the list of current filters. Also specifies the order in which this filter is applied to the findings.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
@@ -410,112 +407,12 @@ schema GuarddutyAwsUpboundIoV1beta1FilterSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema GuarddutyAwsUpboundIoV1beta1FilterSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : GuarddutyAwsUpboundIoV1beta1FilterSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : GuarddutyAwsUpboundIoV1beta1FilterSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: GuarddutyAwsUpboundIoV1beta1FilterSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: GuarddutyAwsUpboundIoV1beta1FilterSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema GuarddutyAwsUpboundIoV1beta1FilterSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : GuarddutyAwsUpboundIoV1beta1FilterSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: GuarddutyAwsUpboundIoV1beta1FilterSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema GuarddutyAwsUpboundIoV1beta1FilterSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema GuarddutyAwsUpboundIoV1beta1FilterSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema GuarddutyAwsUpboundIoV1beta1FilterSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -572,9 +469,12 @@ schema GuarddutyAwsUpboundIoV1beta1FilterStatusAtProvider:
     findingCriteria : [GuarddutyAwsUpboundIoV1beta1FilterStatusAtProviderFindingCriteriaItems0], default is Undefined, optional
         Represents the criteria to be used in the filter for querying findings. Contains one or more criterion blocks, documented below.
     id : str, default is Undefined, optional
-        A compound field, consisting of the ID of the GuardDuty detector and the name of the filter.
+        id
     rank : float, default is Undefined, optional
         Specifies the position of the filter in the list of current filters. Also specifies the order in which this filter is applied to the findings.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
@@ -595,6 +495,8 @@ schema GuarddutyAwsUpboundIoV1beta1FilterStatusAtProvider:
     id?: str
 
     rank?: float
+
+    region?: str
 
     tags?: {str:str}
 

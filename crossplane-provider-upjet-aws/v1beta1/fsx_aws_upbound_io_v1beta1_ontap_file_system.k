@@ -66,8 +66,6 @@ schema FsxAwsUpboundIoV1beta1OntapFileSystemSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : FsxAwsUpboundIoV1beta1OntapFileSystemSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : FsxAwsUpboundIoV1beta1OntapFileSystemSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : FsxAwsUpboundIoV1beta1OntapFileSystemSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema FsxAwsUpboundIoV1beta1OntapFileSystemSpec:
 
     providerConfigRef?: FsxAwsUpboundIoV1beta1OntapFileSystemSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: FsxAwsUpboundIoV1beta1OntapFileSystemSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: FsxAwsUpboundIoV1beta1OntapFileSystemSpecWriteConnectionSecretToRef
 
 
@@ -99,7 +95,7 @@ schema FsxAwsUpboundIoV1beta1OntapFileSystemSpecForProvider:
     dailyAutomaticBackupStartTime : str, default is Undefined, optional
         A recurring daily time, in the format HH:MM. HH is the zero-padded hour of the day (0-23), and MM is the zero-padded minute of the hour. For example, 05:00 specifies 5 AM daily. Requires automatic_backup_retention_days to be set.
     deploymentType : str, default is Undefined, optional
-        - The filesystem deployment type. Supports MULTI_AZ_1, SINGLE_AZ_1, and SINGLE_AZ_2.
+        - The filesystem deployment type. Supports MULTI_AZ_1, MULTI_AZ_2, SINGLE_AZ_1, and SINGLE_AZ_2.
     diskIopsConfiguration : [FsxAwsUpboundIoV1beta1OntapFileSystemSpecForProviderDiskIopsConfigurationItems0], default is Undefined, optional
         The SSD IOPS configuration for the Amazon FSx for NetApp ONTAP file system. See Disk Iops Configuration below.
     endpointIpAddressRange : str, default is Undefined, optional
@@ -107,7 +103,7 @@ schema FsxAwsUpboundIoV1beta1OntapFileSystemSpecForProvider:
     fsxAdminPasswordSecretRef : FsxAwsUpboundIoV1beta1OntapFileSystemSpecForProviderFsxAdminPasswordSecretRef, default is Undefined, optional
         fsx admin password secret ref
     haPairs : float, default is Undefined, optional
-        - The number of ha_pairs to deploy for the file system. Valid values are 1 through 12. Value of 2 or greater required for SINGLE_AZ_2. Only value of 1 is supported with SINGLE_AZ_1 or MULTI_AZ_1 but not required.
+        - The number of ha_pairs to deploy for the file system. Valid value is 1 for SINGLE_AZ_1 or MULTI_AZ_1 and MULTI_AZ_2. Valid values are 1 through 12 for SINGLE_AZ_2.
     kmsKeyId : str, default is Undefined, optional
         ARN for the KMS Key to encrypt the file system at rest, Defaults to an AWS managed KMS Key.
     kmsKeyIdRef : FsxAwsUpboundIoV1beta1OntapFileSystemSpecForProviderKmsKeyIDRef, default is Undefined, optional
@@ -121,6 +117,7 @@ schema FsxAwsUpboundIoV1beta1OntapFileSystemSpecForProvider:
     preferredSubnetIdSelector : FsxAwsUpboundIoV1beta1OntapFileSystemSpecForProviderPreferredSubnetIDSelector, default is Undefined, optional
         preferred subnet Id selector
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     routeTableIds : [str], default is Undefined, optional
         Specifies the VPC route tables in which your file system's endpoints will be created. You should specify all VPC route tables associated with the subnets in which your clients are located. By default, Amazon FSx selects your VPC's default route table.
@@ -131,7 +128,7 @@ schema FsxAwsUpboundIoV1beta1OntapFileSystemSpecForProvider:
     securityGroupIds : [str], default is Undefined, optional
         A list of IDs for the security groups that apply to the specified network interfaces created for file system access. These security groups will apply to all network interfaces.
     storageCapacity : float, default is Undefined, optional
-        The storage capacity (GiB) of the file system. Valid values between 1024 and 196608 for file systems with deployment_type SINGLE_AZ_1 and MULTI_AZ_1. Valid values between 2048 (1024 per ha pair) and 1048576 for file systems with deployment_type SINGLE_AZ_2.
+        The storage capacity (GiB) of the file system. Valid values between 1024 and 196608 for file systems with deployment_type SINGLE_AZ_1 and MULTI_AZ_1. Valid values are between 1024 and 524288 for MULTI_AZ_2. Valid values between 1024 (1024 per ha pair) and 1048576 for file systems with deployment_type SINGLE_AZ_2. For SINGLE_AZ_2, the 1048576 (1PB) maximum is only supported when using 2 or more ha_pairs, the maximum is 524288 (512TB) when using 1 ha_pair.
     storageType : str, default is Undefined, optional
         - The filesystem storage type. defaults to SSD.
     subnetIdRefs : [FsxAwsUpboundIoV1beta1OntapFileSystemSpecForProviderSubnetIDRefsItems0], default is Undefined, optional
@@ -145,7 +142,7 @@ schema FsxAwsUpboundIoV1beta1OntapFileSystemSpecForProvider:
     throughputCapacity : float, default is Undefined, optional
         Sets the throughput capacity (in MBps) for the file system that you're creating. Valid values are 128, 256, 512, 1024, 2048, and 4096. This parameter is only supported when not using the ha_pairs parameter. Either throughput_capacity or throughput_capacity_per_ha_pair must be specified.
     throughputCapacityPerHaPair : float, default is Undefined, optional
-        Sets the throughput capacity (in MBps) for the file system that you're creating. Valid value when using 1 ha_pair are 128, 256, 512, 1024, 2048, and 4096. Valid values when using 2 or more ha_pairs are 3072,6144. This parameter is only supported when specifying the ha_pairs parameter. Either throughput_capacity or throughput_capacity_per_ha_pair must be specified.
+        Sets the per-HA-pair throughput capacity (in MBps) for the file system that you're creating, as opposed to throughput_capacity which specifies the total throughput capacity for the file system. Valid value for MULTI_AZ_1 and SINGLE_AZ_1 are 128, 256, 512, 1024, 2048, and 4096. Valid values for deployment type MULTI_AZ_2 and SINGLE_AZ_2 are 384,768,1536,3072,6144 where ha_pairs is 1. Valid values for deployment type SINGLE_AZ_2 are 1536, 3072, and 6144 where ha_pairs is greater than 1. This parameter is only supported when specifying the ha_pairs parameter. Either throughput_capacity or throughput_capacity_per_ha_pair must be specified.
     weeklyMaintenanceStartTime : str, default is Undefined, optional
         The preferred start time (in d:HH:MM format) to perform weekly maintenance, in the UTC time zone.
     """
@@ -622,7 +619,7 @@ schema FsxAwsUpboundIoV1beta1OntapFileSystemSpecInitProvider:
     dailyAutomaticBackupStartTime : str, default is Undefined, optional
         A recurring daily time, in the format HH:MM. HH is the zero-padded hour of the day (0-23), and MM is the zero-padded minute of the hour. For example, 05:00 specifies 5 AM daily. Requires automatic_backup_retention_days to be set.
     deploymentType : str, default is Undefined, optional
-        - The filesystem deployment type. Supports MULTI_AZ_1, SINGLE_AZ_1, and SINGLE_AZ_2.
+        - The filesystem deployment type. Supports MULTI_AZ_1, MULTI_AZ_2, SINGLE_AZ_1, and SINGLE_AZ_2.
     diskIopsConfiguration : [FsxAwsUpboundIoV1beta1OntapFileSystemSpecInitProviderDiskIopsConfigurationItems0], default is Undefined, optional
         The SSD IOPS configuration for the Amazon FSx for NetApp ONTAP file system. See Disk Iops Configuration below.
     endpointIpAddressRange : str, default is Undefined, optional
@@ -630,7 +627,7 @@ schema FsxAwsUpboundIoV1beta1OntapFileSystemSpecInitProvider:
     fsxAdminPasswordSecretRef : FsxAwsUpboundIoV1beta1OntapFileSystemSpecInitProviderFsxAdminPasswordSecretRef, default is Undefined, optional
         fsx admin password secret ref
     haPairs : float, default is Undefined, optional
-        - The number of ha_pairs to deploy for the file system. Valid values are 1 through 12. Value of 2 or greater required for SINGLE_AZ_2. Only value of 1 is supported with SINGLE_AZ_1 or MULTI_AZ_1 but not required.
+        - The number of ha_pairs to deploy for the file system. Valid value is 1 for SINGLE_AZ_1 or MULTI_AZ_1 and MULTI_AZ_2. Valid values are 1 through 12 for SINGLE_AZ_2.
     kmsKeyId : str, default is Undefined, optional
         ARN for the KMS Key to encrypt the file system at rest, Defaults to an AWS managed KMS Key.
     kmsKeyIdRef : FsxAwsUpboundIoV1beta1OntapFileSystemSpecInitProviderKmsKeyIDRef, default is Undefined, optional
@@ -652,7 +649,7 @@ schema FsxAwsUpboundIoV1beta1OntapFileSystemSpecInitProvider:
     securityGroupIds : [str], default is Undefined, optional
         A list of IDs for the security groups that apply to the specified network interfaces created for file system access. These security groups will apply to all network interfaces.
     storageCapacity : float, default is Undefined, optional
-        The storage capacity (GiB) of the file system. Valid values between 1024 and 196608 for file systems with deployment_type SINGLE_AZ_1 and MULTI_AZ_1. Valid values between 2048 (1024 per ha pair) and 1048576 for file systems with deployment_type SINGLE_AZ_2.
+        The storage capacity (GiB) of the file system. Valid values between 1024 and 196608 for file systems with deployment_type SINGLE_AZ_1 and MULTI_AZ_1. Valid values are between 1024 and 524288 for MULTI_AZ_2. Valid values between 1024 (1024 per ha pair) and 1048576 for file systems with deployment_type SINGLE_AZ_2. For SINGLE_AZ_2, the 1048576 (1PB) maximum is only supported when using 2 or more ha_pairs, the maximum is 524288 (512TB) when using 1 ha_pair.
     storageType : str, default is Undefined, optional
         - The filesystem storage type. defaults to SSD.
     subnetIdRefs : [FsxAwsUpboundIoV1beta1OntapFileSystemSpecInitProviderSubnetIDRefsItems0], default is Undefined, optional
@@ -666,7 +663,7 @@ schema FsxAwsUpboundIoV1beta1OntapFileSystemSpecInitProvider:
     throughputCapacity : float, default is Undefined, optional
         Sets the throughput capacity (in MBps) for the file system that you're creating. Valid values are 128, 256, 512, 1024, 2048, and 4096. This parameter is only supported when not using the ha_pairs parameter. Either throughput_capacity or throughput_capacity_per_ha_pair must be specified.
     throughputCapacityPerHaPair : float, default is Undefined, optional
-        Sets the throughput capacity (in MBps) for the file system that you're creating. Valid value when using 1 ha_pair are 128, 256, 512, 1024, 2048, and 4096. Valid values when using 2 or more ha_pairs are 3072,6144. This parameter is only supported when specifying the ha_pairs parameter. Either throughput_capacity or throughput_capacity_per_ha_pair must be specified.
+        Sets the per-HA-pair throughput capacity (in MBps) for the file system that you're creating, as opposed to throughput_capacity which specifies the total throughput capacity for the file system. Valid value for MULTI_AZ_1 and SINGLE_AZ_1 are 128, 256, 512, 1024, 2048, and 4096. Valid values for deployment type MULTI_AZ_2 and SINGLE_AZ_2 are 384,768,1536,3072,6144 where ha_pairs is 1. Valid values for deployment type SINGLE_AZ_2 are 1536, 3072, and 6144 where ha_pairs is greater than 1. This parameter is only supported when specifying the ha_pairs parameter. Either throughput_capacity or throughput_capacity_per_ha_pair must be specified.
     weeklyMaintenanceStartTime : str, default is Undefined, optional
         The preferred start time (in d:HH:MM format) to perform weekly maintenance, in the UTC time zone.
     """
@@ -1165,112 +1162,12 @@ schema FsxAwsUpboundIoV1beta1OntapFileSystemSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema FsxAwsUpboundIoV1beta1OntapFileSystemSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : FsxAwsUpboundIoV1beta1OntapFileSystemSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : FsxAwsUpboundIoV1beta1OntapFileSystemSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: FsxAwsUpboundIoV1beta1OntapFileSystemSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: FsxAwsUpboundIoV1beta1OntapFileSystemSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema FsxAwsUpboundIoV1beta1OntapFileSystemSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : FsxAwsUpboundIoV1beta1OntapFileSystemSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: FsxAwsUpboundIoV1beta1OntapFileSystemSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema FsxAwsUpboundIoV1beta1OntapFileSystemSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema FsxAwsUpboundIoV1beta1OntapFileSystemSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema FsxAwsUpboundIoV1beta1OntapFileSystemSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1323,17 +1220,17 @@ schema FsxAwsUpboundIoV1beta1OntapFileSystemStatusAtProvider:
     dailyAutomaticBackupStartTime : str, default is Undefined, optional
         A recurring daily time, in the format HH:MM. HH is the zero-padded hour of the day (0-23), and MM is the zero-padded minute of the hour. For example, 05:00 specifies 5 AM daily. Requires automatic_backup_retention_days to be set.
     deploymentType : str, default is Undefined, optional
-        - The filesystem deployment type. Supports MULTI_AZ_1, SINGLE_AZ_1, and SINGLE_AZ_2.
+        - The filesystem deployment type. Supports MULTI_AZ_1, MULTI_AZ_2, SINGLE_AZ_1, and SINGLE_AZ_2.
     diskIopsConfiguration : [FsxAwsUpboundIoV1beta1OntapFileSystemStatusAtProviderDiskIopsConfigurationItems0], default is Undefined, optional
         The SSD IOPS configuration for the Amazon FSx for NetApp ONTAP file system. See Disk Iops Configuration below.
     dnsName : str, default is Undefined, optional
-        DNS name for the file system, e.g., fs-12345678.fsx.us-west-2.amazonaws.com
+        DNS name for the file system.
     endpointIpAddressRange : str, default is Undefined, optional
         Specifies the IP address range in which the endpoints to access your file system will be created. By default, Amazon FSx selects an unused IP address range for you from the 198.19.* range.
     endpoints : [FsxAwsUpboundIoV1beta1OntapFileSystemStatusAtProviderEndpointsItems0], default is Undefined, optional
         The endpoints that are used to access data or to manage the file system using the NetApp ONTAP CLI, REST API, or NetApp SnapMirror. See Endpoints below.
     haPairs : float, default is Undefined, optional
-        - The number of ha_pairs to deploy for the file system. Valid values are 1 through 12. Value of 2 or greater required for SINGLE_AZ_2. Only value of 1 is supported with SINGLE_AZ_1 or MULTI_AZ_1 but not required.
+        - The number of ha_pairs to deploy for the file system. Valid value is 1 for SINGLE_AZ_1 or MULTI_AZ_1 and MULTI_AZ_2. Valid values are 1 through 12 for SINGLE_AZ_2.
     id : str, default is Undefined, optional
         Identifier of the file system, e.g., fs-12345678
     kmsKeyId : str, default is Undefined, optional
@@ -1344,12 +1241,15 @@ schema FsxAwsUpboundIoV1beta1OntapFileSystemStatusAtProvider:
         AWS account identifier that created the file system.
     preferredSubnetId : str, default is Undefined, optional
         The ID for a subnet. A subnet is a range of IP addresses in your virtual private cloud (VPC).
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     routeTableIds : [str], default is Undefined, optional
         Specifies the VPC route tables in which your file system's endpoints will be created. You should specify all VPC route tables associated with the subnets in which your clients are located. By default, Amazon FSx selects your VPC's default route table.
     securityGroupIds : [str], default is Undefined, optional
         A list of IDs for the security groups that apply to the specified network interfaces created for file system access. These security groups will apply to all network interfaces.
     storageCapacity : float, default is Undefined, optional
-        The storage capacity (GiB) of the file system. Valid values between 1024 and 196608 for file systems with deployment_type SINGLE_AZ_1 and MULTI_AZ_1. Valid values between 2048 (1024 per ha pair) and 1048576 for file systems with deployment_type SINGLE_AZ_2.
+        The storage capacity (GiB) of the file system. Valid values between 1024 and 196608 for file systems with deployment_type SINGLE_AZ_1 and MULTI_AZ_1. Valid values are between 1024 and 524288 for MULTI_AZ_2. Valid values between 1024 (1024 per ha pair) and 1048576 for file systems with deployment_type SINGLE_AZ_2. For SINGLE_AZ_2, the 1048576 (1PB) maximum is only supported when using 2 or more ha_pairs, the maximum is 524288 (512TB) when using 1 ha_pair.
     storageType : str, default is Undefined, optional
         - The filesystem storage type. defaults to SSD.
     subnetIds : [str], default is Undefined, optional
@@ -1361,7 +1261,7 @@ schema FsxAwsUpboundIoV1beta1OntapFileSystemStatusAtProvider:
     throughputCapacity : float, default is Undefined, optional
         Sets the throughput capacity (in MBps) for the file system that you're creating. Valid values are 128, 256, 512, 1024, 2048, and 4096. This parameter is only supported when not using the ha_pairs parameter. Either throughput_capacity or throughput_capacity_per_ha_pair must be specified.
     throughputCapacityPerHaPair : float, default is Undefined, optional
-        Sets the throughput capacity (in MBps) for the file system that you're creating. Valid value when using 1 ha_pair are 128, 256, 512, 1024, 2048, and 4096. Valid values when using 2 or more ha_pairs are 3072,6144. This parameter is only supported when specifying the ha_pairs parameter. Either throughput_capacity or throughput_capacity_per_ha_pair must be specified.
+        Sets the per-HA-pair throughput capacity (in MBps) for the file system that you're creating, as opposed to throughput_capacity which specifies the total throughput capacity for the file system. Valid value for MULTI_AZ_1 and SINGLE_AZ_1 are 128, 256, 512, 1024, 2048, and 4096. Valid values for deployment type MULTI_AZ_2 and SINGLE_AZ_2 are 384,768,1536,3072,6144 where ha_pairs is 1. Valid values for deployment type SINGLE_AZ_2 are 1536, 3072, and 6144 where ha_pairs is greater than 1. This parameter is only supported when specifying the ha_pairs parameter. Either throughput_capacity or throughput_capacity_per_ha_pair must be specified.
     vpcId : str, default is Undefined, optional
         Identifier of the Virtual Private Cloud for the file system.
     weeklyMaintenanceStartTime : str, default is Undefined, optional
@@ -1396,6 +1296,8 @@ schema FsxAwsUpboundIoV1beta1OntapFileSystemStatusAtProvider:
     ownerId?: str
 
     preferredSubnetId?: str
+
+    region?: str
 
     routeTableIds?: [str]
 
@@ -1463,7 +1365,7 @@ schema FsxAwsUpboundIoV1beta1OntapFileSystemStatusAtProviderEndpointsItems0Inter
     Attributes
     ----------
     dnsName : str, default is Undefined, optional
-        DNS name for the file system, e.g., fs-12345678.fsx.us-west-2.amazonaws.com
+        DNS name for the file system.
     ipAddresses : [str], default is Undefined, optional
         IP addresses of the file system endpoint.
     """
@@ -1481,7 +1383,7 @@ schema FsxAwsUpboundIoV1beta1OntapFileSystemStatusAtProviderEndpointsItems0Manag
     Attributes
     ----------
     dnsName : str, default is Undefined, optional
-        DNS name for the file system, e.g., fs-12345678.fsx.us-west-2.amazonaws.com
+        DNS name for the file system.
     ipAddresses : [str], default is Undefined, optional
         IP addresses of the file system endpoint.
     """

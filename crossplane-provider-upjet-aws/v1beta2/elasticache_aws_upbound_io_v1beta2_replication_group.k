@@ -66,8 +66,6 @@ schema ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecWriteConnectionSecretToRef
 
@@ -103,7 +99,7 @@ schema ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecForProvider:
     authTokenSecretRef : ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecForProviderAuthTokenSecretRef, default is Undefined, optional
         auth token secret ref
     authTokenUpdateStrategy : str, default is Undefined, optional
-        Strategy to use when updating the auth_token. Valid values are SET, ROTATE, and DELETE. Defaults to ROTATE.
+        Strategy to use when updating the auth_token. Valid values are SET, ROTATE, and DELETE. Required if auth_token is set.
     autoGenerateAuthToken : bool, default is Undefined, optional
         Password used to access a password protected server. Can be specified only if transit_encryption_enabled = true.
         If true, the auth token will be auto-generated and stored in the Secret referenced by the authTokenSecretRef field.
@@ -118,7 +114,7 @@ schema ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecForProvider:
     dataTieringEnabled : bool, default is Undefined, optional
         Enables data tiering. Data tiering is only supported for replication groups using the r6gd node type. This parameter must be set to true when using r6gd nodes.
     description : str, default is Undefined, optional
-        created description for the replication group. Must not be empty.
+        User-created description for the replication group. Must not be empty.
     engine : str, default is Undefined, optional
         Name of the cache engine to be used for the clusters in this replication group.
         Valid values are redis or valkey.
@@ -149,7 +145,7 @@ schema ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecForProvider:
     logDeliveryConfiguration : [ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecForProviderLogDeliveryConfigurationItems0], default is Undefined, optional
         Specifies the destination and format of Redis OSS/Valkey SLOWLOG or Redis OSS/Valkey Engine Log. See the documentation on Amazon ElastiCache. See Log Delivery Configuration below for more details.
     maintenanceWindow : str, default is Undefined, optional
-        ddd:hh24:mi (24H Clock UTC). The minimum maintenance window is a 60 minute period. Example: sun:05:00-sun:09:00
+        Specifies the weekly time range for when maintenance on the cache cluster is performed. The format is ddd:hh24:mi-ddd:hh24:mi (24H Clock UTC). The minimum maintenance window is a 60 minute period. Example: sun:05:00-sun:09:00
     multiAzEnabled : bool, default is Undefined, optional
         Specifies whether to enable Multi-AZ Support for the replication group.
         If true, automatic_failover_enabled must also be enabled.
@@ -162,7 +158,7 @@ schema ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecForProvider:
         Required unless global_replication_group_id is set.
         Cannot be set if global_replication_group_id is set.
     notificationTopicArn : str, default is Undefined, optional
-        east-1:012345678999:my_sns_topic
+        ARN of an SNS topic to send ElastiCache notifications to. Example: arn:aws:sns:us-east-1:012345678999:my_sns_topic
     numCacheClusters : float, default is Undefined, optional
         00#.
     numNodeGroups : float, default is Undefined, optional
@@ -172,10 +168,11 @@ schema ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecForProvider:
     parameterGroupName : str, default is Undefined, optional
         Name of the parameter group to associate with this replication group. If this argument is omitted, the default cache parameter group for the specified engine is used. To enable "cluster mode", i.e., data sharding, use a parameter group that has the parameter cluster-enabled set to true.
     port : float, default is Undefined, optional
-        –  Port number on which each of the cache nodes will accept connections. For Memcache the default is 11211, and for Redis the default port is 6379.
+        Port number on which each of the cache nodes will accept connections. For Memcache the default is 11211, and for Redis the default port is 6379.
     preferredCacheClusterAzs : [str], default is Undefined, optional
         List of EC2 availability zones in which the replication group's cache clusters will be created. The order of the availability zones in the list is considered. The first item in the list will be the primary node. Ignored when updating.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     replicasPerNodeGroup : float, default is Undefined, optional
         Number of replica nodes in each node group.
@@ -192,7 +189,7 @@ schema ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecForProvider:
     securityGroupNames : [str], default is Undefined, optional
         Names of one or more Amazon VPC security groups associated with this replication group. Use this parameter only when you are creating a replication group in an Amazon Virtual Private Cloud.
     snapshotArns : [str], default is Undefined, optional
-        –  List of ARNs that identify Redis RDB snapshot files stored in Amazon S3. The names object names cannot contain any commas.
+        List of ARNs that identify Redis RDB snapshot files stored in Amazon S3. The names object names cannot contain any commas.
     snapshotName : str, default is Undefined, optional
         Name of a snapshot from which to restore data into the new node group. Changing the snapshot_name forces a new resource.
     snapshotRetentionLimit : float, default is Undefined, optional
@@ -747,7 +744,7 @@ schema ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecInitProvider:
     authTokenSecretRef : ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecInitProviderAuthTokenSecretRef, default is Undefined, optional
         auth token secret ref
     authTokenUpdateStrategy : str, default is Undefined, optional
-        Strategy to use when updating the auth_token. Valid values are SET, ROTATE, and DELETE. Defaults to ROTATE.
+        Strategy to use when updating the auth_token. Valid values are SET, ROTATE, and DELETE. Required if auth_token is set.
     autoMinorVersionUpgrade : str, default is Undefined, optional
         Specifies whether minor version engine upgrades will be applied automatically to the underlying Cache Cluster instances during the maintenance window.
         Only supported for engine types "redis" and "valkey" and if the engine version is 6 or higher.
@@ -759,7 +756,7 @@ schema ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecInitProvider:
     dataTieringEnabled : bool, default is Undefined, optional
         Enables data tiering. Data tiering is only supported for replication groups using the r6gd node type. This parameter must be set to true when using r6gd nodes.
     description : str, default is Undefined, optional
-        created description for the replication group. Must not be empty.
+        User-created description for the replication group. Must not be empty.
     engine : str, default is Undefined, optional
         Name of the cache engine to be used for the clusters in this replication group.
         Valid values are redis or valkey.
@@ -790,7 +787,7 @@ schema ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecInitProvider:
     logDeliveryConfiguration : [ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecInitProviderLogDeliveryConfigurationItems0], default is Undefined, optional
         Specifies the destination and format of Redis OSS/Valkey SLOWLOG or Redis OSS/Valkey Engine Log. See the documentation on Amazon ElastiCache. See Log Delivery Configuration below for more details.
     maintenanceWindow : str, default is Undefined, optional
-        ddd:hh24:mi (24H Clock UTC). The minimum maintenance window is a 60 minute period. Example: sun:05:00-sun:09:00
+        Specifies the weekly time range for when maintenance on the cache cluster is performed. The format is ddd:hh24:mi-ddd:hh24:mi (24H Clock UTC). The minimum maintenance window is a 60 minute period. Example: sun:05:00-sun:09:00
     multiAzEnabled : bool, default is Undefined, optional
         Specifies whether to enable Multi-AZ Support for the replication group.
         If true, automatic_failover_enabled must also be enabled.
@@ -803,7 +800,7 @@ schema ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecInitProvider:
         Required unless global_replication_group_id is set.
         Cannot be set if global_replication_group_id is set.
     notificationTopicArn : str, default is Undefined, optional
-        east-1:012345678999:my_sns_topic
+        ARN of an SNS topic to send ElastiCache notifications to. Example: arn:aws:sns:us-east-1:012345678999:my_sns_topic
     numCacheClusters : float, default is Undefined, optional
         00#.
     numNodeGroups : float, default is Undefined, optional
@@ -813,7 +810,7 @@ schema ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecInitProvider:
     parameterGroupName : str, default is Undefined, optional
         Name of the parameter group to associate with this replication group. If this argument is omitted, the default cache parameter group for the specified engine is used. To enable "cluster mode", i.e., data sharding, use a parameter group that has the parameter cluster-enabled set to true.
     port : float, default is Undefined, optional
-        –  Port number on which each of the cache nodes will accept connections. For Memcache the default is 11211, and for Redis the default port is 6379.
+        Port number on which each of the cache nodes will accept connections. For Memcache the default is 11211, and for Redis the default port is 6379.
     preferredCacheClusterAzs : [str], default is Undefined, optional
         List of EC2 availability zones in which the replication group's cache clusters will be created. The order of the availability zones in the list is considered. The first item in the list will be the primary node. Ignored when updating.
     replicasPerNodeGroup : float, default is Undefined, optional
@@ -831,7 +828,7 @@ schema ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecInitProvider:
     securityGroupNames : [str], default is Undefined, optional
         Names of one or more Amazon VPC security groups associated with this replication group. Use this parameter only when you are creating a replication group in an Amazon Virtual Private Cloud.
     snapshotArns : [str], default is Undefined, optional
-        –  List of ARNs that identify Redis RDB snapshot files stored in Amazon S3. The names object names cannot contain any commas.
+        List of ARNs that identify Redis RDB snapshot files stored in Amazon S3. The names object names cannot contain any commas.
     snapshotName : str, default is Undefined, optional
         Name of a snapshot from which to restore data into the new node group. Changing the snapshot_name forces a new resource.
     snapshotRetentionLimit : float, default is Undefined, optional
@@ -1402,112 +1399,12 @@ schema ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecProviderConfigRefPolicy
     resolve?: "Always" | "IfNotPresent"
 
 
-schema ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema ElasticacheAwsUpboundIoV1beta2ReplicationGroupSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1562,7 +1459,7 @@ schema ElasticacheAwsUpboundIoV1beta2ReplicationGroupStatusAtProvider:
         When engine is redis, default is false.
         When engine is valkey, default is true.
     authTokenUpdateStrategy : str, default is Undefined, optional
-        Strategy to use when updating the auth_token. Valid values are SET, ROTATE, and DELETE. Defaults to ROTATE.
+        Strategy to use when updating the auth_token. Valid values are SET, ROTATE, and DELETE. Required if auth_token is set.
     autoMinorVersionUpgrade : str, default is Undefined, optional
         Specifies whether minor version engine upgrades will be applied automatically to the underlying Cache Cluster instances during the maintenance window.
         Only supported for engine types "redis" and "valkey" and if the engine version is 6 or higher.
@@ -1578,7 +1475,7 @@ schema ElasticacheAwsUpboundIoV1beta2ReplicationGroupStatusAtProvider:
     dataTieringEnabled : bool, default is Undefined, optional
         Enables data tiering. Data tiering is only supported for replication groups using the r6gd node type. This parameter must be set to true when using r6gd nodes.
     description : str, default is Undefined, optional
-        created description for the replication group. Must not be empty.
+        User-created description for the replication group. Must not be empty.
     engine : str, default is Undefined, optional
         Name of the cache engine to be used for the clusters in this replication group.
         Valid values are redis or valkey.
@@ -1605,7 +1502,7 @@ schema ElasticacheAwsUpboundIoV1beta2ReplicationGroupStatusAtProvider:
     logDeliveryConfiguration : [ElasticacheAwsUpboundIoV1beta2ReplicationGroupStatusAtProviderLogDeliveryConfigurationItems0], default is Undefined, optional
         Specifies the destination and format of Redis OSS/Valkey SLOWLOG or Redis OSS/Valkey Engine Log. See the documentation on Amazon ElastiCache. See Log Delivery Configuration below for more details.
     maintenanceWindow : str, default is Undefined, optional
-        ddd:hh24:mi (24H Clock UTC). The minimum maintenance window is a 60 minute period. Example: sun:05:00-sun:09:00
+        Specifies the weekly time range for when maintenance on the cache cluster is performed. The format is ddd:hh24:mi-ddd:hh24:mi (24H Clock UTC). The minimum maintenance window is a 60 minute period. Example: sun:05:00-sun:09:00
     memberClusters : [str], default is Undefined, optional
         Identifiers of all the nodes that are part of this replication group.
     multiAzEnabled : bool, default is Undefined, optional
@@ -1620,7 +1517,7 @@ schema ElasticacheAwsUpboundIoV1beta2ReplicationGroupStatusAtProvider:
         Required unless global_replication_group_id is set.
         Cannot be set if global_replication_group_id is set.
     notificationTopicArn : str, default is Undefined, optional
-        east-1:012345678999:my_sns_topic
+        ARN of an SNS topic to send ElastiCache notifications to. Example: arn:aws:sns:us-east-1:012345678999:my_sns_topic
     numCacheClusters : float, default is Undefined, optional
         00#.
     numNodeGroups : float, default is Undefined, optional
@@ -1630,13 +1527,16 @@ schema ElasticacheAwsUpboundIoV1beta2ReplicationGroupStatusAtProvider:
     parameterGroupName : str, default is Undefined, optional
         Name of the parameter group to associate with this replication group. If this argument is omitted, the default cache parameter group for the specified engine is used. To enable "cluster mode", i.e., data sharding, use a parameter group that has the parameter cluster-enabled set to true.
     port : float, default is Undefined, optional
-        –  Port number on which each of the cache nodes will accept connections. For Memcache the default is 11211, and for Redis the default port is 6379.
+        Port number on which each of the cache nodes will accept connections. For Memcache the default is 11211, and for Redis the default port is 6379.
     preferredCacheClusterAzs : [str], default is Undefined, optional
         List of EC2 availability zones in which the replication group's cache clusters will be created. The order of the availability zones in the list is considered. The first item in the list will be the primary node. Ignored when updating.
     primaryEndpointAddress : str, default is Undefined, optional
         (Redis only) Address of the endpoint for the primary node in the replication group, if the cluster mode is disabled.
     readerEndpointAddress : str, default is Undefined, optional
         (Redis only) Address of the endpoint for the reader node in the replication group, if the cluster mode is disabled.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     replicasPerNodeGroup : float, default is Undefined, optional
         Number of replica nodes in each node group.
         Changing this number will trigger a resizing operation before other settings modifications.
@@ -1648,7 +1548,7 @@ schema ElasticacheAwsUpboundIoV1beta2ReplicationGroupStatusAtProvider:
     securityGroupNames : [str], default is Undefined, optional
         Names of one or more Amazon VPC security groups associated with this replication group. Use this parameter only when you are creating a replication group in an Amazon Virtual Private Cloud.
     snapshotArns : [str], default is Undefined, optional
-        –  List of ARNs that identify Redis RDB snapshot files stored in Amazon S3. The names object names cannot contain any commas.
+        List of ARNs that identify Redis RDB snapshot files stored in Amazon S3. The names object names cannot contain any commas.
     snapshotName : str, default is Undefined, optional
         Name of a snapshot from which to restore data into the new node group. Changing the snapshot_name forces a new resource.
     snapshotRetentionLimit : float, default is Undefined, optional
@@ -1740,6 +1640,8 @@ schema ElasticacheAwsUpboundIoV1beta2ReplicationGroupStatusAtProvider:
     primaryEndpointAddress?: str
 
     readerEndpointAddress?: str
+
+    region?: str
 
     replicasPerNodeGroup?: float
 

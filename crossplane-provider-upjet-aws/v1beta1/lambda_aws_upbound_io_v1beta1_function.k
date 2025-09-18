@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema Function:
     r"""
-    Function is the Schema for the Functions API. Provides a Lambda Function resource. Lambda allows you to trigger execution of code in response to events in AWS, enabling serverless backend solutions. The Lambda Function itself includes source code and runtime configuration.
+    Function is the Schema for the Functions API. Manages an AWS Lambda Function.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema LambdaAwsUpboundIoV1beta1FunctionSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : LambdaAwsUpboundIoV1beta1FunctionSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : LambdaAwsUpboundIoV1beta1FunctionSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : LambdaAwsUpboundIoV1beta1FunctionSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema LambdaAwsUpboundIoV1beta1FunctionSpec:
 
     providerConfigRef?: LambdaAwsUpboundIoV1beta1FunctionSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: LambdaAwsUpboundIoV1beta1FunctionSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: LambdaAwsUpboundIoV1beta1FunctionSpecWriteConnectionSecretToRef
 
 
@@ -95,89 +91,90 @@ schema LambdaAwsUpboundIoV1beta1FunctionSpecForProvider:
     Attributes
     ----------
     architectures : [str], default is Undefined, optional
-        Instruction set architecture for your Lambda function. Valid values are ["x86_64"] and ["arm64"]. Default is ["x86_64"]. Removing this attribute, function's architecture stay the same.
+        Instruction set architecture for your Lambda function. Valid values are ["x86_64"] and ["arm64"]. Default is ["x86_64"]. Removing this attribute, function's architecture stays the same.
     codeSigningConfigArn : str, default is Undefined, optional
-        To enable code signing for this function, specify the ARN of a code-signing configuration. A code-signing configuration includes a set of signing profiles, which define the trusted publishers for this function.
+        ARN of a code-signing configuration to enable code signing for this function.
     deadLetterConfig : [LambdaAwsUpboundIoV1beta1FunctionSpecForProviderDeadLetterConfigItems0], default is Undefined, optional
-        Configuration block. Detailed below.
+        Configuration block for dead letter queue. See below.
     description : str, default is Undefined, optional
         Description of what your Lambda Function does.
     environment : [LambdaAwsUpboundIoV1beta1FunctionSpecForProviderEnvironmentItems0], default is Undefined, optional
-        Configuration block. Detailed below.
+        Configuration block for environment variables. See below.
     ephemeralStorage : [LambdaAwsUpboundIoV1beta1FunctionSpecForProviderEphemeralStorageItems0], default is Undefined, optional
-        The amount of Ephemeral storage(/tmp) to allocate for the Lambda Function in MB. This parameter is used to expand the total amount of Ephemeral storage available, beyond the default amount of 512MB. Detailed below.
+        Amount of ephemeral storage (/tmp) to allocate for the Lambda Function. See below.
     fileSystemConfig : [LambdaAwsUpboundIoV1beta1FunctionSpecForProviderFileSystemConfigItems0], default is Undefined, optional
-        Configuration block. Detailed below.
+        Configuration block for EFS file system. See below.
     handler : str, default is Undefined, optional
-        Function entrypoint in your code.
+        Function entry point in your code. Required if package_type is Zip.
     imageConfig : [LambdaAwsUpboundIoV1beta1FunctionSpecForProviderImageConfigItems0], default is Undefined, optional
-        Configuration block. Detailed below.
+        Container image configuration values. See below.
     imageUri : str, default is Undefined, optional
-        ECR image URI containing the function's deployment package. Exactly one of filename, image_uri,  or s3_bucket must be specified.
+        ECR image URI containing the function's deployment package. Conflicts with filename and s3_bucket. One of filename, image_uri, or s3_bucket must be specified.
     kmsKeyArn : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of the AWS Key Management Service (KMS) key that is used to encrypt environment variables. If this configuration is not provided when environment variables are in use, AWS Lambda uses a default service key. To fix the perpetual difference, remove this configuration.
+        ARN of the AWS Key Management Service key used to encrypt environment variables. If not provided when environment variables are in use, AWS Lambda uses a default service key. If provided when environment variables are not in use, the AWS Lambda API does not save this configuration.
     kmsKeyArnRef : LambdaAwsUpboundIoV1beta1FunctionSpecForProviderKmsKeyArnRef, default is Undefined, optional
         kms key arn ref
     kmsKeyArnSelector : LambdaAwsUpboundIoV1beta1FunctionSpecForProviderKmsKeyArnSelector, default is Undefined, optional
         kms key arn selector
     layers : [str], default is Undefined, optional
-        List of Lambda Layer Version ARNs (maximum of 5) to attach to your Lambda Function. See Lambda Layers
+        List of Lambda Layer Version ARNs (maximum of 5) to attach to your Lambda Function.
     layersRefs : [LambdaAwsUpboundIoV1beta1FunctionSpecForProviderLayersRefsItems0], default is Undefined, optional
         References to LayerVersion in lambda to populate layers.
     layersSelector : LambdaAwsUpboundIoV1beta1FunctionSpecForProviderLayersSelector, default is Undefined, optional
         layers selector
     loggingConfig : [LambdaAwsUpboundIoV1beta1FunctionSpecForProviderLoggingConfigItems0], default is Undefined, optional
-        Configuration block used to specify advanced logging settings. Detailed below.
+        Configuration block for advanced logging settings. See below.
     memorySize : float, default is Undefined, optional
-        Amount of memory in MB your Lambda Function can use at runtime. Defaults to 128. See Limits
+        Amount of memory in MB your Lambda Function can use at runtime. Valid value between 128 MB to 10,240 MB (10 GB), in 1 MB increments. Defaults to 128.
     packageType : str, default is Undefined, optional
         Lambda deployment package type. Valid values are Zip and Image. Defaults to Zip.
     publish : bool, default is Undefined, optional
         Whether to publish creation/change as new Lambda Function Version. Defaults to false.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     replaceSecurityGroupsOnDestroy : bool, default is Undefined, optional
-        AWS no longer supports this operation. This attribute now has no effect and will be removed in a future major version. Whether to replace the security groups on associated lambda network interfaces upon destruction. Removing these security groups from orphaned network interfaces can speed up security group deletion times by avoiding a dependency on AWS's internal cleanup operations. By default, the ENI security groups will be replaced with the default security group in the function's VPC. Set the replacement_security_group_ids attribute to use a custom list of security groups for replacement.
+        Whether to replace the security groups on the function's VPC configuration prior to destruction. Default is false.
     replacementSecurityGroupIdRefs : [LambdaAwsUpboundIoV1beta1FunctionSpecForProviderReplacementSecurityGroupIDRefsItems0], default is Undefined, optional
         References to SecurityGroup in ec2 to populate replacementSecurityGroupIds.
     replacementSecurityGroupIdSelector : LambdaAwsUpboundIoV1beta1FunctionSpecForProviderReplacementSecurityGroupIDSelector, default is Undefined, optional
         replacement security group Id selector
     replacementSecurityGroupIds : [str], default is Undefined, optional
-        List of security group IDs to assign to orphaned Lambda function network interfaces upon destruction. replace_security_groups_on_destroy must be set to true to use this attribute.
+        List of security group IDs to assign to the function's VPC configuration prior to destruction. Required if replace_security_groups_on_destroy is true.
     reservedConcurrentExecutions : float, default is Undefined, optional
-        Amount of reserved concurrent executions for this lambda function. A value of 0 disables lambda from being triggered and -1 removes any concurrency limitations. Defaults to Unreserved Concurrency Limits -1. See Managing Concurrency
+        Amount of reserved concurrent executions for this lambda function. A value of 0 disables lambda from being triggered and -1 removes any concurrency limitations. Defaults to Unreserved Concurrency Limits -1.
     role : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of the function's execution role. The role provides the function's identity and access to AWS services and resources.
+        ARN of the function's execution role. The role provides the function's identity and access to AWS services and resources.
     roleRef : LambdaAwsUpboundIoV1beta1FunctionSpecForProviderRoleRef, default is Undefined, optional
         role ref
     roleSelector : LambdaAwsUpboundIoV1beta1FunctionSpecForProviderRoleSelector, default is Undefined, optional
         role selector
     runtime : str, default is Undefined, optional
-        Identifier of the function's runtime. See Runtimes for valid values.
+        Identifier of the function's runtime. Required if package_type is Zip. See Runtimes for valid values.
     s3Bucket : str, default is Undefined, optional
-        S3 bucket location containing the function's deployment package. This bucket must reside in the same AWS region where you are creating the Lambda function. Exactly one of filename, image_uri, or s3_bucket must be specified. When s3_bucket is set, s3_key is required.
+        S3 bucket location containing the function's deployment package. Conflicts with filename and image_uri. One of filename, image_uri, or s3_bucket must be specified.
     s3BucketRef : LambdaAwsUpboundIoV1beta1FunctionSpecForProviderS3BucketRef, default is Undefined, optional
         s3 bucket ref
     s3BucketSelector : LambdaAwsUpboundIoV1beta1FunctionSpecForProviderS3BucketSelector, default is Undefined, optional
         s3 bucket selector
     s3Key : str, default is Undefined, optional
-        S3 key of an object containing the function's deployment package. When s3_bucket is set, s3_key is required.
+        S3 key of an object containing the function's deployment package. Required if s3_bucket is set.
     s3ObjectVersion : str, default is Undefined, optional
         Object version containing the function's deployment package. Conflicts with filename and image_uri.
     skipDestroy : bool, default is Undefined, optional
-        skip destroy
+        Whether to retain the old version of a previously deployed Lambda Layer. Default is false.
     snapStart : [LambdaAwsUpboundIoV1beta1FunctionSpecForProviderSnapStartItems0], default is Undefined, optional
-        Snap start settings block. Detailed below.
+        Configuration block for snap start settings. See below.
     sourceCodeHash : str, default is Undefined, optional
         Used to trigger updates. Must be set to a base64 encoded SHA256 hash of the package file specified with either filename or s3_key. If you have specified this field manually, it should be the actual (computed) hash of the underlying lambda function specified in the filename, image_uri, s3_bucket fields.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     timeout : float, default is Undefined, optional
-        Amount of time your Lambda Function has to run in seconds. Defaults to 3. See Limits.
+        Amount of time your Lambda Function has to run in seconds. Defaults to 3. Valid between 1 and 900.
     tracingConfig : [LambdaAwsUpboundIoV1beta1FunctionSpecForProviderTracingConfigItems0], default is Undefined, optional
-        Configuration block. Detailed below.
+        Configuration block for X-Ray tracing. See below.
     vpcConfig : [LambdaAwsUpboundIoV1beta1FunctionSpecForProviderVpcConfigItems0], default is Undefined, optional
-        Configuration block. Detailed below.
+        Configuration block for VPC. See below.
     """
 
 
@@ -273,11 +270,108 @@ schema LambdaAwsUpboundIoV1beta1FunctionSpecForProviderDeadLetterConfigItems0:
     Attributes
     ----------
     targetArn : str, default is Undefined, optional
-        ARN of an SNS topic or SQS queue to notify when an invocation fails. If this option is used, the function's IAM role must be granted suitable access to write to the target object, which means allowing either the sns:Publish or sqs:SendMessage action on this ARN, depending on which service is targeted.
+        ARN of an SNS topic or SQS queue to notify when an invocation fails.
+    targetArnRef : LambdaAwsUpboundIoV1beta1FunctionSpecForProviderDeadLetterConfigItems0TargetArnRef, default is Undefined, optional
+        target arn ref
+    targetArnSelector : LambdaAwsUpboundIoV1beta1FunctionSpecForProviderDeadLetterConfigItems0TargetArnSelector, default is Undefined, optional
+        target arn selector
     """
 
 
     targetArn?: str
+
+    targetArnRef?: LambdaAwsUpboundIoV1beta1FunctionSpecForProviderDeadLetterConfigItems0TargetArnRef
+
+    targetArnSelector?: LambdaAwsUpboundIoV1beta1FunctionSpecForProviderDeadLetterConfigItems0TargetArnSelector
+
+
+schema LambdaAwsUpboundIoV1beta1FunctionSpecForProviderDeadLetterConfigItems0TargetArnRef:
+    r"""
+    Reference to a Queue in sqs to populate targetArn.
+
+    Attributes
+    ----------
+    name : str, default is Undefined, required
+        Name of the referenced object.
+    policy : LambdaAwsUpboundIoV1beta1FunctionSpecForProviderDeadLetterConfigItems0TargetArnRefPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    name: str
+
+    policy?: LambdaAwsUpboundIoV1beta1FunctionSpecForProviderDeadLetterConfigItems0TargetArnRefPolicy
+
+
+schema LambdaAwsUpboundIoV1beta1FunctionSpecForProviderDeadLetterConfigItems0TargetArnRefPolicy:
+    r"""
+    Policies for referencing.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema LambdaAwsUpboundIoV1beta1FunctionSpecForProviderDeadLetterConfigItems0TargetArnSelector:
+    r"""
+    Selector for a Queue in sqs to populate targetArn.
+
+    Attributes
+    ----------
+    matchControllerRef : bool, default is Undefined, optional
+        MatchControllerRef ensures an object with the same controller reference
+        as the selecting object is selected.
+    matchLabels : {str:str}, default is Undefined, optional
+        MatchLabels ensures an object with matching labels is selected.
+    policy : LambdaAwsUpboundIoV1beta1FunctionSpecForProviderDeadLetterConfigItems0TargetArnSelectorPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    matchControllerRef?: bool
+
+    matchLabels?: {str:str}
+
+    policy?: LambdaAwsUpboundIoV1beta1FunctionSpecForProviderDeadLetterConfigItems0TargetArnSelectorPolicy
+
+
+schema LambdaAwsUpboundIoV1beta1FunctionSpecForProviderDeadLetterConfigItems0TargetArnSelectorPolicy:
+    r"""
+    Policies for selection.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
 
 
 schema LambdaAwsUpboundIoV1beta1FunctionSpecForProviderEnvironmentItems0:
@@ -287,7 +381,7 @@ schema LambdaAwsUpboundIoV1beta1FunctionSpecForProviderEnvironmentItems0:
     Attributes
     ----------
     variables : {str:str}, default is Undefined, optional
-        Map of environment variables that are accessible from the function code during execution. If provided at least one key must be present.
+        Map of environment variables available to your Lambda function during execution.
     """
 
 
@@ -301,7 +395,7 @@ schema LambdaAwsUpboundIoV1beta1FunctionSpecForProviderEphemeralStorageItems0:
     Attributes
     ----------
     size : float, default is Undefined, optional
-        The size of the Lambda function Ephemeral storage(/tmp) represented in MB. The minimum supported ephemeral_storage value defaults to 512MB and the maximum supported value is 10240MB.
+        Amount of ephemeral storage (/tmp) in MB. Valid between 512 MB and 10,240 MB (10 GB).
     """
 
 
@@ -315,13 +409,13 @@ schema LambdaAwsUpboundIoV1beta1FunctionSpecForProviderFileSystemConfigItems0:
     Attributes
     ----------
     arn : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of the Amazon EFS Access Point that provides access to the file system.
+        ARN of the Amazon EFS Access Point.
     arnRef : LambdaAwsUpboundIoV1beta1FunctionSpecForProviderFileSystemConfigItems0ArnRef, default is Undefined, optional
         arn ref
     arnSelector : LambdaAwsUpboundIoV1beta1FunctionSpecForProviderFileSystemConfigItems0ArnSelector, default is Undefined, optional
         arn selector
     localMountPath : str, default is Undefined, optional
-        Path where the function can access the file system, starting with /mnt/.
+        Path where the function can access the file system. Must start with /mnt/.
     """
 
 
@@ -430,11 +524,11 @@ schema LambdaAwsUpboundIoV1beta1FunctionSpecForProviderImageConfigItems0:
     Attributes
     ----------
     command : [str], default is Undefined, optional
-        Parameters that you want to pass in with entry_point.
+        Parameters to pass to the container image.
     entryPoint : [str], default is Undefined, optional
-        Entry point to your application, which is typically the location of the runtime executable.
+        Entry point to your application.
     workingDirectory : str, default is Undefined, optional
-        Working directory.
+        Working directory for the container image.
     """
 
 
@@ -630,13 +724,13 @@ schema LambdaAwsUpboundIoV1beta1FunctionSpecForProviderLoggingConfigItems0:
     Attributes
     ----------
     applicationLogLevel : str, default is Undefined, optional
-        for JSON structured logs, choose the detail level of the logs your application sends to CloudWatch when using supported logging libraries.
+        Detail level of application logs. Valid values: TRACE, DEBUG, INFO, WARN, ERROR, FATAL.
     logFormat : str, default is Undefined, optional
-        select between Text and structured JSON format for your function's logs.
+        Log format. Valid values: Text, JSON.
     logGroup : str, default is Undefined, optional
-        the CloudWatch log group your function sends logs to.
+        CloudWatch log group where logs are sent.
     systemLogLevel : str, default is Undefined, optional
-        for JSON structured logs, choose the detail level of the Lambda platform event logs sent to CloudWatch, such as ERROR, DEBUG, or INFO.
+        Detail level of Lambda platform logs. Valid values: DEBUG, INFO, WARN.
     """
 
 
@@ -923,7 +1017,7 @@ schema LambdaAwsUpboundIoV1beta1FunctionSpecForProviderSnapStartItems0:
     Attributes
     ----------
     applyOn : str, default is Undefined, optional
-        Conditions where snap start is enabled. Valid values are PublishedVersions.
+        When to apply snap start optimization. Valid value: PublishedVersions.
     """
 
 
@@ -937,7 +1031,7 @@ schema LambdaAwsUpboundIoV1beta1FunctionSpecForProviderTracingConfigItems0:
     Attributes
     ----------
     mode : str, default is Undefined, optional
-        Whether to sample and trace a subset of incoming requests with AWS X-Ray. Valid values are PassThrough and Active. If PassThrough, Lambda will only trace the request from an upstream service if it contains a tracing header with "sampled=1". If Active, Lambda will respect any tracing header it receives from an upstream service. If no tracing header is received, Lambda will call X-Ray for a tracing decision.
+        X-Ray tracing mode. Valid values: Active, PassThrough.
     """
 
 
@@ -951,7 +1045,7 @@ schema LambdaAwsUpboundIoV1beta1FunctionSpecForProviderVpcConfigItems0:
     Attributes
     ----------
     ipv6AllowedForDualStack : bool, default is Undefined, optional
-        Allows outbound IPv6 traffic on VPC functions that are connected to dual-stack subnets. Default is false.
+        Whether to allow outbound IPv6 traffic on VPC functions connected to dual-stack subnets. Default: false.
     securityGroupIdRefs : [LambdaAwsUpboundIoV1beta1FunctionSpecForProviderVpcConfigItems0SecurityGroupIDRefsItems0], default is Undefined, optional
         References to SecurityGroup in ec2 to populate securityGroupIds.
     securityGroupIdSelector : LambdaAwsUpboundIoV1beta1FunctionSpecForProviderVpcConfigItems0SecurityGroupIDSelector, default is Undefined, optional
@@ -1176,87 +1270,87 @@ schema LambdaAwsUpboundIoV1beta1FunctionSpecInitProvider:
     Attributes
     ----------
     architectures : [str], default is Undefined, optional
-        Instruction set architecture for your Lambda function. Valid values are ["x86_64"] and ["arm64"]. Default is ["x86_64"]. Removing this attribute, function's architecture stay the same.
+        Instruction set architecture for your Lambda function. Valid values are ["x86_64"] and ["arm64"]. Default is ["x86_64"]. Removing this attribute, function's architecture stays the same.
     codeSigningConfigArn : str, default is Undefined, optional
-        To enable code signing for this function, specify the ARN of a code-signing configuration. A code-signing configuration includes a set of signing profiles, which define the trusted publishers for this function.
+        ARN of a code-signing configuration to enable code signing for this function.
     deadLetterConfig : [LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderDeadLetterConfigItems0], default is Undefined, optional
-        Configuration block. Detailed below.
+        Configuration block for dead letter queue. See below.
     description : str, default is Undefined, optional
         Description of what your Lambda Function does.
     environment : [LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderEnvironmentItems0], default is Undefined, optional
-        Configuration block. Detailed below.
+        Configuration block for environment variables. See below.
     ephemeralStorage : [LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderEphemeralStorageItems0], default is Undefined, optional
-        The amount of Ephemeral storage(/tmp) to allocate for the Lambda Function in MB. This parameter is used to expand the total amount of Ephemeral storage available, beyond the default amount of 512MB. Detailed below.
+        Amount of ephemeral storage (/tmp) to allocate for the Lambda Function. See below.
     fileSystemConfig : [LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderFileSystemConfigItems0], default is Undefined, optional
-        Configuration block. Detailed below.
+        Configuration block for EFS file system. See below.
     handler : str, default is Undefined, optional
-        Function entrypoint in your code.
+        Function entry point in your code. Required if package_type is Zip.
     imageConfig : [LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderImageConfigItems0], default is Undefined, optional
-        Configuration block. Detailed below.
+        Container image configuration values. See below.
     imageUri : str, default is Undefined, optional
-        ECR image URI containing the function's deployment package. Exactly one of filename, image_uri,  or s3_bucket must be specified.
+        ECR image URI containing the function's deployment package. Conflicts with filename and s3_bucket. One of filename, image_uri, or s3_bucket must be specified.
     kmsKeyArn : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of the AWS Key Management Service (KMS) key that is used to encrypt environment variables. If this configuration is not provided when environment variables are in use, AWS Lambda uses a default service key. To fix the perpetual difference, remove this configuration.
+        ARN of the AWS Key Management Service key used to encrypt environment variables. If not provided when environment variables are in use, AWS Lambda uses a default service key. If provided when environment variables are not in use, the AWS Lambda API does not save this configuration.
     kmsKeyArnRef : LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderKmsKeyArnRef, default is Undefined, optional
         kms key arn ref
     kmsKeyArnSelector : LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderKmsKeyArnSelector, default is Undefined, optional
         kms key arn selector
     layers : [str], default is Undefined, optional
-        List of Lambda Layer Version ARNs (maximum of 5) to attach to your Lambda Function. See Lambda Layers
+        List of Lambda Layer Version ARNs (maximum of 5) to attach to your Lambda Function.
     layersRefs : [LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderLayersRefsItems0], default is Undefined, optional
         References to LayerVersion in lambda to populate layers.
     layersSelector : LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderLayersSelector, default is Undefined, optional
         layers selector
     loggingConfig : [LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderLoggingConfigItems0], default is Undefined, optional
-        Configuration block used to specify advanced logging settings. Detailed below.
+        Configuration block for advanced logging settings. See below.
     memorySize : float, default is Undefined, optional
-        Amount of memory in MB your Lambda Function can use at runtime. Defaults to 128. See Limits
+        Amount of memory in MB your Lambda Function can use at runtime. Valid value between 128 MB to 10,240 MB (10 GB), in 1 MB increments. Defaults to 128.
     packageType : str, default is Undefined, optional
         Lambda deployment package type. Valid values are Zip and Image. Defaults to Zip.
     publish : bool, default is Undefined, optional
         Whether to publish creation/change as new Lambda Function Version. Defaults to false.
     replaceSecurityGroupsOnDestroy : bool, default is Undefined, optional
-        AWS no longer supports this operation. This attribute now has no effect and will be removed in a future major version. Whether to replace the security groups on associated lambda network interfaces upon destruction. Removing these security groups from orphaned network interfaces can speed up security group deletion times by avoiding a dependency on AWS's internal cleanup operations. By default, the ENI security groups will be replaced with the default security group in the function's VPC. Set the replacement_security_group_ids attribute to use a custom list of security groups for replacement.
+        Whether to replace the security groups on the function's VPC configuration prior to destruction. Default is false.
     replacementSecurityGroupIdRefs : [LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderReplacementSecurityGroupIDRefsItems0], default is Undefined, optional
         References to SecurityGroup in ec2 to populate replacementSecurityGroupIds.
     replacementSecurityGroupIdSelector : LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderReplacementSecurityGroupIDSelector, default is Undefined, optional
         replacement security group Id selector
     replacementSecurityGroupIds : [str], default is Undefined, optional
-        List of security group IDs to assign to orphaned Lambda function network interfaces upon destruction. replace_security_groups_on_destroy must be set to true to use this attribute.
+        List of security group IDs to assign to the function's VPC configuration prior to destruction. Required if replace_security_groups_on_destroy is true.
     reservedConcurrentExecutions : float, default is Undefined, optional
-        Amount of reserved concurrent executions for this lambda function. A value of 0 disables lambda from being triggered and -1 removes any concurrency limitations. Defaults to Unreserved Concurrency Limits -1. See Managing Concurrency
+        Amount of reserved concurrent executions for this lambda function. A value of 0 disables lambda from being triggered and -1 removes any concurrency limitations. Defaults to Unreserved Concurrency Limits -1.
     role : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of the function's execution role. The role provides the function's identity and access to AWS services and resources.
+        ARN of the function's execution role. The role provides the function's identity and access to AWS services and resources.
     roleRef : LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderRoleRef, default is Undefined, optional
         role ref
     roleSelector : LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderRoleSelector, default is Undefined, optional
         role selector
     runtime : str, default is Undefined, optional
-        Identifier of the function's runtime. See Runtimes for valid values.
+        Identifier of the function's runtime. Required if package_type is Zip. See Runtimes for valid values.
     s3Bucket : str, default is Undefined, optional
-        S3 bucket location containing the function's deployment package. This bucket must reside in the same AWS region where you are creating the Lambda function. Exactly one of filename, image_uri, or s3_bucket must be specified. When s3_bucket is set, s3_key is required.
+        S3 bucket location containing the function's deployment package. Conflicts with filename and image_uri. One of filename, image_uri, or s3_bucket must be specified.
     s3BucketRef : LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderS3BucketRef, default is Undefined, optional
         s3 bucket ref
     s3BucketSelector : LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderS3BucketSelector, default is Undefined, optional
         s3 bucket selector
     s3Key : str, default is Undefined, optional
-        S3 key of an object containing the function's deployment package. When s3_bucket is set, s3_key is required.
+        S3 key of an object containing the function's deployment package. Required if s3_bucket is set.
     s3ObjectVersion : str, default is Undefined, optional
         Object version containing the function's deployment package. Conflicts with filename and image_uri.
     skipDestroy : bool, default is Undefined, optional
-        skip destroy
+        Whether to retain the old version of a previously deployed Lambda Layer. Default is false.
     snapStart : [LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderSnapStartItems0], default is Undefined, optional
-        Snap start settings block. Detailed below.
+        Configuration block for snap start settings. See below.
     sourceCodeHash : str, default is Undefined, optional
         Used to trigger updates. Must be set to a base64 encoded SHA256 hash of the package file specified with either filename or s3_key. If you have specified this field manually, it should be the actual (computed) hash of the underlying lambda function specified in the filename, image_uri, s3_bucket fields.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     timeout : float, default is Undefined, optional
-        Amount of time your Lambda Function has to run in seconds. Defaults to 3. See Limits.
+        Amount of time your Lambda Function has to run in seconds. Defaults to 3. Valid between 1 and 900.
     tracingConfig : [LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderTracingConfigItems0], default is Undefined, optional
-        Configuration block. Detailed below.
+        Configuration block for X-Ray tracing. See below.
     vpcConfig : [LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderVpcConfigItems0], default is Undefined, optional
-        Configuration block. Detailed below.
+        Configuration block for VPC. See below.
     """
 
 
@@ -1350,11 +1444,108 @@ schema LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderDeadLetterConfigItems0:
     Attributes
     ----------
     targetArn : str, default is Undefined, optional
-        ARN of an SNS topic or SQS queue to notify when an invocation fails. If this option is used, the function's IAM role must be granted suitable access to write to the target object, which means allowing either the sns:Publish or sqs:SendMessage action on this ARN, depending on which service is targeted.
+        ARN of an SNS topic or SQS queue to notify when an invocation fails.
+    targetArnRef : LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderDeadLetterConfigItems0TargetArnRef, default is Undefined, optional
+        target arn ref
+    targetArnSelector : LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderDeadLetterConfigItems0TargetArnSelector, default is Undefined, optional
+        target arn selector
     """
 
 
     targetArn?: str
+
+    targetArnRef?: LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderDeadLetterConfigItems0TargetArnRef
+
+    targetArnSelector?: LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderDeadLetterConfigItems0TargetArnSelector
+
+
+schema LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderDeadLetterConfigItems0TargetArnRef:
+    r"""
+    Reference to a Queue in sqs to populate targetArn.
+
+    Attributes
+    ----------
+    name : str, default is Undefined, required
+        Name of the referenced object.
+    policy : LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderDeadLetterConfigItems0TargetArnRefPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    name: str
+
+    policy?: LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderDeadLetterConfigItems0TargetArnRefPolicy
+
+
+schema LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderDeadLetterConfigItems0TargetArnRefPolicy:
+    r"""
+    Policies for referencing.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderDeadLetterConfigItems0TargetArnSelector:
+    r"""
+    Selector for a Queue in sqs to populate targetArn.
+
+    Attributes
+    ----------
+    matchControllerRef : bool, default is Undefined, optional
+        MatchControllerRef ensures an object with the same controller reference
+        as the selecting object is selected.
+    matchLabels : {str:str}, default is Undefined, optional
+        MatchLabels ensures an object with matching labels is selected.
+    policy : LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderDeadLetterConfigItems0TargetArnSelectorPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    matchControllerRef?: bool
+
+    matchLabels?: {str:str}
+
+    policy?: LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderDeadLetterConfigItems0TargetArnSelectorPolicy
+
+
+schema LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderDeadLetterConfigItems0TargetArnSelectorPolicy:
+    r"""
+    Policies for selection.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
 
 
 schema LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderEnvironmentItems0:
@@ -1364,7 +1555,7 @@ schema LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderEnvironmentItems0:
     Attributes
     ----------
     variables : {str:str}, default is Undefined, optional
-        Map of environment variables that are accessible from the function code during execution. If provided at least one key must be present.
+        Map of environment variables available to your Lambda function during execution.
     """
 
 
@@ -1378,7 +1569,7 @@ schema LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderEphemeralStorageItems0:
     Attributes
     ----------
     size : float, default is Undefined, optional
-        The size of the Lambda function Ephemeral storage(/tmp) represented in MB. The minimum supported ephemeral_storage value defaults to 512MB and the maximum supported value is 10240MB.
+        Amount of ephemeral storage (/tmp) in MB. Valid between 512 MB and 10,240 MB (10 GB).
     """
 
 
@@ -1392,13 +1583,13 @@ schema LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderFileSystemConfigItems0:
     Attributes
     ----------
     arn : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of the Amazon EFS Access Point that provides access to the file system.
+        ARN of the Amazon EFS Access Point.
     arnRef : LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderFileSystemConfigItems0ArnRef, default is Undefined, optional
         arn ref
     arnSelector : LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderFileSystemConfigItems0ArnSelector, default is Undefined, optional
         arn selector
     localMountPath : str, default is Undefined, optional
-        Path where the function can access the file system, starting with /mnt/.
+        Path where the function can access the file system. Must start with /mnt/.
     """
 
 
@@ -1507,11 +1698,11 @@ schema LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderImageConfigItems0:
     Attributes
     ----------
     command : [str], default is Undefined, optional
-        Parameters that you want to pass in with entry_point.
+        Parameters to pass to the container image.
     entryPoint : [str], default is Undefined, optional
-        Entry point to your application, which is typically the location of the runtime executable.
+        Entry point to your application.
     workingDirectory : str, default is Undefined, optional
-        Working directory.
+        Working directory for the container image.
     """
 
 
@@ -1707,13 +1898,13 @@ schema LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderLoggingConfigItems0:
     Attributes
     ----------
     applicationLogLevel : str, default is Undefined, optional
-        for JSON structured logs, choose the detail level of the logs your application sends to CloudWatch when using supported logging libraries.
+        Detail level of application logs. Valid values: TRACE, DEBUG, INFO, WARN, ERROR, FATAL.
     logFormat : str, default is Undefined, optional
-        select between Text and structured JSON format for your function's logs.
+        Log format. Valid values: Text, JSON.
     logGroup : str, default is Undefined, optional
-        the CloudWatch log group your function sends logs to.
+        CloudWatch log group where logs are sent.
     systemLogLevel : str, default is Undefined, optional
-        for JSON structured logs, choose the detail level of the Lambda platform event logs sent to CloudWatch, such as ERROR, DEBUG, or INFO.
+        Detail level of Lambda platform logs. Valid values: DEBUG, INFO, WARN.
     """
 
 
@@ -2000,7 +2191,7 @@ schema LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderSnapStartItems0:
     Attributes
     ----------
     applyOn : str, default is Undefined, optional
-        Conditions where snap start is enabled. Valid values are PublishedVersions.
+        When to apply snap start optimization. Valid value: PublishedVersions.
     """
 
 
@@ -2014,7 +2205,7 @@ schema LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderTracingConfigItems0:
     Attributes
     ----------
     mode : str, default is Undefined, optional
-        Whether to sample and trace a subset of incoming requests with AWS X-Ray. Valid values are PassThrough and Active. If PassThrough, Lambda will only trace the request from an upstream service if it contains a tracing header with "sampled=1". If Active, Lambda will respect any tracing header it receives from an upstream service. If no tracing header is received, Lambda will call X-Ray for a tracing decision.
+        X-Ray tracing mode. Valid values: Active, PassThrough.
     """
 
 
@@ -2028,7 +2219,7 @@ schema LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderVpcConfigItems0:
     Attributes
     ----------
     ipv6AllowedForDualStack : bool, default is Undefined, optional
-        Allows outbound IPv6 traffic on VPC functions that are connected to dual-stack subnets. Default is false.
+        Whether to allow outbound IPv6 traffic on VPC functions connected to dual-stack subnets. Default: false.
     securityGroupIdRefs : [LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderVpcConfigItems0SecurityGroupIDRefsItems0], default is Undefined, optional
         References to SecurityGroup in ec2 to populate securityGroupIds.
     securityGroupIdSelector : LambdaAwsUpboundIoV1beta1FunctionSpecInitProviderVpcConfigItems0SecurityGroupIDSelector, default is Undefined, optional
@@ -2281,112 +2472,12 @@ schema LambdaAwsUpboundIoV1beta1FunctionSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema LambdaAwsUpboundIoV1beta1FunctionSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : LambdaAwsUpboundIoV1beta1FunctionSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : LambdaAwsUpboundIoV1beta1FunctionSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: LambdaAwsUpboundIoV1beta1FunctionSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: LambdaAwsUpboundIoV1beta1FunctionSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema LambdaAwsUpboundIoV1beta1FunctionSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : LambdaAwsUpboundIoV1beta1FunctionSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: LambdaAwsUpboundIoV1beta1FunctionSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema LambdaAwsUpboundIoV1beta1FunctionSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema LambdaAwsUpboundIoV1beta1FunctionSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema LambdaAwsUpboundIoV1beta1FunctionSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -2433,43 +2524,43 @@ schema LambdaAwsUpboundIoV1beta1FunctionStatusAtProvider:
     Attributes
     ----------
     architectures : [str], default is Undefined, optional
-        Instruction set architecture for your Lambda function. Valid values are ["x86_64"] and ["arm64"]. Default is ["x86_64"]. Removing this attribute, function's architecture stay the same.
+        Instruction set architecture for your Lambda function. Valid values are ["x86_64"] and ["arm64"]. Default is ["x86_64"]. Removing this attribute, function's architecture stays the same.
     arn : str, default is Undefined, optional
-        Amazon Resource Name (ARN) identifying your Lambda Function.
+        ARN identifying your Lambda Function.
     codeSha256 : str, default is Undefined, optional
         Base64-encoded representation of raw SHA-256 sum of the zip file.
     codeSigningConfigArn : str, default is Undefined, optional
-        To enable code signing for this function, specify the ARN of a code-signing configuration. A code-signing configuration includes a set of signing profiles, which define the trusted publishers for this function.
+        ARN of a code-signing configuration to enable code signing for this function.
     deadLetterConfig : [LambdaAwsUpboundIoV1beta1FunctionStatusAtProviderDeadLetterConfigItems0], default is Undefined, optional
-        Configuration block. Detailed below.
+        Configuration block for dead letter queue. See below.
     description : str, default is Undefined, optional
         Description of what your Lambda Function does.
     environment : [LambdaAwsUpboundIoV1beta1FunctionStatusAtProviderEnvironmentItems0], default is Undefined, optional
-        Configuration block. Detailed below.
+        Configuration block for environment variables. See below.
     ephemeralStorage : [LambdaAwsUpboundIoV1beta1FunctionStatusAtProviderEphemeralStorageItems0], default is Undefined, optional
-        The amount of Ephemeral storage(/tmp) to allocate for the Lambda Function in MB. This parameter is used to expand the total amount of Ephemeral storage available, beyond the default amount of 512MB. Detailed below.
+        Amount of ephemeral storage (/tmp) to allocate for the Lambda Function. See below.
     fileSystemConfig : [LambdaAwsUpboundIoV1beta1FunctionStatusAtProviderFileSystemConfigItems0], default is Undefined, optional
-        Configuration block. Detailed below.
+        Configuration block for EFS file system. See below.
     handler : str, default is Undefined, optional
-        Function entrypoint in your code.
+        Function entry point in your code. Required if package_type is Zip.
     id : str, default is Undefined, optional
         id
     imageConfig : [LambdaAwsUpboundIoV1beta1FunctionStatusAtProviderImageConfigItems0], default is Undefined, optional
-        Configuration block. Detailed below.
+        Container image configuration values. See below.
     imageUri : str, default is Undefined, optional
-        ECR image URI containing the function's deployment package. Exactly one of filename, image_uri,  or s3_bucket must be specified.
+        ECR image URI containing the function's deployment package. Conflicts with filename and s3_bucket. One of filename, image_uri, or s3_bucket must be specified.
     invokeArn : str, default is Undefined, optional
         ARN to be used for invoking Lambda Function from API Gateway - to be used in aws_api_gateway_integration's uri.
     kmsKeyArn : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of the AWS Key Management Service (KMS) key that is used to encrypt environment variables. If this configuration is not provided when environment variables are in use, AWS Lambda uses a default service key. To fix the perpetual difference, remove this configuration.
+        ARN of the AWS Key Management Service key used to encrypt environment variables. If not provided when environment variables are in use, AWS Lambda uses a default service key. If provided when environment variables are not in use, the AWS Lambda API does not save this configuration.
     lastModified : str, default is Undefined, optional
         Date this resource was last modified.
     layers : [str], default is Undefined, optional
-        List of Lambda Layer Version ARNs (maximum of 5) to attach to your Lambda Function. See Lambda Layers
+        List of Lambda Layer Version ARNs (maximum of 5) to attach to your Lambda Function.
     loggingConfig : [LambdaAwsUpboundIoV1beta1FunctionStatusAtProviderLoggingConfigItems0], default is Undefined, optional
-        Configuration block used to specify advanced logging settings. Detailed below.
+        Configuration block for advanced logging settings. See below.
     memorySize : float, default is Undefined, optional
-        Amount of memory in MB your Lambda Function can use at runtime. Defaults to 128. See Limits
+        Amount of memory in MB your Lambda Function can use at runtime. Valid value between 128 MB to 10,240 MB (10 GB), in 1 MB increments. Defaults to 128.
     packageType : str, default is Undefined, optional
         Lambda deployment package type. Valid values are Zip and Image. Defaults to Zip.
     publish : bool, default is Undefined, optional
@@ -2478,20 +2569,23 @@ schema LambdaAwsUpboundIoV1beta1FunctionStatusAtProvider:
         ARN identifying your Lambda Function Version (if versioning is enabled via publish = true).
     qualifiedInvokeArn : str, default is Undefined, optional
         Qualified ARN (ARN with lambda version number) to be used for invoking Lambda Function from API Gateway - to be used in aws_api_gateway_integration's uri.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     replaceSecurityGroupsOnDestroy : bool, default is Undefined, optional
-        AWS no longer supports this operation. This attribute now has no effect and will be removed in a future major version. Whether to replace the security groups on associated lambda network interfaces upon destruction. Removing these security groups from orphaned network interfaces can speed up security group deletion times by avoiding a dependency on AWS's internal cleanup operations. By default, the ENI security groups will be replaced with the default security group in the function's VPC. Set the replacement_security_group_ids attribute to use a custom list of security groups for replacement.
+        Whether to replace the security groups on the function's VPC configuration prior to destruction. Default is false.
     replacementSecurityGroupIds : [str], default is Undefined, optional
-        List of security group IDs to assign to orphaned Lambda function network interfaces upon destruction. replace_security_groups_on_destroy must be set to true to use this attribute.
+        List of security group IDs to assign to the function's VPC configuration prior to destruction. Required if replace_security_groups_on_destroy is true.
     reservedConcurrentExecutions : float, default is Undefined, optional
-        Amount of reserved concurrent executions for this lambda function. A value of 0 disables lambda from being triggered and -1 removes any concurrency limitations. Defaults to Unreserved Concurrency Limits -1. See Managing Concurrency
+        Amount of reserved concurrent executions for this lambda function. A value of 0 disables lambda from being triggered and -1 removes any concurrency limitations. Defaults to Unreserved Concurrency Limits -1.
     role : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of the function's execution role. The role provides the function's identity and access to AWS services and resources.
+        ARN of the function's execution role. The role provides the function's identity and access to AWS services and resources.
     runtime : str, default is Undefined, optional
-        Identifier of the function's runtime. See Runtimes for valid values.
+        Identifier of the function's runtime. Required if package_type is Zip. See Runtimes for valid values.
     s3Bucket : str, default is Undefined, optional
-        S3 bucket location containing the function's deployment package. This bucket must reside in the same AWS region where you are creating the Lambda function. Exactly one of filename, image_uri, or s3_bucket must be specified. When s3_bucket is set, s3_key is required.
+        S3 bucket location containing the function's deployment package. Conflicts with filename and image_uri. One of filename, image_uri, or s3_bucket must be specified.
     s3Key : str, default is Undefined, optional
-        S3 key of an object containing the function's deployment package. When s3_bucket is set, s3_key is required.
+        S3 key of an object containing the function's deployment package. Required if s3_bucket is set.
     s3ObjectVersion : str, default is Undefined, optional
         Object version containing the function's deployment package. Conflicts with filename and image_uri.
     signingJobArn : str, default is Undefined, optional
@@ -2499,9 +2593,9 @@ schema LambdaAwsUpboundIoV1beta1FunctionStatusAtProvider:
     signingProfileVersionArn : str, default is Undefined, optional
         ARN of the signing profile version.
     skipDestroy : bool, default is Undefined, optional
-        skip destroy
+        Whether to retain the old version of a previously deployed Lambda Layer. Default is false.
     snapStart : [LambdaAwsUpboundIoV1beta1FunctionStatusAtProviderSnapStartItems0], default is Undefined, optional
-        Snap start settings block. Detailed below.
+        Configuration block for snap start settings. See below.
     sourceCodeHash : str, default is Undefined, optional
         Used to trigger updates. Must be set to a base64 encoded SHA256 hash of the package file specified with either filename or s3_key. If you have specified this field manually, it should be the actual (computed) hash of the underlying lambda function specified in the filename, image_uri, s3_bucket fields.
     sourceCodeSize : float, default is Undefined, optional
@@ -2509,15 +2603,15 @@ schema LambdaAwsUpboundIoV1beta1FunctionStatusAtProvider:
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
-        A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
+        Map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     timeout : float, default is Undefined, optional
-        Amount of time your Lambda Function has to run in seconds. Defaults to 3. See Limits.
+        Amount of time your Lambda Function has to run in seconds. Defaults to 3. Valid between 1 and 900.
     tracingConfig : [LambdaAwsUpboundIoV1beta1FunctionStatusAtProviderTracingConfigItems0], default is Undefined, optional
-        Configuration block. Detailed below.
+        Configuration block for X-Ray tracing. See below.
     version : str, default is Undefined, optional
         Latest published version of your Lambda Function.
     vpcConfig : [LambdaAwsUpboundIoV1beta1FunctionStatusAtProviderVpcConfigItems0], default is Undefined, optional
-        Configuration block. Detailed below.
+        Configuration block for VPC. See below.
     """
 
 
@@ -2567,6 +2661,8 @@ schema LambdaAwsUpboundIoV1beta1FunctionStatusAtProvider:
 
     qualifiedInvokeArn?: str
 
+    region?: str
+
     replaceSecurityGroupsOnDestroy?: bool
 
     replacementSecurityGroupIds?: [str]
@@ -2615,7 +2711,7 @@ schema LambdaAwsUpboundIoV1beta1FunctionStatusAtProviderDeadLetterConfigItems0:
     Attributes
     ----------
     targetArn : str, default is Undefined, optional
-        ARN of an SNS topic or SQS queue to notify when an invocation fails. If this option is used, the function's IAM role must be granted suitable access to write to the target object, which means allowing either the sns:Publish or sqs:SendMessage action on this ARN, depending on which service is targeted.
+        ARN of an SNS topic or SQS queue to notify when an invocation fails.
     """
 
 
@@ -2629,7 +2725,7 @@ schema LambdaAwsUpboundIoV1beta1FunctionStatusAtProviderEnvironmentItems0:
     Attributes
     ----------
     variables : {str:str}, default is Undefined, optional
-        Map of environment variables that are accessible from the function code during execution. If provided at least one key must be present.
+        Map of environment variables available to your Lambda function during execution.
     """
 
 
@@ -2643,7 +2739,7 @@ schema LambdaAwsUpboundIoV1beta1FunctionStatusAtProviderEphemeralStorageItems0:
     Attributes
     ----------
     size : float, default is Undefined, optional
-        The size of the Lambda function Ephemeral storage(/tmp) represented in MB. The minimum supported ephemeral_storage value defaults to 512MB and the maximum supported value is 10240MB.
+        Amount of ephemeral storage (/tmp) in MB. Valid between 512 MB and 10,240 MB (10 GB).
     """
 
 
@@ -2657,9 +2753,9 @@ schema LambdaAwsUpboundIoV1beta1FunctionStatusAtProviderFileSystemConfigItems0:
     Attributes
     ----------
     arn : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of the Amazon EFS Access Point that provides access to the file system.
+        ARN of the Amazon EFS Access Point.
     localMountPath : str, default is Undefined, optional
-        Path where the function can access the file system, starting with /mnt/.
+        Path where the function can access the file system. Must start with /mnt/.
     """
 
 
@@ -2675,11 +2771,11 @@ schema LambdaAwsUpboundIoV1beta1FunctionStatusAtProviderImageConfigItems0:
     Attributes
     ----------
     command : [str], default is Undefined, optional
-        Parameters that you want to pass in with entry_point.
+        Parameters to pass to the container image.
     entryPoint : [str], default is Undefined, optional
-        Entry point to your application, which is typically the location of the runtime executable.
+        Entry point to your application.
     workingDirectory : str, default is Undefined, optional
-        Working directory.
+        Working directory for the container image.
     """
 
 
@@ -2697,13 +2793,13 @@ schema LambdaAwsUpboundIoV1beta1FunctionStatusAtProviderLoggingConfigItems0:
     Attributes
     ----------
     applicationLogLevel : str, default is Undefined, optional
-        for JSON structured logs, choose the detail level of the logs your application sends to CloudWatch when using supported logging libraries.
+        Detail level of application logs. Valid values: TRACE, DEBUG, INFO, WARN, ERROR, FATAL.
     logFormat : str, default is Undefined, optional
-        select between Text and structured JSON format for your function's logs.
+        Log format. Valid values: Text, JSON.
     logGroup : str, default is Undefined, optional
-        the CloudWatch log group your function sends logs to.
+        CloudWatch log group where logs are sent.
     systemLogLevel : str, default is Undefined, optional
-        for JSON structured logs, choose the detail level of the Lambda platform event logs sent to CloudWatch, such as ERROR, DEBUG, or INFO.
+        Detail level of Lambda platform logs. Valid values: DEBUG, INFO, WARN.
     """
 
 
@@ -2723,7 +2819,7 @@ schema LambdaAwsUpboundIoV1beta1FunctionStatusAtProviderSnapStartItems0:
     Attributes
     ----------
     applyOn : str, default is Undefined, optional
-        Conditions where snap start is enabled. Valid values are PublishedVersions.
+        When to apply snap start optimization. Valid value: PublishedVersions.
     optimizationStatus : str, default is Undefined, optional
         Optimization status of the snap start configuration. Valid values are On and Off.
     """
@@ -2741,7 +2837,7 @@ schema LambdaAwsUpboundIoV1beta1FunctionStatusAtProviderTracingConfigItems0:
     Attributes
     ----------
     mode : str, default is Undefined, optional
-        Whether to sample and trace a subset of incoming requests with AWS X-Ray. Valid values are PassThrough and Active. If PassThrough, Lambda will only trace the request from an upstream service if it contains a tracing header with "sampled=1". If Active, Lambda will respect any tracing header it receives from an upstream service. If no tracing header is received, Lambda will call X-Ray for a tracing decision.
+        X-Ray tracing mode. Valid values: Active, PassThrough.
     """
 
 
@@ -2755,7 +2851,7 @@ schema LambdaAwsUpboundIoV1beta1FunctionStatusAtProviderVpcConfigItems0:
     Attributes
     ----------
     ipv6AllowedForDualStack : bool, default is Undefined, optional
-        Allows outbound IPv6 traffic on VPC functions that are connected to dual-stack subnets. Default is false.
+        Whether to allow outbound IPv6 traffic on VPC functions connected to dual-stack subnets. Default: false.
     securityGroupIds : [str], default is Undefined, optional
         List of security group IDs associated with the Lambda function.
     subnetIds : [str], default is Undefined, optional

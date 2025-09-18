@@ -66,8 +66,6 @@ schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpec:
 
     providerConfigRef?: AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecWriteConnectionSecretToRef
 
 
@@ -95,13 +91,14 @@ schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecForProvider:
     Attributes
     ----------
     configuration : [AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecForProviderConfigurationItems0], default is Undefined, optional
-        A block that specifies the configuration of the analyzer. Documented below
+        A block that specifies the configuration of the analyzer. See configuration Block for details.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     $type : str, default is Undefined, optional
-        Type of Analyzer. Valid values are ACCOUNT, ORGANIZATION, ACCOUNT_UNUSED_ACCESS , ORGANIZATION_UNUSED_ACCESS. Defaults to ACCOUNT.
+        Type that represents the zone of trust or scope for the analyzer. Valid values are ACCOUNT, ACCOUNT_INTERNAL_ACCESS, ACCOUNT_UNUSED_ACCESS, ORGANIZATION, ORGANIZATION_INTERNAL_ACCESS, ORGANIZATION_UNUSED_ACCESS. Defaults to ACCOUNT.
     """
 
 
@@ -120,12 +117,66 @@ schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecForProviderConfigurationItem
 
     Attributes
     ----------
+    internalAccess : [AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecForProviderConfigurationItems0InternalAccessItems0], default is Undefined, optional
+        Specifies the configuration of an internal access analyzer for an AWS organization or account. This configuration determines how the analyzer evaluates access within your AWS environment. See internal_access Block for details.
     unusedAccess : [AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecForProviderConfigurationItems0UnusedAccessItems0], default is Undefined, optional
-        A block that specifies the configuration of an unused access analyzer for an AWS organization or account. Documented below
+        Specifies the configuration of an unused access analyzer for an AWS organization or account. See unused_access Block for details.
     """
 
 
+    internalAccess?: [AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecForProviderConfigurationItems0InternalAccessItems0]
+
     unusedAccess?: [AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecForProviderConfigurationItems0UnusedAccessItems0]
+
+
+schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecForProviderConfigurationItems0InternalAccessItems0:
+    r"""
+    accessanalyzer aws upbound io v1beta1 analyzer spec for provider configuration items0 internal access items0
+
+    Attributes
+    ----------
+    analysisRule : [AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecForProviderConfigurationItems0InternalAccessItems0AnalysisRuleItems0], default is Undefined, optional
+        Information about analysis rules for the internal access analyzer. These rules determine which resources and access patterns will be analyzed. See analysis_rule Block for Internal Access Analyzer for details.
+    """
+
+
+    analysisRule?: [AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecForProviderConfigurationItems0InternalAccessItems0AnalysisRuleItems0]
+
+
+schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecForProviderConfigurationItems0InternalAccessItems0AnalysisRuleItems0:
+    r"""
+    accessanalyzer aws upbound io v1beta1 analyzer spec for provider configuration items0 internal access items0 analysis rule items0
+
+    Attributes
+    ----------
+    inclusion : [AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecForProviderConfigurationItems0InternalAccessItems0AnalysisRuleItems0InclusionItems0], default is Undefined, optional
+        List of rules for the internal access analyzer containing criteria to include in analysis. Only resources that meet the rule criteria will generate findings. See inclusion Block for details.
+    """
+
+
+    inclusion?: [AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecForProviderConfigurationItems0InternalAccessItems0AnalysisRuleItems0InclusionItems0]
+
+
+schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecForProviderConfigurationItems0InternalAccessItems0AnalysisRuleItems0InclusionItems0:
+    r"""
+    accessanalyzer aws upbound io v1beta1 analyzer spec for provider configuration items0 internal access items0 analysis rule items0 inclusion items0
+
+    Attributes
+    ----------
+    accountIds : [str], default is Undefined, optional
+        List of AWS account IDs to apply to the internal access analysis rule criteria. Account IDs can only be applied to the analysis rule criteria for organization-level analyzers.
+    resourceArns : [str], default is Undefined, optional
+        List of resource ARNs to apply to the internal access analysis rule criteria. The analyzer will only generate findings for resources that match these ARNs.
+    resourceTypes : [str], default is Undefined, optional
+        List of resource types to apply to the internal access analysis rule criteria. The analyzer will only generate findings for resources of these types. Refer to InternalAccessAnalysisRuleCriteria in the AWS IAM Access Analyzer API Reference for valid values.
+    """
+
+
+    accountIds?: [str]
+
+    resourceArns?: [str]
+
+    resourceTypes?: [str]
 
 
 schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecForProviderConfigurationItems0UnusedAccessItems0:
@@ -134,12 +185,48 @@ schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecForProviderConfigurationItem
 
     Attributes
     ----------
+    analysisRule : [AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecForProviderConfigurationItems0UnusedAccessItems0AnalysisRuleItems0], default is Undefined, optional
+        Information about analysis rules for the analyzer. Analysis rules determine which entities will generate findings based on the criteria you define when you create the rule. See analysis_rule Block for Unused Access Analyzer for details.
     unusedAccessAge : float, default is Undefined, optional
-        The specified access age in days for which to generate findings for unused access.
+        Specified access age in days for which to generate findings for unused access.
     """
 
 
+    analysisRule?: [AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecForProviderConfigurationItems0UnusedAccessItems0AnalysisRuleItems0]
+
     unusedAccessAge?: float
+
+
+schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecForProviderConfigurationItems0UnusedAccessItems0AnalysisRuleItems0:
+    r"""
+    accessanalyzer aws upbound io v1beta1 analyzer spec for provider configuration items0 unused access items0 analysis rule items0
+
+    Attributes
+    ----------
+    exclusion : [AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecForProviderConfigurationItems0UnusedAccessItems0AnalysisRuleItems0ExclusionItems0], default is Undefined, optional
+        List of rules for the analyzer containing criteria to exclude from analysis. Entities that meet the rule criteria will not generate findings. See exclusion Block for details.
+    """
+
+
+    exclusion?: [AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecForProviderConfigurationItems0UnusedAccessItems0AnalysisRuleItems0ExclusionItems0]
+
+
+schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecForProviderConfigurationItems0UnusedAccessItems0AnalysisRuleItems0ExclusionItems0:
+    r"""
+    accessanalyzer aws upbound io v1beta1 analyzer spec for provider configuration items0 unused access items0 analysis rule items0 exclusion items0
+
+    Attributes
+    ----------
+    accountIds : [str], default is Undefined, optional
+        List of AWS account IDs to apply to the analysis rule criteria. The accounts cannot include the organization analyzer owner account. Account IDs can only be applied to the analysis rule criteria for organization-level analyzers.
+    resourceTags : [{str:str}], default is Undefined, optional
+        List of key-value pairs for resource tags to exclude from the analysis.
+    """
+
+
+    accountIds?: [str]
+
+    resourceTags?: [{str:str}]
 
 
 schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecInitProvider:
@@ -158,11 +245,11 @@ schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecInitProvider:
     Attributes
     ----------
     configuration : [AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecInitProviderConfigurationItems0], default is Undefined, optional
-        A block that specifies the configuration of the analyzer. Documented below
+        A block that specifies the configuration of the analyzer. See configuration Block for details.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     $type : str, default is Undefined, optional
-        Type of Analyzer. Valid values are ACCOUNT, ORGANIZATION, ACCOUNT_UNUSED_ACCESS , ORGANIZATION_UNUSED_ACCESS. Defaults to ACCOUNT.
+        Type that represents the zone of trust or scope for the analyzer. Valid values are ACCOUNT, ACCOUNT_INTERNAL_ACCESS, ACCOUNT_UNUSED_ACCESS, ORGANIZATION, ORGANIZATION_INTERNAL_ACCESS, ORGANIZATION_UNUSED_ACCESS. Defaults to ACCOUNT.
     """
 
 
@@ -179,12 +266,66 @@ schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecInitProviderConfigurationIte
 
     Attributes
     ----------
+    internalAccess : [AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecInitProviderConfigurationItems0InternalAccessItems0], default is Undefined, optional
+        Specifies the configuration of an internal access analyzer for an AWS organization or account. This configuration determines how the analyzer evaluates access within your AWS environment. See internal_access Block for details.
     unusedAccess : [AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecInitProviderConfigurationItems0UnusedAccessItems0], default is Undefined, optional
-        A block that specifies the configuration of an unused access analyzer for an AWS organization or account. Documented below
+        Specifies the configuration of an unused access analyzer for an AWS organization or account. See unused_access Block for details.
     """
 
 
+    internalAccess?: [AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecInitProviderConfigurationItems0InternalAccessItems0]
+
     unusedAccess?: [AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecInitProviderConfigurationItems0UnusedAccessItems0]
+
+
+schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecInitProviderConfigurationItems0InternalAccessItems0:
+    r"""
+    accessanalyzer aws upbound io v1beta1 analyzer spec init provider configuration items0 internal access items0
+
+    Attributes
+    ----------
+    analysisRule : [AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecInitProviderConfigurationItems0InternalAccessItems0AnalysisRuleItems0], default is Undefined, optional
+        Information about analysis rules for the internal access analyzer. These rules determine which resources and access patterns will be analyzed. See analysis_rule Block for Internal Access Analyzer for details.
+    """
+
+
+    analysisRule?: [AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecInitProviderConfigurationItems0InternalAccessItems0AnalysisRuleItems0]
+
+
+schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecInitProviderConfigurationItems0InternalAccessItems0AnalysisRuleItems0:
+    r"""
+    accessanalyzer aws upbound io v1beta1 analyzer spec init provider configuration items0 internal access items0 analysis rule items0
+
+    Attributes
+    ----------
+    inclusion : [AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecInitProviderConfigurationItems0InternalAccessItems0AnalysisRuleItems0InclusionItems0], default is Undefined, optional
+        List of rules for the internal access analyzer containing criteria to include in analysis. Only resources that meet the rule criteria will generate findings. See inclusion Block for details.
+    """
+
+
+    inclusion?: [AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecInitProviderConfigurationItems0InternalAccessItems0AnalysisRuleItems0InclusionItems0]
+
+
+schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecInitProviderConfigurationItems0InternalAccessItems0AnalysisRuleItems0InclusionItems0:
+    r"""
+    accessanalyzer aws upbound io v1beta1 analyzer spec init provider configuration items0 internal access items0 analysis rule items0 inclusion items0
+
+    Attributes
+    ----------
+    accountIds : [str], default is Undefined, optional
+        List of AWS account IDs to apply to the internal access analysis rule criteria. Account IDs can only be applied to the analysis rule criteria for organization-level analyzers.
+    resourceArns : [str], default is Undefined, optional
+        List of resource ARNs to apply to the internal access analysis rule criteria. The analyzer will only generate findings for resources that match these ARNs.
+    resourceTypes : [str], default is Undefined, optional
+        List of resource types to apply to the internal access analysis rule criteria. The analyzer will only generate findings for resources of these types. Refer to InternalAccessAnalysisRuleCriteria in the AWS IAM Access Analyzer API Reference for valid values.
+    """
+
+
+    accountIds?: [str]
+
+    resourceArns?: [str]
+
+    resourceTypes?: [str]
 
 
 schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecInitProviderConfigurationItems0UnusedAccessItems0:
@@ -193,12 +334,48 @@ schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecInitProviderConfigurationIte
 
     Attributes
     ----------
+    analysisRule : [AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecInitProviderConfigurationItems0UnusedAccessItems0AnalysisRuleItems0], default is Undefined, optional
+        Information about analysis rules for the analyzer. Analysis rules determine which entities will generate findings based on the criteria you define when you create the rule. See analysis_rule Block for Unused Access Analyzer for details.
     unusedAccessAge : float, default is Undefined, optional
-        The specified access age in days for which to generate findings for unused access.
+        Specified access age in days for which to generate findings for unused access.
     """
 
 
+    analysisRule?: [AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecInitProviderConfigurationItems0UnusedAccessItems0AnalysisRuleItems0]
+
     unusedAccessAge?: float
+
+
+schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecInitProviderConfigurationItems0UnusedAccessItems0AnalysisRuleItems0:
+    r"""
+    accessanalyzer aws upbound io v1beta1 analyzer spec init provider configuration items0 unused access items0 analysis rule items0
+
+    Attributes
+    ----------
+    exclusion : [AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecInitProviderConfigurationItems0UnusedAccessItems0AnalysisRuleItems0ExclusionItems0], default is Undefined, optional
+        List of rules for the analyzer containing criteria to exclude from analysis. Entities that meet the rule criteria will not generate findings. See exclusion Block for details.
+    """
+
+
+    exclusion?: [AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecInitProviderConfigurationItems0UnusedAccessItems0AnalysisRuleItems0ExclusionItems0]
+
+
+schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecInitProviderConfigurationItems0UnusedAccessItems0AnalysisRuleItems0ExclusionItems0:
+    r"""
+    accessanalyzer aws upbound io v1beta1 analyzer spec init provider configuration items0 unused access items0 analysis rule items0 exclusion items0
+
+    Attributes
+    ----------
+    accountIds : [str], default is Undefined, optional
+        List of AWS account IDs to apply to the analysis rule criteria. The accounts cannot include the organization analyzer owner account. Account IDs can only be applied to the analysis rule criteria for organization-level analyzers.
+    resourceTags : [{str:str}], default is Undefined, optional
+        List of key-value pairs for resource tags to exclude from the analysis.
+    """
+
+
+    accountIds?: [str]
+
+    resourceTags?: [{str:str}]
 
 
 schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecProviderConfigRef:
@@ -245,112 +422,12 @@ schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -399,15 +476,18 @@ schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerStatusAtProvider:
     arn : str, default is Undefined, optional
         ARN of the Analyzer.
     configuration : [AccessanalyzerAwsUpboundIoV1beta1AnalyzerStatusAtProviderConfigurationItems0], default is Undefined, optional
-        A block that specifies the configuration of the analyzer. Documented below
+        A block that specifies the configuration of the analyzer. See configuration Block for details.
     id : str, default is Undefined, optional
-        Analyzer name.
+        Name of the analyzer.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
         Map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     $type : str, default is Undefined, optional
-        Type of Analyzer. Valid values are ACCOUNT, ORGANIZATION, ACCOUNT_UNUSED_ACCESS , ORGANIZATION_UNUSED_ACCESS. Defaults to ACCOUNT.
+        Type that represents the zone of trust or scope for the analyzer. Valid values are ACCOUNT, ACCOUNT_INTERNAL_ACCESS, ACCOUNT_UNUSED_ACCESS, ORGANIZATION, ORGANIZATION_INTERNAL_ACCESS, ORGANIZATION_UNUSED_ACCESS. Defaults to ACCOUNT.
     """
 
 
@@ -416,6 +496,8 @@ schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerStatusAtProvider:
     configuration?: [AccessanalyzerAwsUpboundIoV1beta1AnalyzerStatusAtProviderConfigurationItems0]
 
     id?: str
+
+    region?: str
 
     tags?: {str:str}
 
@@ -430,12 +512,66 @@ schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerStatusAtProviderConfigurationIte
 
     Attributes
     ----------
+    internalAccess : [AccessanalyzerAwsUpboundIoV1beta1AnalyzerStatusAtProviderConfigurationItems0InternalAccessItems0], default is Undefined, optional
+        Specifies the configuration of an internal access analyzer for an AWS organization or account. This configuration determines how the analyzer evaluates access within your AWS environment. See internal_access Block for details.
     unusedAccess : [AccessanalyzerAwsUpboundIoV1beta1AnalyzerStatusAtProviderConfigurationItems0UnusedAccessItems0], default is Undefined, optional
-        A block that specifies the configuration of an unused access analyzer for an AWS organization or account. Documented below
+        Specifies the configuration of an unused access analyzer for an AWS organization or account. See unused_access Block for details.
     """
 
 
+    internalAccess?: [AccessanalyzerAwsUpboundIoV1beta1AnalyzerStatusAtProviderConfigurationItems0InternalAccessItems0]
+
     unusedAccess?: [AccessanalyzerAwsUpboundIoV1beta1AnalyzerStatusAtProviderConfigurationItems0UnusedAccessItems0]
+
+
+schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerStatusAtProviderConfigurationItems0InternalAccessItems0:
+    r"""
+    accessanalyzer aws upbound io v1beta1 analyzer status at provider configuration items0 internal access items0
+
+    Attributes
+    ----------
+    analysisRule : [AccessanalyzerAwsUpboundIoV1beta1AnalyzerStatusAtProviderConfigurationItems0InternalAccessItems0AnalysisRuleItems0], default is Undefined, optional
+        Information about analysis rules for the internal access analyzer. These rules determine which resources and access patterns will be analyzed. See analysis_rule Block for Internal Access Analyzer for details.
+    """
+
+
+    analysisRule?: [AccessanalyzerAwsUpboundIoV1beta1AnalyzerStatusAtProviderConfigurationItems0InternalAccessItems0AnalysisRuleItems0]
+
+
+schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerStatusAtProviderConfigurationItems0InternalAccessItems0AnalysisRuleItems0:
+    r"""
+    accessanalyzer aws upbound io v1beta1 analyzer status at provider configuration items0 internal access items0 analysis rule items0
+
+    Attributes
+    ----------
+    inclusion : [AccessanalyzerAwsUpboundIoV1beta1AnalyzerStatusAtProviderConfigurationItems0InternalAccessItems0AnalysisRuleItems0InclusionItems0], default is Undefined, optional
+        List of rules for the internal access analyzer containing criteria to include in analysis. Only resources that meet the rule criteria will generate findings. See inclusion Block for details.
+    """
+
+
+    inclusion?: [AccessanalyzerAwsUpboundIoV1beta1AnalyzerStatusAtProviderConfigurationItems0InternalAccessItems0AnalysisRuleItems0InclusionItems0]
+
+
+schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerStatusAtProviderConfigurationItems0InternalAccessItems0AnalysisRuleItems0InclusionItems0:
+    r"""
+    accessanalyzer aws upbound io v1beta1 analyzer status at provider configuration items0 internal access items0 analysis rule items0 inclusion items0
+
+    Attributes
+    ----------
+    accountIds : [str], default is Undefined, optional
+        List of AWS account IDs to apply to the internal access analysis rule criteria. Account IDs can only be applied to the analysis rule criteria for organization-level analyzers.
+    resourceArns : [str], default is Undefined, optional
+        List of resource ARNs to apply to the internal access analysis rule criteria. The analyzer will only generate findings for resources that match these ARNs.
+    resourceTypes : [str], default is Undefined, optional
+        List of resource types to apply to the internal access analysis rule criteria. The analyzer will only generate findings for resources of these types. Refer to InternalAccessAnalysisRuleCriteria in the AWS IAM Access Analyzer API Reference for valid values.
+    """
+
+
+    accountIds?: [str]
+
+    resourceArns?: [str]
+
+    resourceTypes?: [str]
 
 
 schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerStatusAtProviderConfigurationItems0UnusedAccessItems0:
@@ -444,12 +580,48 @@ schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerStatusAtProviderConfigurationIte
 
     Attributes
     ----------
+    analysisRule : [AccessanalyzerAwsUpboundIoV1beta1AnalyzerStatusAtProviderConfigurationItems0UnusedAccessItems0AnalysisRuleItems0], default is Undefined, optional
+        Information about analysis rules for the analyzer. Analysis rules determine which entities will generate findings based on the criteria you define when you create the rule. See analysis_rule Block for Unused Access Analyzer for details.
     unusedAccessAge : float, default is Undefined, optional
-        The specified access age in days for which to generate findings for unused access.
+        Specified access age in days for which to generate findings for unused access.
     """
 
 
+    analysisRule?: [AccessanalyzerAwsUpboundIoV1beta1AnalyzerStatusAtProviderConfigurationItems0UnusedAccessItems0AnalysisRuleItems0]
+
     unusedAccessAge?: float
+
+
+schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerStatusAtProviderConfigurationItems0UnusedAccessItems0AnalysisRuleItems0:
+    r"""
+    accessanalyzer aws upbound io v1beta1 analyzer status at provider configuration items0 unused access items0 analysis rule items0
+
+    Attributes
+    ----------
+    exclusion : [AccessanalyzerAwsUpboundIoV1beta1AnalyzerStatusAtProviderConfigurationItems0UnusedAccessItems0AnalysisRuleItems0ExclusionItems0], default is Undefined, optional
+        List of rules for the analyzer containing criteria to exclude from analysis. Entities that meet the rule criteria will not generate findings. See exclusion Block for details.
+    """
+
+
+    exclusion?: [AccessanalyzerAwsUpboundIoV1beta1AnalyzerStatusAtProviderConfigurationItems0UnusedAccessItems0AnalysisRuleItems0ExclusionItems0]
+
+
+schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerStatusAtProviderConfigurationItems0UnusedAccessItems0AnalysisRuleItems0ExclusionItems0:
+    r"""
+    accessanalyzer aws upbound io v1beta1 analyzer status at provider configuration items0 unused access items0 analysis rule items0 exclusion items0
+
+    Attributes
+    ----------
+    accountIds : [str], default is Undefined, optional
+        List of AWS account IDs to apply to the analysis rule criteria. The accounts cannot include the organization analyzer owner account. Account IDs can only be applied to the analysis rule criteria for organization-level analyzers.
+    resourceTags : [{str:str}], default is Undefined, optional
+        List of key-value pairs for resource tags to exclude from the analysis.
+    """
+
+
+    accountIds?: [str]
+
+    resourceTags?: [{str:str}]
 
 
 schema AccessanalyzerAwsUpboundIoV1beta1AnalyzerStatusConditionsItems0:

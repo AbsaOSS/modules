@@ -66,8 +66,6 @@ schema AppsyncAwsUpboundIoV1beta1DatasourceSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : AppsyncAwsUpboundIoV1beta1DatasourceSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : AppsyncAwsUpboundIoV1beta1DatasourceSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : AppsyncAwsUpboundIoV1beta1DatasourceSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema AppsyncAwsUpboundIoV1beta1DatasourceSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: AppsyncAwsUpboundIoV1beta1DatasourceSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: AppsyncAwsUpboundIoV1beta1DatasourceSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: AppsyncAwsUpboundIoV1beta1DatasourceSpecWriteConnectionSecretToRef
 
@@ -103,22 +99,22 @@ schema AppsyncAwsUpboundIoV1beta1DatasourceSpecForProvider:
     description : str, default is Undefined, optional
         Description of the data source.
     dynamodbConfig : [AppsyncAwsUpboundIoV1beta1DatasourceSpecForProviderDynamodbConfigItems0], default is Undefined, optional
-        DynamoDB settings. See DynamoDB Config
+        DynamoDB settings. See dynamodb_config Block for details.
     elasticsearchConfig : [AppsyncAwsUpboundIoV1beta1DatasourceSpecForProviderElasticsearchConfigItems0], default is Undefined, optional
-        Amazon Elasticsearch settings. See ElasticSearch Config
+        Amazon Elasticsearch settings. See elasticsearch_config Block for details.
     eventBridgeConfig : [AppsyncAwsUpboundIoV1beta1DatasourceSpecForProviderEventBridgeConfigItems0], default is Undefined, optional
-        AWS EventBridge settings. See Event Bridge Config
+        AWS EventBridge settings. See event_bridge_config Block for details.
     httpConfig : [AppsyncAwsUpboundIoV1beta1DatasourceSpecForProviderHTTPConfigItems0], default is Undefined, optional
-        HTTP settings. See HTTP Config
+        HTTP settings. See http_config Block for details.
     lambdaConfig : [AppsyncAwsUpboundIoV1beta1DatasourceSpecForProviderLambdaConfigItems0], default is Undefined, optional
-        AWS Lambda settings. See Lambda Config
+        AWS Lambda settings. See lambda_config Block for details.
     opensearchserviceConfig : [AppsyncAwsUpboundIoV1beta1DatasourceSpecForProviderOpensearchserviceConfigItems0], default is Undefined, optional
-        Amazon OpenSearch Service settings. See OpenSearch Service Config
+        Amazon OpenSearch Service settings. See opensearchservice_config Block for details.
     region : str, default is Undefined, required
-        AWS region of the DynamoDB table. Defaults to current region.
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     relationalDatabaseConfig : [AppsyncAwsUpboundIoV1beta1DatasourceSpecForProviderRelationalDatabaseConfigItems0], default is Undefined, optional
-        AWS RDS settings. See Relational Database Config
+        AWS RDS settings. See relational_database_config Block for details.
     serviceRoleArn : str, default is Undefined, optional
         IAM service role ARN for the data source. Required if type is specified as AWS_LAMBDA, AMAZON_DYNAMODB, AMAZON_ELASTICSEARCH, AMAZON_EVENTBRIDGE, or AMAZON_OPENSEARCH_SERVICE.
     serviceRoleArnRef : AppsyncAwsUpboundIoV1beta1DatasourceSpecForProviderServiceRoleArnRef, default is Undefined, optional
@@ -259,7 +255,7 @@ schema AppsyncAwsUpboundIoV1beta1DatasourceSpecForProviderDynamodbConfigItems0:
     Attributes
     ----------
     deltaSyncConfig : [AppsyncAwsUpboundIoV1beta1DatasourceSpecForProviderDynamodbConfigItems0DeltaSyncConfigItems0], default is Undefined, optional
-        The DeltaSyncConfig for a versioned data source. See Delta Sync Config
+        The DeltaSyncConfig for a versioned data source. See delta_sync_config Block for details.
     region : str, default is Undefined, optional
         AWS region of the DynamoDB table. Defaults to current region.
     tableName : str, default is Undefined, optional
@@ -410,7 +406,7 @@ schema AppsyncAwsUpboundIoV1beta1DatasourceSpecForProviderElasticsearchConfigIte
     endpoint : str, default is Undefined, optional
         HTTP endpoint of the Elasticsearch domain.
     region : str, default is Undefined, optional
-        AWS region of the DynamoDB table. Defaults to current region.
+        AWS region of Elasticsearch domain. Defaults to current region.
     """
 
 
@@ -440,9 +436,9 @@ schema AppsyncAwsUpboundIoV1beta1DatasourceSpecForProviderHTTPConfigItems0:
     Attributes
     ----------
     authorizationConfig : [AppsyncAwsUpboundIoV1beta1DatasourceSpecForProviderHTTPConfigItems0AuthorizationConfigItems0], default is Undefined, optional
-        Authorization configuration in case the HTTP endpoint requires authorization. See Authorization Config.
+        Authorization configuration in case the HTTP endpoint requires authorization. See authorization_config Block for details.
     endpoint : str, default is Undefined, optional
-        HTTP endpoint of the Elasticsearch domain.
+        HTTP URL.
     """
 
 
@@ -460,7 +456,7 @@ schema AppsyncAwsUpboundIoV1beta1DatasourceSpecForProviderHTTPConfigItems0Author
     authorizationType : str, default is Undefined, optional
         Authorization type that the HTTP endpoint requires. Default values is AWS_IAM.
     awsIamConfig : [AppsyncAwsUpboundIoV1beta1DatasourceSpecForProviderHTTPConfigItems0AuthorizationConfigItems0AwsIamConfigItems0], default is Undefined, optional
-        Identity and Access Management (IAM) settings. See AWS IAM Config.
+        Identity and Access Management (IAM) settings. See aws_iam_config Block for details.
     """
 
 
@@ -508,9 +504,9 @@ schema AppsyncAwsUpboundIoV1beta1DatasourceSpecForProviderOpensearchserviceConfi
     Attributes
     ----------
     endpoint : str, default is Undefined, optional
-        HTTP endpoint of the Elasticsearch domain.
+        HTTP endpoint of the OpenSearch domain.
     region : str, default is Undefined, optional
-        AWS region of the DynamoDB table. Defaults to current region.
+        AWS region of the OpenSearch domain. Defaults to current region.
     """
 
 
@@ -526,7 +522,7 @@ schema AppsyncAwsUpboundIoV1beta1DatasourceSpecForProviderRelationalDatabaseConf
     Attributes
     ----------
     httpEndpointConfig : [AppsyncAwsUpboundIoV1beta1DatasourceSpecForProviderRelationalDatabaseConfigItems0HTTPEndpointConfigItems0], default is Undefined, optional
-        Amazon RDS HTTP endpoint configuration. See HTTP Endpoint Config.
+        Amazon RDS HTTP endpoint configuration. See http_endpoint_config Block for details.
     sourceType : str, default is Undefined, optional
         Source type for the relational database. Valid values: RDS_HTTP_ENDPOINT.
     """
@@ -550,7 +546,7 @@ schema AppsyncAwsUpboundIoV1beta1DatasourceSpecForProviderRelationalDatabaseConf
     dbClusterIdentifier : str, default is Undefined, optional
         Amazon RDS cluster identifier.
     region : str, default is Undefined, optional
-        AWS region of the DynamoDB table. Defaults to current region.
+        AWS Region for RDS HTTP endpoint. Defaults to current region.
     $schema : str, default is Undefined, optional
         Logical schema name.
     """
@@ -674,19 +670,19 @@ schema AppsyncAwsUpboundIoV1beta1DatasourceSpecInitProvider:
     description : str, default is Undefined, optional
         Description of the data source.
     dynamodbConfig : [AppsyncAwsUpboundIoV1beta1DatasourceSpecInitProviderDynamodbConfigItems0], default is Undefined, optional
-        DynamoDB settings. See DynamoDB Config
+        DynamoDB settings. See dynamodb_config Block for details.
     elasticsearchConfig : [AppsyncAwsUpboundIoV1beta1DatasourceSpecInitProviderElasticsearchConfigItems0], default is Undefined, optional
-        Amazon Elasticsearch settings. See ElasticSearch Config
+        Amazon Elasticsearch settings. See elasticsearch_config Block for details.
     eventBridgeConfig : [AppsyncAwsUpboundIoV1beta1DatasourceSpecInitProviderEventBridgeConfigItems0], default is Undefined, optional
-        AWS EventBridge settings. See Event Bridge Config
+        AWS EventBridge settings. See event_bridge_config Block for details.
     httpConfig : [AppsyncAwsUpboundIoV1beta1DatasourceSpecInitProviderHTTPConfigItems0], default is Undefined, optional
-        HTTP settings. See HTTP Config
+        HTTP settings. See http_config Block for details.
     lambdaConfig : [AppsyncAwsUpboundIoV1beta1DatasourceSpecInitProviderLambdaConfigItems0], default is Undefined, optional
-        AWS Lambda settings. See Lambda Config
+        AWS Lambda settings. See lambda_config Block for details.
     opensearchserviceConfig : [AppsyncAwsUpboundIoV1beta1DatasourceSpecInitProviderOpensearchserviceConfigItems0], default is Undefined, optional
-        Amazon OpenSearch Service settings. See OpenSearch Service Config
+        Amazon OpenSearch Service settings. See opensearchservice_config Block for details.
     relationalDatabaseConfig : [AppsyncAwsUpboundIoV1beta1DatasourceSpecInitProviderRelationalDatabaseConfigItems0], default is Undefined, optional
-        AWS RDS settings. See Relational Database Config
+        AWS RDS settings. See relational_database_config Block for details.
     serviceRoleArn : str, default is Undefined, optional
         IAM service role ARN for the data source. Required if type is specified as AWS_LAMBDA, AMAZON_DYNAMODB, AMAZON_ELASTICSEARCH, AMAZON_EVENTBRIDGE, or AMAZON_OPENSEARCH_SERVICE.
     serviceRoleArnRef : AppsyncAwsUpboundIoV1beta1DatasourceSpecInitProviderServiceRoleArnRef, default is Undefined, optional
@@ -730,7 +726,7 @@ schema AppsyncAwsUpboundIoV1beta1DatasourceSpecInitProviderDynamodbConfigItems0:
     Attributes
     ----------
     deltaSyncConfig : [AppsyncAwsUpboundIoV1beta1DatasourceSpecInitProviderDynamodbConfigItems0DeltaSyncConfigItems0], default is Undefined, optional
-        The DeltaSyncConfig for a versioned data source. See Delta Sync Config
+        The DeltaSyncConfig for a versioned data source. See delta_sync_config Block for details.
     tableName : str, default is Undefined, optional
         Name of the DynamoDB table.
     tableNameRef : AppsyncAwsUpboundIoV1beta1DatasourceSpecInitProviderDynamodbConfigItems0TableNameRef, default is Undefined, optional
@@ -903,9 +899,9 @@ schema AppsyncAwsUpboundIoV1beta1DatasourceSpecInitProviderHTTPConfigItems0:
     Attributes
     ----------
     authorizationConfig : [AppsyncAwsUpboundIoV1beta1DatasourceSpecInitProviderHTTPConfigItems0AuthorizationConfigItems0], default is Undefined, optional
-        Authorization configuration in case the HTTP endpoint requires authorization. See Authorization Config.
+        Authorization configuration in case the HTTP endpoint requires authorization. See authorization_config Block for details.
     endpoint : str, default is Undefined, optional
-        HTTP endpoint of the Elasticsearch domain.
+        HTTP URL.
     """
 
 
@@ -923,7 +919,7 @@ schema AppsyncAwsUpboundIoV1beta1DatasourceSpecInitProviderHTTPConfigItems0Autho
     authorizationType : str, default is Undefined, optional
         Authorization type that the HTTP endpoint requires. Default values is AWS_IAM.
     awsIamConfig : [AppsyncAwsUpboundIoV1beta1DatasourceSpecInitProviderHTTPConfigItems0AuthorizationConfigItems0AwsIamConfigItems0], default is Undefined, optional
-        Identity and Access Management (IAM) settings. See AWS IAM Config.
+        Identity and Access Management (IAM) settings. See aws_iam_config Block for details.
     """
 
 
@@ -971,7 +967,7 @@ schema AppsyncAwsUpboundIoV1beta1DatasourceSpecInitProviderOpensearchserviceConf
     Attributes
     ----------
     endpoint : str, default is Undefined, optional
-        HTTP endpoint of the Elasticsearch domain.
+        HTTP endpoint of the OpenSearch domain.
     """
 
 
@@ -985,7 +981,7 @@ schema AppsyncAwsUpboundIoV1beta1DatasourceSpecInitProviderRelationalDatabaseCon
     Attributes
     ----------
     httpEndpointConfig : [AppsyncAwsUpboundIoV1beta1DatasourceSpecInitProviderRelationalDatabaseConfigItems0HTTPEndpointConfigItems0], default is Undefined, optional
-        Amazon RDS HTTP endpoint configuration. See HTTP Endpoint Config.
+        Amazon RDS HTTP endpoint configuration. See http_endpoint_config Block for details.
     sourceType : str, default is Undefined, optional
         Source type for the relational database. Valid values: RDS_HTTP_ENDPOINT.
     """
@@ -1155,112 +1151,12 @@ schema AppsyncAwsUpboundIoV1beta1DatasourceSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema AppsyncAwsUpboundIoV1beta1DatasourceSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : AppsyncAwsUpboundIoV1beta1DatasourceSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : AppsyncAwsUpboundIoV1beta1DatasourceSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: AppsyncAwsUpboundIoV1beta1DatasourceSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: AppsyncAwsUpboundIoV1beta1DatasourceSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema AppsyncAwsUpboundIoV1beta1DatasourceSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : AppsyncAwsUpboundIoV1beta1DatasourceSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: AppsyncAwsUpboundIoV1beta1DatasourceSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema AppsyncAwsUpboundIoV1beta1DatasourceSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema AppsyncAwsUpboundIoV1beta1DatasourceSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema AppsyncAwsUpboundIoV1beta1DatasourceSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1313,21 +1209,24 @@ schema AppsyncAwsUpboundIoV1beta1DatasourceStatusAtProvider:
     description : str, default is Undefined, optional
         Description of the data source.
     dynamodbConfig : [AppsyncAwsUpboundIoV1beta1DatasourceStatusAtProviderDynamodbConfigItems0], default is Undefined, optional
-        DynamoDB settings. See DynamoDB Config
+        DynamoDB settings. See dynamodb_config Block for details.
     elasticsearchConfig : [AppsyncAwsUpboundIoV1beta1DatasourceStatusAtProviderElasticsearchConfigItems0], default is Undefined, optional
-        Amazon Elasticsearch settings. See ElasticSearch Config
+        Amazon Elasticsearch settings. See elasticsearch_config Block for details.
     eventBridgeConfig : [AppsyncAwsUpboundIoV1beta1DatasourceStatusAtProviderEventBridgeConfigItems0], default is Undefined, optional
-        AWS EventBridge settings. See Event Bridge Config
+        AWS EventBridge settings. See event_bridge_config Block for details.
     httpConfig : [AppsyncAwsUpboundIoV1beta1DatasourceStatusAtProviderHTTPConfigItems0], default is Undefined, optional
-        HTTP settings. See HTTP Config
+        HTTP settings. See http_config Block for details.
     id : str, default is Undefined, optional
         id
     lambdaConfig : [AppsyncAwsUpboundIoV1beta1DatasourceStatusAtProviderLambdaConfigItems0], default is Undefined, optional
-        AWS Lambda settings. See Lambda Config
+        AWS Lambda settings. See lambda_config Block for details.
     opensearchserviceConfig : [AppsyncAwsUpboundIoV1beta1DatasourceStatusAtProviderOpensearchserviceConfigItems0], default is Undefined, optional
-        Amazon OpenSearch Service settings. See OpenSearch Service Config
+        Amazon OpenSearch Service settings. See opensearchservice_config Block for details.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     relationalDatabaseConfig : [AppsyncAwsUpboundIoV1beta1DatasourceStatusAtProviderRelationalDatabaseConfigItems0], default is Undefined, optional
-        AWS RDS settings. See Relational Database Config
+        AWS RDS settings. See relational_database_config Block for details.
     serviceRoleArn : str, default is Undefined, optional
         IAM service role ARN for the data source. Required if type is specified as AWS_LAMBDA, AMAZON_DYNAMODB, AMAZON_ELASTICSEARCH, AMAZON_EVENTBRIDGE, or AMAZON_OPENSEARCH_SERVICE.
     $type : str, default is Undefined, optional
@@ -1355,6 +1254,8 @@ schema AppsyncAwsUpboundIoV1beta1DatasourceStatusAtProvider:
 
     opensearchserviceConfig?: [AppsyncAwsUpboundIoV1beta1DatasourceStatusAtProviderOpensearchserviceConfigItems0]
 
+    region?: str
+
     relationalDatabaseConfig?: [AppsyncAwsUpboundIoV1beta1DatasourceStatusAtProviderRelationalDatabaseConfigItems0]
 
     serviceRoleArn?: str
@@ -1369,7 +1270,7 @@ schema AppsyncAwsUpboundIoV1beta1DatasourceStatusAtProviderDynamodbConfigItems0:
     Attributes
     ----------
     deltaSyncConfig : [AppsyncAwsUpboundIoV1beta1DatasourceStatusAtProviderDynamodbConfigItems0DeltaSyncConfigItems0], default is Undefined, optional
-        The DeltaSyncConfig for a versioned data source. See Delta Sync Config
+        The DeltaSyncConfig for a versioned data source. See delta_sync_config Block for details.
     region : str, default is Undefined, optional
         AWS region of the DynamoDB table. Defaults to current region.
     tableName : str, default is Undefined, optional
@@ -1423,7 +1324,7 @@ schema AppsyncAwsUpboundIoV1beta1DatasourceStatusAtProviderElasticsearchConfigIt
     endpoint : str, default is Undefined, optional
         HTTP endpoint of the Elasticsearch domain.
     region : str, default is Undefined, optional
-        AWS region of the DynamoDB table. Defaults to current region.
+        AWS region of Elasticsearch domain. Defaults to current region.
     """
 
 
@@ -1453,9 +1354,9 @@ schema AppsyncAwsUpboundIoV1beta1DatasourceStatusAtProviderHTTPConfigItems0:
     Attributes
     ----------
     authorizationConfig : [AppsyncAwsUpboundIoV1beta1DatasourceStatusAtProviderHTTPConfigItems0AuthorizationConfigItems0], default is Undefined, optional
-        Authorization configuration in case the HTTP endpoint requires authorization. See Authorization Config.
+        Authorization configuration in case the HTTP endpoint requires authorization. See authorization_config Block for details.
     endpoint : str, default is Undefined, optional
-        HTTP endpoint of the Elasticsearch domain.
+        HTTP URL.
     """
 
 
@@ -1473,7 +1374,7 @@ schema AppsyncAwsUpboundIoV1beta1DatasourceStatusAtProviderHTTPConfigItems0Autho
     authorizationType : str, default is Undefined, optional
         Authorization type that the HTTP endpoint requires. Default values is AWS_IAM.
     awsIamConfig : [AppsyncAwsUpboundIoV1beta1DatasourceStatusAtProviderHTTPConfigItems0AuthorizationConfigItems0AwsIamConfigItems0], default is Undefined, optional
-        Identity and Access Management (IAM) settings. See AWS IAM Config.
+        Identity and Access Management (IAM) settings. See aws_iam_config Block for details.
     """
 
 
@@ -1521,9 +1422,9 @@ schema AppsyncAwsUpboundIoV1beta1DatasourceStatusAtProviderOpensearchserviceConf
     Attributes
     ----------
     endpoint : str, default is Undefined, optional
-        HTTP endpoint of the Elasticsearch domain.
+        HTTP endpoint of the OpenSearch domain.
     region : str, default is Undefined, optional
-        AWS region of the DynamoDB table. Defaults to current region.
+        AWS region of the OpenSearch domain. Defaults to current region.
     """
 
 
@@ -1539,7 +1440,7 @@ schema AppsyncAwsUpboundIoV1beta1DatasourceStatusAtProviderRelationalDatabaseCon
     Attributes
     ----------
     httpEndpointConfig : [AppsyncAwsUpboundIoV1beta1DatasourceStatusAtProviderRelationalDatabaseConfigItems0HTTPEndpointConfigItems0], default is Undefined, optional
-        Amazon RDS HTTP endpoint configuration. See HTTP Endpoint Config.
+        Amazon RDS HTTP endpoint configuration. See http_endpoint_config Block for details.
     sourceType : str, default is Undefined, optional
         Source type for the relational database. Valid values: RDS_HTTP_ENDPOINT.
     """
@@ -1563,7 +1464,7 @@ schema AppsyncAwsUpboundIoV1beta1DatasourceStatusAtProviderRelationalDatabaseCon
     dbClusterIdentifier : str, default is Undefined, optional
         Amazon RDS cluster identifier.
     region : str, default is Undefined, optional
-        AWS region of the DynamoDB table. Defaults to current region.
+        AWS Region for RDS HTTP endpoint. Defaults to current region.
     $schema : str, default is Undefined, optional
         Logical schema name.
     """

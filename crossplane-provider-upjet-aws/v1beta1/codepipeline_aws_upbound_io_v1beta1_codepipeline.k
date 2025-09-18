@@ -66,8 +66,6 @@ schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : CodepipelineAwsUpboundIoV1beta1CodepipelineSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : CodepipelineAwsUpboundIoV1beta1CodepipelineSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : CodepipelineAwsUpboundIoV1beta1CodepipelineSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: CodepipelineAwsUpboundIoV1beta1CodepipelineSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: CodepipelineAwsUpboundIoV1beta1CodepipelineSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: CodepipelineAwsUpboundIoV1beta1CodepipelineSpecWriteConnectionSecretToRef
 
@@ -101,7 +97,7 @@ schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProvider:
     pipelineType : str, default is Undefined, optional
         Type of the pipeline. Possible values are: V1 and V2. Default value is V1.
     region : str, default is Undefined, required
-        The region in which to run the action.
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     roleArn : str, default is Undefined, optional
         A service role Amazon Resource Name (ARN) that grants AWS CodePipeline permission to make calls to AWS services on your behalf.
@@ -381,14 +377,26 @@ schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0:
     ----------
     action : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0ActionItems0], default is Undefined, optional
         The action(s) to include in the stage. Defined as an action block below
+    beforeEntry : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0BeforeEntryItems0], default is Undefined, optional
+        The method to use when a stage allows entry. For example, configuring this field for conditions will allow entry to the stage when the conditions are met.
     name : str, default is Undefined, optional
         The name of the stage.
+    onFailure : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0OnFailureItems0], default is Undefined, optional
+        The method to use when a stage has not completed successfully. For example, configuring this field for rollback will roll back a failed stage automatically to the last successful pipeline execution in the stage.
+    onSuccess : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0OnSuccessItems0], default is Undefined, optional
+        The method to use when a stage has succeeded. For example, configuring this field for conditions will allow the stage to succeed when the conditions are met.
     """
 
 
     action?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0ActionItems0]
 
+    beforeEntry?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0BeforeEntryItems0]
+
     name?: str
+
+    onFailure?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0OnFailureItems0]
+
+    onSuccess?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0OnSuccessItems0]
 
 
 schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0ActionItems0:
@@ -400,7 +408,7 @@ schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0Acti
     category : str, default is Undefined, optional
         A category defines what kind of action can be taken in the stage, and constrains the provider type for the action. Possible values are Approval, Build, Deploy, Invoke, Source and Test.
     configuration : {str:str}, default is Undefined, optional
-        A map of the action declaration's configuration. Configurations options for action types and providers can be found in the Pipeline Structure Reference and Action Structure Reference documentation.
+        A map of the action declaration's configuration. Configurations options for action types and providers can be found in the Pipeline Structure Reference and Action Structure Reference documentation. Note: The DetectChanges parameter  in the configuration section causes CodePipeline to automatically start your pipeline upon new commits. Please refer to AWS Documentation for more details: https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-CodestarConnectionSource.html#action-reference-CodestarConnectionSource-config.
     inputArtifacts : [str], default is Undefined, optional
         A list of artifact names to be worked on.
     name : str, default is Undefined, optional
@@ -420,7 +428,7 @@ schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0Acti
     runOrder : float, default is Undefined, optional
         The order in which actions are run.
     timeoutInMinutes : float, default is Undefined, optional
-        timeout in minutes
+        The action timeout for the rule.
     version : str, default is Undefined, optional
         A string that identifies the action type.
     """
@@ -449,6 +457,328 @@ schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0Acti
     runOrder?: float
 
     timeoutInMinutes?: float
+
+    version?: str
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0BeforeEntryItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline spec for provider stage items0 before entry items0
+
+    Attributes
+    ----------
+    condition : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0BeforeEntryItems0ConditionItems0], default is Undefined, optional
+        The conditions that are success conditions. Defined as a condition block below.
+    """
+
+
+    condition?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0BeforeEntryItems0ConditionItems0]
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0BeforeEntryItems0ConditionItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline spec for provider stage items0 before entry items0 condition items0
+
+    Attributes
+    ----------
+    result : str, default is Undefined, optional
+        The conditions that are configured as failure conditions. Possible values are ROLLBACK,  FAIL, RETRY and SKIP.
+    $rule : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0BeforeEntryItems0ConditionItems0RuleItems0], default is Undefined, optional
+        The rules that make up the condition. Defined as a rule block below.
+    """
+
+
+    result?: str
+
+    $rule?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0BeforeEntryItems0ConditionItems0RuleItems0]
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0BeforeEntryItems0ConditionItems0RuleItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline spec for provider stage items0 before entry items0 condition items0 rule items0
+
+    Attributes
+    ----------
+    commands : [str], default is Undefined, optional
+        The shell commands to run with your commands rule in CodePipeline. All commands are supported except multi-line formats.
+    configuration : {str:str}, default is Undefined, optional
+        A map of the action declaration's configuration. Configurations options for action types and providers can be found in the Pipeline Structure Reference and Action Structure Reference documentation. Note: The DetectChanges parameter  in the configuration section causes CodePipeline to automatically start your pipeline upon new commits. Please refer to AWS Documentation for more details: https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-CodestarConnectionSource.html#action-reference-CodestarConnectionSource-config.
+    inputArtifacts : [str], default is Undefined, optional
+        A list of artifact names to be worked on.
+    name : str, default is Undefined, optional
+        The name of a pipeline-level variable.
+    region : str, default is Undefined, optional
+        The region in which to run the action.
+    roleArn : str, default is Undefined, optional
+        The ARN of the IAM service role that will perform the declared action. This is assumed through the roleArn for the pipeline.
+    ruleTypeId : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0BeforeEntryItems0ConditionItems0RuleItems0RuleTypeIDItems0], default is Undefined, optional
+        The ID for the rule type, which is made up of the combined values for category, owner, provider, and version. Defined as an rule_type_id block below.
+    timeoutInMinutes : float, default is Undefined, optional
+        The action timeout for the rule.
+    """
+
+
+    commands?: [str]
+
+    configuration?: {str:str}
+
+    inputArtifacts?: [str]
+
+    name?: str
+
+    region?: str
+
+    roleArn?: str
+
+    ruleTypeId?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0BeforeEntryItems0ConditionItems0RuleItems0RuleTypeIDItems0]
+
+    timeoutInMinutes?: float
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0BeforeEntryItems0ConditionItems0RuleItems0RuleTypeIDItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline spec for provider stage items0 before entry items0 condition items0 rule items0 rule type ID items0
+
+    Attributes
+    ----------
+    category : str, default is Undefined, optional
+        A category defines what kind of action can be taken in the stage, and constrains the provider type for the action. Possible values are Approval, Build, Deploy, Invoke, Source and Test.
+    owner : str, default is Undefined, optional
+        The creator of the action being called. Possible values are AWS, Custom and ThirdParty.
+    provider : str, default is Undefined, optional
+        The provider of the service being called by the action. Valid providers are determined by the action category. Provider names are listed in the Action Structure Reference documentation.
+    version : str, default is Undefined, optional
+        A string that identifies the action type.
+    """
+
+
+    category?: str
+
+    owner?: str
+
+    provider?: str
+
+    version?: str
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0OnFailureItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline spec for provider stage items0 on failure items0
+
+    Attributes
+    ----------
+    condition : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0OnFailureItems0ConditionItems0], default is Undefined, optional
+        The conditions that are success conditions. Defined as a condition block below.
+    result : str, default is Undefined, optional
+        The conditions that are configured as failure conditions. Possible values are ROLLBACK,  FAIL, RETRY and SKIP.
+    retryConfiguration : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0OnFailureItems0RetryConfigurationItems0], default is Undefined, optional
+        The retry configuration specifies automatic retry for a failed stage, along with the configured retry mode. Defined as a retry_configuration block below.
+    """
+
+
+    condition?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0OnFailureItems0ConditionItems0]
+
+    result?: str
+
+    retryConfiguration?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0OnFailureItems0RetryConfigurationItems0]
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0OnFailureItems0ConditionItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline spec for provider stage items0 on failure items0 condition items0
+
+    Attributes
+    ----------
+    result : str, default is Undefined, optional
+        The conditions that are configured as failure conditions. Possible values are ROLLBACK,  FAIL, RETRY and SKIP.
+    $rule : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0OnFailureItems0ConditionItems0RuleItems0], default is Undefined, optional
+        The rules that make up the condition. Defined as a rule block below.
+    """
+
+
+    result?: str
+
+    $rule?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0OnFailureItems0ConditionItems0RuleItems0]
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0OnFailureItems0ConditionItems0RuleItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline spec for provider stage items0 on failure items0 condition items0 rule items0
+
+    Attributes
+    ----------
+    commands : [str], default is Undefined, optional
+        The shell commands to run with your commands rule in CodePipeline. All commands are supported except multi-line formats.
+    configuration : {str:str}, default is Undefined, optional
+        A map of the action declaration's configuration. Configurations options for action types and providers can be found in the Pipeline Structure Reference and Action Structure Reference documentation. Note: The DetectChanges parameter  in the configuration section causes CodePipeline to automatically start your pipeline upon new commits. Please refer to AWS Documentation for more details: https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-CodestarConnectionSource.html#action-reference-CodestarConnectionSource-config.
+    inputArtifacts : [str], default is Undefined, optional
+        A list of artifact names to be worked on.
+    name : str, default is Undefined, optional
+        The name of a pipeline-level variable.
+    region : str, default is Undefined, optional
+        The region in which to run the action.
+    roleArn : str, default is Undefined, optional
+        The ARN of the IAM service role that will perform the declared action. This is assumed through the roleArn for the pipeline.
+    ruleTypeId : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0OnFailureItems0ConditionItems0RuleItems0RuleTypeIDItems0], default is Undefined, optional
+        The ID for the rule type, which is made up of the combined values for category, owner, provider, and version. Defined as an rule_type_id block below.
+    timeoutInMinutes : float, default is Undefined, optional
+        The action timeout for the rule.
+    """
+
+
+    commands?: [str]
+
+    configuration?: {str:str}
+
+    inputArtifacts?: [str]
+
+    name?: str
+
+    region?: str
+
+    roleArn?: str
+
+    ruleTypeId?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0OnFailureItems0ConditionItems0RuleItems0RuleTypeIDItems0]
+
+    timeoutInMinutes?: float
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0OnFailureItems0ConditionItems0RuleItems0RuleTypeIDItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline spec for provider stage items0 on failure items0 condition items0 rule items0 rule type ID items0
+
+    Attributes
+    ----------
+    category : str, default is Undefined, optional
+        A category defines what kind of action can be taken in the stage, and constrains the provider type for the action. Possible values are Approval, Build, Deploy, Invoke, Source and Test.
+    owner : str, default is Undefined, optional
+        The creator of the action being called. Possible values are AWS, Custom and ThirdParty.
+    provider : str, default is Undefined, optional
+        The provider of the service being called by the action. Valid providers are determined by the action category. Provider names are listed in the Action Structure Reference documentation.
+    version : str, default is Undefined, optional
+        A string that identifies the action type.
+    """
+
+
+    category?: str
+
+    owner?: str
+
+    provider?: str
+
+    version?: str
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0OnFailureItems0RetryConfigurationItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline spec for provider stage items0 on failure items0 retry configuration items0
+
+    Attributes
+    ----------
+    retryMode : str, default is Undefined, optional
+        The method that you want to configure for automatic stage retry on stage failure. You can specify to retry only failed action in the stage or all actions in the stage. Possible values are FAILED_ACTIONS and ALL_ACTIONS.
+    """
+
+
+    retryMode?: str
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0OnSuccessItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline spec for provider stage items0 on success items0
+
+    Attributes
+    ----------
+    condition : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0OnSuccessItems0ConditionItems0], default is Undefined, optional
+        The conditions that are success conditions. Defined as a condition block below.
+    """
+
+
+    condition?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0OnSuccessItems0ConditionItems0]
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0OnSuccessItems0ConditionItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline spec for provider stage items0 on success items0 condition items0
+
+    Attributes
+    ----------
+    result : str, default is Undefined, optional
+        The conditions that are configured as failure conditions. Possible values are ROLLBACK,  FAIL, RETRY and SKIP.
+    $rule : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0OnSuccessItems0ConditionItems0RuleItems0], default is Undefined, optional
+        The rules that make up the condition. Defined as a rule block below.
+    """
+
+
+    result?: str
+
+    $rule?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0OnSuccessItems0ConditionItems0RuleItems0]
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0OnSuccessItems0ConditionItems0RuleItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline spec for provider stage items0 on success items0 condition items0 rule items0
+
+    Attributes
+    ----------
+    commands : [str], default is Undefined, optional
+        The shell commands to run with your commands rule in CodePipeline. All commands are supported except multi-line formats.
+    configuration : {str:str}, default is Undefined, optional
+        A map of the action declaration's configuration. Configurations options for action types and providers can be found in the Pipeline Structure Reference and Action Structure Reference documentation. Note: The DetectChanges parameter  in the configuration section causes CodePipeline to automatically start your pipeline upon new commits. Please refer to AWS Documentation for more details: https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-CodestarConnectionSource.html#action-reference-CodestarConnectionSource-config.
+    inputArtifacts : [str], default is Undefined, optional
+        A list of artifact names to be worked on.
+    name : str, default is Undefined, optional
+        The name of a pipeline-level variable.
+    region : str, default is Undefined, optional
+        The region in which to run the action.
+    roleArn : str, default is Undefined, optional
+        The ARN of the IAM service role that will perform the declared action. This is assumed through the roleArn for the pipeline.
+    ruleTypeId : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0OnSuccessItems0ConditionItems0RuleItems0RuleTypeIDItems0], default is Undefined, optional
+        The ID for the rule type, which is made up of the combined values for category, owner, provider, and version. Defined as an rule_type_id block below.
+    timeoutInMinutes : float, default is Undefined, optional
+        The action timeout for the rule.
+    """
+
+
+    commands?: [str]
+
+    configuration?: {str:str}
+
+    inputArtifacts?: [str]
+
+    name?: str
+
+    region?: str
+
+    roleArn?: str
+
+    ruleTypeId?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0OnSuccessItems0ConditionItems0RuleItems0RuleTypeIDItems0]
+
+    timeoutInMinutes?: float
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderStageItems0OnSuccessItems0ConditionItems0RuleItems0RuleTypeIDItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline spec for provider stage items0 on success items0 condition items0 rule items0 rule type ID items0
+
+    Attributes
+    ----------
+    category : str, default is Undefined, optional
+        A category defines what kind of action can be taken in the stage, and constrains the provider type for the action. Possible values are Approval, Build, Deploy, Invoke, Source and Test.
+    owner : str, default is Undefined, optional
+        The creator of the action being called. Possible values are AWS, Custom and ThirdParty.
+    provider : str, default is Undefined, optional
+        The provider of the service being called by the action. Valid providers are determined by the action category. Provider names are listed in the Action Structure Reference documentation.
+    version : str, default is Undefined, optional
+        A string that identifies the action type.
+    """
+
+
+    category?: str
+
+    owner?: str
+
+    provider?: str
 
     version?: str
 
@@ -482,7 +812,7 @@ schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderTriggerItems0Gi
     push : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecForProviderTriggerItems0GitConfigurationItems0PushItems0], default is Undefined, optional
         The field where the repository event that will start the pipeline, such as pushing Git tags, is specified with details. A push block is documented below.
     sourceActionName : str, default is Undefined, optional
-        The name of the pipeline source action where the trigger configuration.
+        The name of the pipeline source action where the trigger configuration, such as Git tags, is specified. The trigger configuration will start the pipeline upon the specified change only.
     """
 
 
@@ -942,14 +1272,26 @@ schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0:
     ----------
     action : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0ActionItems0], default is Undefined, optional
         The action(s) to include in the stage. Defined as an action block below
+    beforeEntry : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0BeforeEntryItems0], default is Undefined, optional
+        The method to use when a stage allows entry. For example, configuring this field for conditions will allow entry to the stage when the conditions are met.
     name : str, default is Undefined, optional
         The name of the stage.
+    onFailure : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0OnFailureItems0], default is Undefined, optional
+        The method to use when a stage has not completed successfully. For example, configuring this field for rollback will roll back a failed stage automatically to the last successful pipeline execution in the stage.
+    onSuccess : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0OnSuccessItems0], default is Undefined, optional
+        The method to use when a stage has succeeded. For example, configuring this field for conditions will allow the stage to succeed when the conditions are met.
     """
 
 
     action?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0ActionItems0]
 
+    beforeEntry?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0BeforeEntryItems0]
+
     name?: str
+
+    onFailure?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0OnFailureItems0]
+
+    onSuccess?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0OnSuccessItems0]
 
 
 schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0ActionItems0:
@@ -961,7 +1303,7 @@ schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0Act
     category : str, default is Undefined, optional
         A category defines what kind of action can be taken in the stage, and constrains the provider type for the action. Possible values are Approval, Build, Deploy, Invoke, Source and Test.
     configuration : {str:str}, default is Undefined, optional
-        A map of the action declaration's configuration. Configurations options for action types and providers can be found in the Pipeline Structure Reference and Action Structure Reference documentation.
+        A map of the action declaration's configuration. Configurations options for action types and providers can be found in the Pipeline Structure Reference and Action Structure Reference documentation. Note: The DetectChanges parameter  in the configuration section causes CodePipeline to automatically start your pipeline upon new commits. Please refer to AWS Documentation for more details: https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-CodestarConnectionSource.html#action-reference-CodestarConnectionSource-config.
     inputArtifacts : [str], default is Undefined, optional
         A list of artifact names to be worked on.
     name : str, default is Undefined, optional
@@ -979,7 +1321,7 @@ schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0Act
     runOrder : float, default is Undefined, optional
         The order in which actions are run.
     timeoutInMinutes : float, default is Undefined, optional
-        timeout in minutes
+        The action timeout for the rule.
     version : str, default is Undefined, optional
         A string that identifies the action type.
     """
@@ -1006,6 +1348,316 @@ schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0Act
     runOrder?: float
 
     timeoutInMinutes?: float
+
+    version?: str
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0BeforeEntryItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline spec init provider stage items0 before entry items0
+
+    Attributes
+    ----------
+    condition : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0BeforeEntryItems0ConditionItems0], default is Undefined, optional
+        The conditions that are success conditions. Defined as a condition block below.
+    """
+
+
+    condition?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0BeforeEntryItems0ConditionItems0]
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0BeforeEntryItems0ConditionItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline spec init provider stage items0 before entry items0 condition items0
+
+    Attributes
+    ----------
+    result : str, default is Undefined, optional
+        The conditions that are configured as failure conditions. Possible values are ROLLBACK,  FAIL, RETRY and SKIP.
+    $rule : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0BeforeEntryItems0ConditionItems0RuleItems0], default is Undefined, optional
+        The rules that make up the condition. Defined as a rule block below.
+    """
+
+
+    result?: str
+
+    $rule?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0BeforeEntryItems0ConditionItems0RuleItems0]
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0BeforeEntryItems0ConditionItems0RuleItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline spec init provider stage items0 before entry items0 condition items0 rule items0
+
+    Attributes
+    ----------
+    commands : [str], default is Undefined, optional
+        The shell commands to run with your commands rule in CodePipeline. All commands are supported except multi-line formats.
+    configuration : {str:str}, default is Undefined, optional
+        A map of the action declaration's configuration. Configurations options for action types and providers can be found in the Pipeline Structure Reference and Action Structure Reference documentation. Note: The DetectChanges parameter  in the configuration section causes CodePipeline to automatically start your pipeline upon new commits. Please refer to AWS Documentation for more details: https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-CodestarConnectionSource.html#action-reference-CodestarConnectionSource-config.
+    inputArtifacts : [str], default is Undefined, optional
+        A list of artifact names to be worked on.
+    name : str, default is Undefined, optional
+        The name of a pipeline-level variable.
+    roleArn : str, default is Undefined, optional
+        The ARN of the IAM service role that will perform the declared action. This is assumed through the roleArn for the pipeline.
+    ruleTypeId : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0BeforeEntryItems0ConditionItems0RuleItems0RuleTypeIDItems0], default is Undefined, optional
+        The ID for the rule type, which is made up of the combined values for category, owner, provider, and version. Defined as an rule_type_id block below.
+    timeoutInMinutes : float, default is Undefined, optional
+        The action timeout for the rule.
+    """
+
+
+    commands?: [str]
+
+    configuration?: {str:str}
+
+    inputArtifacts?: [str]
+
+    name?: str
+
+    roleArn?: str
+
+    ruleTypeId?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0BeforeEntryItems0ConditionItems0RuleItems0RuleTypeIDItems0]
+
+    timeoutInMinutes?: float
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0BeforeEntryItems0ConditionItems0RuleItems0RuleTypeIDItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline spec init provider stage items0 before entry items0 condition items0 rule items0 rule type ID items0
+
+    Attributes
+    ----------
+    category : str, default is Undefined, optional
+        A category defines what kind of action can be taken in the stage, and constrains the provider type for the action. Possible values are Approval, Build, Deploy, Invoke, Source and Test.
+    owner : str, default is Undefined, optional
+        The creator of the action being called. Possible values are AWS, Custom and ThirdParty.
+    provider : str, default is Undefined, optional
+        The provider of the service being called by the action. Valid providers are determined by the action category. Provider names are listed in the Action Structure Reference documentation.
+    version : str, default is Undefined, optional
+        A string that identifies the action type.
+    """
+
+
+    category?: str
+
+    owner?: str
+
+    provider?: str
+
+    version?: str
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0OnFailureItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline spec init provider stage items0 on failure items0
+
+    Attributes
+    ----------
+    condition : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0OnFailureItems0ConditionItems0], default is Undefined, optional
+        The conditions that are success conditions. Defined as a condition block below.
+    result : str, default is Undefined, optional
+        The conditions that are configured as failure conditions. Possible values are ROLLBACK,  FAIL, RETRY and SKIP.
+    retryConfiguration : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0OnFailureItems0RetryConfigurationItems0], default is Undefined, optional
+        The retry configuration specifies automatic retry for a failed stage, along with the configured retry mode. Defined as a retry_configuration block below.
+    """
+
+
+    condition?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0OnFailureItems0ConditionItems0]
+
+    result?: str
+
+    retryConfiguration?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0OnFailureItems0RetryConfigurationItems0]
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0OnFailureItems0ConditionItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline spec init provider stage items0 on failure items0 condition items0
+
+    Attributes
+    ----------
+    result : str, default is Undefined, optional
+        The conditions that are configured as failure conditions. Possible values are ROLLBACK,  FAIL, RETRY and SKIP.
+    $rule : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0OnFailureItems0ConditionItems0RuleItems0], default is Undefined, optional
+        The rules that make up the condition. Defined as a rule block below.
+    """
+
+
+    result?: str
+
+    $rule?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0OnFailureItems0ConditionItems0RuleItems0]
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0OnFailureItems0ConditionItems0RuleItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline spec init provider stage items0 on failure items0 condition items0 rule items0
+
+    Attributes
+    ----------
+    commands : [str], default is Undefined, optional
+        The shell commands to run with your commands rule in CodePipeline. All commands are supported except multi-line formats.
+    configuration : {str:str}, default is Undefined, optional
+        A map of the action declaration's configuration. Configurations options for action types and providers can be found in the Pipeline Structure Reference and Action Structure Reference documentation. Note: The DetectChanges parameter  in the configuration section causes CodePipeline to automatically start your pipeline upon new commits. Please refer to AWS Documentation for more details: https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-CodestarConnectionSource.html#action-reference-CodestarConnectionSource-config.
+    inputArtifacts : [str], default is Undefined, optional
+        A list of artifact names to be worked on.
+    name : str, default is Undefined, optional
+        The name of a pipeline-level variable.
+    roleArn : str, default is Undefined, optional
+        The ARN of the IAM service role that will perform the declared action. This is assumed through the roleArn for the pipeline.
+    ruleTypeId : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0OnFailureItems0ConditionItems0RuleItems0RuleTypeIDItems0], default is Undefined, optional
+        The ID for the rule type, which is made up of the combined values for category, owner, provider, and version. Defined as an rule_type_id block below.
+    timeoutInMinutes : float, default is Undefined, optional
+        The action timeout for the rule.
+    """
+
+
+    commands?: [str]
+
+    configuration?: {str:str}
+
+    inputArtifacts?: [str]
+
+    name?: str
+
+    roleArn?: str
+
+    ruleTypeId?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0OnFailureItems0ConditionItems0RuleItems0RuleTypeIDItems0]
+
+    timeoutInMinutes?: float
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0OnFailureItems0ConditionItems0RuleItems0RuleTypeIDItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline spec init provider stage items0 on failure items0 condition items0 rule items0 rule type ID items0
+
+    Attributes
+    ----------
+    category : str, default is Undefined, optional
+        A category defines what kind of action can be taken in the stage, and constrains the provider type for the action. Possible values are Approval, Build, Deploy, Invoke, Source and Test.
+    owner : str, default is Undefined, optional
+        The creator of the action being called. Possible values are AWS, Custom and ThirdParty.
+    provider : str, default is Undefined, optional
+        The provider of the service being called by the action. Valid providers are determined by the action category. Provider names are listed in the Action Structure Reference documentation.
+    version : str, default is Undefined, optional
+        A string that identifies the action type.
+    """
+
+
+    category?: str
+
+    owner?: str
+
+    provider?: str
+
+    version?: str
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0OnFailureItems0RetryConfigurationItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline spec init provider stage items0 on failure items0 retry configuration items0
+
+    Attributes
+    ----------
+    retryMode : str, default is Undefined, optional
+        The method that you want to configure for automatic stage retry on stage failure. You can specify to retry only failed action in the stage or all actions in the stage. Possible values are FAILED_ACTIONS and ALL_ACTIONS.
+    """
+
+
+    retryMode?: str
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0OnSuccessItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline spec init provider stage items0 on success items0
+
+    Attributes
+    ----------
+    condition : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0OnSuccessItems0ConditionItems0], default is Undefined, optional
+        The conditions that are success conditions. Defined as a condition block below.
+    """
+
+
+    condition?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0OnSuccessItems0ConditionItems0]
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0OnSuccessItems0ConditionItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline spec init provider stage items0 on success items0 condition items0
+
+    Attributes
+    ----------
+    result : str, default is Undefined, optional
+        The conditions that are configured as failure conditions. Possible values are ROLLBACK,  FAIL, RETRY and SKIP.
+    $rule : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0OnSuccessItems0ConditionItems0RuleItems0], default is Undefined, optional
+        The rules that make up the condition. Defined as a rule block below.
+    """
+
+
+    result?: str
+
+    $rule?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0OnSuccessItems0ConditionItems0RuleItems0]
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0OnSuccessItems0ConditionItems0RuleItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline spec init provider stage items0 on success items0 condition items0 rule items0
+
+    Attributes
+    ----------
+    commands : [str], default is Undefined, optional
+        The shell commands to run with your commands rule in CodePipeline. All commands are supported except multi-line formats.
+    configuration : {str:str}, default is Undefined, optional
+        A map of the action declaration's configuration. Configurations options for action types and providers can be found in the Pipeline Structure Reference and Action Structure Reference documentation. Note: The DetectChanges parameter  in the configuration section causes CodePipeline to automatically start your pipeline upon new commits. Please refer to AWS Documentation for more details: https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-CodestarConnectionSource.html#action-reference-CodestarConnectionSource-config.
+    inputArtifacts : [str], default is Undefined, optional
+        A list of artifact names to be worked on.
+    name : str, default is Undefined, optional
+        The name of a pipeline-level variable.
+    roleArn : str, default is Undefined, optional
+        The ARN of the IAM service role that will perform the declared action. This is assumed through the roleArn for the pipeline.
+    ruleTypeId : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0OnSuccessItems0ConditionItems0RuleItems0RuleTypeIDItems0], default is Undefined, optional
+        The ID for the rule type, which is made up of the combined values for category, owner, provider, and version. Defined as an rule_type_id block below.
+    timeoutInMinutes : float, default is Undefined, optional
+        The action timeout for the rule.
+    """
+
+
+    commands?: [str]
+
+    configuration?: {str:str}
+
+    inputArtifacts?: [str]
+
+    name?: str
+
+    roleArn?: str
+
+    ruleTypeId?: [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0OnSuccessItems0ConditionItems0RuleItems0RuleTypeIDItems0]
+
+    timeoutInMinutes?: float
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderStageItems0OnSuccessItems0ConditionItems0RuleItems0RuleTypeIDItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline spec init provider stage items0 on success items0 condition items0 rule items0 rule type ID items0
+
+    Attributes
+    ----------
+    category : str, default is Undefined, optional
+        A category defines what kind of action can be taken in the stage, and constrains the provider type for the action. Possible values are Approval, Build, Deploy, Invoke, Source and Test.
+    owner : str, default is Undefined, optional
+        The creator of the action being called. Possible values are AWS, Custom and ThirdParty.
+    provider : str, default is Undefined, optional
+        The provider of the service being called by the action. Valid providers are determined by the action category. Provider names are listed in the Action Structure Reference documentation.
+    version : str, default is Undefined, optional
+        A string that identifies the action type.
+    """
+
+
+    category?: str
+
+    owner?: str
+
+    provider?: str
 
     version?: str
 
@@ -1039,7 +1691,7 @@ schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderTriggerItems0G
     push : [CodepipelineAwsUpboundIoV1beta1CodepipelineSpecInitProviderTriggerItems0GitConfigurationItems0PushItems0], default is Undefined, optional
         The field where the repository event that will start the pipeline, such as pushing Git tags, is specified with details. A push block is documented below.
     sourceActionName : str, default is Undefined, optional
-        The name of the pipeline source action where the trigger configuration.
+        The name of the pipeline source action where the trigger configuration, such as Git tags, is specified. The trigger configuration will start the pipeline upon the specified change only.
     """
 
 
@@ -1250,112 +1902,12 @@ schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : CodepipelineAwsUpboundIoV1beta1CodepipelineSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : CodepipelineAwsUpboundIoV1beta1CodepipelineSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: CodepipelineAwsUpboundIoV1beta1CodepipelineSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: CodepipelineAwsUpboundIoV1beta1CodepipelineSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : CodepipelineAwsUpboundIoV1beta1CodepipelineSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: CodepipelineAwsUpboundIoV1beta1CodepipelineSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema CodepipelineAwsUpboundIoV1beta1CodepipelineSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1402,15 +1954,18 @@ schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProvider:
     Attributes
     ----------
     arn : str, default is Undefined, optional
-        The codepipeline ARN.
+        Codepipeline ARN.
     artifactStore : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderArtifactStoreItems0], default is Undefined, optional
         One or more artifact_store blocks. Artifact stores are documented below.
     executionMode : str, default is Undefined, optional
         The method that the pipeline will use to handle multiple executions. The default mode is SUPERSEDED. For value values, refer to the AWS documentation.
     id : str, default is Undefined, optional
-        The codepipeline ID.
+        Codepipeline ID.
     pipelineType : str, default is Undefined, optional
         Type of the pipeline. Possible values are: V1 and V2. Default value is V1.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     roleArn : str, default is Undefined, optional
         A service role Amazon Resource Name (ARN) that grants AWS CodePipeline permission to make calls to AWS services on your behalf.
     stage : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0], default is Undefined, optional
@@ -1421,6 +1976,8 @@ schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProvider:
         A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     trigger : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerItems0], default is Undefined, optional
         A trigger block. Valid only when pipeline_type is V2. Triggers are documented below.
+    triggerAll : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerAllItems0], default is Undefined, optional
+        A list of all triggers present on the pipeline, including default triggers added by AWS for V2 pipelines which omit an explicit trigger definition.
     variable : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderVariableItems0], default is Undefined, optional
         A pipeline-level variable block. Valid only when pipeline_type is V2. Variable are documented below.
     """
@@ -1436,6 +1993,8 @@ schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProvider:
 
     pipelineType?: str
 
+    region?: str
+
     roleArn?: str
 
     stage?: [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0]
@@ -1445,6 +2004,8 @@ schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProvider:
     tagsAll?: {str:str}
 
     trigger?: [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerItems0]
+
+    triggerAll?: [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerAllItems0]
 
     variable?: [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderVariableItems0]
 
@@ -1501,14 +2062,26 @@ schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0:
     ----------
     action : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0ActionItems0], default is Undefined, optional
         The action(s) to include in the stage. Defined as an action block below
+    beforeEntry : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0BeforeEntryItems0], default is Undefined, optional
+        The method to use when a stage allows entry. For example, configuring this field for conditions will allow entry to the stage when the conditions are met.
     name : str, default is Undefined, optional
         The name of the stage.
+    onFailure : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0OnFailureItems0], default is Undefined, optional
+        The method to use when a stage has not completed successfully. For example, configuring this field for rollback will roll back a failed stage automatically to the last successful pipeline execution in the stage.
+    onSuccess : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0OnSuccessItems0], default is Undefined, optional
+        The method to use when a stage has succeeded. For example, configuring this field for conditions will allow the stage to succeed when the conditions are met.
     """
 
 
     action?: [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0ActionItems0]
 
+    beforeEntry?: [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0BeforeEntryItems0]
+
     name?: str
+
+    onFailure?: [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0OnFailureItems0]
+
+    onSuccess?: [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0OnSuccessItems0]
 
 
 schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0ActionItems0:
@@ -1520,7 +2093,7 @@ schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0Act
     category : str, default is Undefined, optional
         A category defines what kind of action can be taken in the stage, and constrains the provider type for the action. Possible values are Approval, Build, Deploy, Invoke, Source and Test.
     configuration : {str:str}, default is Undefined, optional
-        A map of the action declaration's configuration. Configurations options for action types and providers can be found in the Pipeline Structure Reference and Action Structure Reference documentation.
+        A map of the action declaration's configuration. Configurations options for action types and providers can be found in the Pipeline Structure Reference and Action Structure Reference documentation. Note: The DetectChanges parameter  in the configuration section causes CodePipeline to automatically start your pipeline upon new commits. Please refer to AWS Documentation for more details: https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-CodestarConnectionSource.html#action-reference-CodestarConnectionSource-config.
     inputArtifacts : [str], default is Undefined, optional
         A list of artifact names to be worked on.
     name : str, default is Undefined, optional
@@ -1540,7 +2113,7 @@ schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0Act
     runOrder : float, default is Undefined, optional
         The order in which actions are run.
     timeoutInMinutes : float, default is Undefined, optional
-        timeout in minutes
+        The action timeout for the rule.
     version : str, default is Undefined, optional
         A string that identifies the action type.
     """
@@ -1573,6 +2146,502 @@ schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0Act
     version?: str
 
 
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0BeforeEntryItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline status at provider stage items0 before entry items0
+
+    Attributes
+    ----------
+    condition : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0BeforeEntryItems0ConditionItems0], default is Undefined, optional
+        The conditions that are success conditions. Defined as a condition block below.
+    """
+
+
+    condition?: [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0BeforeEntryItems0ConditionItems0]
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0BeforeEntryItems0ConditionItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline status at provider stage items0 before entry items0 condition items0
+
+    Attributes
+    ----------
+    result : str, default is Undefined, optional
+        The conditions that are configured as failure conditions. Possible values are ROLLBACK,  FAIL, RETRY and SKIP.
+    $rule : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0BeforeEntryItems0ConditionItems0RuleItems0], default is Undefined, optional
+        The rules that make up the condition. Defined as a rule block below.
+    """
+
+
+    result?: str
+
+    $rule?: [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0BeforeEntryItems0ConditionItems0RuleItems0]
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0BeforeEntryItems0ConditionItems0RuleItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline status at provider stage items0 before entry items0 condition items0 rule items0
+
+    Attributes
+    ----------
+    commands : [str], default is Undefined, optional
+        The shell commands to run with your commands rule in CodePipeline. All commands are supported except multi-line formats.
+    configuration : {str:str}, default is Undefined, optional
+        A map of the action declaration's configuration. Configurations options for action types and providers can be found in the Pipeline Structure Reference and Action Structure Reference documentation. Note: The DetectChanges parameter  in the configuration section causes CodePipeline to automatically start your pipeline upon new commits. Please refer to AWS Documentation for more details: https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-CodestarConnectionSource.html#action-reference-CodestarConnectionSource-config.
+    inputArtifacts : [str], default is Undefined, optional
+        A list of artifact names to be worked on.
+    name : str, default is Undefined, optional
+        The name of a pipeline-level variable.
+    region : str, default is Undefined, optional
+        The region in which to run the action.
+    roleArn : str, default is Undefined, optional
+        The ARN of the IAM service role that will perform the declared action. This is assumed through the roleArn for the pipeline.
+    ruleTypeId : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0BeforeEntryItems0ConditionItems0RuleItems0RuleTypeIDItems0], default is Undefined, optional
+        The ID for the rule type, which is made up of the combined values for category, owner, provider, and version. Defined as an rule_type_id block below.
+    timeoutInMinutes : float, default is Undefined, optional
+        The action timeout for the rule.
+    """
+
+
+    commands?: [str]
+
+    configuration?: {str:str}
+
+    inputArtifacts?: [str]
+
+    name?: str
+
+    region?: str
+
+    roleArn?: str
+
+    ruleTypeId?: [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0BeforeEntryItems0ConditionItems0RuleItems0RuleTypeIDItems0]
+
+    timeoutInMinutes?: float
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0BeforeEntryItems0ConditionItems0RuleItems0RuleTypeIDItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline status at provider stage items0 before entry items0 condition items0 rule items0 rule type ID items0
+
+    Attributes
+    ----------
+    category : str, default is Undefined, optional
+        A category defines what kind of action can be taken in the stage, and constrains the provider type for the action. Possible values are Approval, Build, Deploy, Invoke, Source and Test.
+    owner : str, default is Undefined, optional
+        The creator of the action being called. Possible values are AWS, Custom and ThirdParty.
+    provider : str, default is Undefined, optional
+        The provider of the service being called by the action. Valid providers are determined by the action category. Provider names are listed in the Action Structure Reference documentation.
+    version : str, default is Undefined, optional
+        A string that identifies the action type.
+    """
+
+
+    category?: str
+
+    owner?: str
+
+    provider?: str
+
+    version?: str
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0OnFailureItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline status at provider stage items0 on failure items0
+
+    Attributes
+    ----------
+    condition : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0OnFailureItems0ConditionItems0], default is Undefined, optional
+        The conditions that are success conditions. Defined as a condition block below.
+    result : str, default is Undefined, optional
+        The conditions that are configured as failure conditions. Possible values are ROLLBACK,  FAIL, RETRY and SKIP.
+    retryConfiguration : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0OnFailureItems0RetryConfigurationItems0], default is Undefined, optional
+        The retry configuration specifies automatic retry for a failed stage, along with the configured retry mode. Defined as a retry_configuration block below.
+    """
+
+
+    condition?: [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0OnFailureItems0ConditionItems0]
+
+    result?: str
+
+    retryConfiguration?: [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0OnFailureItems0RetryConfigurationItems0]
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0OnFailureItems0ConditionItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline status at provider stage items0 on failure items0 condition items0
+
+    Attributes
+    ----------
+    result : str, default is Undefined, optional
+        The conditions that are configured as failure conditions. Possible values are ROLLBACK,  FAIL, RETRY and SKIP.
+    $rule : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0OnFailureItems0ConditionItems0RuleItems0], default is Undefined, optional
+        The rules that make up the condition. Defined as a rule block below.
+    """
+
+
+    result?: str
+
+    $rule?: [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0OnFailureItems0ConditionItems0RuleItems0]
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0OnFailureItems0ConditionItems0RuleItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline status at provider stage items0 on failure items0 condition items0 rule items0
+
+    Attributes
+    ----------
+    commands : [str], default is Undefined, optional
+        The shell commands to run with your commands rule in CodePipeline. All commands are supported except multi-line formats.
+    configuration : {str:str}, default is Undefined, optional
+        A map of the action declaration's configuration. Configurations options for action types and providers can be found in the Pipeline Structure Reference and Action Structure Reference documentation. Note: The DetectChanges parameter  in the configuration section causes CodePipeline to automatically start your pipeline upon new commits. Please refer to AWS Documentation for more details: https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-CodestarConnectionSource.html#action-reference-CodestarConnectionSource-config.
+    inputArtifacts : [str], default is Undefined, optional
+        A list of artifact names to be worked on.
+    name : str, default is Undefined, optional
+        The name of a pipeline-level variable.
+    region : str, default is Undefined, optional
+        The region in which to run the action.
+    roleArn : str, default is Undefined, optional
+        The ARN of the IAM service role that will perform the declared action. This is assumed through the roleArn for the pipeline.
+    ruleTypeId : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0OnFailureItems0ConditionItems0RuleItems0RuleTypeIDItems0], default is Undefined, optional
+        The ID for the rule type, which is made up of the combined values for category, owner, provider, and version. Defined as an rule_type_id block below.
+    timeoutInMinutes : float, default is Undefined, optional
+        The action timeout for the rule.
+    """
+
+
+    commands?: [str]
+
+    configuration?: {str:str}
+
+    inputArtifacts?: [str]
+
+    name?: str
+
+    region?: str
+
+    roleArn?: str
+
+    ruleTypeId?: [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0OnFailureItems0ConditionItems0RuleItems0RuleTypeIDItems0]
+
+    timeoutInMinutes?: float
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0OnFailureItems0ConditionItems0RuleItems0RuleTypeIDItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline status at provider stage items0 on failure items0 condition items0 rule items0 rule type ID items0
+
+    Attributes
+    ----------
+    category : str, default is Undefined, optional
+        A category defines what kind of action can be taken in the stage, and constrains the provider type for the action. Possible values are Approval, Build, Deploy, Invoke, Source and Test.
+    owner : str, default is Undefined, optional
+        The creator of the action being called. Possible values are AWS, Custom and ThirdParty.
+    provider : str, default is Undefined, optional
+        The provider of the service being called by the action. Valid providers are determined by the action category. Provider names are listed in the Action Structure Reference documentation.
+    version : str, default is Undefined, optional
+        A string that identifies the action type.
+    """
+
+
+    category?: str
+
+    owner?: str
+
+    provider?: str
+
+    version?: str
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0OnFailureItems0RetryConfigurationItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline status at provider stage items0 on failure items0 retry configuration items0
+
+    Attributes
+    ----------
+    retryMode : str, default is Undefined, optional
+        The method that you want to configure for automatic stage retry on stage failure. You can specify to retry only failed action in the stage or all actions in the stage. Possible values are FAILED_ACTIONS and ALL_ACTIONS.
+    """
+
+
+    retryMode?: str
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0OnSuccessItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline status at provider stage items0 on success items0
+
+    Attributes
+    ----------
+    condition : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0OnSuccessItems0ConditionItems0], default is Undefined, optional
+        The conditions that are success conditions. Defined as a condition block below.
+    """
+
+
+    condition?: [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0OnSuccessItems0ConditionItems0]
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0OnSuccessItems0ConditionItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline status at provider stage items0 on success items0 condition items0
+
+    Attributes
+    ----------
+    result : str, default is Undefined, optional
+        The conditions that are configured as failure conditions. Possible values are ROLLBACK,  FAIL, RETRY and SKIP.
+    $rule : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0OnSuccessItems0ConditionItems0RuleItems0], default is Undefined, optional
+        The rules that make up the condition. Defined as a rule block below.
+    """
+
+
+    result?: str
+
+    $rule?: [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0OnSuccessItems0ConditionItems0RuleItems0]
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0OnSuccessItems0ConditionItems0RuleItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline status at provider stage items0 on success items0 condition items0 rule items0
+
+    Attributes
+    ----------
+    commands : [str], default is Undefined, optional
+        The shell commands to run with your commands rule in CodePipeline. All commands are supported except multi-line formats.
+    configuration : {str:str}, default is Undefined, optional
+        A map of the action declaration's configuration. Configurations options for action types and providers can be found in the Pipeline Structure Reference and Action Structure Reference documentation. Note: The DetectChanges parameter  in the configuration section causes CodePipeline to automatically start your pipeline upon new commits. Please refer to AWS Documentation for more details: https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-CodestarConnectionSource.html#action-reference-CodestarConnectionSource-config.
+    inputArtifacts : [str], default is Undefined, optional
+        A list of artifact names to be worked on.
+    name : str, default is Undefined, optional
+        The name of a pipeline-level variable.
+    region : str, default is Undefined, optional
+        The region in which to run the action.
+    roleArn : str, default is Undefined, optional
+        The ARN of the IAM service role that will perform the declared action. This is assumed through the roleArn for the pipeline.
+    ruleTypeId : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0OnSuccessItems0ConditionItems0RuleItems0RuleTypeIDItems0], default is Undefined, optional
+        The ID for the rule type, which is made up of the combined values for category, owner, provider, and version. Defined as an rule_type_id block below.
+    timeoutInMinutes : float, default is Undefined, optional
+        The action timeout for the rule.
+    """
+
+
+    commands?: [str]
+
+    configuration?: {str:str}
+
+    inputArtifacts?: [str]
+
+    name?: str
+
+    region?: str
+
+    roleArn?: str
+
+    ruleTypeId?: [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0OnSuccessItems0ConditionItems0RuleItems0RuleTypeIDItems0]
+
+    timeoutInMinutes?: float
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderStageItems0OnSuccessItems0ConditionItems0RuleItems0RuleTypeIDItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline status at provider stage items0 on success items0 condition items0 rule items0 rule type ID items0
+
+    Attributes
+    ----------
+    category : str, default is Undefined, optional
+        A category defines what kind of action can be taken in the stage, and constrains the provider type for the action. Possible values are Approval, Build, Deploy, Invoke, Source and Test.
+    owner : str, default is Undefined, optional
+        The creator of the action being called. Possible values are AWS, Custom and ThirdParty.
+    provider : str, default is Undefined, optional
+        The provider of the service being called by the action. Valid providers are determined by the action category. Provider names are listed in the Action Structure Reference documentation.
+    version : str, default is Undefined, optional
+        A string that identifies the action type.
+    """
+
+
+    category?: str
+
+    owner?: str
+
+    provider?: str
+
+    version?: str
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerAllItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline status at provider trigger all items0
+
+    Attributes
+    ----------
+    gitConfiguration : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerAllItems0GitConfigurationItems0], default is Undefined, optional
+        Provides the filter criteria and the source stage for the repository event that starts the pipeline. For more information, refer to the AWS documentation. A git_configuration block is documented below.
+    providerType : str, default is Undefined, optional
+        The source provider for the event. Possible value is CodeStarSourceConnection.
+    """
+
+
+    gitConfiguration?: [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerAllItems0GitConfigurationItems0]
+
+    providerType?: str
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerAllItems0GitConfigurationItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline status at provider trigger all items0 git configuration items0
+
+    Attributes
+    ----------
+    pullRequest : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerAllItems0GitConfigurationItems0PullRequestItems0], default is Undefined, optional
+        The field where the repository event that will start the pipeline is specified as pull requests. A pull_request block is documented below.
+    push : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerAllItems0GitConfigurationItems0PushItems0], default is Undefined, optional
+        The field where the repository event that will start the pipeline, such as pushing Git tags, is specified with details. A push block is documented below.
+    sourceActionName : str, default is Undefined, optional
+        The name of the pipeline source action where the trigger configuration, such as Git tags, is specified. The trigger configuration will start the pipeline upon the specified change only.
+    """
+
+
+    pullRequest?: [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerAllItems0GitConfigurationItems0PullRequestItems0]
+
+    push?: [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerAllItems0GitConfigurationItems0PushItems0]
+
+    sourceActionName?: str
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerAllItems0GitConfigurationItems0PullRequestItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline status at provider trigger all items0 git configuration items0 pull request items0
+
+    Attributes
+    ----------
+    branches : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerAllItems0GitConfigurationItems0PullRequestItems0BranchesItems0], default is Undefined, optional
+        The field that specifies to filter on branches for the pull request trigger configuration. A branches block is documented below.
+    events : [str], default is Undefined, optional
+        A list that specifies which pull request events to filter on (opened, updated, closed) for the trigger configuration. Possible values are OPEN, UPDATED  and CLOSED.
+    filePaths : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerAllItems0GitConfigurationItems0PullRequestItems0FilePathsItems0], default is Undefined, optional
+        The field that specifies to filter on file paths for the pull request trigger configuration. A file_paths block is documented below.
+    """
+
+
+    branches?: [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerAllItems0GitConfigurationItems0PullRequestItems0BranchesItems0]
+
+    events?: [str]
+
+    filePaths?: [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerAllItems0GitConfigurationItems0PullRequestItems0FilePathsItems0]
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerAllItems0GitConfigurationItems0PullRequestItems0BranchesItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline status at provider trigger all items0 git configuration items0 pull request items0 branches items0
+
+    Attributes
+    ----------
+    excludes : [str], default is Undefined, optional
+        A list of patterns of Git tags that, when pushed, are to be excluded from starting the pipeline.
+    includes : [str], default is Undefined, optional
+        A list of patterns of Git tags that, when pushed, are to be included as criteria that starts the pipeline.
+    """
+
+
+    excludes?: [str]
+
+    includes?: [str]
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerAllItems0GitConfigurationItems0PullRequestItems0FilePathsItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline status at provider trigger all items0 git configuration items0 pull request items0 file paths items0
+
+    Attributes
+    ----------
+    excludes : [str], default is Undefined, optional
+        A list of patterns of Git tags that, when pushed, are to be excluded from starting the pipeline.
+    includes : [str], default is Undefined, optional
+        A list of patterns of Git tags that, when pushed, are to be included as criteria that starts the pipeline.
+    """
+
+
+    excludes?: [str]
+
+    includes?: [str]
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerAllItems0GitConfigurationItems0PushItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline status at provider trigger all items0 git configuration items0 push items0
+
+    Attributes
+    ----------
+    branches : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerAllItems0GitConfigurationItems0PushItems0BranchesItems0], default is Undefined, optional
+        The field that specifies to filter on branches for the pull request trigger configuration. A branches block is documented below.
+    filePaths : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerAllItems0GitConfigurationItems0PushItems0FilePathsItems0], default is Undefined, optional
+        The field that specifies to filter on file paths for the pull request trigger configuration. A file_paths block is documented below.
+    tags : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerAllItems0GitConfigurationItems0PushItems0TagsItems0], default is Undefined, optional
+        Key-value map of resource tags.
+    """
+
+
+    branches?: [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerAllItems0GitConfigurationItems0PushItems0BranchesItems0]
+
+    filePaths?: [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerAllItems0GitConfigurationItems0PushItems0FilePathsItems0]
+
+    tags?: [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerAllItems0GitConfigurationItems0PushItems0TagsItems0]
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerAllItems0GitConfigurationItems0PushItems0BranchesItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline status at provider trigger all items0 git configuration items0 push items0 branches items0
+
+    Attributes
+    ----------
+    excludes : [str], default is Undefined, optional
+        A list of patterns of Git tags that, when pushed, are to be excluded from starting the pipeline.
+    includes : [str], default is Undefined, optional
+        A list of patterns of Git tags that, when pushed, are to be included as criteria that starts the pipeline.
+    """
+
+
+    excludes?: [str]
+
+    includes?: [str]
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerAllItems0GitConfigurationItems0PushItems0FilePathsItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline status at provider trigger all items0 git configuration items0 push items0 file paths items0
+
+    Attributes
+    ----------
+    excludes : [str], default is Undefined, optional
+        A list of patterns of Git tags that, when pushed, are to be excluded from starting the pipeline.
+    includes : [str], default is Undefined, optional
+        A list of patterns of Git tags that, when pushed, are to be included as criteria that starts the pipeline.
+    """
+
+
+    excludes?: [str]
+
+    includes?: [str]
+
+
+schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerAllItems0GitConfigurationItems0PushItems0TagsItems0:
+    r"""
+    codepipeline aws upbound io v1beta1 codepipeline status at provider trigger all items0 git configuration items0 push items0 tags items0
+
+    Attributes
+    ----------
+    excludes : [str], default is Undefined, optional
+        A list of patterns of Git tags that, when pushed, are to be excluded from starting the pipeline.
+    includes : [str], default is Undefined, optional
+        A list of patterns of Git tags that, when pushed, are to be included as criteria that starts the pipeline.
+    """
+
+
+    excludes?: [str]
+
+    includes?: [str]
+
+
 schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerItems0:
     r"""
     codepipeline aws upbound io v1beta1 codepipeline status at provider trigger items0
@@ -1602,7 +2671,7 @@ schema CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerItems0G
     push : [CodepipelineAwsUpboundIoV1beta1CodepipelineStatusAtProviderTriggerItems0GitConfigurationItems0PushItems0], default is Undefined, optional
         The field where the repository event that will start the pipeline, such as pushing Git tags, is specified with details. A push block is documented below.
     sourceActionName : str, default is Undefined, optional
-        The name of the pipeline source action where the trigger configuration.
+        The name of the pipeline source action where the trigger configuration, such as Git tags, is specified. The trigger configuration will start the pipeline upon the specified change only.
     """
 
 

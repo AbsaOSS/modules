@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema StaticIPAttachment:
     r"""
-    StaticIPAttachment is the Schema for the StaticIPAttachments API. Provides an Lightsail Static IP Attachment
+    StaticIPAttachment is the Schema for the StaticIPAttachments API. Manages a Lightsail Static IP Attachment.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpec:
 
     providerConfigRef?: LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecWriteConnectionSecretToRef
 
 
@@ -95,15 +91,16 @@ schema LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecForProvider:
     Attributes
     ----------
     instanceName : str, default is Undefined, optional
-        The name of the Lightsail instance to attach the IP to
+        Name of the Lightsail instance to attach the IP to.
     instanceNameRef : LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecForProviderInstanceNameRef, default is Undefined, optional
         instance name ref
     instanceNameSelector : LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecForProviderInstanceNameSelector, default is Undefined, optional
         instance name selector
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     staticIpName : str, default is Undefined, optional
-        The name of the allocated static IP
+        Name of the allocated static IP.
     staticIpNameRef : LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecForProviderStaticIPNameRef, default is Undefined, optional
         static Ip name ref
     staticIpNameSelector : LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecForProviderStaticIPNameSelector, default is Undefined, optional
@@ -320,13 +317,13 @@ schema LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecInitProvider:
     Attributes
     ----------
     instanceName : str, default is Undefined, optional
-        The name of the Lightsail instance to attach the IP to
+        Name of the Lightsail instance to attach the IP to.
     instanceNameRef : LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecInitProviderInstanceNameRef, default is Undefined, optional
         instance name ref
     instanceNameSelector : LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecInitProviderInstanceNameSelector, default is Undefined, optional
         instance name selector
     staticIpName : str, default is Undefined, optional
-        The name of the allocated static IP
+        Name of the allocated static IP.
     staticIpNameRef : LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecInitProviderStaticIPNameRef, default is Undefined, optional
         static Ip name ref
     staticIpNameSelector : LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecInitProviderStaticIPNameSelector, default is Undefined, optional
@@ -569,112 +566,12 @@ schema LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecProviderConfigRefPolicy
     resolve?: "Always" | "IfNotPresent"
 
 
-schema LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema LightsailAwsUpboundIoV1beta1StaticIPAttachmentSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -723,11 +620,14 @@ schema LightsailAwsUpboundIoV1beta1StaticIPAttachmentStatusAtProvider:
     id : str, default is Undefined, optional
         id
     instanceName : str, default is Undefined, optional
-        The name of the Lightsail instance to attach the IP to
+        Name of the Lightsail instance to attach the IP to.
     ipAddress : str, default is Undefined, optional
-        The allocated static IP address
+        Allocated static IP address.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     staticIpName : str, default is Undefined, optional
-        The name of the allocated static IP
+        Name of the allocated static IP.
     """
 
 
@@ -736,6 +636,8 @@ schema LightsailAwsUpboundIoV1beta1StaticIPAttachmentStatusAtProvider:
     instanceName?: str
 
     ipAddress?: str
+
+    region?: str
 
     staticIpName?: str
 

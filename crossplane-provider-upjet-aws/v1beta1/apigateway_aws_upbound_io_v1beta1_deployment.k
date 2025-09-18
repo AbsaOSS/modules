@@ -66,8 +66,6 @@ schema ApigatewayAwsUpboundIoV1beta1DeploymentSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : ApigatewayAwsUpboundIoV1beta1DeploymentSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : ApigatewayAwsUpboundIoV1beta1DeploymentSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : ApigatewayAwsUpboundIoV1beta1DeploymentSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema ApigatewayAwsUpboundIoV1beta1DeploymentSpec:
 
     providerConfigRef?: ApigatewayAwsUpboundIoV1beta1DeploymentSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: ApigatewayAwsUpboundIoV1beta1DeploymentSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: ApigatewayAwsUpboundIoV1beta1DeploymentSpecWriteConnectionSecretToRef
 
 
@@ -94,11 +90,10 @@ schema ApigatewayAwsUpboundIoV1beta1DeploymentSpecForProvider:
 
     Attributes
     ----------
-    canarySettings : ApigatewayAwsUpboundIoV1beta1DeploymentSpecForProviderCanarySettings, default is Undefined, optional
-        canary settings
     description : str, default is Undefined, optional
-        Description of the deployment
+        Description of the deployment.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     restApiId : str, default is Undefined, optional
         REST API identifier.
@@ -106,21 +101,12 @@ schema ApigatewayAwsUpboundIoV1beta1DeploymentSpecForProvider:
         rest Api Id ref
     restApiIdSelector : ApigatewayAwsUpboundIoV1beta1DeploymentSpecForProviderRestAPIIDSelector, default is Undefined, optional
         rest Api Id selector
-    stageDescription : str, default is Undefined, optional
-        Description to set on the stage managed by the stage_name argument.
-        Has no effect when stage_name is not set.
-    stageName : str, default is Undefined, optional
-        Name of the stage to create with this deployment.
-        If the specified stage already exists, it will be updated to point to the new deployment.
-        We recommend using the aws_api_gateway_stage resource instead to manage stages.
     triggers : {str:str}, default is Undefined, optional
         argument or explicit resource references using the resource . The triggers argument should be preferred over depends_on, since depends_on can only capture dependency ordering and will not cause the resource to recreate (redeploy the REST API) with upstream configuration changes.
     variables : {str:str}, default is Undefined, optional
-        Map to set on the stage managed by the stage_name argument.
+        Map to set on the related stage.
     """
 
-
-    canarySettings?: ApigatewayAwsUpboundIoV1beta1DeploymentSpecForProviderCanarySettings
 
     description?: str
 
@@ -132,36 +118,9 @@ schema ApigatewayAwsUpboundIoV1beta1DeploymentSpecForProvider:
 
     restApiIdSelector?: ApigatewayAwsUpboundIoV1beta1DeploymentSpecForProviderRestAPIIDSelector
 
-    stageDescription?: str
-
-    stageName?: str
-
     triggers?: {str:str}
 
     variables?: {str:str}
-
-
-schema ApigatewayAwsUpboundIoV1beta1DeploymentSpecForProviderCanarySettings:
-    r"""
-    Input configuration for the canary deployment when the deployment is a canary release deployment.
-    See [canary_settings](#canary_settings-argument-reference) below. Has no effect when stage_name` is not set.
-
-    Attributes
-    ----------
-    percentTraffic : float, default is Undefined, optional
-        Percentage (0.0-100.0) of traffic routed to the canary deployment.
-    stageVariableOverrides : {str:str}, default is Undefined, optional
-        Stage variable overrides used for the canary release deployment. They can override existing stage variables or add new stage variables for the canary release deployment. These stage variables are represented as a string-to-string map between stage variable names and their values.
-    useStageCache : bool, default is Undefined, optional
-        Boolean flag to indicate whether the canary release deployment uses the stage cache or not.
-    """
-
-
-    percentTraffic?: float
-
-    stageVariableOverrides?: {str:str}
-
-    useStageCache?: bool
 
 
 schema ApigatewayAwsUpboundIoV1beta1DeploymentSpecForProviderRestAPIIDRef:
@@ -268,31 +227,20 @@ schema ApigatewayAwsUpboundIoV1beta1DeploymentSpecInitProvider:
 
     Attributes
     ----------
-    canarySettings : ApigatewayAwsUpboundIoV1beta1DeploymentSpecInitProviderCanarySettings, default is Undefined, optional
-        canary settings
     description : str, default is Undefined, optional
-        Description of the deployment
+        Description of the deployment.
     restApiId : str, default is Undefined, optional
         REST API identifier.
     restApiIdRef : ApigatewayAwsUpboundIoV1beta1DeploymentSpecInitProviderRestAPIIDRef, default is Undefined, optional
         rest Api Id ref
     restApiIdSelector : ApigatewayAwsUpboundIoV1beta1DeploymentSpecInitProviderRestAPIIDSelector, default is Undefined, optional
         rest Api Id selector
-    stageDescription : str, default is Undefined, optional
-        Description to set on the stage managed by the stage_name argument.
-        Has no effect when stage_name is not set.
-    stageName : str, default is Undefined, optional
-        Name of the stage to create with this deployment.
-        If the specified stage already exists, it will be updated to point to the new deployment.
-        We recommend using the aws_api_gateway_stage resource instead to manage stages.
     triggers : {str:str}, default is Undefined, optional
         argument or explicit resource references using the resource . The triggers argument should be preferred over depends_on, since depends_on can only capture dependency ordering and will not cause the resource to recreate (redeploy the REST API) with upstream configuration changes.
     variables : {str:str}, default is Undefined, optional
-        Map to set on the stage managed by the stage_name argument.
+        Map to set on the related stage.
     """
 
-
-    canarySettings?: ApigatewayAwsUpboundIoV1beta1DeploymentSpecInitProviderCanarySettings
 
     description?: str
 
@@ -302,36 +250,9 @@ schema ApigatewayAwsUpboundIoV1beta1DeploymentSpecInitProvider:
 
     restApiIdSelector?: ApigatewayAwsUpboundIoV1beta1DeploymentSpecInitProviderRestAPIIDSelector
 
-    stageDescription?: str
-
-    stageName?: str
-
     triggers?: {str:str}
 
     variables?: {str:str}
-
-
-schema ApigatewayAwsUpboundIoV1beta1DeploymentSpecInitProviderCanarySettings:
-    r"""
-    Input configuration for the canary deployment when the deployment is a canary release deployment.
-    See [canary_settings](#canary_settings-argument-reference) below. Has no effect when stage_name` is not set.
-
-    Attributes
-    ----------
-    percentTraffic : float, default is Undefined, optional
-        Percentage (0.0-100.0) of traffic routed to the canary deployment.
-    stageVariableOverrides : {str:str}, default is Undefined, optional
-        Stage variable overrides used for the canary release deployment. They can override existing stage variables or add new stage variables for the canary release deployment. These stage variables are represented as a string-to-string map between stage variable names and their values.
-    useStageCache : bool, default is Undefined, optional
-        Boolean flag to indicate whether the canary release deployment uses the stage cache or not.
-    """
-
-
-    percentTraffic?: float
-
-    stageVariableOverrides?: {str:str}
-
-    useStageCache?: bool
 
 
 schema ApigatewayAwsUpboundIoV1beta1DeploymentSpecInitProviderRestAPIIDRef:
@@ -467,112 +388,12 @@ schema ApigatewayAwsUpboundIoV1beta1DeploymentSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema ApigatewayAwsUpboundIoV1beta1DeploymentSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : ApigatewayAwsUpboundIoV1beta1DeploymentSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : ApigatewayAwsUpboundIoV1beta1DeploymentSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: ApigatewayAwsUpboundIoV1beta1DeploymentSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: ApigatewayAwsUpboundIoV1beta1DeploymentSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema ApigatewayAwsUpboundIoV1beta1DeploymentSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : ApigatewayAwsUpboundIoV1beta1DeploymentSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: ApigatewayAwsUpboundIoV1beta1DeploymentSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema ApigatewayAwsUpboundIoV1beta1DeploymentSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema ApigatewayAwsUpboundIoV1beta1DeploymentSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema ApigatewayAwsUpboundIoV1beta1DeploymentSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -618,81 +439,37 @@ schema ApigatewayAwsUpboundIoV1beta1DeploymentStatusAtProvider:
 
     Attributes
     ----------
-    canarySettings : ApigatewayAwsUpboundIoV1beta1DeploymentStatusAtProviderCanarySettings, default is Undefined, optional
-        canary settings
     createdDate : str, default is Undefined, optional
         Creation date of the deployment
     description : str, default is Undefined, optional
-        Description of the deployment
-    executionArn : str, default is Undefined, optional
-        Execution ARN to be used in lambda_permission's source_arn
-        when allowing API Gateway to invoke a Lambda function,
-        e.g., arn:aws:execute-api:eu-west-2:123456789012:z4675bid1j/prod
+        Description of the deployment.
     id : str, default is Undefined, optional
         ID of the deployment
-    invokeUrl : str, default is Undefined, optional
-        URL to invoke the API pointing to the stage,
-        e.g., https://z4675bid1j.execute-api.eu-west-2.amazonaws.com/prod
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     restApiId : str, default is Undefined, optional
         REST API identifier.
-    stageDescription : str, default is Undefined, optional
-        Description to set on the stage managed by the stage_name argument.
-        Has no effect when stage_name is not set.
-    stageName : str, default is Undefined, optional
-        Name of the stage to create with this deployment.
-        If the specified stage already exists, it will be updated to point to the new deployment.
-        We recommend using the aws_api_gateway_stage resource instead to manage stages.
     triggers : {str:str}, default is Undefined, optional
         argument or explicit resource references using the resource . The triggers argument should be preferred over depends_on, since depends_on can only capture dependency ordering and will not cause the resource to recreate (redeploy the REST API) with upstream configuration changes.
     variables : {str:str}, default is Undefined, optional
-        Map to set on the stage managed by the stage_name argument.
+        Map to set on the related stage.
     """
 
-
-    canarySettings?: ApigatewayAwsUpboundIoV1beta1DeploymentStatusAtProviderCanarySettings
 
     createdDate?: str
 
     description?: str
 
-    executionArn?: str
-
     id?: str
 
-    invokeUrl?: str
+    region?: str
 
     restApiId?: str
-
-    stageDescription?: str
-
-    stageName?: str
 
     triggers?: {str:str}
 
     variables?: {str:str}
-
-
-schema ApigatewayAwsUpboundIoV1beta1DeploymentStatusAtProviderCanarySettings:
-    r"""
-    Input configuration for the canary deployment when the deployment is a canary release deployment.
-    See [canary_settings](#canary_settings-argument-reference) below. Has no effect when stage_name` is not set.
-
-    Attributes
-    ----------
-    percentTraffic : float, default is Undefined, optional
-        Percentage (0.0-100.0) of traffic routed to the canary deployment.
-    stageVariableOverrides : {str:str}, default is Undefined, optional
-        Stage variable overrides used for the canary release deployment. They can override existing stage variables or add new stage variables for the canary release deployment. These stage variables are represented as a string-to-string map between stage variable names and their values.
-    useStageCache : bool, default is Undefined, optional
-        Boolean flag to indicate whether the canary release deployment uses the stage cache or not.
-    """
-
-
-    percentTraffic?: float
-
-    stageVariableOverrides?: {str:str}
-
-    useStageCache?: bool
 
 
 schema ApigatewayAwsUpboundIoV1beta1DeploymentStatusConditionsItems0:

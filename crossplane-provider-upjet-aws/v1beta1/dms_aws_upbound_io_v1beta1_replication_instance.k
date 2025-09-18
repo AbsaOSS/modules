@@ -66,8 +66,6 @@ schema DmsAwsUpboundIoV1beta1ReplicationInstanceSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : DmsAwsUpboundIoV1beta1ReplicationInstanceSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : DmsAwsUpboundIoV1beta1ReplicationInstanceSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : DmsAwsUpboundIoV1beta1ReplicationInstanceSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema DmsAwsUpboundIoV1beta1ReplicationInstanceSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: DmsAwsUpboundIoV1beta1ReplicationInstanceSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: DmsAwsUpboundIoV1beta1ReplicationInstanceSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: DmsAwsUpboundIoV1beta1ReplicationInstanceSpecWriteConnectionSecretToRef
 
@@ -121,6 +117,7 @@ schema DmsAwsUpboundIoV1beta1ReplicationInstanceSpecForProvider:
     publiclyAccessible : bool, default is Undefined, optional
         Specifies the accessibility options for the replication instance. A value of true represents an instance with a public IP address. A value of false represents an instance with a private IP address.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     replicationInstanceClass : str, default is Undefined, optional
         The compute and memory capacity of the replication instance as specified by the replication instance class. See AWS DMS User Guide for available instance sizes and advice on which one to choose.
@@ -867,112 +864,12 @@ schema DmsAwsUpboundIoV1beta1ReplicationInstanceSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema DmsAwsUpboundIoV1beta1ReplicationInstanceSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : DmsAwsUpboundIoV1beta1ReplicationInstanceSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : DmsAwsUpboundIoV1beta1ReplicationInstanceSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: DmsAwsUpboundIoV1beta1ReplicationInstanceSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: DmsAwsUpboundIoV1beta1ReplicationInstanceSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema DmsAwsUpboundIoV1beta1ReplicationInstanceSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : DmsAwsUpboundIoV1beta1ReplicationInstanceSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: DmsAwsUpboundIoV1beta1ReplicationInstanceSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema DmsAwsUpboundIoV1beta1ReplicationInstanceSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema DmsAwsUpboundIoV1beta1ReplicationInstanceSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema DmsAwsUpboundIoV1beta1ReplicationInstanceSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1042,6 +939,9 @@ schema DmsAwsUpboundIoV1beta1ReplicationInstanceStatusAtProvider:
         The weekly time range during which system maintenance can occur, in Universal Coordinated Time (UTC).
     publiclyAccessible : bool, default is Undefined, optional
         Specifies the accessibility options for the replication instance. A value of true represents an instance with a public IP address. A value of false represents an instance with a private IP address.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     replicationInstanceArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the replication instance.
     replicationInstanceClass : str, default is Undefined, optional
@@ -1084,6 +984,8 @@ schema DmsAwsUpboundIoV1beta1ReplicationInstanceStatusAtProvider:
     preferredMaintenanceWindow?: str
 
     publiclyAccessible?: bool
+
+    region?: str
 
     replicationInstanceArn?: str
 

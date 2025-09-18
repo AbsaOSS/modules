@@ -66,8 +66,6 @@ schema AppstreamAwsUpboundIoV1beta1StackSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : AppstreamAwsUpboundIoV1beta1StackSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : AppstreamAwsUpboundIoV1beta1StackSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : AppstreamAwsUpboundIoV1beta1StackSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema AppstreamAwsUpboundIoV1beta1StackSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: AppstreamAwsUpboundIoV1beta1StackSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: AppstreamAwsUpboundIoV1beta1StackSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: AppstreamAwsUpboundIoV1beta1StackSpecWriteConnectionSecretToRef
 
@@ -113,6 +109,7 @@ schema AppstreamAwsUpboundIoV1beta1StackSpecForProvider:
     redirectUrl : str, default is Undefined, optional
         URL that users are redirected to after their streaming session ends.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     storageConnectors : [AppstreamAwsUpboundIoV1beta1StackSpecForProviderStorageConnectorsItems0], default is Undefined, optional
         Configuration block for the storage connectors to enable.
@@ -240,7 +237,7 @@ schema AppstreamAwsUpboundIoV1beta1StackSpecForProviderUserSettingsItems0:
     ----------
     action : str, default is Undefined, optional
         Action that is enabled or disabled.
-        Valid values are CLIPBOARD_COPY_FROM_LOCAL_DEVICE,  CLIPBOARD_COPY_TO_LOCAL_DEVICE, FILE_UPLOAD, FILE_DOWNLOAD, PRINTING_TO_LOCAL_DEVICE, DOMAIN_PASSWORD_SIGNIN, or DOMAIN_SMART_CARD_SIGNIN.
+        Valid values are AUTO_TIME_ZONE_REDIRECTION, CLIPBOARD_COPY_FROM_LOCAL_DEVICE, CLIPBOARD_COPY_TO_LOCAL_DEVICE, DOMAIN_PASSWORD_SIGNIN, DOMAIN_SMART_CARD_SIGNIN, FILE_UPLOAD, FILE_DOWNLOAD, or PRINTING_TO_LOCAL_DEVICE.
     permission : str, default is Undefined, optional
         Whether the action is enabled or disabled.
         Valid values are ENABLED or DISABLED.
@@ -409,7 +406,7 @@ schema AppstreamAwsUpboundIoV1beta1StackSpecInitProviderUserSettingsItems0:
     ----------
     action : str, default is Undefined, optional
         Action that is enabled or disabled.
-        Valid values are CLIPBOARD_COPY_FROM_LOCAL_DEVICE,  CLIPBOARD_COPY_TO_LOCAL_DEVICE, FILE_UPLOAD, FILE_DOWNLOAD, PRINTING_TO_LOCAL_DEVICE, DOMAIN_PASSWORD_SIGNIN, or DOMAIN_SMART_CARD_SIGNIN.
+        Valid values are AUTO_TIME_ZONE_REDIRECTION, CLIPBOARD_COPY_FROM_LOCAL_DEVICE, CLIPBOARD_COPY_TO_LOCAL_DEVICE, DOMAIN_PASSWORD_SIGNIN, DOMAIN_SMART_CARD_SIGNIN, FILE_UPLOAD, FILE_DOWNLOAD, or PRINTING_TO_LOCAL_DEVICE.
     permission : str, default is Undefined, optional
         Whether the action is enabled or disabled.
         Valid values are ENABLED or DISABLED.
@@ -465,112 +462,12 @@ schema AppstreamAwsUpboundIoV1beta1StackSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema AppstreamAwsUpboundIoV1beta1StackSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : AppstreamAwsUpboundIoV1beta1StackSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : AppstreamAwsUpboundIoV1beta1StackSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: AppstreamAwsUpboundIoV1beta1StackSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: AppstreamAwsUpboundIoV1beta1StackSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema AppstreamAwsUpboundIoV1beta1StackSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : AppstreamAwsUpboundIoV1beta1StackSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: AppstreamAwsUpboundIoV1beta1StackSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema AppstreamAwsUpboundIoV1beta1StackSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema AppstreamAwsUpboundIoV1beta1StackSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema AppstreamAwsUpboundIoV1beta1StackSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -640,6 +537,9 @@ schema AppstreamAwsUpboundIoV1beta1StackStatusAtProvider:
         Unique name for the AppStream stack.
     redirectUrl : str, default is Undefined, optional
         URL that users are redirected to after their streaming session ends.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     storageConnectors : [AppstreamAwsUpboundIoV1beta1StackStatusAtProviderStorageConnectorsItems0], default is Undefined, optional
         Configuration block for the storage connectors to enable.
         See storage_connectors below.
@@ -677,6 +577,8 @@ schema AppstreamAwsUpboundIoV1beta1StackStatusAtProvider:
     name?: str
 
     redirectUrl?: str
+
+    region?: str
 
     storageConnectors?: [AppstreamAwsUpboundIoV1beta1StackStatusAtProviderStorageConnectorsItems0]
 
@@ -774,7 +676,7 @@ schema AppstreamAwsUpboundIoV1beta1StackStatusAtProviderUserSettingsItems0:
     ----------
     action : str, default is Undefined, optional
         Action that is enabled or disabled.
-        Valid values are CLIPBOARD_COPY_FROM_LOCAL_DEVICE,  CLIPBOARD_COPY_TO_LOCAL_DEVICE, FILE_UPLOAD, FILE_DOWNLOAD, PRINTING_TO_LOCAL_DEVICE, DOMAIN_PASSWORD_SIGNIN, or DOMAIN_SMART_CARD_SIGNIN.
+        Valid values are AUTO_TIME_ZONE_REDIRECTION, CLIPBOARD_COPY_FROM_LOCAL_DEVICE, CLIPBOARD_COPY_TO_LOCAL_DEVICE, DOMAIN_PASSWORD_SIGNIN, DOMAIN_SMART_CARD_SIGNIN, FILE_UPLOAD, FILE_DOWNLOAD, or PRINTING_TO_LOCAL_DEVICE.
     permission : str, default is Undefined, optional
         Whether the action is enabled or disabled.
         Valid values are ENABLED or DISABLED.

@@ -66,8 +66,6 @@ schema Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecWriteConnectionSecretToRef
 
@@ -100,18 +96,10 @@ schema Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecForProvider:
         associate public Ip address
     availabilityZone : str, default is Undefined, optional
         availability zone
-    blockDurationMinutes : float, default is Undefined, optional
-        The required duration for the Spot instances, in minutes. This value must be a multiple of 60 (60, 120, 180, 240, 300, or 360).
-        The duration period starts as soon as your Spot instance receives its instance ID. At the end of the duration period, Amazon EC2 marks the Spot instance for termination and provides a Spot instance termination notice, which gives the instance a two-minute warning before it terminates.
-        Note that you can't specify an Availability Zone group or a launch group if you specify a duration.
     capacityReservationSpecification : Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecForProviderCapacityReservationSpecification, default is Undefined, optional
         capacity reservation specification
-    cpuCoreCount : float, default is Undefined, optional
-        cpu core count
     cpuOptions : Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecForProviderCPUOptions, default is Undefined, optional
         cpu options
-    cpuThreadsPerCore : float, default is Undefined, optional
-        cpu threads per core
     creditSpecification : Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecForProviderCreditSpecification, default is Undefined, optional
         credit specification
     disableApiStop : bool, default is Undefined, optional
@@ -172,6 +160,8 @@ schema Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecForProvider:
     privateIp : str, default is Undefined, optional
         The private IP address assigned to the instance
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Spot Instance Requests support all the same arguments as aws_instance, with the addition of:
         Region is the region you'd like your resource to be created in.
     rootBlockDevice : Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecForProviderRootBlockDevice, default is Undefined, optional
         root block device
@@ -225,15 +215,9 @@ schema Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecForProvider:
 
     availabilityZone?: str
 
-    blockDurationMinutes?: float
-
     capacityReservationSpecification?: Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecForProviderCapacityReservationSpecification
 
-    cpuCoreCount?: float
-
     cpuOptions?: Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecForProviderCPUOptions
-
-    cpuThreadsPerCore?: float
 
     creditSpecification?: Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecForProviderCreditSpecification
 
@@ -859,18 +843,10 @@ schema Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecInitProvider:
         associate public Ip address
     availabilityZone : str, default is Undefined, optional
         availability zone
-    blockDurationMinutes : float, default is Undefined, optional
-        The required duration for the Spot instances, in minutes. This value must be a multiple of 60 (60, 120, 180, 240, 300, or 360).
-        The duration period starts as soon as your Spot instance receives its instance ID. At the end of the duration period, Amazon EC2 marks the Spot instance for termination and provides a Spot instance termination notice, which gives the instance a two-minute warning before it terminates.
-        Note that you can't specify an Availability Zone group or a launch group if you specify a duration.
     capacityReservationSpecification : Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecInitProviderCapacityReservationSpecification, default is Undefined, optional
         capacity reservation specification
-    cpuCoreCount : float, default is Undefined, optional
-        cpu core count
     cpuOptions : Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecInitProviderCPUOptions, default is Undefined, optional
         cpu options
-    cpuThreadsPerCore : float, default is Undefined, optional
-        cpu threads per core
     creditSpecification : Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecInitProviderCreditSpecification, default is Undefined, optional
         credit specification
     disableApiStop : bool, default is Undefined, optional
@@ -982,15 +958,9 @@ schema Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecInitProvider:
 
     availabilityZone?: str
 
-    blockDurationMinutes?: float
-
     capacityReservationSpecification?: Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecInitProviderCapacityReservationSpecification
 
-    cpuCoreCount?: float
-
     cpuOptions?: Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecInitProviderCPUOptions
-
-    cpuThreadsPerCore?: float
 
     creditSpecification?: Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecInitProviderCreditSpecification
 
@@ -1637,112 +1607,12 @@ schema Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema Ec2AwsUpboundIoV1beta2SpotInstanceRequestSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1796,18 +1666,10 @@ schema Ec2AwsUpboundIoV1beta2SpotInstanceRequestStatusAtProvider:
         associate public Ip address
     availabilityZone : str, default is Undefined, optional
         availability zone
-    blockDurationMinutes : float, default is Undefined, optional
-        The required duration for the Spot instances, in minutes. This value must be a multiple of 60 (60, 120, 180, 240, 300, or 360).
-        The duration period starts as soon as your Spot instance receives its instance ID. At the end of the duration period, Amazon EC2 marks the Spot instance for termination and provides a Spot instance termination notice, which gives the instance a two-minute warning before it terminates.
-        Note that you can't specify an Availability Zone group or a launch group if you specify a duration.
     capacityReservationSpecification : Ec2AwsUpboundIoV1beta2SpotInstanceRequestStatusAtProviderCapacityReservationSpecification, default is Undefined, optional
         capacity reservation specification
-    cpuCoreCount : float, default is Undefined, optional
-        cpu core count
     cpuOptions : Ec2AwsUpboundIoV1beta2SpotInstanceRequestStatusAtProviderCPUOptions, default is Undefined, optional
         cpu options
-    cpuThreadsPerCore : float, default is Undefined, optional
-        cpu threads per core
     creditSpecification : Ec2AwsUpboundIoV1beta2SpotInstanceRequestStatusAtProviderCreditSpecification, default is Undefined, optional
         credit specification
     disableApiStop : bool, default is Undefined, optional
@@ -1886,6 +1748,10 @@ schema Ec2AwsUpboundIoV1beta2SpotInstanceRequestStatusAtProvider:
         is only available if you've enabled DNS hostnames for your VPC
     publicIp : str, default is Undefined, optional
         The public IP address assigned to the instance, if applicable.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Spot Instance Requests support all the same arguments as aws_instance, with the addition of:
+        Region is the region you'd like your resource to be created in.
     rootBlockDevice : Ec2AwsUpboundIoV1beta2SpotInstanceRequestStatusAtProviderRootBlockDevice, default is Undefined, optional
         root block device
     secondaryPrivateIps : [str], default is Undefined, optional
@@ -1945,15 +1811,9 @@ schema Ec2AwsUpboundIoV1beta2SpotInstanceRequestStatusAtProvider:
 
     availabilityZone?: str
 
-    blockDurationMinutes?: float
-
     capacityReservationSpecification?: Ec2AwsUpboundIoV1beta2SpotInstanceRequestStatusAtProviderCapacityReservationSpecification
 
-    cpuCoreCount?: float
-
     cpuOptions?: Ec2AwsUpboundIoV1beta2SpotInstanceRequestStatusAtProviderCPUOptions
-
-    cpuThreadsPerCore?: float
 
     creditSpecification?: Ec2AwsUpboundIoV1beta2SpotInstanceRequestStatusAtProviderCreditSpecification
 
@@ -2028,6 +1888,8 @@ schema Ec2AwsUpboundIoV1beta2SpotInstanceRequestStatusAtProvider:
     publicDns?: str
 
     publicIp?: str
+
+    region?: str
 
     rootBlockDevice?: Ec2AwsUpboundIoV1beta2SpotInstanceRequestStatusAtProviderRootBlockDevice
 

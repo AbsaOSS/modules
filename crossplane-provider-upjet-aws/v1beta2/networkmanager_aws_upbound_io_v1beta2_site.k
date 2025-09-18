@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema Site:
     r"""
-    Site is the Schema for the Sites API. Creates a site in a global network.
+    Site is the Schema for the Sites API. Manages a Network Manager site.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema NetworkmanagerAwsUpboundIoV1beta2SiteSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : NetworkmanagerAwsUpboundIoV1beta2SiteSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : NetworkmanagerAwsUpboundIoV1beta2SiteSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : NetworkmanagerAwsUpboundIoV1beta2SiteSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema NetworkmanagerAwsUpboundIoV1beta2SiteSpec:
 
     providerConfigRef?: NetworkmanagerAwsUpboundIoV1beta2SiteSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: NetworkmanagerAwsUpboundIoV1beta2SiteSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: NetworkmanagerAwsUpboundIoV1beta2SiteSpecWriteConnectionSecretToRef
 
 
@@ -97,15 +93,13 @@ schema NetworkmanagerAwsUpboundIoV1beta2SiteSpecForProvider:
     description : str, default is Undefined, optional
         Description of the Site.
     globalNetworkId : str, default is Undefined, optional
-        The ID of the Global Network to create the site in.
+        ID of the Global Network to create the site in.
     globalNetworkIdRef : NetworkmanagerAwsUpboundIoV1beta2SiteSpecForProviderGlobalNetworkIDRef, default is Undefined, optional
         global network Id ref
     globalNetworkIdSelector : NetworkmanagerAwsUpboundIoV1beta2SiteSpecForProviderGlobalNetworkIDSelector, default is Undefined, optional
         global network Id selector
     location : NetworkmanagerAwsUpboundIoV1beta2SiteSpecForProviderLocation, default is Undefined, optional
         location
-    region : str, default is Undefined, required
-        Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     """
@@ -120,8 +114,6 @@ schema NetworkmanagerAwsUpboundIoV1beta2SiteSpecForProvider:
     globalNetworkIdSelector?: NetworkmanagerAwsUpboundIoV1beta2SiteSpecForProviderGlobalNetworkIDSelector
 
     location?: NetworkmanagerAwsUpboundIoV1beta2SiteSpecForProviderLocation
-
-    region: str
 
     tags?: {str:str}
 
@@ -217,7 +209,7 @@ schema NetworkmanagerAwsUpboundIoV1beta2SiteSpecForProviderGlobalNetworkIDSelect
 
 schema NetworkmanagerAwsUpboundIoV1beta2SiteSpecForProviderLocation:
     r"""
-    The site location as documented below.
+    Site location. See below.
 
     Attributes
     ----------
@@ -255,7 +247,7 @@ schema NetworkmanagerAwsUpboundIoV1beta2SiteSpecInitProvider:
     description : str, default is Undefined, optional
         Description of the Site.
     globalNetworkId : str, default is Undefined, optional
-        The ID of the Global Network to create the site in.
+        ID of the Global Network to create the site in.
     globalNetworkIdRef : NetworkmanagerAwsUpboundIoV1beta2SiteSpecInitProviderGlobalNetworkIDRef, default is Undefined, optional
         global network Id ref
     globalNetworkIdSelector : NetworkmanagerAwsUpboundIoV1beta2SiteSpecInitProviderGlobalNetworkIDSelector, default is Undefined, optional
@@ -371,7 +363,7 @@ schema NetworkmanagerAwsUpboundIoV1beta2SiteSpecInitProviderGlobalNetworkIDSelec
 
 schema NetworkmanagerAwsUpboundIoV1beta2SiteSpecInitProviderLocation:
     r"""
-    The site location as documented below.
+    Site location. See below.
 
     Attributes
     ----------
@@ -435,112 +427,12 @@ schema NetworkmanagerAwsUpboundIoV1beta2SiteSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema NetworkmanagerAwsUpboundIoV1beta2SiteSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : NetworkmanagerAwsUpboundIoV1beta2SiteSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : NetworkmanagerAwsUpboundIoV1beta2SiteSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: NetworkmanagerAwsUpboundIoV1beta2SiteSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: NetworkmanagerAwsUpboundIoV1beta2SiteSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema NetworkmanagerAwsUpboundIoV1beta2SiteSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : NetworkmanagerAwsUpboundIoV1beta2SiteSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: NetworkmanagerAwsUpboundIoV1beta2SiteSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema NetworkmanagerAwsUpboundIoV1beta2SiteSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema NetworkmanagerAwsUpboundIoV1beta2SiteSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema NetworkmanagerAwsUpboundIoV1beta2SiteSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -587,11 +479,11 @@ schema NetworkmanagerAwsUpboundIoV1beta2SiteStatusAtProvider:
     Attributes
     ----------
     arn : str, default is Undefined, optional
-        Site Amazon Resource Name (ARN)
+        Site ARN.
     description : str, default is Undefined, optional
         Description of the Site.
     globalNetworkId : str, default is Undefined, optional
-        The ID of the Global Network to create the site in.
+        ID of the Global Network to create the site in.
     id : str, default is Undefined, optional
         id
     location : NetworkmanagerAwsUpboundIoV1beta2SiteStatusAtProviderLocation, default is Undefined, optional
@@ -599,7 +491,7 @@ schema NetworkmanagerAwsUpboundIoV1beta2SiteStatusAtProvider:
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
-        A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
+        Map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     """
 
 
@@ -620,7 +512,7 @@ schema NetworkmanagerAwsUpboundIoV1beta2SiteStatusAtProvider:
 
 schema NetworkmanagerAwsUpboundIoV1beta2SiteStatusAtProviderLocation:
     r"""
-    The site location as documented below.
+    Site location. See below.
 
     Attributes
     ----------

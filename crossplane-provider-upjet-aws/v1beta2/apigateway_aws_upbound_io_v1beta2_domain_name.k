@@ -66,8 +66,6 @@ schema ApigatewayAwsUpboundIoV1beta2DomainNameSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : ApigatewayAwsUpboundIoV1beta2DomainNameSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : ApigatewayAwsUpboundIoV1beta2DomainNameSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : ApigatewayAwsUpboundIoV1beta2DomainNameSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema ApigatewayAwsUpboundIoV1beta2DomainNameSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: ApigatewayAwsUpboundIoV1beta2DomainNameSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: ApigatewayAwsUpboundIoV1beta2DomainNameSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: ApigatewayAwsUpboundIoV1beta2DomainNameSpecWriteConnectionSecretToRef
 
@@ -119,6 +115,7 @@ schema ApigatewayAwsUpboundIoV1beta2DomainNameSpecForProvider:
     policy : str, default is Undefined, optional
         A stringified JSON policy document that applies to the execute-api service for this DomainName regardless of the caller and Method configuration. Supported only for private custom domain names.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     regionalCertificateArn : str, default is Undefined, optional
         ARN for an AWS-managed certificate. AWS Certificate Manager is the only supported source. Used when a regional domain name is desired. Conflicts with certificate_arn, certificate_name, certificate_body, certificate_chain, and certificate_private_key.
@@ -291,10 +288,14 @@ schema ApigatewayAwsUpboundIoV1beta2DomainNameSpecForProviderEndpointConfigurati
 
     Attributes
     ----------
+    ipAddressType : str, default is Undefined, optional
+        The IP address types that can invoke a DomainName. Valid values: ipv4, dualstack. Use ipv4 to allow only IPv4 addresses to invoke a DomainName, or use dualstack to allow both IPv4 and IPv6 addresses to invoke a DomainName. For the PRIVATE endpoint type, only dualstack is supported.
     types : [str], default is Undefined, optional
         A list of endpoint types of an API or its custom domain name. For an edge-optimized API and its custom domain name, the endpoint type is EDGE. For a regional API and its custom domain name, the endpoint type is REGIONAL. For a private API, the endpoint type is PRIVATE.
     """
 
+
+    ipAddressType?: str
 
     types?: [str]
 
@@ -614,10 +615,14 @@ schema ApigatewayAwsUpboundIoV1beta2DomainNameSpecInitProviderEndpointConfigurat
 
     Attributes
     ----------
+    ipAddressType : str, default is Undefined, optional
+        The IP address types that can invoke a DomainName. Valid values: ipv4, dualstack. Use ipv4 to allow only IPv4 addresses to invoke a DomainName, or use dualstack to allow both IPv4 and IPv6 addresses to invoke a DomainName. For the PRIVATE endpoint type, only dualstack is supported.
     types : [str], default is Undefined, optional
         A list of endpoint types of an API or its custom domain name. For an edge-optimized API and its custom domain name, the endpoint type is EDGE. For a regional API and its custom domain name, the endpoint type is REGIONAL. For a private API, the endpoint type is PRIVATE.
     """
 
+
+    ipAddressType?: str
 
     types?: [str]
 
@@ -773,112 +778,12 @@ schema ApigatewayAwsUpboundIoV1beta2DomainNameSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema ApigatewayAwsUpboundIoV1beta2DomainNameSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : ApigatewayAwsUpboundIoV1beta2DomainNameSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : ApigatewayAwsUpboundIoV1beta2DomainNameSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: ApigatewayAwsUpboundIoV1beta2DomainNameSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: ApigatewayAwsUpboundIoV1beta2DomainNameSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema ApigatewayAwsUpboundIoV1beta2DomainNameSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : ApigatewayAwsUpboundIoV1beta2DomainNameSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: ApigatewayAwsUpboundIoV1beta2DomainNameSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema ApigatewayAwsUpboundIoV1beta2DomainNameSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema ApigatewayAwsUpboundIoV1beta2DomainNameSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema ApigatewayAwsUpboundIoV1beta2DomainNameSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -954,6 +859,9 @@ schema ApigatewayAwsUpboundIoV1beta2DomainNameStatusAtProvider:
         ARN of the AWS-issued certificate used to validate custom domain ownership (when certificate_arn is issued via an ACM Private CA or mutual_tls_authentication is configured with an ACM-imported certificate.)
     policy : str, default is Undefined, optional
         A stringified JSON policy document that applies to the execute-api service for this DomainName regardless of the caller and Method configuration. Supported only for private custom domain names.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     regionalCertificateArn : str, default is Undefined, optional
         ARN for an AWS-managed certificate. AWS Certificate Manager is the only supported source. Used when a regional domain name is desired. Conflicts with certificate_arn, certificate_name, certificate_body, certificate_chain, and certificate_private_key.
     regionalCertificateName : str, default is Undefined, optional
@@ -1001,6 +909,8 @@ schema ApigatewayAwsUpboundIoV1beta2DomainNameStatusAtProvider:
 
     policy?: str
 
+    region?: str
+
     regionalCertificateArn?: str
 
     regionalCertificateName?: str
@@ -1022,10 +932,14 @@ schema ApigatewayAwsUpboundIoV1beta2DomainNameStatusAtProviderEndpointConfigurat
 
     Attributes
     ----------
+    ipAddressType : str, default is Undefined, optional
+        The IP address types that can invoke a DomainName. Valid values: ipv4, dualstack. Use ipv4 to allow only IPv4 addresses to invoke a DomainName, or use dualstack to allow both IPv4 and IPv6 addresses to invoke a DomainName. For the PRIVATE endpoint type, only dualstack is supported.
     types : [str], default is Undefined, optional
         A list of endpoint types of an API or its custom domain name. For an edge-optimized API and its custom domain name, the endpoint type is EDGE. For a regional API and its custom domain name, the endpoint type is REGIONAL. For a private API, the endpoint type is PRIVATE.
     """
 
+
+    ipAddressType?: str
 
     types?: [str]
 

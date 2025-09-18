@@ -66,8 +66,6 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : MedialiveAwsUpboundIoV1beta1ChannelSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : MedialiveAwsUpboundIoV1beta1ChannelSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : MedialiveAwsUpboundIoV1beta1ChannelSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: MedialiveAwsUpboundIoV1beta1ChannelSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: MedialiveAwsUpboundIoV1beta1ChannelSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: MedialiveAwsUpboundIoV1beta1ChannelSpecWriteConnectionSecretToRef
 
@@ -113,6 +109,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecForProvider:
     name : str, default is Undefined, optional
         Name of the Channel.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     roleArn : str, default is Undefined, optional
         Concise argument description.
@@ -837,7 +834,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecForProviderEncoderSettingsItems0Av
     passwordParam : str, default is Undefined, optional
         Key used to extract the password from EC2 Parameter store.
     uri : str, default is Undefined, optional
-        –  Path to a file accessible to the live stream.
+        Path to a file accessible to the live stream.
     username : str, default is Undefined, optional
         Username for destination.
     """
@@ -907,13 +904,13 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecForProviderEncoderSettingsItems0Ca
     scte20PlusEmbeddedDestinationSettings : [any], default is Undefined, optional
         SCTE20 Plus Embedded Destination Settings.
     scte27DestinationSettings : [any], default is Undefined, optional
-        –  SCTE27 Destination Settings.
+        SCTE27 Destination Settings.
     smpteTtDestinationSettings : [any], default is Undefined, optional
-        –  SMPTE TT Destination Settings.
+        SMPTE TT Destination Settings.
     teletextDestinationSettings : [any], default is Undefined, optional
-        –  Teletext Destination Settings.
+        Teletext Destination Settings.
     ttmlDestinationSettings : [MedialiveAwsUpboundIoV1beta1ChannelSpecForProviderEncoderSettingsItems0CaptionDescriptionsItems0DestinationSettingsItems0TtmlDestinationSettingsItems0], default is Undefined, optional
-        –  TTML Destination Settings. See TTML Destination Settings for more details.
+        TTML Destination Settings. See TTML Destination Settings for more details.
     webvttDestinationSettings : [MedialiveAwsUpboundIoV1beta1ChannelSpecForProviderEncoderSettingsItems0CaptionDescriptionsItems0DestinationSettingsItems0WebvttDestinationSettingsItems0], default is Undefined, optional
         WebVTT Destination Settings. See WebVTT Destination Settings for more details.
     """
@@ -953,39 +950,39 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecForProviderEncoderSettingsItems0Ca
     Attributes
     ----------
     alignment : str, default is Undefined, optional
-        justify live subtitles and center-justify pre-recorded subtitles. All burn-in and DVB-Sub font settings must match.
+        If no explicit xPosition or yPosition is provided, setting alignment to centered will place the captions at the bottom center of the output. Similarly, setting a left alignment will align captions to the bottom left of the output. If x and y positions are given in conjunction with the alignment parameter, the font will be justified (either left or centered) relative to those coordinates. Selecting “smart” justification will left-justify live subtitles and center-justify pre-recorded subtitles. All burn-in and DVB-Sub font settings must match.
     backgroundColor : str, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the color of the rectangle behind the captions. All burn-in and DVB-Sub font settings must match.
     backgroundOpacity : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the opacity of the background rectangle. 255 is opaque; 0 is transparent. Leaving this parameter out is equivalent to setting it to 0 (transparent). All burn-in and DVB-Sub font settings must match.
     font : [MedialiveAwsUpboundIoV1beta1ChannelSpecForProviderEncoderSettingsItems0CaptionDescriptionsItems0DestinationSettingsItems0BurnInDestinationSettingsItems0FontItems0], default is Undefined, optional
-        in. File extension must be ‘ttf’ or ‘tte’. Although the user can select output fonts for many different types of input captions, embedded, STL and teletext sources use a strict grid system. Using external fonts with these caption sources could cause unexpected display of proportional fonts. All burn-in and DVB-Sub font settings must match. See Font for more details.
+        External font file used for caption burn-in. File extension must be ‘ttf’ or ‘tte’. Although the user can select output fonts for many different types of input captions, embedded, STL and teletext sources use a strict grid system. Using external fonts with these caption sources could cause unexpected display of proportional fonts. All burn-in and DVB-Sub font settings must match. See Font for more details.
     fontColor : str, default is Undefined, optional
-        in captions. This option is not valid for source captions that are STL, 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
+        Specifies the color of the burned-in captions. This option is not valid for source captions that are STL, 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
     fontOpacity : float, default is Undefined, optional
-        in captions. 255 is opaque; 0 is transparent. All burn-in and DVB-Sub font settings must match.
+        Specifies the opacity of the burned-in captions. 255 is opaque; 0 is transparent. All burn-in and DVB-Sub font settings must match.
     fontResolution : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Font resolution in DPI (dots per inch); default is 96 dpi. All burn-in and DVB-Sub font settings must match.
     fontSize : str, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        When set to ‘auto’ fontSize will scale depending on the size of the output. Giving a positive integer will specify the exact font size in points. All burn-in and DVB-Sub font settings must match.
     outlineColor : str, default is Undefined, optional
-        defined by the caption stream. All burn-in and DVB-Sub font settings must match.
+        Specifies font outline color. This option is not valid for source captions that are either 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
     outlineSize : float, default is Undefined, optional
-        defined by the caption stream. All burn-in and DVB-Sub font settings must match.
+        Specifies font outline size in pixels. This option is not valid for source captions that are either 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
     shadowColor : str, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the color of the shadow cast by the captions. All burn-in and DVB-Sub font settings must match.
     shadowOpacity : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the opacity of the shadow. 255 is opaque; 0 is transparent. Leaving this parameter out is equivalent to setting it to 0 (transparent). All burn-in and DVB-Sub font settings must match.
     shadowXOffset : float, default is Undefined, optional
-        2 would result in a shadow offset 2 pixels to the left. All burn-in and DVB-Sub font settings must match.
+        Specifies the horizontal offset of the shadow relative to the captions in pixels. A value of -2 would result in a shadow offset 2 pixels to the left. All burn-in and DVB-Sub font settings must match.
     shadowYOffset : float, default is Undefined, optional
-        2 would result in a shadow offset 2 pixels above the text. All burn-in and DVB-Sub font settings must match.
+        Specifies the vertical offset of the shadow relative to the captions in pixels. A value of -2 would result in a shadow offset 2 pixels above the text. All burn-in and DVB-Sub font settings must match.
     teletextGridControl : str, default is Undefined, optional
-        Sub/Burn-in outputs.
+        Controls whether a fixed grid size will be used to generate the output subtitles bitmap. Only applicable for Teletext inputs and DVB-Sub/Burn-in outputs.
     xPosition : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the horizontal position of the caption relative to the left side of the output in pixels. A value of 10 would result in the captions starting 10 pixels from the left of the output. If no explicit xPosition is provided, the horizontal caption position will be determined by the alignment parameter. All burn-in and DVB-Sub font settings must match.
     yPosition : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the vertical position of the caption relative to the top of the output in pixels. A value of 10 would result in the captions starting 10 pixels from the top of the output. If no explicit yPosition is provided, the caption will be positioned towards the bottom of the output. All burn-in and DVB-Sub font settings must match.
     """
 
 
@@ -1033,7 +1030,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecForProviderEncoderSettingsItems0Ca
     passwordParam : str, default is Undefined, optional
         Key used to extract the password from EC2 Parameter store.
     uri : str, default is Undefined, optional
-        –  Path to a file accessible to the live stream.
+        Path to a file accessible to the live stream.
     username : str, default is Undefined, optional
         Username for destination.
     """
@@ -1053,39 +1050,39 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecForProviderEncoderSettingsItems0Ca
     Attributes
     ----------
     alignment : str, default is Undefined, optional
-        justify live subtitles and center-justify pre-recorded subtitles. All burn-in and DVB-Sub font settings must match.
+        If no explicit xPosition or yPosition is provided, setting alignment to centered will place the captions at the bottom center of the output. Similarly, setting a left alignment will align captions to the bottom left of the output. If x and y positions are given in conjunction with the alignment parameter, the font will be justified (either left or centered) relative to those coordinates. Selecting “smart” justification will left-justify live subtitles and center-justify pre-recorded subtitles. All burn-in and DVB-Sub font settings must match.
     backgroundColor : str, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the color of the rectangle behind the captions. All burn-in and DVB-Sub font settings must match.
     backgroundOpacity : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the opacity of the background rectangle. 255 is opaque; 0 is transparent. Leaving this parameter out is equivalent to setting it to 0 (transparent). All burn-in and DVB-Sub font settings must match.
     font : [MedialiveAwsUpboundIoV1beta1ChannelSpecForProviderEncoderSettingsItems0CaptionDescriptionsItems0DestinationSettingsItems0DvbSubDestinationSettingsItems0FontItems0], default is Undefined, optional
-        in. File extension must be ‘ttf’ or ‘tte’. Although the user can select output fonts for many different types of input captions, embedded, STL and teletext sources use a strict grid system. Using external fonts with these caption sources could cause unexpected display of proportional fonts. All burn-in and DVB-Sub font settings must match. See Font for more details.
+        External font file used for caption burn-in. File extension must be ‘ttf’ or ‘tte’. Although the user can select output fonts for many different types of input captions, embedded, STL and teletext sources use a strict grid system. Using external fonts with these caption sources could cause unexpected display of proportional fonts. All burn-in and DVB-Sub font settings must match. See Font for more details.
     fontColor : str, default is Undefined, optional
-        in captions. This option is not valid for source captions that are STL, 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
+        Specifies the color of the burned-in captions. This option is not valid for source captions that are STL, 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
     fontOpacity : float, default is Undefined, optional
-        in captions. 255 is opaque; 0 is transparent. All burn-in and DVB-Sub font settings must match.
+        Specifies the opacity of the burned-in captions. 255 is opaque; 0 is transparent. All burn-in and DVB-Sub font settings must match.
     fontResolution : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Font resolution in DPI (dots per inch); default is 96 dpi. All burn-in and DVB-Sub font settings must match.
     fontSize : str, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        When set to ‘auto’ fontSize will scale depending on the size of the output. Giving a positive integer will specify the exact font size in points. All burn-in and DVB-Sub font settings must match.
     outlineColor : str, default is Undefined, optional
-        defined by the caption stream. All burn-in and DVB-Sub font settings must match.
+        Specifies font outline color. This option is not valid for source captions that are either 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
     outlineSize : float, default is Undefined, optional
-        defined by the caption stream. All burn-in and DVB-Sub font settings must match.
+        Specifies font outline size in pixels. This option is not valid for source captions that are either 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
     shadowColor : str, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the color of the shadow cast by the captions. All burn-in and DVB-Sub font settings must match.
     shadowOpacity : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the opacity of the shadow. 255 is opaque; 0 is transparent. Leaving this parameter out is equivalent to setting it to 0 (transparent). All burn-in and DVB-Sub font settings must match.
     shadowXOffset : float, default is Undefined, optional
-        2 would result in a shadow offset 2 pixels to the left. All burn-in and DVB-Sub font settings must match.
+        Specifies the horizontal offset of the shadow relative to the captions in pixels. A value of -2 would result in a shadow offset 2 pixels to the left. All burn-in and DVB-Sub font settings must match.
     shadowYOffset : float, default is Undefined, optional
-        2 would result in a shadow offset 2 pixels above the text. All burn-in and DVB-Sub font settings must match.
+        Specifies the vertical offset of the shadow relative to the captions in pixels. A value of -2 would result in a shadow offset 2 pixels above the text. All burn-in and DVB-Sub font settings must match.
     teletextGridControl : str, default is Undefined, optional
-        Sub/Burn-in outputs.
+        Controls whether a fixed grid size will be used to generate the output subtitles bitmap. Only applicable for Teletext inputs and DVB-Sub/Burn-in outputs.
     xPosition : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the horizontal position of the caption relative to the left side of the output in pixels. A value of 10 would result in the captions starting 10 pixels from the left of the output. If no explicit xPosition is provided, the horizontal caption position will be determined by the alignment parameter. All burn-in and DVB-Sub font settings must match.
     yPosition : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the vertical position of the caption relative to the top of the output in pixels. A value of 10 would result in the captions starting 10 pixels from the top of the output. If no explicit yPosition is provided, the caption will be positioned towards the bottom of the output. All burn-in and DVB-Sub font settings must match.
     """
 
 
@@ -1133,7 +1130,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecForProviderEncoderSettingsItems0Ca
     passwordParam : str, default is Undefined, optional
         Key used to extract the password from EC2 Parameter store.
     uri : str, default is Undefined, optional
-        –  Path to a file accessible to the live stream.
+        Path to a file accessible to the live stream.
     username : str, default is Undefined, optional
         Username for destination.
     """
@@ -1153,13 +1150,13 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecForProviderEncoderSettingsItems0Ca
     Attributes
     ----------
     copyrightHolder : str, default is Undefined, optional
-        –  Complete this field if you want to include the name of the copyright holder in the copyright tag in the captions metadata.
+        Complete this field if you want to include the name of the copyright holder in the copyright tag in the captions metadata.
     fillLineGap : str, default is Undefined, optional
-        line captions). - enabled: Fill with the captions background color (as specified in the input captions). - disabled: Leave the gap unfilled.
+        Specifies how to handle the gap between the lines (in multi-line captions). - enabled: Fill with the captions background color (as specified in the input captions). - disabled: Leave the gap unfilled.
     fontFamily : str, default is Undefined, optional
-        TT captions. Valid only if styleControl is set to include. If you leave this field empty, the font family is set to “monospaced”. (If styleControl is set to exclude, the font family is always set to “monospaced”.) You specify only the font family. All other style information (color, bold, position and so on) is copied from the input captions. The size is always set to 100% to allow the downstream player to choose the size. - Enter a list of font families, as a comma-separated list of font names, in order of preference. The name can be a font family (such as “Arial”), or a generic font family (such as “serif”), or “default” (to let the downstream player choose the font). - Leave blank to set the family to “monospace”.
+        Specifies the font family to include in the font data attached to the EBU-TT captions. Valid only if styleControl is set to include. If you leave this field empty, the font family is set to “monospaced”. (If styleControl is set to exclude, the font family is always set to “monospaced”.) You specify only the font family. All other style information (color, bold, position and so on) is copied from the input captions. The size is always set to 100% to allow the downstream player to choose the size. - Enter a list of font families, as a comma-separated list of font names, in order of preference. The name can be a font family (such as “Arial”), or a generic font family (such as “serif”), or “default” (to let the downstream player choose the font). - Leave blank to set the family to “monospace”.
     styleControl : str, default is Undefined, optional
-        TT captions. - include: Take the style information (font color, font position, and so on) from the source captions and include that information in the font data attached to the EBU-TT captions. This option is valid only if the source captions are Embedded or Teletext. - exclude: In the font data attached to the EBU-TT captions, set the font family to “monospaced”. Do not include any other style information.
+        Specifies the style information (font color, font position, and so on) to include in the font data that is attached to the EBU-TT captions. - include: Take the style information (font color, font position, and so on) from the source captions and include that information in the font data attached to the EBU-TT captions. This option is valid only if the source captions are Embedded or Teletext. - exclude: In the font data attached to the EBU-TT captions, set the font family to “monospaced”. Do not include any other style information.
     """
 
 
@@ -1179,7 +1176,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecForProviderEncoderSettingsItems0Ca
     Attributes
     ----------
     styleControl : str, default is Undefined, optional
-        TT captions. - include: Take the style information (font color, font position, and so on) from the source captions and include that information in the font data attached to the EBU-TT captions. This option is valid only if the source captions are Embedded or Teletext. - exclude: In the font data attached to the EBU-TT captions, set the font family to “monospaced”. Do not include any other style information.
+        Specifies the style information (font color, font position, and so on) to include in the font data that is attached to the EBU-TT captions. - include: Take the style information (font color, font position, and so on) from the source captions and include that information in the font data attached to the EBU-TT captions. This option is valid only if the source captions are Embedded or Teletext. - exclude: In the font data attached to the EBU-TT captions, set the font family to “monospaced”. Do not include any other style information.
     """
 
 
@@ -1193,7 +1190,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecForProviderEncoderSettingsItems0Ca
     Attributes
     ----------
     styleControl : str, default is Undefined, optional
-        TT captions. - include: Take the style information (font color, font position, and so on) from the source captions and include that information in the font data attached to the EBU-TT captions. This option is valid only if the source captions are Embedded or Teletext. - exclude: In the font data attached to the EBU-TT captions, set the font family to “monospaced”. Do not include any other style information.
+        Specifies the style information (font color, font position, and so on) to include in the font data that is attached to the EBU-TT captions. - include: Take the style information (font color, font position, and so on) from the source captions and include that information in the font data attached to the EBU-TT captions. This option is valid only if the source captions are Embedded or Teletext. - exclude: In the font data attached to the EBU-TT captions, set the font family to “monospaced”. Do not include any other style information.
     """
 
 
@@ -1207,17 +1204,17 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecForProviderEncoderSettingsItems0Gl
     Attributes
     ----------
     initialAudioGain : float, default is Undefined, optional
-        –  Value to set the initial audio gain for the Live Event.
+        Value to set the initial audio gain for the Live Event.
     inputEndAction : str, default is Undefined, optional
-        of-file). When switchAndLoopInputs is configured the encoder will restart at the beginning of the first input. When “none” is configured the encoder will transcode either black, a solid color, or a user specified slate images per the “Input Loss Behavior” configuration until the next input switch occurs (which is controlled through the Channel Schedule API).
+        Indicates the action to take when the current input completes (e.g. end-of-file). When switchAndLoopInputs is configured the encoder will restart at the beginning of the first input. When “none” is configured the encoder will transcode either black, a solid color, or a user specified slate images per the “Input Loss Behavior” configuration until the next input switch occurs (which is controlled through the Channel Schedule API).
     inputLossBehavior : [MedialiveAwsUpboundIoV1beta1ChannelSpecForProviderEncoderSettingsItems0GlobalConfigurationItems0InputLossBehaviorItems0], default is Undefined, optional
         Settings for system actions when input is lost. See Input Loss Behavior for more details.
     outputLockingMode : str, default is Undefined, optional
-        MediaLive will attempt to synchronize the output of each pipeline to the other. EPOCH_LOCKING - MediaLive will attempt to synchronize the output of each pipeline to the Unix epoch.
+        Indicates how MediaLive pipelines are synchronized. PIPELINE_LOCKING - MediaLive will attempt to synchronize the output of each pipeline to the other. EPOCH_LOCKING - MediaLive will attempt to synchronize the output of each pipeline to the Unix epoch.
     outputTimingSource : str, default is Undefined, optional
-        –  Indicates whether the rate of frames emitted by the Live encoder should be paced by its system clock (which optionally may be locked to another source via NTP) or should be locked to the clock of the source that is providing the input stream.
+        Indicates whether the rate of frames emitted by the Live encoder should be paced by its system clock (which optionally may be locked to another source via NTP) or should be locked to the clock of the source that is providing the input stream.
     supportLowFramerateInputs : str, default is Undefined, optional
-        –  Adjusts video input buffer for streams with very low video framerates. This is commonly set to enabled for music channels with less than one video frame per second.
+        Adjusts video input buffer for streams with very low video framerates. This is commonly set to enabled for music channels with less than one video frame per second.
     """
 
 
@@ -1273,7 +1270,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecForProviderEncoderSettingsItems0Gl
     passwordParam : str, default is Undefined, optional
         Key used to extract the password from EC2 Parameter store.
     uri : str, default is Undefined, optional
-        –  Path to a file accessible to the live stream.
+        Path to a file accessible to the live stream.
     username : str, default is Undefined, optional
         Username for destination.
     """
@@ -1293,7 +1290,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecForProviderEncoderSettingsItems0Mo
     Attributes
     ----------
     motionGraphicsInsertion : str, default is Undefined, optional
-        –  Motion Graphics Insertion.
+        Motion Graphics Insertion.
     motionGraphicsSettings : [MedialiveAwsUpboundIoV1beta1ChannelSpecForProviderEncoderSettingsItems0MotionGraphicsConfigurationItems0MotionGraphicsSettingsItems0], default is Undefined, optional
         –  Motion Graphics Settings. See Motion Graphics Settings for more details.
     """
@@ -1311,7 +1308,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecForProviderEncoderSettingsItems0Mo
     Attributes
     ----------
     htmlMotionGraphicsSettings : [any], default is Undefined, optional
-        –  Html Motion Graphics Settings.
+        Html Motion Graphics Settings.
     """
 
 
@@ -1325,9 +1322,9 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecForProviderEncoderSettingsItems0Ni
     Attributes
     ----------
     distributorId : str, default is Undefined, optional
-        –  Enter the Distributor ID assigned to your organization by Nielsen.
+        Enter the Distributor ID assigned to your organization by Nielsen.
     nielsenPcmToId3Tagging : str, default is Undefined, optional
-        –  Enables Nielsen PCM to ID3 tagging.
+        Enables Nielsen PCM to ID3 tagging.
     """
 
 
@@ -1947,7 +1944,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecForProviderEncoderSettingsItems0Ou
     passwordParam : str, default is Undefined, optional
         Key used to extract the password from EC2 Parameter store.
     uri : str, default is Undefined, optional
-        –  Path to a file accessible to the live stream.
+        Path to a file accessible to the live stream.
     username : str, default is Undefined, optional
         Username for destination.
     """
@@ -2621,7 +2618,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecForProviderEncoderSettingsItems0Ou
     passwordParam : str, default is Undefined, optional
         Key used to extract the password from EC2 Parameter store.
     uri : str, default is Undefined, optional
-        –  Path to a file accessible to the live stream.
+        Path to a file accessible to the live stream.
     username : str, default is Undefined, optional
         Username for destination.
     """
@@ -3321,7 +3318,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecForProviderEncoderSettingsItems0Vi
     maxBitrate : float, default is Undefined, optional
         Set the maximum bitrate in order to accommodate expected spikes in the complexity of the video.
     minIInterval : float, default is Undefined, optional
-        min i interval
+        Min interval.
     numRefFrames : float, default is Undefined, optional
         Number of reference frames to use.
     parControl : str, default is Undefined, optional
@@ -3515,7 +3512,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecForProviderEncoderSettingsItems0Vi
     maxBitrate : float, default is Undefined, optional
         Set the maximum bitrate in order to accommodate expected spikes in the complexity of the video.
     minIInterval : float, default is Undefined, optional
-        min i interval
+        Min interval.
     minQp : float, default is Undefined, optional
         Set the minimum QP.
     mvOverPictureBoundaries : str, default is Undefined, optional
@@ -3974,9 +3971,9 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecForProviderInputAttachmentsItems0I
     Attributes
     ----------
     audioSelector : [MedialiveAwsUpboundIoV1beta1ChannelSpecForProviderInputAttachmentsItems0InputSettingsItems0AudioSelectorItems0], default is Undefined, optional
-        audio selector
+        Used to select the audio stream to decode for inputs that have multiple. See Audio Selectors for more details.
     captionSelector : [MedialiveAwsUpboundIoV1beta1ChannelSpecForProviderInputAttachmentsItems0InputSettingsItems0CaptionSelectorItems0], default is Undefined, optional
-        caption selector
+        Used to select the caption input to use for inputs that have multiple available. See Caption Selectors for more details.
     deblockFilter : str, default is Undefined, optional
         Enable or disable the deblock filter when filtering.
     denoiseFilter : str, default is Undefined, optional
@@ -5326,7 +5323,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecInitProviderEncoderSettingsItems0A
     passwordParam : str, default is Undefined, optional
         Key used to extract the password from EC2 Parameter store.
     uri : str, default is Undefined, optional
-        –  Path to a file accessible to the live stream.
+        Path to a file accessible to the live stream.
     username : str, default is Undefined, optional
         Username for destination.
     """
@@ -5396,13 +5393,13 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecInitProviderEncoderSettingsItems0C
     scte20PlusEmbeddedDestinationSettings : [any], default is Undefined, optional
         SCTE20 Plus Embedded Destination Settings.
     scte27DestinationSettings : [any], default is Undefined, optional
-        –  SCTE27 Destination Settings.
+        SCTE27 Destination Settings.
     smpteTtDestinationSettings : [any], default is Undefined, optional
-        –  SMPTE TT Destination Settings.
+        SMPTE TT Destination Settings.
     teletextDestinationSettings : [any], default is Undefined, optional
-        –  Teletext Destination Settings.
+        Teletext Destination Settings.
     ttmlDestinationSettings : [MedialiveAwsUpboundIoV1beta1ChannelSpecInitProviderEncoderSettingsItems0CaptionDescriptionsItems0DestinationSettingsItems0TtmlDestinationSettingsItems0], default is Undefined, optional
-        –  TTML Destination Settings. See TTML Destination Settings for more details.
+        TTML Destination Settings. See TTML Destination Settings for more details.
     webvttDestinationSettings : [MedialiveAwsUpboundIoV1beta1ChannelSpecInitProviderEncoderSettingsItems0CaptionDescriptionsItems0DestinationSettingsItems0WebvttDestinationSettingsItems0], default is Undefined, optional
         WebVTT Destination Settings. See WebVTT Destination Settings for more details.
     """
@@ -5442,39 +5439,39 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecInitProviderEncoderSettingsItems0C
     Attributes
     ----------
     alignment : str, default is Undefined, optional
-        justify live subtitles and center-justify pre-recorded subtitles. All burn-in and DVB-Sub font settings must match.
+        If no explicit xPosition or yPosition is provided, setting alignment to centered will place the captions at the bottom center of the output. Similarly, setting a left alignment will align captions to the bottom left of the output. If x and y positions are given in conjunction with the alignment parameter, the font will be justified (either left or centered) relative to those coordinates. Selecting “smart” justification will left-justify live subtitles and center-justify pre-recorded subtitles. All burn-in and DVB-Sub font settings must match.
     backgroundColor : str, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the color of the rectangle behind the captions. All burn-in and DVB-Sub font settings must match.
     backgroundOpacity : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the opacity of the background rectangle. 255 is opaque; 0 is transparent. Leaving this parameter out is equivalent to setting it to 0 (transparent). All burn-in and DVB-Sub font settings must match.
     font : [MedialiveAwsUpboundIoV1beta1ChannelSpecInitProviderEncoderSettingsItems0CaptionDescriptionsItems0DestinationSettingsItems0BurnInDestinationSettingsItems0FontItems0], default is Undefined, optional
-        in. File extension must be ‘ttf’ or ‘tte’. Although the user can select output fonts for many different types of input captions, embedded, STL and teletext sources use a strict grid system. Using external fonts with these caption sources could cause unexpected display of proportional fonts. All burn-in and DVB-Sub font settings must match. See Font for more details.
+        External font file used for caption burn-in. File extension must be ‘ttf’ or ‘tte’. Although the user can select output fonts for many different types of input captions, embedded, STL and teletext sources use a strict grid system. Using external fonts with these caption sources could cause unexpected display of proportional fonts. All burn-in and DVB-Sub font settings must match. See Font for more details.
     fontColor : str, default is Undefined, optional
-        in captions. This option is not valid for source captions that are STL, 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
+        Specifies the color of the burned-in captions. This option is not valid for source captions that are STL, 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
     fontOpacity : float, default is Undefined, optional
-        in captions. 255 is opaque; 0 is transparent. All burn-in and DVB-Sub font settings must match.
+        Specifies the opacity of the burned-in captions. 255 is opaque; 0 is transparent. All burn-in and DVB-Sub font settings must match.
     fontResolution : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Font resolution in DPI (dots per inch); default is 96 dpi. All burn-in and DVB-Sub font settings must match.
     fontSize : str, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        When set to ‘auto’ fontSize will scale depending on the size of the output. Giving a positive integer will specify the exact font size in points. All burn-in and DVB-Sub font settings must match.
     outlineColor : str, default is Undefined, optional
-        defined by the caption stream. All burn-in and DVB-Sub font settings must match.
+        Specifies font outline color. This option is not valid for source captions that are either 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
     outlineSize : float, default is Undefined, optional
-        defined by the caption stream. All burn-in and DVB-Sub font settings must match.
+        Specifies font outline size in pixels. This option is not valid for source captions that are either 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
     shadowColor : str, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the color of the shadow cast by the captions. All burn-in and DVB-Sub font settings must match.
     shadowOpacity : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the opacity of the shadow. 255 is opaque; 0 is transparent. Leaving this parameter out is equivalent to setting it to 0 (transparent). All burn-in and DVB-Sub font settings must match.
     shadowXOffset : float, default is Undefined, optional
-        2 would result in a shadow offset 2 pixels to the left. All burn-in and DVB-Sub font settings must match.
+        Specifies the horizontal offset of the shadow relative to the captions in pixels. A value of -2 would result in a shadow offset 2 pixels to the left. All burn-in and DVB-Sub font settings must match.
     shadowYOffset : float, default is Undefined, optional
-        2 would result in a shadow offset 2 pixels above the text. All burn-in and DVB-Sub font settings must match.
+        Specifies the vertical offset of the shadow relative to the captions in pixels. A value of -2 would result in a shadow offset 2 pixels above the text. All burn-in and DVB-Sub font settings must match.
     teletextGridControl : str, default is Undefined, optional
-        Sub/Burn-in outputs.
+        Controls whether a fixed grid size will be used to generate the output subtitles bitmap. Only applicable for Teletext inputs and DVB-Sub/Burn-in outputs.
     xPosition : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the horizontal position of the caption relative to the left side of the output in pixels. A value of 10 would result in the captions starting 10 pixels from the left of the output. If no explicit xPosition is provided, the horizontal caption position will be determined by the alignment parameter. All burn-in and DVB-Sub font settings must match.
     yPosition : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the vertical position of the caption relative to the top of the output in pixels. A value of 10 would result in the captions starting 10 pixels from the top of the output. If no explicit yPosition is provided, the caption will be positioned towards the bottom of the output. All burn-in and DVB-Sub font settings must match.
     """
 
 
@@ -5522,7 +5519,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecInitProviderEncoderSettingsItems0C
     passwordParam : str, default is Undefined, optional
         Key used to extract the password from EC2 Parameter store.
     uri : str, default is Undefined, optional
-        –  Path to a file accessible to the live stream.
+        Path to a file accessible to the live stream.
     username : str, default is Undefined, optional
         Username for destination.
     """
@@ -5542,39 +5539,39 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecInitProviderEncoderSettingsItems0C
     Attributes
     ----------
     alignment : str, default is Undefined, optional
-        justify live subtitles and center-justify pre-recorded subtitles. All burn-in and DVB-Sub font settings must match.
+        If no explicit xPosition or yPosition is provided, setting alignment to centered will place the captions at the bottom center of the output. Similarly, setting a left alignment will align captions to the bottom left of the output. If x and y positions are given in conjunction with the alignment parameter, the font will be justified (either left or centered) relative to those coordinates. Selecting “smart” justification will left-justify live subtitles and center-justify pre-recorded subtitles. All burn-in and DVB-Sub font settings must match.
     backgroundColor : str, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the color of the rectangle behind the captions. All burn-in and DVB-Sub font settings must match.
     backgroundOpacity : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the opacity of the background rectangle. 255 is opaque; 0 is transparent. Leaving this parameter out is equivalent to setting it to 0 (transparent). All burn-in and DVB-Sub font settings must match.
     font : [MedialiveAwsUpboundIoV1beta1ChannelSpecInitProviderEncoderSettingsItems0CaptionDescriptionsItems0DestinationSettingsItems0DvbSubDestinationSettingsItems0FontItems0], default is Undefined, optional
-        in. File extension must be ‘ttf’ or ‘tte’. Although the user can select output fonts for many different types of input captions, embedded, STL and teletext sources use a strict grid system. Using external fonts with these caption sources could cause unexpected display of proportional fonts. All burn-in and DVB-Sub font settings must match. See Font for more details.
+        External font file used for caption burn-in. File extension must be ‘ttf’ or ‘tte’. Although the user can select output fonts for many different types of input captions, embedded, STL and teletext sources use a strict grid system. Using external fonts with these caption sources could cause unexpected display of proportional fonts. All burn-in and DVB-Sub font settings must match. See Font for more details.
     fontColor : str, default is Undefined, optional
-        in captions. This option is not valid for source captions that are STL, 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
+        Specifies the color of the burned-in captions. This option is not valid for source captions that are STL, 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
     fontOpacity : float, default is Undefined, optional
-        in captions. 255 is opaque; 0 is transparent. All burn-in and DVB-Sub font settings must match.
+        Specifies the opacity of the burned-in captions. 255 is opaque; 0 is transparent. All burn-in and DVB-Sub font settings must match.
     fontResolution : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Font resolution in DPI (dots per inch); default is 96 dpi. All burn-in and DVB-Sub font settings must match.
     fontSize : str, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        When set to ‘auto’ fontSize will scale depending on the size of the output. Giving a positive integer will specify the exact font size in points. All burn-in and DVB-Sub font settings must match.
     outlineColor : str, default is Undefined, optional
-        defined by the caption stream. All burn-in and DVB-Sub font settings must match.
+        Specifies font outline color. This option is not valid for source captions that are either 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
     outlineSize : float, default is Undefined, optional
-        defined by the caption stream. All burn-in and DVB-Sub font settings must match.
+        Specifies font outline size in pixels. This option is not valid for source captions that are either 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
     shadowColor : str, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the color of the shadow cast by the captions. All burn-in and DVB-Sub font settings must match.
     shadowOpacity : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the opacity of the shadow. 255 is opaque; 0 is transparent. Leaving this parameter out is equivalent to setting it to 0 (transparent). All burn-in and DVB-Sub font settings must match.
     shadowXOffset : float, default is Undefined, optional
-        2 would result in a shadow offset 2 pixels to the left. All burn-in and DVB-Sub font settings must match.
+        Specifies the horizontal offset of the shadow relative to the captions in pixels. A value of -2 would result in a shadow offset 2 pixels to the left. All burn-in and DVB-Sub font settings must match.
     shadowYOffset : float, default is Undefined, optional
-        2 would result in a shadow offset 2 pixels above the text. All burn-in and DVB-Sub font settings must match.
+        Specifies the vertical offset of the shadow relative to the captions in pixels. A value of -2 would result in a shadow offset 2 pixels above the text. All burn-in and DVB-Sub font settings must match.
     teletextGridControl : str, default is Undefined, optional
-        Sub/Burn-in outputs.
+        Controls whether a fixed grid size will be used to generate the output subtitles bitmap. Only applicable for Teletext inputs and DVB-Sub/Burn-in outputs.
     xPosition : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the horizontal position of the caption relative to the left side of the output in pixels. A value of 10 would result in the captions starting 10 pixels from the left of the output. If no explicit xPosition is provided, the horizontal caption position will be determined by the alignment parameter. All burn-in and DVB-Sub font settings must match.
     yPosition : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the vertical position of the caption relative to the top of the output in pixels. A value of 10 would result in the captions starting 10 pixels from the top of the output. If no explicit yPosition is provided, the caption will be positioned towards the bottom of the output. All burn-in and DVB-Sub font settings must match.
     """
 
 
@@ -5622,7 +5619,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecInitProviderEncoderSettingsItems0C
     passwordParam : str, default is Undefined, optional
         Key used to extract the password from EC2 Parameter store.
     uri : str, default is Undefined, optional
-        –  Path to a file accessible to the live stream.
+        Path to a file accessible to the live stream.
     username : str, default is Undefined, optional
         Username for destination.
     """
@@ -5642,13 +5639,13 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecInitProviderEncoderSettingsItems0C
     Attributes
     ----------
     copyrightHolder : str, default is Undefined, optional
-        –  Complete this field if you want to include the name of the copyright holder in the copyright tag in the captions metadata.
+        Complete this field if you want to include the name of the copyright holder in the copyright tag in the captions metadata.
     fillLineGap : str, default is Undefined, optional
-        line captions). - enabled: Fill with the captions background color (as specified in the input captions). - disabled: Leave the gap unfilled.
+        Specifies how to handle the gap between the lines (in multi-line captions). - enabled: Fill with the captions background color (as specified in the input captions). - disabled: Leave the gap unfilled.
     fontFamily : str, default is Undefined, optional
-        TT captions. Valid only if styleControl is set to include. If you leave this field empty, the font family is set to “monospaced”. (If styleControl is set to exclude, the font family is always set to “monospaced”.) You specify only the font family. All other style information (color, bold, position and so on) is copied from the input captions. The size is always set to 100% to allow the downstream player to choose the size. - Enter a list of font families, as a comma-separated list of font names, in order of preference. The name can be a font family (such as “Arial”), or a generic font family (such as “serif”), or “default” (to let the downstream player choose the font). - Leave blank to set the family to “monospace”.
+        Specifies the font family to include in the font data attached to the EBU-TT captions. Valid only if styleControl is set to include. If you leave this field empty, the font family is set to “monospaced”. (If styleControl is set to exclude, the font family is always set to “monospaced”.) You specify only the font family. All other style information (color, bold, position and so on) is copied from the input captions. The size is always set to 100% to allow the downstream player to choose the size. - Enter a list of font families, as a comma-separated list of font names, in order of preference. The name can be a font family (such as “Arial”), or a generic font family (such as “serif”), or “default” (to let the downstream player choose the font). - Leave blank to set the family to “monospace”.
     styleControl : str, default is Undefined, optional
-        TT captions. - include: Take the style information (font color, font position, and so on) from the source captions and include that information in the font data attached to the EBU-TT captions. This option is valid only if the source captions are Embedded or Teletext. - exclude: In the font data attached to the EBU-TT captions, set the font family to “monospaced”. Do not include any other style information.
+        Specifies the style information (font color, font position, and so on) to include in the font data that is attached to the EBU-TT captions. - include: Take the style information (font color, font position, and so on) from the source captions and include that information in the font data attached to the EBU-TT captions. This option is valid only if the source captions are Embedded or Teletext. - exclude: In the font data attached to the EBU-TT captions, set the font family to “monospaced”. Do not include any other style information.
     """
 
 
@@ -5668,7 +5665,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecInitProviderEncoderSettingsItems0C
     Attributes
     ----------
     styleControl : str, default is Undefined, optional
-        TT captions. - include: Take the style information (font color, font position, and so on) from the source captions and include that information in the font data attached to the EBU-TT captions. This option is valid only if the source captions are Embedded or Teletext. - exclude: In the font data attached to the EBU-TT captions, set the font family to “monospaced”. Do not include any other style information.
+        Specifies the style information (font color, font position, and so on) to include in the font data that is attached to the EBU-TT captions. - include: Take the style information (font color, font position, and so on) from the source captions and include that information in the font data attached to the EBU-TT captions. This option is valid only if the source captions are Embedded or Teletext. - exclude: In the font data attached to the EBU-TT captions, set the font family to “monospaced”. Do not include any other style information.
     """
 
 
@@ -5682,7 +5679,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecInitProviderEncoderSettingsItems0C
     Attributes
     ----------
     styleControl : str, default is Undefined, optional
-        TT captions. - include: Take the style information (font color, font position, and so on) from the source captions and include that information in the font data attached to the EBU-TT captions. This option is valid only if the source captions are Embedded or Teletext. - exclude: In the font data attached to the EBU-TT captions, set the font family to “monospaced”. Do not include any other style information.
+        Specifies the style information (font color, font position, and so on) to include in the font data that is attached to the EBU-TT captions. - include: Take the style information (font color, font position, and so on) from the source captions and include that information in the font data attached to the EBU-TT captions. This option is valid only if the source captions are Embedded or Teletext. - exclude: In the font data attached to the EBU-TT captions, set the font family to “monospaced”. Do not include any other style information.
     """
 
 
@@ -5696,17 +5693,17 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecInitProviderEncoderSettingsItems0G
     Attributes
     ----------
     initialAudioGain : float, default is Undefined, optional
-        –  Value to set the initial audio gain for the Live Event.
+        Value to set the initial audio gain for the Live Event.
     inputEndAction : str, default is Undefined, optional
-        of-file). When switchAndLoopInputs is configured the encoder will restart at the beginning of the first input. When “none” is configured the encoder will transcode either black, a solid color, or a user specified slate images per the “Input Loss Behavior” configuration until the next input switch occurs (which is controlled through the Channel Schedule API).
+        Indicates the action to take when the current input completes (e.g. end-of-file). When switchAndLoopInputs is configured the encoder will restart at the beginning of the first input. When “none” is configured the encoder will transcode either black, a solid color, or a user specified slate images per the “Input Loss Behavior” configuration until the next input switch occurs (which is controlled through the Channel Schedule API).
     inputLossBehavior : [MedialiveAwsUpboundIoV1beta1ChannelSpecInitProviderEncoderSettingsItems0GlobalConfigurationItems0InputLossBehaviorItems0], default is Undefined, optional
         Settings for system actions when input is lost. See Input Loss Behavior for more details.
     outputLockingMode : str, default is Undefined, optional
-        MediaLive will attempt to synchronize the output of each pipeline to the other. EPOCH_LOCKING - MediaLive will attempt to synchronize the output of each pipeline to the Unix epoch.
+        Indicates how MediaLive pipelines are synchronized. PIPELINE_LOCKING - MediaLive will attempt to synchronize the output of each pipeline to the other. EPOCH_LOCKING - MediaLive will attempt to synchronize the output of each pipeline to the Unix epoch.
     outputTimingSource : str, default is Undefined, optional
-        –  Indicates whether the rate of frames emitted by the Live encoder should be paced by its system clock (which optionally may be locked to another source via NTP) or should be locked to the clock of the source that is providing the input stream.
+        Indicates whether the rate of frames emitted by the Live encoder should be paced by its system clock (which optionally may be locked to another source via NTP) or should be locked to the clock of the source that is providing the input stream.
     supportLowFramerateInputs : str, default is Undefined, optional
-        –  Adjusts video input buffer for streams with very low video framerates. This is commonly set to enabled for music channels with less than one video frame per second.
+        Adjusts video input buffer for streams with very low video framerates. This is commonly set to enabled for music channels with less than one video frame per second.
     """
 
 
@@ -5762,7 +5759,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecInitProviderEncoderSettingsItems0G
     passwordParam : str, default is Undefined, optional
         Key used to extract the password from EC2 Parameter store.
     uri : str, default is Undefined, optional
-        –  Path to a file accessible to the live stream.
+        Path to a file accessible to the live stream.
     username : str, default is Undefined, optional
         Username for destination.
     """
@@ -5782,7 +5779,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecInitProviderEncoderSettingsItems0M
     Attributes
     ----------
     motionGraphicsInsertion : str, default is Undefined, optional
-        –  Motion Graphics Insertion.
+        Motion Graphics Insertion.
     motionGraphicsSettings : [MedialiveAwsUpboundIoV1beta1ChannelSpecInitProviderEncoderSettingsItems0MotionGraphicsConfigurationItems0MotionGraphicsSettingsItems0], default is Undefined, optional
         –  Motion Graphics Settings. See Motion Graphics Settings for more details.
     """
@@ -5800,7 +5797,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecInitProviderEncoderSettingsItems0M
     Attributes
     ----------
     htmlMotionGraphicsSettings : [any], default is Undefined, optional
-        –  Html Motion Graphics Settings.
+        Html Motion Graphics Settings.
     """
 
 
@@ -5814,9 +5811,9 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecInitProviderEncoderSettingsItems0N
     Attributes
     ----------
     distributorId : str, default is Undefined, optional
-        –  Enter the Distributor ID assigned to your organization by Nielsen.
+        Enter the Distributor ID assigned to your organization by Nielsen.
     nielsenPcmToId3Tagging : str, default is Undefined, optional
-        –  Enables Nielsen PCM to ID3 tagging.
+        Enables Nielsen PCM to ID3 tagging.
     """
 
 
@@ -6436,7 +6433,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecInitProviderEncoderSettingsItems0O
     passwordParam : str, default is Undefined, optional
         Key used to extract the password from EC2 Parameter store.
     uri : str, default is Undefined, optional
-        –  Path to a file accessible to the live stream.
+        Path to a file accessible to the live stream.
     username : str, default is Undefined, optional
         Username for destination.
     """
@@ -7110,7 +7107,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecInitProviderEncoderSettingsItems0O
     passwordParam : str, default is Undefined, optional
         Key used to extract the password from EC2 Parameter store.
     uri : str, default is Undefined, optional
-        –  Path to a file accessible to the live stream.
+        Path to a file accessible to the live stream.
     username : str, default is Undefined, optional
         Username for destination.
     """
@@ -7810,7 +7807,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecInitProviderEncoderSettingsItems0V
     maxBitrate : float, default is Undefined, optional
         Set the maximum bitrate in order to accommodate expected spikes in the complexity of the video.
     minIInterval : float, default is Undefined, optional
-        min i interval
+        Min interval.
     numRefFrames : float, default is Undefined, optional
         Number of reference frames to use.
     parControl : str, default is Undefined, optional
@@ -8004,7 +8001,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecInitProviderEncoderSettingsItems0V
     maxBitrate : float, default is Undefined, optional
         Set the maximum bitrate in order to accommodate expected spikes in the complexity of the video.
     minIInterval : float, default is Undefined, optional
-        min i interval
+        Min interval.
     minQp : float, default is Undefined, optional
         Set the minimum QP.
     mvOverPictureBoundaries : str, default is Undefined, optional
@@ -8463,9 +8460,9 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecInitProviderInputAttachmentsItems0
     Attributes
     ----------
     audioSelector : [MedialiveAwsUpboundIoV1beta1ChannelSpecInitProviderInputAttachmentsItems0InputSettingsItems0AudioSelectorItems0], default is Undefined, optional
-        audio selector
+        Used to select the audio stream to decode for inputs that have multiple. See Audio Selectors for more details.
     captionSelector : [MedialiveAwsUpboundIoV1beta1ChannelSpecInitProviderInputAttachmentsItems0InputSettingsItems0CaptionSelectorItems0], default is Undefined, optional
-        caption selector
+        Used to select the caption input to use for inputs that have multiple available. See Caption Selectors for more details.
     deblockFilter : str, default is Undefined, optional
         Enable or disable the deblock filter when filtering.
     denoiseFilter : str, default is Undefined, optional
@@ -9105,112 +9102,12 @@ schema MedialiveAwsUpboundIoV1beta1ChannelSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema MedialiveAwsUpboundIoV1beta1ChannelSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : MedialiveAwsUpboundIoV1beta1ChannelSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : MedialiveAwsUpboundIoV1beta1ChannelSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: MedialiveAwsUpboundIoV1beta1ChannelSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: MedialiveAwsUpboundIoV1beta1ChannelSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema MedialiveAwsUpboundIoV1beta1ChannelSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : MedialiveAwsUpboundIoV1beta1ChannelSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: MedialiveAwsUpboundIoV1beta1ChannelSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema MedialiveAwsUpboundIoV1beta1ChannelSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema MedialiveAwsUpboundIoV1beta1ChannelSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema MedialiveAwsUpboundIoV1beta1ChannelSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -9280,6 +9177,9 @@ schema MedialiveAwsUpboundIoV1beta1ChannelStatusAtProvider:
         Maintenance settings for this channel. See Maintenance for more details.
     name : str, default is Undefined, optional
         Name of the Channel.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     roleArn : str, default is Undefined, optional
         Concise argument description.
     startChannel : bool, default is Undefined, optional
@@ -9316,6 +9216,8 @@ schema MedialiveAwsUpboundIoV1beta1ChannelStatusAtProvider:
     maintenance?: [MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderMaintenanceItems0]
 
     name?: str
+
+    region?: str
 
     roleArn?: str
 
@@ -10003,7 +9905,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderEncoderSettingsItems0A
     passwordParam : str, default is Undefined, optional
         Key used to extract the password from EC2 Parameter store.
     uri : str, default is Undefined, optional
-        –  Path to a file accessible to the live stream.
+        Path to a file accessible to the live stream.
     username : str, default is Undefined, optional
         Username for destination.
     """
@@ -10073,13 +9975,13 @@ schema MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderEncoderSettingsItems0C
     scte20PlusEmbeddedDestinationSettings : [any], default is Undefined, optional
         SCTE20 Plus Embedded Destination Settings.
     scte27DestinationSettings : [any], default is Undefined, optional
-        –  SCTE27 Destination Settings.
+        SCTE27 Destination Settings.
     smpteTtDestinationSettings : [any], default is Undefined, optional
-        –  SMPTE TT Destination Settings.
+        SMPTE TT Destination Settings.
     teletextDestinationSettings : [any], default is Undefined, optional
-        –  Teletext Destination Settings.
+        Teletext Destination Settings.
     ttmlDestinationSettings : [MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderEncoderSettingsItems0CaptionDescriptionsItems0DestinationSettingsItems0TtmlDestinationSettingsItems0], default is Undefined, optional
-        –  TTML Destination Settings. See TTML Destination Settings for more details.
+        TTML Destination Settings. See TTML Destination Settings for more details.
     webvttDestinationSettings : [MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderEncoderSettingsItems0CaptionDescriptionsItems0DestinationSettingsItems0WebvttDestinationSettingsItems0], default is Undefined, optional
         WebVTT Destination Settings. See WebVTT Destination Settings for more details.
     """
@@ -10119,39 +10021,39 @@ schema MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderEncoderSettingsItems0C
     Attributes
     ----------
     alignment : str, default is Undefined, optional
-        justify live subtitles and center-justify pre-recorded subtitles. All burn-in and DVB-Sub font settings must match.
+        If no explicit xPosition or yPosition is provided, setting alignment to centered will place the captions at the bottom center of the output. Similarly, setting a left alignment will align captions to the bottom left of the output. If x and y positions are given in conjunction with the alignment parameter, the font will be justified (either left or centered) relative to those coordinates. Selecting “smart” justification will left-justify live subtitles and center-justify pre-recorded subtitles. All burn-in and DVB-Sub font settings must match.
     backgroundColor : str, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the color of the rectangle behind the captions. All burn-in and DVB-Sub font settings must match.
     backgroundOpacity : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the opacity of the background rectangle. 255 is opaque; 0 is transparent. Leaving this parameter out is equivalent to setting it to 0 (transparent). All burn-in and DVB-Sub font settings must match.
     font : [MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderEncoderSettingsItems0CaptionDescriptionsItems0DestinationSettingsItems0BurnInDestinationSettingsItems0FontItems0], default is Undefined, optional
-        in. File extension must be ‘ttf’ or ‘tte’. Although the user can select output fonts for many different types of input captions, embedded, STL and teletext sources use a strict grid system. Using external fonts with these caption sources could cause unexpected display of proportional fonts. All burn-in and DVB-Sub font settings must match. See Font for more details.
+        External font file used for caption burn-in. File extension must be ‘ttf’ or ‘tte’. Although the user can select output fonts for many different types of input captions, embedded, STL and teletext sources use a strict grid system. Using external fonts with these caption sources could cause unexpected display of proportional fonts. All burn-in and DVB-Sub font settings must match. See Font for more details.
     fontColor : str, default is Undefined, optional
-        in captions. This option is not valid for source captions that are STL, 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
+        Specifies the color of the burned-in captions. This option is not valid for source captions that are STL, 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
     fontOpacity : float, default is Undefined, optional
-        in captions. 255 is opaque; 0 is transparent. All burn-in and DVB-Sub font settings must match.
+        Specifies the opacity of the burned-in captions. 255 is opaque; 0 is transparent. All burn-in and DVB-Sub font settings must match.
     fontResolution : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Font resolution in DPI (dots per inch); default is 96 dpi. All burn-in and DVB-Sub font settings must match.
     fontSize : str, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        When set to ‘auto’ fontSize will scale depending on the size of the output. Giving a positive integer will specify the exact font size in points. All burn-in and DVB-Sub font settings must match.
     outlineColor : str, default is Undefined, optional
-        defined by the caption stream. All burn-in and DVB-Sub font settings must match.
+        Specifies font outline color. This option is not valid for source captions that are either 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
     outlineSize : float, default is Undefined, optional
-        defined by the caption stream. All burn-in and DVB-Sub font settings must match.
+        Specifies font outline size in pixels. This option is not valid for source captions that are either 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
     shadowColor : str, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the color of the shadow cast by the captions. All burn-in and DVB-Sub font settings must match.
     shadowOpacity : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the opacity of the shadow. 255 is opaque; 0 is transparent. Leaving this parameter out is equivalent to setting it to 0 (transparent). All burn-in and DVB-Sub font settings must match.
     shadowXOffset : float, default is Undefined, optional
-        2 would result in a shadow offset 2 pixels to the left. All burn-in and DVB-Sub font settings must match.
+        Specifies the horizontal offset of the shadow relative to the captions in pixels. A value of -2 would result in a shadow offset 2 pixels to the left. All burn-in and DVB-Sub font settings must match.
     shadowYOffset : float, default is Undefined, optional
-        2 would result in a shadow offset 2 pixels above the text. All burn-in and DVB-Sub font settings must match.
+        Specifies the vertical offset of the shadow relative to the captions in pixels. A value of -2 would result in a shadow offset 2 pixels above the text. All burn-in and DVB-Sub font settings must match.
     teletextGridControl : str, default is Undefined, optional
-        Sub/Burn-in outputs.
+        Controls whether a fixed grid size will be used to generate the output subtitles bitmap. Only applicable for Teletext inputs and DVB-Sub/Burn-in outputs.
     xPosition : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the horizontal position of the caption relative to the left side of the output in pixels. A value of 10 would result in the captions starting 10 pixels from the left of the output. If no explicit xPosition is provided, the horizontal caption position will be determined by the alignment parameter. All burn-in and DVB-Sub font settings must match.
     yPosition : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the vertical position of the caption relative to the top of the output in pixels. A value of 10 would result in the captions starting 10 pixels from the top of the output. If no explicit yPosition is provided, the caption will be positioned towards the bottom of the output. All burn-in and DVB-Sub font settings must match.
     """
 
 
@@ -10199,7 +10101,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderEncoderSettingsItems0C
     passwordParam : str, default is Undefined, optional
         Key used to extract the password from EC2 Parameter store.
     uri : str, default is Undefined, optional
-        –  Path to a file accessible to the live stream.
+        Path to a file accessible to the live stream.
     username : str, default is Undefined, optional
         Username for destination.
     """
@@ -10219,39 +10121,39 @@ schema MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderEncoderSettingsItems0C
     Attributes
     ----------
     alignment : str, default is Undefined, optional
-        justify live subtitles and center-justify pre-recorded subtitles. All burn-in and DVB-Sub font settings must match.
+        If no explicit xPosition or yPosition is provided, setting alignment to centered will place the captions at the bottom center of the output. Similarly, setting a left alignment will align captions to the bottom left of the output. If x and y positions are given in conjunction with the alignment parameter, the font will be justified (either left or centered) relative to those coordinates. Selecting “smart” justification will left-justify live subtitles and center-justify pre-recorded subtitles. All burn-in and DVB-Sub font settings must match.
     backgroundColor : str, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the color of the rectangle behind the captions. All burn-in and DVB-Sub font settings must match.
     backgroundOpacity : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the opacity of the background rectangle. 255 is opaque; 0 is transparent. Leaving this parameter out is equivalent to setting it to 0 (transparent). All burn-in and DVB-Sub font settings must match.
     font : [MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderEncoderSettingsItems0CaptionDescriptionsItems0DestinationSettingsItems0DvbSubDestinationSettingsItems0FontItems0], default is Undefined, optional
-        in. File extension must be ‘ttf’ or ‘tte’. Although the user can select output fonts for many different types of input captions, embedded, STL and teletext sources use a strict grid system. Using external fonts with these caption sources could cause unexpected display of proportional fonts. All burn-in and DVB-Sub font settings must match. See Font for more details.
+        External font file used for caption burn-in. File extension must be ‘ttf’ or ‘tte’. Although the user can select output fonts for many different types of input captions, embedded, STL and teletext sources use a strict grid system. Using external fonts with these caption sources could cause unexpected display of proportional fonts. All burn-in and DVB-Sub font settings must match. See Font for more details.
     fontColor : str, default is Undefined, optional
-        in captions. This option is not valid for source captions that are STL, 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
+        Specifies the color of the burned-in captions. This option is not valid for source captions that are STL, 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
     fontOpacity : float, default is Undefined, optional
-        in captions. 255 is opaque; 0 is transparent. All burn-in and DVB-Sub font settings must match.
+        Specifies the opacity of the burned-in captions. 255 is opaque; 0 is transparent. All burn-in and DVB-Sub font settings must match.
     fontResolution : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Font resolution in DPI (dots per inch); default is 96 dpi. All burn-in and DVB-Sub font settings must match.
     fontSize : str, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        When set to ‘auto’ fontSize will scale depending on the size of the output. Giving a positive integer will specify the exact font size in points. All burn-in and DVB-Sub font settings must match.
     outlineColor : str, default is Undefined, optional
-        defined by the caption stream. All burn-in and DVB-Sub font settings must match.
+        Specifies font outline color. This option is not valid for source captions that are either 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
     outlineSize : float, default is Undefined, optional
-        defined by the caption stream. All burn-in and DVB-Sub font settings must match.
+        Specifies font outline size in pixels. This option is not valid for source captions that are either 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
     shadowColor : str, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the color of the shadow cast by the captions. All burn-in and DVB-Sub font settings must match.
     shadowOpacity : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the opacity of the shadow. 255 is opaque; 0 is transparent. Leaving this parameter out is equivalent to setting it to 0 (transparent). All burn-in and DVB-Sub font settings must match.
     shadowXOffset : float, default is Undefined, optional
-        2 would result in a shadow offset 2 pixels to the left. All burn-in and DVB-Sub font settings must match.
+        Specifies the horizontal offset of the shadow relative to the captions in pixels. A value of -2 would result in a shadow offset 2 pixels to the left. All burn-in and DVB-Sub font settings must match.
     shadowYOffset : float, default is Undefined, optional
-        2 would result in a shadow offset 2 pixels above the text. All burn-in and DVB-Sub font settings must match.
+        Specifies the vertical offset of the shadow relative to the captions in pixels. A value of -2 would result in a shadow offset 2 pixels above the text. All burn-in and DVB-Sub font settings must match.
     teletextGridControl : str, default is Undefined, optional
-        Sub/Burn-in outputs.
+        Controls whether a fixed grid size will be used to generate the output subtitles bitmap. Only applicable for Teletext inputs and DVB-Sub/Burn-in outputs.
     xPosition : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the horizontal position of the caption relative to the left side of the output in pixels. A value of 10 would result in the captions starting 10 pixels from the left of the output. If no explicit xPosition is provided, the horizontal caption position will be determined by the alignment parameter. All burn-in and DVB-Sub font settings must match.
     yPosition : float, default is Undefined, optional
-        in and DVB-Sub font settings must match.
+        Specifies the vertical position of the caption relative to the top of the output in pixels. A value of 10 would result in the captions starting 10 pixels from the top of the output. If no explicit yPosition is provided, the caption will be positioned towards the bottom of the output. All burn-in and DVB-Sub font settings must match.
     """
 
 
@@ -10299,7 +10201,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderEncoderSettingsItems0C
     passwordParam : str, default is Undefined, optional
         Key used to extract the password from EC2 Parameter store.
     uri : str, default is Undefined, optional
-        –  Path to a file accessible to the live stream.
+        Path to a file accessible to the live stream.
     username : str, default is Undefined, optional
         Username for destination.
     """
@@ -10319,13 +10221,13 @@ schema MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderEncoderSettingsItems0C
     Attributes
     ----------
     copyrightHolder : str, default is Undefined, optional
-        –  Complete this field if you want to include the name of the copyright holder in the copyright tag in the captions metadata.
+        Complete this field if you want to include the name of the copyright holder in the copyright tag in the captions metadata.
     fillLineGap : str, default is Undefined, optional
-        line captions). - enabled: Fill with the captions background color (as specified in the input captions). - disabled: Leave the gap unfilled.
+        Specifies how to handle the gap between the lines (in multi-line captions). - enabled: Fill with the captions background color (as specified in the input captions). - disabled: Leave the gap unfilled.
     fontFamily : str, default is Undefined, optional
-        TT captions. Valid only if styleControl is set to include. If you leave this field empty, the font family is set to “monospaced”. (If styleControl is set to exclude, the font family is always set to “monospaced”.) You specify only the font family. All other style information (color, bold, position and so on) is copied from the input captions. The size is always set to 100% to allow the downstream player to choose the size. - Enter a list of font families, as a comma-separated list of font names, in order of preference. The name can be a font family (such as “Arial”), or a generic font family (such as “serif”), or “default” (to let the downstream player choose the font). - Leave blank to set the family to “monospace”.
+        Specifies the font family to include in the font data attached to the EBU-TT captions. Valid only if styleControl is set to include. If you leave this field empty, the font family is set to “monospaced”. (If styleControl is set to exclude, the font family is always set to “monospaced”.) You specify only the font family. All other style information (color, bold, position and so on) is copied from the input captions. The size is always set to 100% to allow the downstream player to choose the size. - Enter a list of font families, as a comma-separated list of font names, in order of preference. The name can be a font family (such as “Arial”), or a generic font family (such as “serif”), or “default” (to let the downstream player choose the font). - Leave blank to set the family to “monospace”.
     styleControl : str, default is Undefined, optional
-        TT captions. - include: Take the style information (font color, font position, and so on) from the source captions and include that information in the font data attached to the EBU-TT captions. This option is valid only if the source captions are Embedded or Teletext. - exclude: In the font data attached to the EBU-TT captions, set the font family to “monospaced”. Do not include any other style information.
+        Specifies the style information (font color, font position, and so on) to include in the font data that is attached to the EBU-TT captions. - include: Take the style information (font color, font position, and so on) from the source captions and include that information in the font data attached to the EBU-TT captions. This option is valid only if the source captions are Embedded or Teletext. - exclude: In the font data attached to the EBU-TT captions, set the font family to “monospaced”. Do not include any other style information.
     """
 
 
@@ -10345,7 +10247,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderEncoderSettingsItems0C
     Attributes
     ----------
     styleControl : str, default is Undefined, optional
-        TT captions. - include: Take the style information (font color, font position, and so on) from the source captions and include that information in the font data attached to the EBU-TT captions. This option is valid only if the source captions are Embedded or Teletext. - exclude: In the font data attached to the EBU-TT captions, set the font family to “monospaced”. Do not include any other style information.
+        Specifies the style information (font color, font position, and so on) to include in the font data that is attached to the EBU-TT captions. - include: Take the style information (font color, font position, and so on) from the source captions and include that information in the font data attached to the EBU-TT captions. This option is valid only if the source captions are Embedded or Teletext. - exclude: In the font data attached to the EBU-TT captions, set the font family to “monospaced”. Do not include any other style information.
     """
 
 
@@ -10359,7 +10261,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderEncoderSettingsItems0C
     Attributes
     ----------
     styleControl : str, default is Undefined, optional
-        TT captions. - include: Take the style information (font color, font position, and so on) from the source captions and include that information in the font data attached to the EBU-TT captions. This option is valid only if the source captions are Embedded or Teletext. - exclude: In the font data attached to the EBU-TT captions, set the font family to “monospaced”. Do not include any other style information.
+        Specifies the style information (font color, font position, and so on) to include in the font data that is attached to the EBU-TT captions. - include: Take the style information (font color, font position, and so on) from the source captions and include that information in the font data attached to the EBU-TT captions. This option is valid only if the source captions are Embedded or Teletext. - exclude: In the font data attached to the EBU-TT captions, set the font family to “monospaced”. Do not include any other style information.
     """
 
 
@@ -10373,17 +10275,17 @@ schema MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderEncoderSettingsItems0G
     Attributes
     ----------
     initialAudioGain : float, default is Undefined, optional
-        –  Value to set the initial audio gain for the Live Event.
+        Value to set the initial audio gain for the Live Event.
     inputEndAction : str, default is Undefined, optional
-        of-file). When switchAndLoopInputs is configured the encoder will restart at the beginning of the first input. When “none” is configured the encoder will transcode either black, a solid color, or a user specified slate images per the “Input Loss Behavior” configuration until the next input switch occurs (which is controlled through the Channel Schedule API).
+        Indicates the action to take when the current input completes (e.g. end-of-file). When switchAndLoopInputs is configured the encoder will restart at the beginning of the first input. When “none” is configured the encoder will transcode either black, a solid color, or a user specified slate images per the “Input Loss Behavior” configuration until the next input switch occurs (which is controlled through the Channel Schedule API).
     inputLossBehavior : [MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderEncoderSettingsItems0GlobalConfigurationItems0InputLossBehaviorItems0], default is Undefined, optional
         Settings for system actions when input is lost. See Input Loss Behavior for more details.
     outputLockingMode : str, default is Undefined, optional
-        MediaLive will attempt to synchronize the output of each pipeline to the other. EPOCH_LOCKING - MediaLive will attempt to synchronize the output of each pipeline to the Unix epoch.
+        Indicates how MediaLive pipelines are synchronized. PIPELINE_LOCKING - MediaLive will attempt to synchronize the output of each pipeline to the other. EPOCH_LOCKING - MediaLive will attempt to synchronize the output of each pipeline to the Unix epoch.
     outputTimingSource : str, default is Undefined, optional
-        –  Indicates whether the rate of frames emitted by the Live encoder should be paced by its system clock (which optionally may be locked to another source via NTP) or should be locked to the clock of the source that is providing the input stream.
+        Indicates whether the rate of frames emitted by the Live encoder should be paced by its system clock (which optionally may be locked to another source via NTP) or should be locked to the clock of the source that is providing the input stream.
     supportLowFramerateInputs : str, default is Undefined, optional
-        –  Adjusts video input buffer for streams with very low video framerates. This is commonly set to enabled for music channels with less than one video frame per second.
+        Adjusts video input buffer for streams with very low video framerates. This is commonly set to enabled for music channels with less than one video frame per second.
     """
 
 
@@ -10439,7 +10341,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderEncoderSettingsItems0G
     passwordParam : str, default is Undefined, optional
         Key used to extract the password from EC2 Parameter store.
     uri : str, default is Undefined, optional
-        –  Path to a file accessible to the live stream.
+        Path to a file accessible to the live stream.
     username : str, default is Undefined, optional
         Username for destination.
     """
@@ -10459,7 +10361,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderEncoderSettingsItems0M
     Attributes
     ----------
     motionGraphicsInsertion : str, default is Undefined, optional
-        –  Motion Graphics Insertion.
+        Motion Graphics Insertion.
     motionGraphicsSettings : [MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderEncoderSettingsItems0MotionGraphicsConfigurationItems0MotionGraphicsSettingsItems0], default is Undefined, optional
         –  Motion Graphics Settings. See Motion Graphics Settings for more details.
     """
@@ -10477,7 +10379,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderEncoderSettingsItems0M
     Attributes
     ----------
     htmlMotionGraphicsSettings : [any], default is Undefined, optional
-        –  Html Motion Graphics Settings.
+        Html Motion Graphics Settings.
     """
 
 
@@ -10491,9 +10393,9 @@ schema MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderEncoderSettingsItems0N
     Attributes
     ----------
     distributorId : str, default is Undefined, optional
-        –  Enter the Distributor ID assigned to your organization by Nielsen.
+        Enter the Distributor ID assigned to your organization by Nielsen.
     nielsenPcmToId3Tagging : str, default is Undefined, optional
-        –  Enables Nielsen PCM to ID3 tagging.
+        Enables Nielsen PCM to ID3 tagging.
     """
 
 
@@ -11113,7 +11015,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderEncoderSettingsItems0O
     passwordParam : str, default is Undefined, optional
         Key used to extract the password from EC2 Parameter store.
     uri : str, default is Undefined, optional
-        –  Path to a file accessible to the live stream.
+        Path to a file accessible to the live stream.
     username : str, default is Undefined, optional
         Username for destination.
     """
@@ -11787,7 +11689,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderEncoderSettingsItems0O
     passwordParam : str, default is Undefined, optional
         Key used to extract the password from EC2 Parameter store.
     uri : str, default is Undefined, optional
-        –  Path to a file accessible to the live stream.
+        Path to a file accessible to the live stream.
     username : str, default is Undefined, optional
         Username for destination.
     """
@@ -12487,7 +12389,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderEncoderSettingsItems0V
     maxBitrate : float, default is Undefined, optional
         Set the maximum bitrate in order to accommodate expected spikes in the complexity of the video.
     minIInterval : float, default is Undefined, optional
-        min i interval
+        Min interval.
     numRefFrames : float, default is Undefined, optional
         Number of reference frames to use.
     parControl : str, default is Undefined, optional
@@ -12681,7 +12583,7 @@ schema MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderEncoderSettingsItems0V
     maxBitrate : float, default is Undefined, optional
         Set the maximum bitrate in order to accommodate expected spikes in the complexity of the video.
     minIInterval : float, default is Undefined, optional
-        min i interval
+        Min interval.
     minQp : float, default is Undefined, optional
         Set the minimum QP.
     mvOverPictureBoundaries : str, default is Undefined, optional
@@ -13043,9 +12945,9 @@ schema MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderInputAttachmentsItems0
     Attributes
     ----------
     audioSelector : [MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderInputAttachmentsItems0InputSettingsItems0AudioSelectorItems0], default is Undefined, optional
-        audio selector
+        Used to select the audio stream to decode for inputs that have multiple. See Audio Selectors for more details.
     captionSelector : [MedialiveAwsUpboundIoV1beta1ChannelStatusAtProviderInputAttachmentsItems0InputSettingsItems0CaptionSelectorItems0], default is Undefined, optional
-        caption selector
+        Used to select the caption input to use for inputs that have multiple available. See Caption Selectors for more details.
     deblockFilter : str, default is Undefined, optional
         Enable or disable the deblock filter when filtering.
     denoiseFilter : str, default is Undefined, optional

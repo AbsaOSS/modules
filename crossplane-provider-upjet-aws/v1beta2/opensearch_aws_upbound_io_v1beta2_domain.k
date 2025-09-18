@@ -66,8 +66,6 @@ schema OpensearchAwsUpboundIoV1beta2DomainSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : OpensearchAwsUpboundIoV1beta2DomainSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : OpensearchAwsUpboundIoV1beta2DomainSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : OpensearchAwsUpboundIoV1beta2DomainSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema OpensearchAwsUpboundIoV1beta2DomainSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: OpensearchAwsUpboundIoV1beta2DomainSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: OpensearchAwsUpboundIoV1beta2DomainSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: OpensearchAwsUpboundIoV1beta2DomainSpecWriteConnectionSecretToRef
 
@@ -123,6 +119,7 @@ schema OpensearchAwsUpboundIoV1beta2DomainSpecForProvider:
     offPeakWindowOptions : OpensearchAwsUpboundIoV1beta2DomainSpecForProviderOffPeakWindowOptions, default is Undefined, optional
         off peak window options
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     snapshotOptions : OpensearchAwsUpboundIoV1beta2DomainSpecForProviderSnapshotOptions, default is Undefined, optional
         snapshot options
@@ -330,6 +327,8 @@ schema OpensearchAwsUpboundIoV1beta2DomainSpecForProviderClusterConfig:
         Instance type of data nodes in the cluster.
     multiAzWithStandbyEnabled : bool, default is Undefined, optional
         Whether a multi-AZ domain is turned on with a standby AZ. For more information, see Configuring a multi-AZ domain in Amazon OpenSearch Service.
+    nodeOptions : [OpensearchAwsUpboundIoV1beta2DomainSpecForProviderClusterConfigNodeOptionsItems0], default is Undefined, optional
+        List of node options for the domain.
     warmCount : float, default is Undefined, optional
         Number of warm nodes in the cluster. Valid values are between 2 and 150. warm_count can be only and must be set when warm_enabled is set to true.
     warmEnabled : bool, default is Undefined, optional
@@ -357,6 +356,8 @@ schema OpensearchAwsUpboundIoV1beta2DomainSpecForProviderClusterConfig:
 
     multiAzWithStandbyEnabled?: bool
 
+    nodeOptions?: [OpensearchAwsUpboundIoV1beta2DomainSpecForProviderClusterConfigNodeOptionsItems0]
+
     warmCount?: float
 
     warmEnabled?: bool
@@ -380,6 +381,46 @@ schema OpensearchAwsUpboundIoV1beta2DomainSpecForProviderClusterConfigColdStorag
 
 
     enabled?: bool
+
+
+schema OpensearchAwsUpboundIoV1beta2DomainSpecForProviderClusterConfigNodeOptionsItems0:
+    r"""
+    opensearch aws upbound io v1beta2 domain spec for provider cluster config node options items0
+
+    Attributes
+    ----------
+    nodeConfig : OpensearchAwsUpboundIoV1beta2DomainSpecForProviderClusterConfigNodeOptionsItems0NodeConfig, default is Undefined, optional
+        node config
+    nodeType : str, default is Undefined, optional
+        Type of node this configuration describes. Valid values: coordinator.
+    """
+
+
+    nodeConfig?: OpensearchAwsUpboundIoV1beta2DomainSpecForProviderClusterConfigNodeOptionsItems0NodeConfig
+
+    nodeType?: str
+
+
+schema OpensearchAwsUpboundIoV1beta2DomainSpecForProviderClusterConfigNodeOptionsItems0NodeConfig:
+    r"""
+    Container to specify sizing of a node type.
+
+    Attributes
+    ----------
+    count : float, default is Undefined, optional
+        Number of nodes of a particular node type in the cluster.
+    enabled : bool, default is Undefined, optional
+        Whether a particular node type is enabled.
+    $type : str, default is Undefined, optional
+        The instance type of a particular node type in the cluster.
+    """
+
+
+    count?: float
+
+    enabled?: bool
+
+    $type?: str
 
 
 schema OpensearchAwsUpboundIoV1beta2DomainSpecForProviderClusterConfigZoneAwarenessConfig:
@@ -1267,6 +1308,8 @@ schema OpensearchAwsUpboundIoV1beta2DomainSpecInitProviderClusterConfig:
         Instance type of data nodes in the cluster.
     multiAzWithStandbyEnabled : bool, default is Undefined, optional
         Whether a multi-AZ domain is turned on with a standby AZ. For more information, see Configuring a multi-AZ domain in Amazon OpenSearch Service.
+    nodeOptions : [OpensearchAwsUpboundIoV1beta2DomainSpecInitProviderClusterConfigNodeOptionsItems0], default is Undefined, optional
+        List of node options for the domain.
     warmCount : float, default is Undefined, optional
         Number of warm nodes in the cluster. Valid values are between 2 and 150. warm_count can be only and must be set when warm_enabled is set to true.
     warmEnabled : bool, default is Undefined, optional
@@ -1294,6 +1337,8 @@ schema OpensearchAwsUpboundIoV1beta2DomainSpecInitProviderClusterConfig:
 
     multiAzWithStandbyEnabled?: bool
 
+    nodeOptions?: [OpensearchAwsUpboundIoV1beta2DomainSpecInitProviderClusterConfigNodeOptionsItems0]
+
     warmCount?: float
 
     warmEnabled?: bool
@@ -1317,6 +1362,46 @@ schema OpensearchAwsUpboundIoV1beta2DomainSpecInitProviderClusterConfigColdStora
 
 
     enabled?: bool
+
+
+schema OpensearchAwsUpboundIoV1beta2DomainSpecInitProviderClusterConfigNodeOptionsItems0:
+    r"""
+    opensearch aws upbound io v1beta2 domain spec init provider cluster config node options items0
+
+    Attributes
+    ----------
+    nodeConfig : OpensearchAwsUpboundIoV1beta2DomainSpecInitProviderClusterConfigNodeOptionsItems0NodeConfig, default is Undefined, optional
+        node config
+    nodeType : str, default is Undefined, optional
+        Type of node this configuration describes. Valid values: coordinator.
+    """
+
+
+    nodeConfig?: OpensearchAwsUpboundIoV1beta2DomainSpecInitProviderClusterConfigNodeOptionsItems0NodeConfig
+
+    nodeType?: str
+
+
+schema OpensearchAwsUpboundIoV1beta2DomainSpecInitProviderClusterConfigNodeOptionsItems0NodeConfig:
+    r"""
+    Container to specify sizing of a node type.
+
+    Attributes
+    ----------
+    count : float, default is Undefined, optional
+        Number of nodes of a particular node type in the cluster.
+    enabled : bool, default is Undefined, optional
+        Whether a particular node type is enabled.
+    $type : str, default is Undefined, optional
+        The instance type of a particular node type in the cluster.
+    """
+
+
+    count?: float
+
+    enabled?: bool
+
+    $type?: str
 
 
 schema OpensearchAwsUpboundIoV1beta2DomainSpecInitProviderClusterConfigZoneAwarenessConfig:
@@ -2001,112 +2086,12 @@ schema OpensearchAwsUpboundIoV1beta2DomainSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema OpensearchAwsUpboundIoV1beta2DomainSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : OpensearchAwsUpboundIoV1beta2DomainSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : OpensearchAwsUpboundIoV1beta2DomainSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: OpensearchAwsUpboundIoV1beta2DomainSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: OpensearchAwsUpboundIoV1beta2DomainSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema OpensearchAwsUpboundIoV1beta2DomainSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : OpensearchAwsUpboundIoV1beta2DomainSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: OpensearchAwsUpboundIoV1beta2DomainSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema OpensearchAwsUpboundIoV1beta2DomainSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema OpensearchAwsUpboundIoV1beta2DomainSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema OpensearchAwsUpboundIoV1beta2DomainSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -2192,14 +2177,15 @@ schema OpensearchAwsUpboundIoV1beta2DomainStatusAtProvider:
         id
     ipAddressType : str, default is Undefined, optional
         The IP address type for the endpoint. Valid values are ipv4 and dualstack.
-    kibanaEndpoint : str, default is Undefined, optional
-        (Deprecated) Domain-specific endpoint for kibana without https scheme. Use the dashboard_endpoint attribute instead.
     logPublishingOptions : [OpensearchAwsUpboundIoV1beta2DomainStatusAtProviderLogPublishingOptionsItems0], default is Undefined, optional
         Configuration block for publishing slow and application logs to CloudWatch Logs. This block can be declared multiple times, for each log_type, within the same resource. Detailed below.
     nodeToNodeEncryption : OpensearchAwsUpboundIoV1beta2DomainStatusAtProviderNodeToNodeEncryption, default is Undefined, optional
         node to node encryption
     offPeakWindowOptions : OpensearchAwsUpboundIoV1beta2DomainStatusAtProviderOffPeakWindowOptions, default is Undefined, optional
         off peak window options
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     snapshotOptions : OpensearchAwsUpboundIoV1beta2DomainStatusAtProviderSnapshotOptions, default is Undefined, optional
         snapshot options
     softwareUpdateOptions : OpensearchAwsUpboundIoV1beta2DomainStatusAtProviderSoftwareUpdateOptions, default is Undefined, optional
@@ -2253,13 +2239,13 @@ schema OpensearchAwsUpboundIoV1beta2DomainStatusAtProvider:
 
     ipAddressType?: str
 
-    kibanaEndpoint?: str
-
     logPublishingOptions?: [OpensearchAwsUpboundIoV1beta2DomainStatusAtProviderLogPublishingOptionsItems0]
 
     nodeToNodeEncryption?: OpensearchAwsUpboundIoV1beta2DomainStatusAtProviderNodeToNodeEncryption
 
     offPeakWindowOptions?: OpensearchAwsUpboundIoV1beta2DomainStatusAtProviderOffPeakWindowOptions
+
+    region?: str
 
     snapshotOptions?: OpensearchAwsUpboundIoV1beta2DomainStatusAtProviderSnapshotOptions
 
@@ -2402,6 +2388,8 @@ schema OpensearchAwsUpboundIoV1beta2DomainStatusAtProviderClusterConfig:
         Instance type of data nodes in the cluster.
     multiAzWithStandbyEnabled : bool, default is Undefined, optional
         Whether a multi-AZ domain is turned on with a standby AZ. For more information, see Configuring a multi-AZ domain in Amazon OpenSearch Service.
+    nodeOptions : [OpensearchAwsUpboundIoV1beta2DomainStatusAtProviderClusterConfigNodeOptionsItems0], default is Undefined, optional
+        List of node options for the domain.
     warmCount : float, default is Undefined, optional
         Number of warm nodes in the cluster. Valid values are between 2 and 150. warm_count can be only and must be set when warm_enabled is set to true.
     warmEnabled : bool, default is Undefined, optional
@@ -2429,6 +2417,8 @@ schema OpensearchAwsUpboundIoV1beta2DomainStatusAtProviderClusterConfig:
 
     multiAzWithStandbyEnabled?: bool
 
+    nodeOptions?: [OpensearchAwsUpboundIoV1beta2DomainStatusAtProviderClusterConfigNodeOptionsItems0]
+
     warmCount?: float
 
     warmEnabled?: bool
@@ -2452,6 +2442,46 @@ schema OpensearchAwsUpboundIoV1beta2DomainStatusAtProviderClusterConfigColdStora
 
 
     enabled?: bool
+
+
+schema OpensearchAwsUpboundIoV1beta2DomainStatusAtProviderClusterConfigNodeOptionsItems0:
+    r"""
+    opensearch aws upbound io v1beta2 domain status at provider cluster config node options items0
+
+    Attributes
+    ----------
+    nodeConfig : OpensearchAwsUpboundIoV1beta2DomainStatusAtProviderClusterConfigNodeOptionsItems0NodeConfig, default is Undefined, optional
+        node config
+    nodeType : str, default is Undefined, optional
+        Type of node this configuration describes. Valid values: coordinator.
+    """
+
+
+    nodeConfig?: OpensearchAwsUpboundIoV1beta2DomainStatusAtProviderClusterConfigNodeOptionsItems0NodeConfig
+
+    nodeType?: str
+
+
+schema OpensearchAwsUpboundIoV1beta2DomainStatusAtProviderClusterConfigNodeOptionsItems0NodeConfig:
+    r"""
+    Container to specify sizing of a node type.
+
+    Attributes
+    ----------
+    count : float, default is Undefined, optional
+        Number of nodes of a particular node type in the cluster.
+    enabled : bool, default is Undefined, optional
+        Whether a particular node type is enabled.
+    $type : str, default is Undefined, optional
+        The instance type of a particular node type in the cluster.
+    """
+
+
+    count?: float
+
+    enabled?: bool
+
+    $type?: str
 
 
 schema OpensearchAwsUpboundIoV1beta2DomainStatusAtProviderClusterConfigZoneAwarenessConfig:

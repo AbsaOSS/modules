@@ -66,8 +66,6 @@ schema Elbv2AwsUpboundIoV1beta1LBTargetGroupSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : Elbv2AwsUpboundIoV1beta1LBTargetGroupSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : Elbv2AwsUpboundIoV1beta1LBTargetGroupSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : Elbv2AwsUpboundIoV1beta1LBTargetGroupSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema Elbv2AwsUpboundIoV1beta1LBTargetGroupSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: Elbv2AwsUpboundIoV1beta1LBTargetGroupSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: Elbv2AwsUpboundIoV1beta1LBTargetGroupSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: Elbv2AwsUpboundIoV1beta1LBTargetGroupSpecWriteConnectionSecretToRef
 
@@ -126,6 +122,7 @@ schema Elbv2AwsUpboundIoV1beta1LBTargetGroupSpecForProvider:
     proxyProtocolV2 : bool, default is Undefined, optional
         Whether to enable support for proxy protocol v2 on Network Load Balancers. See doc for more information. Default is false.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     slowStart : float, default is Undefined, optional
         Amount time for targets to warm up before the load balancer sends them a full share of requests. The range is 30-900 seconds or 0 to disable. The default value is 0 seconds.
@@ -881,112 +878,12 @@ schema Elbv2AwsUpboundIoV1beta1LBTargetGroupSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema Elbv2AwsUpboundIoV1beta1LBTargetGroupSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : Elbv2AwsUpboundIoV1beta1LBTargetGroupSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : Elbv2AwsUpboundIoV1beta1LBTargetGroupSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: Elbv2AwsUpboundIoV1beta1LBTargetGroupSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: Elbv2AwsUpboundIoV1beta1LBTargetGroupSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema Elbv2AwsUpboundIoV1beta1LBTargetGroupSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : Elbv2AwsUpboundIoV1beta1LBTargetGroupSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: Elbv2AwsUpboundIoV1beta1LBTargetGroupSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema Elbv2AwsUpboundIoV1beta1LBTargetGroupSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema Elbv2AwsUpboundIoV1beta1LBTargetGroupSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema Elbv2AwsUpboundIoV1beta1LBTargetGroupSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1071,6 +968,9 @@ schema Elbv2AwsUpboundIoV1beta1LBTargetGroupStatusAtProvider:
         Only applicable when protocol is HTTP or HTTPS. The protocol version. Specify GRPC to send requests to targets using gRPC. Specify HTTP2 to send requests to targets using HTTP/2. The default is HTTP1, which sends requests to targets using HTTP/1.1
     proxyProtocolV2 : bool, default is Undefined, optional
         Whether to enable support for proxy protocol v2 on Network Load Balancers. See doc for more information. Default is false.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     slowStart : float, default is Undefined, optional
         Amount time for targets to warm up before the load balancer sends them a full share of requests. The range is 30-900 seconds or 0 to disable. The default value is 0 seconds.
     stickiness : [Elbv2AwsUpboundIoV1beta1LBTargetGroupStatusAtProviderStickinessItems0], default is Undefined, optional
@@ -1129,6 +1029,8 @@ schema Elbv2AwsUpboundIoV1beta1LBTargetGroupStatusAtProvider:
     protocolVersion?: str
 
     proxyProtocolV2?: bool
+
+    region?: str
 
     slowStart?: float
 

@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema StudioLifecycleConfig:
     r"""
-    StudioLifecycleConfig is the Schema for the StudioLifecycleConfigs API. Provides a SageMaker Studio Lifecycle Config resource.
+    StudioLifecycleConfig is the Schema for the StudioLifecycleConfigs API. Provides a SageMaker AI Studio Lifecycle Config resource.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema SagemakerAwsUpboundIoV1beta1StudioLifecycleConfigSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : SagemakerAwsUpboundIoV1beta1StudioLifecycleConfigSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : SagemakerAwsUpboundIoV1beta1StudioLifecycleConfigSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : SagemakerAwsUpboundIoV1beta1StudioLifecycleConfigSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema SagemakerAwsUpboundIoV1beta1StudioLifecycleConfigSpec:
 
     providerConfigRef?: SagemakerAwsUpboundIoV1beta1StudioLifecycleConfigSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: SagemakerAwsUpboundIoV1beta1StudioLifecycleConfigSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: SagemakerAwsUpboundIoV1beta1StudioLifecycleConfigSpecWriteConnectionSecretToRef
 
 
@@ -95,6 +91,7 @@ schema SagemakerAwsUpboundIoV1beta1StudioLifecycleConfigSpecForProvider:
     Attributes
     ----------
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     studioLifecycleConfigAppType : str, default is Undefined, optional
         The App type that the Lifecycle Configuration is attached to. Valid values are JupyterServer, JupyterLab, CodeEditor and KernelGateway.
@@ -189,112 +186,12 @@ schema SagemakerAwsUpboundIoV1beta1StudioLifecycleConfigSpecProviderConfigRefPol
     resolve?: "Always" | "IfNotPresent"
 
 
-schema SagemakerAwsUpboundIoV1beta1StudioLifecycleConfigSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : SagemakerAwsUpboundIoV1beta1StudioLifecycleConfigSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : SagemakerAwsUpboundIoV1beta1StudioLifecycleConfigSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: SagemakerAwsUpboundIoV1beta1StudioLifecycleConfigSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: SagemakerAwsUpboundIoV1beta1StudioLifecycleConfigSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema SagemakerAwsUpboundIoV1beta1StudioLifecycleConfigSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : SagemakerAwsUpboundIoV1beta1StudioLifecycleConfigSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: SagemakerAwsUpboundIoV1beta1StudioLifecycleConfigSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema SagemakerAwsUpboundIoV1beta1StudioLifecycleConfigSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema SagemakerAwsUpboundIoV1beta1StudioLifecycleConfigSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema SagemakerAwsUpboundIoV1beta1StudioLifecycleConfigSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -344,6 +241,9 @@ schema SagemakerAwsUpboundIoV1beta1StudioLifecycleConfigStatusAtProvider:
         The Amazon Resource Name (ARN) assigned by AWS to this Studio Lifecycle Config.
     id : str, default is Undefined, optional
         The name of the Studio Lifecycle Config.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     studioLifecycleConfigAppType : str, default is Undefined, optional
         The App type that the Lifecycle Configuration is attached to. Valid values are JupyterServer, JupyterLab, CodeEditor and KernelGateway.
     studioLifecycleConfigContent : str, default is Undefined, optional
@@ -358,6 +258,8 @@ schema SagemakerAwsUpboundIoV1beta1StudioLifecycleConfigStatusAtProvider:
     arn?: str
 
     id?: str
+
+    region?: str
 
     studioLifecycleConfigAppType?: str
 

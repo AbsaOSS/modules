@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema Instance:
     r"""
-    Instance is the Schema for the Instances API. Provides an Lightsail Instance
+    Instance is the Schema for the Instances API. Manages a Lightsail Instance.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema LightsailAwsUpboundIoV1beta1InstanceSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : LightsailAwsUpboundIoV1beta1InstanceSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : LightsailAwsUpboundIoV1beta1InstanceSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : LightsailAwsUpboundIoV1beta1InstanceSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema LightsailAwsUpboundIoV1beta1InstanceSpec:
 
     providerConfigRef?: LightsailAwsUpboundIoV1beta1InstanceSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: LightsailAwsUpboundIoV1beta1InstanceSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: LightsailAwsUpboundIoV1beta1InstanceSpecWriteConnectionSecretToRef
 
 
@@ -95,30 +91,24 @@ schema LightsailAwsUpboundIoV1beta1InstanceSpecForProvider:
     Attributes
     ----------
     addOn : [LightsailAwsUpboundIoV1beta1InstanceSpecForProviderAddOnItems0], default is Undefined, optional
-        The add on configuration for the instance. Detailed below.
+        Add-on configuration for the instance. See below.
     availabilityZone : str, default is Undefined, optional
-        The Availability Zone in which to create your instance. A
-        list of available zones can be obtained using the AWS CLI command:
-        aws lightsail get-regions --include-availability-zones.
+        Availability Zone in which to create your instance. A list of available zones can be obtained using the AWS CLI command: aws lightsail get-regions --include-availability-zones.
     blueprintId : str, default is Undefined, optional
-        The ID for a virtual private server image. A list of available
-        blueprint IDs can be obtained using the AWS CLI command:
-        aws lightsail get-blueprints.
+        ID for a virtual private server image. A list of available blueprint IDs can be obtained using the AWS CLI command: aws lightsail get-blueprints.
     bundleId : str, default is Undefined, optional
-        The bundle of specification information. A list of available
-        bundle IDs can be obtained using the AWS CLI command:
-        aws lightsail get-bundles.
+        Bundle of specification information. A list of available bundle IDs can be obtained using the AWS CLI command: aws lightsail get-bundles.
     ipAddressType : str, default is Undefined, optional
-        The IP address type of the Lightsail Instance. Valid Values: dualstack | ipv4.
+        IP address type of the Lightsail Instance. Valid values: dualstack, ipv4, ipv6. Default: dualstack.
     keyPairName : str, default is Undefined, optional
-        The name of your key pair. Created in the
-        Lightsail console (cannot use aws_key_pair at this time)
+        Name of your key pair. Created in the Lightsail console (cannot use aws_key_pair at this time).
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     userData : str, default is Undefined, optional
-        Single lined launch script as a string to configure server with additional user data
+        Single lined launch script as a string to configure server with additional user data.
     """
 
 
@@ -148,11 +138,11 @@ schema LightsailAwsUpboundIoV1beta1InstanceSpecForProviderAddOnItems0:
     Attributes
     ----------
     snapshotTime : str, default is Undefined, optional
-        The daily time when an automatic snapshot will be created. Must be in HH:00 format, and in an hourly increment and specified in Coordinated Universal Time (UTC). The snapshot will be automatically created between the time specified and up to 45 minutes after.
+        Daily time when an automatic snapshot will be created. Must be in HH:00 format, and in an hourly increment and specified in Coordinated Universal Time (UTC). The snapshot will be automatically created between the time specified and up to 45 minutes after.
     status : str, default is Undefined, optional
-        The status of the add on. Valid Values: Enabled, Disabled.
+        Status of the add-on. Valid values: Enabled, Disabled.
     $type : str, default is Undefined, optional
-        The add-on type. There is currently only one valid type AutoSnapshot.
+        Add-on type. There is currently only one valid type AutoSnapshot.
     """
 
 
@@ -179,28 +169,21 @@ schema LightsailAwsUpboundIoV1beta1InstanceSpecInitProvider:
     Attributes
     ----------
     addOn : [LightsailAwsUpboundIoV1beta1InstanceSpecInitProviderAddOnItems0], default is Undefined, optional
-        The add on configuration for the instance. Detailed below.
+        Add-on configuration for the instance. See below.
     availabilityZone : str, default is Undefined, optional
-        The Availability Zone in which to create your instance. A
-        list of available zones can be obtained using the AWS CLI command:
-        aws lightsail get-regions --include-availability-zones.
+        Availability Zone in which to create your instance. A list of available zones can be obtained using the AWS CLI command: aws lightsail get-regions --include-availability-zones.
     blueprintId : str, default is Undefined, optional
-        The ID for a virtual private server image. A list of available
-        blueprint IDs can be obtained using the AWS CLI command:
-        aws lightsail get-blueprints.
+        ID for a virtual private server image. A list of available blueprint IDs can be obtained using the AWS CLI command: aws lightsail get-blueprints.
     bundleId : str, default is Undefined, optional
-        The bundle of specification information. A list of available
-        bundle IDs can be obtained using the AWS CLI command:
-        aws lightsail get-bundles.
+        Bundle of specification information. A list of available bundle IDs can be obtained using the AWS CLI command: aws lightsail get-bundles.
     ipAddressType : str, default is Undefined, optional
-        The IP address type of the Lightsail Instance. Valid Values: dualstack | ipv4.
+        IP address type of the Lightsail Instance. Valid values: dualstack, ipv4, ipv6. Default: dualstack.
     keyPairName : str, default is Undefined, optional
-        The name of your key pair. Created in the
-        Lightsail console (cannot use aws_key_pair at this time)
+        Name of your key pair. Created in the Lightsail console (cannot use aws_key_pair at this time).
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     userData : str, default is Undefined, optional
-        Single lined launch script as a string to configure server with additional user data
+        Single lined launch script as a string to configure server with additional user data.
     """
 
 
@@ -228,11 +211,11 @@ schema LightsailAwsUpboundIoV1beta1InstanceSpecInitProviderAddOnItems0:
     Attributes
     ----------
     snapshotTime : str, default is Undefined, optional
-        The daily time when an automatic snapshot will be created. Must be in HH:00 format, and in an hourly increment and specified in Coordinated Universal Time (UTC). The snapshot will be automatically created between the time specified and up to 45 minutes after.
+        Daily time when an automatic snapshot will be created. Must be in HH:00 format, and in an hourly increment and specified in Coordinated Universal Time (UTC). The snapshot will be automatically created between the time specified and up to 45 minutes after.
     status : str, default is Undefined, optional
-        The status of the add on. Valid Values: Enabled, Disabled.
+        Status of the add-on. Valid values: Enabled, Disabled.
     $type : str, default is Undefined, optional
-        The add-on type. There is currently only one valid type AutoSnapshot.
+        Add-on type. There is currently only one valid type AutoSnapshot.
     """
 
 
@@ -287,112 +270,12 @@ schema LightsailAwsUpboundIoV1beta1InstanceSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema LightsailAwsUpboundIoV1beta1InstanceSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : LightsailAwsUpboundIoV1beta1InstanceSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : LightsailAwsUpboundIoV1beta1InstanceSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: LightsailAwsUpboundIoV1beta1InstanceSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: LightsailAwsUpboundIoV1beta1InstanceSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema LightsailAwsUpboundIoV1beta1InstanceSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : LightsailAwsUpboundIoV1beta1InstanceSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: LightsailAwsUpboundIoV1beta1InstanceSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema LightsailAwsUpboundIoV1beta1InstanceSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema LightsailAwsUpboundIoV1beta1InstanceSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema LightsailAwsUpboundIoV1beta1InstanceSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -439,50 +322,46 @@ schema LightsailAwsUpboundIoV1beta1InstanceStatusAtProvider:
     Attributes
     ----------
     addOn : [LightsailAwsUpboundIoV1beta1InstanceStatusAtProviderAddOnItems0], default is Undefined, optional
-        The add on configuration for the instance. Detailed below.
+        Add-on configuration for the instance. See below.
     arn : str, default is Undefined, optional
-        The ARN of the Lightsail instance (matches id).
+        ARN of the Lightsail instance (matches id).
     availabilityZone : str, default is Undefined, optional
-        The Availability Zone in which to create your instance. A
-        list of available zones can be obtained using the AWS CLI command:
-        aws lightsail get-regions --include-availability-zones.
+        Availability Zone in which to create your instance. A list of available zones can be obtained using the AWS CLI command: aws lightsail get-regions --include-availability-zones.
     blueprintId : str, default is Undefined, optional
-        The ID for a virtual private server image. A list of available
-        blueprint IDs can be obtained using the AWS CLI command:
-        aws lightsail get-blueprints.
+        ID for a virtual private server image. A list of available blueprint IDs can be obtained using the AWS CLI command: aws lightsail get-blueprints.
     bundleId : str, default is Undefined, optional
-        The bundle of specification information. A list of available
-        bundle IDs can be obtained using the AWS CLI command:
-        aws lightsail get-bundles.
+        Bundle of specification information. A list of available bundle IDs can be obtained using the AWS CLI command: aws lightsail get-bundles.
     cpuCount : float, default is Undefined, optional
-        The number of vCPUs the instance has.
+        Number of vCPUs the instance has.
     createdAt : str, default is Undefined, optional
-        The timestamp when the instance was created.
+        Timestamp when the instance was created.
     id : str, default is Undefined, optional
-        The ARN of the Lightsail instance (matches arn).
+        ARN of the Lightsail instance (matches arn).
     ipAddressType : str, default is Undefined, optional
-        The IP address type of the Lightsail Instance. Valid Values: dualstack | ipv4.
+        IP address type of the Lightsail Instance. Valid values: dualstack, ipv4, ipv6. Default: dualstack.
     ipv6Addresses : [str], default is Undefined, optional
         List of IPv6 addresses for the Lightsail instance.
     isStaticIp : bool, default is Undefined, optional
-        A Boolean value indicating whether this instance has a static IP assigned to it.
+        Whether this instance has a static IP assigned to it.
     keyPairName : str, default is Undefined, optional
-        The name of your key pair. Created in the
-        Lightsail console (cannot use aws_key_pair at this time)
+        Name of your key pair. Created in the Lightsail console (cannot use aws_key_pair at this time).
     privateIpAddress : str, default is Undefined, optional
-        The private IP address of the instance.
+        Private IP address of the instance.
     publicIpAddress : str, default is Undefined, optional
-        The public IP address of the instance.
+        Public IP address of the instance.
     ramSize : float, default is Undefined, optional
-        The amount of RAM in GB on the instance (e.g., 1.0).
+        Amount of RAM in GB on the instance (e.g., 1.0).
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
-        A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
+        Map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     userData : str, default is Undefined, optional
-        Single lined launch script as a string to configure server with additional user data
+        Single lined launch script as a string to configure server with additional user data.
     username : str, default is Undefined, optional
-        The user name for connecting to the instance (e.g., ec2-user).
+        User name for connecting to the instance (e.g., ec2-user).
     """
 
 
@@ -516,6 +395,8 @@ schema LightsailAwsUpboundIoV1beta1InstanceStatusAtProvider:
 
     ramSize?: float
 
+    region?: str
+
     tags?: {str:str}
 
     tagsAll?: {str:str}
@@ -532,11 +413,11 @@ schema LightsailAwsUpboundIoV1beta1InstanceStatusAtProviderAddOnItems0:
     Attributes
     ----------
     snapshotTime : str, default is Undefined, optional
-        The daily time when an automatic snapshot will be created. Must be in HH:00 format, and in an hourly increment and specified in Coordinated Universal Time (UTC). The snapshot will be automatically created between the time specified and up to 45 minutes after.
+        Daily time when an automatic snapshot will be created. Must be in HH:00 format, and in an hourly increment and specified in Coordinated Universal Time (UTC). The snapshot will be automatically created between the time specified and up to 45 minutes after.
     status : str, default is Undefined, optional
-        The status of the add on. Valid Values: Enabled, Disabled.
+        Status of the add-on. Valid values: Enabled, Disabled.
     $type : str, default is Undefined, optional
-        The add-on type. There is currently only one valid type AutoSnapshot.
+        Add-on type. There is currently only one valid type AutoSnapshot.
     """
 
 

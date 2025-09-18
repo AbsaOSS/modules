@@ -66,8 +66,6 @@ schema CurAwsUpboundIoV1beta1ReportDefinitionSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : CurAwsUpboundIoV1beta1ReportDefinitionSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : CurAwsUpboundIoV1beta1ReportDefinitionSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : CurAwsUpboundIoV1beta1ReportDefinitionSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema CurAwsUpboundIoV1beta1ReportDefinitionSpec:
 
     providerConfigRef?: CurAwsUpboundIoV1beta1ReportDefinitionSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: CurAwsUpboundIoV1beta1ReportDefinitionSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: CurAwsUpboundIoV1beta1ReportDefinitionSpecWriteConnectionSecretToRef
 
 
@@ -97,15 +93,13 @@ schema CurAwsUpboundIoV1beta1ReportDefinitionSpecForProvider:
     additionalArtifacts : [str], default is Undefined, optional
         A list of additional artifacts. Valid values are: REDSHIFT, QUICKSIGHT, ATHENA. When ATHENA exists within additional_artifacts, no other artifact type can be declared and report_versioning must be OVERWRITE_REPORT.
     additionalSchemaElements : [str], default is Undefined, optional
-        A list of schema elements. Valid values are: RESOURCES, SPLIT_COST_ALLOCATION_DATA.
+        A list of schema elements. Valid values are: RESOURCES, SPLIT_COST_ALLOCATION_DATA, MANUAL_DISCOUNT_COMPATIBILITY.
     compression : str, default is Undefined, optional
         Compression format for report. Valid values are: GZIP, ZIP, Parquet. If Parquet is used, then format must also be Parquet.
     format : str, default is Undefined, optional
         Format for report. Valid values are: textORcsv, Parquet. If Parquet is used, then Compression must also be Parquet.
     refreshClosedReports : bool, default is Undefined, optional
         Set to true to update your reports after they have been finalized if AWS detects charges related to previous months.
-    region : str, default is Undefined, required
-        Region is the region you'd like your resource to be created in.
     reportVersioning : str, default is Undefined, optional
         Overwrite the previous version of each report or to deliver the report in addition to the previous versions. Valid values are: CREATE_NEW_REPORT and OVERWRITE_REPORT.
     s3Bucket : str, default is Undefined, optional
@@ -115,7 +109,7 @@ schema CurAwsUpboundIoV1beta1ReportDefinitionSpecForProvider:
     s3BucketSelector : CurAwsUpboundIoV1beta1ReportDefinitionSpecForProviderS3BucketSelector, default is Undefined, optional
         s3 bucket selector
     s3Prefix : str, default is Undefined, optional
-        Report path prefix. Limited to 256 characters.
+        Report path prefix. Limited to 256 characters. May be empty ("") but the resource can then not be modified via the AWS Console.
     s3Region : str, default is Undefined, optional
         Region of the existing S3 bucket to hold generated reports.
     tags : {str:str}, default is Undefined, optional
@@ -134,8 +128,6 @@ schema CurAwsUpboundIoV1beta1ReportDefinitionSpecForProvider:
     format?: str
 
     refreshClosedReports?: bool
-
-    region: str
 
     reportVersioning?: str
 
@@ -261,7 +253,7 @@ schema CurAwsUpboundIoV1beta1ReportDefinitionSpecInitProvider:
     additionalArtifacts : [str], default is Undefined, optional
         A list of additional artifacts. Valid values are: REDSHIFT, QUICKSIGHT, ATHENA. When ATHENA exists within additional_artifacts, no other artifact type can be declared and report_versioning must be OVERWRITE_REPORT.
     additionalSchemaElements : [str], default is Undefined, optional
-        A list of schema elements. Valid values are: RESOURCES, SPLIT_COST_ALLOCATION_DATA.
+        A list of schema elements. Valid values are: RESOURCES, SPLIT_COST_ALLOCATION_DATA, MANUAL_DISCOUNT_COMPATIBILITY.
     compression : str, default is Undefined, optional
         Compression format for report. Valid values are: GZIP, ZIP, Parquet. If Parquet is used, then format must also be Parquet.
     format : str, default is Undefined, optional
@@ -277,7 +269,7 @@ schema CurAwsUpboundIoV1beta1ReportDefinitionSpecInitProvider:
     s3BucketSelector : CurAwsUpboundIoV1beta1ReportDefinitionSpecInitProviderS3BucketSelector, default is Undefined, optional
         s3 bucket selector
     s3Prefix : str, default is Undefined, optional
-        Report path prefix. Limited to 256 characters.
+        Report path prefix. Limited to 256 characters. May be empty ("") but the resource can then not be modified via the AWS Console.
     s3Region : str, default is Undefined, optional
         Region of the existing S3 bucket to hold generated reports.
     tags : {str:str}, default is Undefined, optional
@@ -447,112 +439,12 @@ schema CurAwsUpboundIoV1beta1ReportDefinitionSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema CurAwsUpboundIoV1beta1ReportDefinitionSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : CurAwsUpboundIoV1beta1ReportDefinitionSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : CurAwsUpboundIoV1beta1ReportDefinitionSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: CurAwsUpboundIoV1beta1ReportDefinitionSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: CurAwsUpboundIoV1beta1ReportDefinitionSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema CurAwsUpboundIoV1beta1ReportDefinitionSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : CurAwsUpboundIoV1beta1ReportDefinitionSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: CurAwsUpboundIoV1beta1ReportDefinitionSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema CurAwsUpboundIoV1beta1ReportDefinitionSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema CurAwsUpboundIoV1beta1ReportDefinitionSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema CurAwsUpboundIoV1beta1ReportDefinitionSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -601,7 +493,7 @@ schema CurAwsUpboundIoV1beta1ReportDefinitionStatusAtProvider:
     additionalArtifacts : [str], default is Undefined, optional
         A list of additional artifacts. Valid values are: REDSHIFT, QUICKSIGHT, ATHENA. When ATHENA exists within additional_artifacts, no other artifact type can be declared and report_versioning must be OVERWRITE_REPORT.
     additionalSchemaElements : [str], default is Undefined, optional
-        A list of schema elements. Valid values are: RESOURCES, SPLIT_COST_ALLOCATION_DATA.
+        A list of schema elements. Valid values are: RESOURCES, SPLIT_COST_ALLOCATION_DATA, MANUAL_DISCOUNT_COMPATIBILITY.
     arn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) specifying the cur report.
     compression : str, default is Undefined, optional
@@ -617,7 +509,7 @@ schema CurAwsUpboundIoV1beta1ReportDefinitionStatusAtProvider:
     s3Bucket : str, default is Undefined, optional
         Name of the existing S3 bucket to hold generated reports.
     s3Prefix : str, default is Undefined, optional
-        Report path prefix. Limited to 256 characters.
+        Report path prefix. Limited to 256 characters. May be empty ("") but the resource can then not be modified via the AWS Console.
     s3Region : str, default is Undefined, optional
         Region of the existing S3 bucket to hold generated reports.
     tags : {str:str}, default is Undefined, optional

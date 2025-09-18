@@ -66,8 +66,6 @@ schema ElasticacheAwsUpboundIoV1beta1SubnetGroupSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : ElasticacheAwsUpboundIoV1beta1SubnetGroupSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : ElasticacheAwsUpboundIoV1beta1SubnetGroupSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : ElasticacheAwsUpboundIoV1beta1SubnetGroupSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema ElasticacheAwsUpboundIoV1beta1SubnetGroupSpec:
 
     providerConfigRef?: ElasticacheAwsUpboundIoV1beta1SubnetGroupSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: ElasticacheAwsUpboundIoV1beta1SubnetGroupSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: ElasticacheAwsUpboundIoV1beta1SubnetGroupSpecWriteConnectionSecretToRef
 
 
@@ -95,15 +91,16 @@ schema ElasticacheAwsUpboundIoV1beta1SubnetGroupSpecForProvider:
     Attributes
     ----------
     description : str, default is Undefined, optional
-        –  Description for the cache subnet group.
+        Description for the cache subnet group.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     subnetIdRefs : [ElasticacheAwsUpboundIoV1beta1SubnetGroupSpecForProviderSubnetIDRefsItems0], default is Undefined, optional
         References to Subnet in ec2 to populate subnetIds.
     subnetIdSelector : ElasticacheAwsUpboundIoV1beta1SubnetGroupSpecForProviderSubnetIDSelector, default is Undefined, optional
         subnet Id selector
     subnetIds : [str], default is Undefined, optional
-        –  List of VPC Subnet IDs for the cache subnet group
+        List of VPC Subnet IDs for the cache subnet group
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     """
@@ -227,13 +224,13 @@ schema ElasticacheAwsUpboundIoV1beta1SubnetGroupSpecInitProvider:
     Attributes
     ----------
     description : str, default is Undefined, optional
-        –  Description for the cache subnet group.
+        Description for the cache subnet group.
     subnetIdRefs : [ElasticacheAwsUpboundIoV1beta1SubnetGroupSpecInitProviderSubnetIDRefsItems0], default is Undefined, optional
         References to Subnet in ec2 to populate subnetIds.
     subnetIdSelector : ElasticacheAwsUpboundIoV1beta1SubnetGroupSpecInitProviderSubnetIDSelector, default is Undefined, optional
         subnet Id selector
     subnetIds : [str], default is Undefined, optional
-        –  List of VPC Subnet IDs for the cache subnet group
+        List of VPC Subnet IDs for the cache subnet group
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     """
@@ -383,112 +380,12 @@ schema ElasticacheAwsUpboundIoV1beta1SubnetGroupSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema ElasticacheAwsUpboundIoV1beta1SubnetGroupSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : ElasticacheAwsUpboundIoV1beta1SubnetGroupSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : ElasticacheAwsUpboundIoV1beta1SubnetGroupSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: ElasticacheAwsUpboundIoV1beta1SubnetGroupSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: ElasticacheAwsUpboundIoV1beta1SubnetGroupSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema ElasticacheAwsUpboundIoV1beta1SubnetGroupSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : ElasticacheAwsUpboundIoV1beta1SubnetGroupSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: ElasticacheAwsUpboundIoV1beta1SubnetGroupSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema ElasticacheAwsUpboundIoV1beta1SubnetGroupSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema ElasticacheAwsUpboundIoV1beta1SubnetGroupSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema ElasticacheAwsUpboundIoV1beta1SubnetGroupSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -537,11 +434,14 @@ schema ElasticacheAwsUpboundIoV1beta1SubnetGroupStatusAtProvider:
     arn : str, default is Undefined, optional
         arn
     description : str, default is Undefined, optional
-        –  Description for the cache subnet group.
+        Description for the cache subnet group.
     id : str, default is Undefined, optional
         id
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     subnetIds : [str], default is Undefined, optional
-        –  List of VPC Subnet IDs for the cache subnet group
+        List of VPC Subnet IDs for the cache subnet group
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
@@ -556,6 +456,8 @@ schema ElasticacheAwsUpboundIoV1beta1SubnetGroupStatusAtProvider:
     description?: str
 
     id?: str
+
+    region?: str
 
     subnetIds?: [str]
 

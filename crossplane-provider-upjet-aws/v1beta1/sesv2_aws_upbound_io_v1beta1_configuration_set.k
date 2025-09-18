@@ -66,8 +66,6 @@ schema Sesv2AwsUpboundIoV1beta1ConfigurationSetSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema Sesv2AwsUpboundIoV1beta1ConfigurationSetSpec:
 
     providerConfigRef?: Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecWriteConnectionSecretToRef
 
 
@@ -95,21 +91,22 @@ schema Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecForProvider:
     Attributes
     ----------
     deliveryOptions : [Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecForProviderDeliveryOptionsItems0], default is Undefined, optional
-        An object that defines the dedicated IP pool that is used to send emails that you send using the configuration set.
+        An object that defines the dedicated IP pool that is used to send emails that you send using the configuration set. See delivery_options Block for details.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     reputationOptions : [Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecForProviderReputationOptionsItems0], default is Undefined, optional
-        An object that defines whether or not Amazon SES collects reputation metrics for the emails that you send that use the configuration set.
+        An object that defines whether or not Amazon SES collects reputation metrics for the emails that you send that use the configuration set. See reputation_options Block for details.
     sendingOptions : [Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecForProviderSendingOptionsItems0], default is Undefined, optional
-        An object that defines whether or not Amazon SES can send email that you send using the configuration set.
+        An object that defines whether or not Amazon SES can send email that you send using the configuration set. See sending_options Block for details.
     suppressionOptions : [Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecForProviderSuppressionOptionsItems0], default is Undefined, optional
-        An object that contains information about the suppression list preferences for your account.
+        An object that contains information about the suppression list preferences for your account. See suppression_options Block for details.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     trackingOptions : [Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecForProviderTrackingOptionsItems0], default is Undefined, optional
-        An object that defines the open and click tracking options for emails that you send using the configuration set.
+        An object that defines the open and click tracking options for emails that you send using the configuration set. See tracking_options Block for details.
     vdmOptions : [Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecForProviderVdmOptionsItems0], default is Undefined, optional
-        An object that defines the VDM settings that apply to emails that you send using the configuration set.
+        An object that defines the VDM settings that apply to emails that you send using the configuration set. See vdm_options Block for details.
     """
 
 
@@ -219,9 +216,9 @@ schema Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecForProviderVdmOptionsItems0:
     Attributes
     ----------
     dashboardOptions : [Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecForProviderVdmOptionsItems0DashboardOptionsItems0], default is Undefined, optional
-        Specifies additional settings for your VDM configuration as applicable to the Dashboard.
+        Specifies additional settings for your VDM configuration as applicable to the Dashboard. See dashboard_options Block for details.
     guardianOptions : [Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecForProviderVdmOptionsItems0GuardianOptionsItems0], default is Undefined, optional
-        Specifies additional settings for your VDM configuration as applicable to the Guardian.
+        Specifies additional settings for your VDM configuration as applicable to the Guardian. See guardian_options Block for details.
     """
 
 
@@ -274,19 +271,19 @@ schema Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecInitProvider:
     Attributes
     ----------
     deliveryOptions : [Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecInitProviderDeliveryOptionsItems0], default is Undefined, optional
-        An object that defines the dedicated IP pool that is used to send emails that you send using the configuration set.
+        An object that defines the dedicated IP pool that is used to send emails that you send using the configuration set. See delivery_options Block for details.
     reputationOptions : [Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecInitProviderReputationOptionsItems0], default is Undefined, optional
-        An object that defines whether or not Amazon SES collects reputation metrics for the emails that you send that use the configuration set.
+        An object that defines whether or not Amazon SES collects reputation metrics for the emails that you send that use the configuration set. See reputation_options Block for details.
     sendingOptions : [Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecInitProviderSendingOptionsItems0], default is Undefined, optional
-        An object that defines whether or not Amazon SES can send email that you send using the configuration set.
+        An object that defines whether or not Amazon SES can send email that you send using the configuration set. See sending_options Block for details.
     suppressionOptions : [Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecInitProviderSuppressionOptionsItems0], default is Undefined, optional
-        An object that contains information about the suppression list preferences for your account.
+        An object that contains information about the suppression list preferences for your account. See suppression_options Block for details.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     trackingOptions : [Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecInitProviderTrackingOptionsItems0], default is Undefined, optional
-        An object that defines the open and click tracking options for emails that you send using the configuration set.
+        An object that defines the open and click tracking options for emails that you send using the configuration set. See tracking_options Block for details.
     vdmOptions : [Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecInitProviderVdmOptionsItems0], default is Undefined, optional
-        An object that defines the VDM settings that apply to emails that you send using the configuration set.
+        An object that defines the VDM settings that apply to emails that you send using the configuration set. See vdm_options Block for details.
     """
 
 
@@ -394,9 +391,9 @@ schema Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecInitProviderVdmOptionsItems0:
     Attributes
     ----------
     dashboardOptions : [Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecInitProviderVdmOptionsItems0DashboardOptionsItems0], default is Undefined, optional
-        Specifies additional settings for your VDM configuration as applicable to the Dashboard.
+        Specifies additional settings for your VDM configuration as applicable to the Dashboard. See dashboard_options Block for details.
     guardianOptions : [Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecInitProviderVdmOptionsItems0GuardianOptionsItems0], default is Undefined, optional
-        Specifies additional settings for your VDM configuration as applicable to the Guardian.
+        Specifies additional settings for your VDM configuration as applicable to the Guardian. See guardian_options Block for details.
     """
 
 
@@ -477,112 +474,12 @@ schema Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema Sesv2AwsUpboundIoV1beta1ConfigurationSetSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -631,23 +528,26 @@ schema Sesv2AwsUpboundIoV1beta1ConfigurationSetStatusAtProvider:
     arn : str, default is Undefined, optional
         ARN of the Configuration Set.
     deliveryOptions : [Sesv2AwsUpboundIoV1beta1ConfigurationSetStatusAtProviderDeliveryOptionsItems0], default is Undefined, optional
-        An object that defines the dedicated IP pool that is used to send emails that you send using the configuration set.
+        An object that defines the dedicated IP pool that is used to send emails that you send using the configuration set. See delivery_options Block for details.
     id : str, default is Undefined, optional
         id
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     reputationOptions : [Sesv2AwsUpboundIoV1beta1ConfigurationSetStatusAtProviderReputationOptionsItems0], default is Undefined, optional
-        An object that defines whether or not Amazon SES collects reputation metrics for the emails that you send that use the configuration set.
+        An object that defines whether or not Amazon SES collects reputation metrics for the emails that you send that use the configuration set. See reputation_options Block for details.
     sendingOptions : [Sesv2AwsUpboundIoV1beta1ConfigurationSetStatusAtProviderSendingOptionsItems0], default is Undefined, optional
-        An object that defines whether or not Amazon SES can send email that you send using the configuration set.
+        An object that defines whether or not Amazon SES can send email that you send using the configuration set. See sending_options Block for details.
     suppressionOptions : [Sesv2AwsUpboundIoV1beta1ConfigurationSetStatusAtProviderSuppressionOptionsItems0], default is Undefined, optional
-        An object that contains information about the suppression list preferences for your account.
+        An object that contains information about the suppression list preferences for your account. See suppression_options Block for details.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
         tags all
     trackingOptions : [Sesv2AwsUpboundIoV1beta1ConfigurationSetStatusAtProviderTrackingOptionsItems0], default is Undefined, optional
-        An object that defines the open and click tracking options for emails that you send using the configuration set.
+        An object that defines the open and click tracking options for emails that you send using the configuration set. See tracking_options Block for details.
     vdmOptions : [Sesv2AwsUpboundIoV1beta1ConfigurationSetStatusAtProviderVdmOptionsItems0], default is Undefined, optional
-        An object that defines the VDM settings that apply to emails that you send using the configuration set.
+        An object that defines the VDM settings that apply to emails that you send using the configuration set. See vdm_options Block for details.
     """
 
 
@@ -656,6 +556,8 @@ schema Sesv2AwsUpboundIoV1beta1ConfigurationSetStatusAtProvider:
     deliveryOptions?: [Sesv2AwsUpboundIoV1beta1ConfigurationSetStatusAtProviderDeliveryOptionsItems0]
 
     id?: str
+
+    region?: str
 
     reputationOptions?: [Sesv2AwsUpboundIoV1beta1ConfigurationSetStatusAtProviderReputationOptionsItems0]
 
@@ -765,9 +667,9 @@ schema Sesv2AwsUpboundIoV1beta1ConfigurationSetStatusAtProviderVdmOptionsItems0:
     Attributes
     ----------
     dashboardOptions : [Sesv2AwsUpboundIoV1beta1ConfigurationSetStatusAtProviderVdmOptionsItems0DashboardOptionsItems0], default is Undefined, optional
-        Specifies additional settings for your VDM configuration as applicable to the Dashboard.
+        Specifies additional settings for your VDM configuration as applicable to the Dashboard. See dashboard_options Block for details.
     guardianOptions : [Sesv2AwsUpboundIoV1beta1ConfigurationSetStatusAtProviderVdmOptionsItems0GuardianOptionsItems0], default is Undefined, optional
-        Specifies additional settings for your VDM configuration as applicable to the Guardian.
+        Specifies additional settings for your VDM configuration as applicable to the Guardian. See guardian_options Block for details.
     """
 
 

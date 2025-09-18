@@ -66,8 +66,6 @@ schema SnsAwsUpboundIoV1beta1TopicSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : SnsAwsUpboundIoV1beta1TopicSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : SnsAwsUpboundIoV1beta1TopicSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : SnsAwsUpboundIoV1beta1TopicSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema SnsAwsUpboundIoV1beta1TopicSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: SnsAwsUpboundIoV1beta1TopicSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: SnsAwsUpboundIoV1beta1TopicSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: SnsAwsUpboundIoV1beta1TopicSpecWriteConnectionSecretToRef
 
@@ -116,6 +112,8 @@ schema SnsAwsUpboundIoV1beta1TopicSpecForProvider:
         The SNS delivery policy. More details in the AWS documentation.
     displayName : str, default is Undefined, optional
         The display name for the topic
+    fifoThroughputScope : str, default is Undefined, optional
+        Enables higher throughput for FIFO topics by adjusting the scope of deduplication. This attribute has two possible values, Topic and MessageGroup. For more information, see the related documentation.
     fifoTopic : bool, default is Undefined, optional
         Boolean indicating whether or not to create a FIFO (first-in-first-out) topic. FIFO topics can't deliver messages to customer managed endpoints, such as email addresses, mobile apps, SMS, or HTTP(S) endpoints. These endpoint types aren't guaranteed to preserve strict message ordering. Default is false.
     firehoseFailureFeedbackRoleArn : str, default is Undefined, optional
@@ -165,6 +163,7 @@ schema SnsAwsUpboundIoV1beta1TopicSpecForProvider:
     policy : str, default is Undefined, optional
         The fully-formed AWS policy as JSON.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     signatureVersion : float, default is Undefined, optional
         If SignatureVersion should be 1 (SHA1) or 2 (SHA256). The signature version corresponds to the hashing algorithm used while creating the signature of the notifications, subscription confirmations, or unsubscribe confirmation messages sent by Amazon SNS.
@@ -210,6 +209,8 @@ schema SnsAwsUpboundIoV1beta1TopicSpecForProvider:
     deliveryPolicy?: str
 
     displayName?: str
+
+    fifoThroughputScope?: str
 
     fifoTopic?: bool
 
@@ -1209,6 +1210,8 @@ schema SnsAwsUpboundIoV1beta1TopicSpecInitProvider:
         The SNS delivery policy. More details in the AWS documentation.
     displayName : str, default is Undefined, optional
         The display name for the topic
+    fifoThroughputScope : str, default is Undefined, optional
+        Enables higher throughput for FIFO topics by adjusting the scope of deduplication. This attribute has two possible values, Topic and MessageGroup. For more information, see the related documentation.
     fifoTopic : bool, default is Undefined, optional
         Boolean indicating whether or not to create a FIFO (first-in-first-out) topic. FIFO topics can't deliver messages to customer managed endpoints, such as email addresses, mobile apps, SMS, or HTTP(S) endpoints. These endpoint types aren't guaranteed to preserve strict message ordering. Default is false.
     firehoseFailureFeedbackRoleArn : str, default is Undefined, optional
@@ -1301,6 +1304,8 @@ schema SnsAwsUpboundIoV1beta1TopicSpecInitProvider:
     deliveryPolicy?: str
 
     displayName?: str
+
+    fifoThroughputScope?: str
 
     fifoTopic?: bool
 
@@ -2305,112 +2310,12 @@ schema SnsAwsUpboundIoV1beta1TopicSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema SnsAwsUpboundIoV1beta1TopicSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : SnsAwsUpboundIoV1beta1TopicSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : SnsAwsUpboundIoV1beta1TopicSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: SnsAwsUpboundIoV1beta1TopicSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: SnsAwsUpboundIoV1beta1TopicSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema SnsAwsUpboundIoV1beta1TopicSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : SnsAwsUpboundIoV1beta1TopicSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: SnsAwsUpboundIoV1beta1TopicSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema SnsAwsUpboundIoV1beta1TopicSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema SnsAwsUpboundIoV1beta1TopicSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema SnsAwsUpboundIoV1beta1TopicSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -2474,6 +2379,8 @@ schema SnsAwsUpboundIoV1beta1TopicStatusAtProvider:
         The SNS delivery policy. More details in the AWS documentation.
     displayName : str, default is Undefined, optional
         The display name for the topic
+    fifoThroughputScope : str, default is Undefined, optional
+        Enables higher throughput for FIFO topics by adjusting the scope of deduplication. This attribute has two possible values, Topic and MessageGroup. For more information, see the related documentation.
     fifoTopic : bool, default is Undefined, optional
         Boolean indicating whether or not to create a FIFO (first-in-first-out) topic. FIFO topics can't deliver messages to customer managed endpoints, such as email addresses, mobile apps, SMS, or HTTP(S) endpoints. These endpoint types aren't guaranteed to preserve strict message ordering. Default is false.
     firehoseFailureFeedbackRoleArn : str, default is Undefined, optional
@@ -2502,6 +2409,9 @@ schema SnsAwsUpboundIoV1beta1TopicStatusAtProvider:
         The AWS Account ID of the SNS topic owner
     policy : str, default is Undefined, optional
         The fully-formed AWS policy as JSON.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     signatureVersion : float, default is Undefined, optional
         If SignatureVersion should be 1 (SHA1) or 2 (SHA256). The signature version corresponds to the hashing algorithm used while creating the signature of the notifications, subscription confirmations, or unsubscribe confirmation messages sent by Amazon SNS.
     sqsFailureFeedbackRoleArn : str, default is Undefined, optional
@@ -2537,6 +2447,8 @@ schema SnsAwsUpboundIoV1beta1TopicStatusAtProvider:
 
     displayName?: str
 
+    fifoThroughputScope?: str
+
     fifoTopic?: bool
 
     firehoseFailureFeedbackRoleArn?: str
@@ -2564,6 +2476,8 @@ schema SnsAwsUpboundIoV1beta1TopicStatusAtProvider:
     owner?: str
 
     policy?: str
+
+    region?: str
 
     signatureVersion?: float
 

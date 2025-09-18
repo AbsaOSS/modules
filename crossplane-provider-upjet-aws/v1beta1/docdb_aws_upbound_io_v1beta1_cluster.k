@@ -66,8 +66,6 @@ schema DocdbAwsUpboundIoV1beta1ClusterSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : DocdbAwsUpboundIoV1beta1ClusterSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : DocdbAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : DocdbAwsUpboundIoV1beta1ClusterSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema DocdbAwsUpboundIoV1beta1ClusterSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: DocdbAwsUpboundIoV1beta1ClusterSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: DocdbAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: DocdbAwsUpboundIoV1beta1ClusterSpecWriteConnectionSecretToRef
 
@@ -136,8 +132,15 @@ schema DocdbAwsUpboundIoV1beta1ClusterSpecForProvider:
         kms key Id ref
     kmsKeyIdSelector : DocdbAwsUpboundIoV1beta1ClusterSpecForProviderKmsKeyIDSelector, default is Undefined, optional
         kms key Id selector
+    manageMasterUserPassword : bool, default is Undefined, optional
+        Set to true to allow Amazon DocumentDB to manage the master user password in AWS Secrets Manager. Cannot be set if master_password or master_password_wo is provided.
     masterPasswordSecretRef : DocdbAwsUpboundIoV1beta1ClusterSpecForProviderMasterPasswordSecretRef, default is Undefined, optional
         master password secret ref
+    masterPasswordWo : str, default is Undefined, optional
+        Password for the master DB user. Note that this may
+        show up in logs. Please refer to the DocumentDB Naming Constraints. Conflicts with master_password and manage_master_user_password.
+    masterPasswordWoVersion : float, default is Undefined, optional
+        Used together with master_password_wo to trigger an update. Increment this value when an update to the master_password_wo is required.
     masterUsername : str, default is Undefined, optional
         Username for the master DB user.
     port : float, default is Undefined, optional
@@ -148,6 +151,7 @@ schema DocdbAwsUpboundIoV1beta1ClusterSpecForProvider:
     preferredMaintenanceWindow : str, default is Undefined, optional
         The weekly time range during which system maintenance can occur, in (UTC) e.g., wed:04:00-wed:04:30
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     restoreToPointInTime : DocdbAwsUpboundIoV1beta1ClusterSpecForProviderRestoreToPointInTime, default is Undefined, optional
         restore to point in time
@@ -207,7 +211,13 @@ schema DocdbAwsUpboundIoV1beta1ClusterSpecForProvider:
 
     kmsKeyIdSelector?: DocdbAwsUpboundIoV1beta1ClusterSpecForProviderKmsKeyIDSelector
 
+    manageMasterUserPassword?: bool
+
     masterPasswordSecretRef?: DocdbAwsUpboundIoV1beta1ClusterSpecForProviderMasterPasswordSecretRef
+
+    masterPasswordWo?: str
+
+    masterPasswordWoVersion?: float
 
     masterUsername?: str
 
@@ -419,7 +429,7 @@ schema DocdbAwsUpboundIoV1beta1ClusterSpecForProviderKmsKeyIDSelectorPolicy:
 schema DocdbAwsUpboundIoV1beta1ClusterSpecForProviderMasterPasswordSecretRef:
     r"""
     Password for the master DB user. Note that this may
-    show up in logs, and it will be stored in the state file. Please refer to the DocumentDB Naming Constraints.
+    show up in logs, and it will be stored in the state file. Please refer to the DocumentDB Naming Constraints. Conflicts with master_password_wo and manage_master_user_password.
     Password for the master DB user. If you set autoGeneratePassword to true, the Secret referenced here will be created or updated with generated password if it does not already contain one.
 
     Attributes
@@ -610,8 +620,15 @@ schema DocdbAwsUpboundIoV1beta1ClusterSpecInitProvider:
         kms key Id ref
     kmsKeyIdSelector : DocdbAwsUpboundIoV1beta1ClusterSpecInitProviderKmsKeyIDSelector, default is Undefined, optional
         kms key Id selector
+    manageMasterUserPassword : bool, default is Undefined, optional
+        Set to true to allow Amazon DocumentDB to manage the master user password in AWS Secrets Manager. Cannot be set if master_password or master_password_wo is provided.
     masterPasswordSecretRef : DocdbAwsUpboundIoV1beta1ClusterSpecInitProviderMasterPasswordSecretRef, default is Undefined, optional
         master password secret ref
+    masterPasswordWo : str, default is Undefined, optional
+        Password for the master DB user. Note that this may
+        show up in logs. Please refer to the DocumentDB Naming Constraints. Conflicts with master_password and manage_master_user_password.
+    masterPasswordWoVersion : float, default is Undefined, optional
+        Used together with master_password_wo to trigger an update. Increment this value when an update to the master_password_wo is required.
     masterUsername : str, default is Undefined, optional
         Username for the master DB user.
     port : float, default is Undefined, optional
@@ -677,7 +694,13 @@ schema DocdbAwsUpboundIoV1beta1ClusterSpecInitProvider:
 
     kmsKeyIdSelector?: DocdbAwsUpboundIoV1beta1ClusterSpecInitProviderKmsKeyIDSelector
 
+    manageMasterUserPassword?: bool
+
     masterPasswordSecretRef?: DocdbAwsUpboundIoV1beta1ClusterSpecInitProviderMasterPasswordSecretRef
+
+    masterPasswordWo?: str
+
+    masterPasswordWoVersion?: float
 
     masterUsername?: str
 
@@ -887,7 +910,7 @@ schema DocdbAwsUpboundIoV1beta1ClusterSpecInitProviderKmsKeyIDSelectorPolicy:
 schema DocdbAwsUpboundIoV1beta1ClusterSpecInitProviderMasterPasswordSecretRef:
     r"""
     Password for the master DB user. Note that this may
-    show up in logs, and it will be stored in the state file. Please refer to the DocumentDB Naming Constraints.
+    show up in logs, and it will be stored in the state file. Please refer to the DocumentDB Naming Constraints. Conflicts with master_password_wo and manage_master_user_password.
     Password for the master DB user. If you set autoGeneratePassword to true, the Secret referenced here will be created or updated with generated password if it does not already contain one.
 
     Attributes
@@ -1067,112 +1090,12 @@ schema DocdbAwsUpboundIoV1beta1ClusterSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema DocdbAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : DocdbAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : DocdbAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: DocdbAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: DocdbAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema DocdbAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : DocdbAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: DocdbAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema DocdbAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema DocdbAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema DocdbAwsUpboundIoV1beta1ClusterSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1232,7 +1155,7 @@ schema DocdbAwsUpboundIoV1beta1ClusterStatusAtProvider:
     backupRetentionPeriod : float, default is Undefined, optional
         The days to retain backups for. Default 1
     clusterMembers : [str], default is Undefined, optional
-        – List of DocumentDB Instances that are a part of this cluster
+        List of DocumentDB Instances that are a part of this cluster
     clusterResourceId : str, default is Undefined, optional
         The DocumentDB Cluster Resource ID
     dbClusterParameterGroupName : str, default is Undefined, optional
@@ -1259,9 +1182,18 @@ schema DocdbAwsUpboundIoV1beta1ClusterStatusAtProvider:
     hostedZoneId : str, default is Undefined, optional
         The Route53 Hosted Zone ID of the endpoint
     id : str, default is Undefined, optional
-        The DocumentDB Cluster Identifier
+        (Deprecated) Amazon Resource Name (ARN) of cluster
     kmsKeyId : str, default is Undefined, optional
         The ARN for the KMS encryption key. When specifying kms_key_id, storage_encrypted needs to be set to true.
+    manageMasterUserPassword : bool, default is Undefined, optional
+        Set to true to allow Amazon DocumentDB to manage the master user password in AWS Secrets Manager. Cannot be set if master_password or master_password_wo is provided.
+    masterPasswordWo : str, default is Undefined, optional
+        Password for the master DB user. Note that this may
+        show up in logs. Please refer to the DocumentDB Naming Constraints. Conflicts with master_password and manage_master_user_password.
+    masterPasswordWoVersion : float, default is Undefined, optional
+        Used together with master_password_wo to trigger an update. Increment this value when an update to the master_password_wo is required.
+    masterUserSecret : [DocdbAwsUpboundIoV1beta1ClusterStatusAtProviderMasterUserSecretItems0], default is Undefined, optional
+        master user secret
     masterUsername : str, default is Undefined, optional
         Username for the master DB user.
     port : float, default is Undefined, optional
@@ -1273,6 +1205,9 @@ schema DocdbAwsUpboundIoV1beta1ClusterStatusAtProvider:
         The weekly time range during which system maintenance can occur, in (UTC) e.g., wed:04:00-wed:04:30
     readerEndpoint : str, default is Undefined, optional
         A read-only endpoint for the DocumentDB cluster, automatically load-balanced across replicas
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     restoreToPointInTime : DocdbAwsUpboundIoV1beta1ClusterStatusAtProviderRestoreToPointInTime, default is Undefined, optional
         restore to point in time
     skipFinalSnapshot : bool, default is Undefined, optional
@@ -1331,6 +1266,14 @@ schema DocdbAwsUpboundIoV1beta1ClusterStatusAtProvider:
 
     kmsKeyId?: str
 
+    manageMasterUserPassword?: bool
+
+    masterPasswordWo?: str
+
+    masterPasswordWoVersion?: float
+
+    masterUserSecret?: [DocdbAwsUpboundIoV1beta1ClusterStatusAtProviderMasterUserSecretItems0]
+
     masterUsername?: str
 
     port?: float
@@ -1340,6 +1283,8 @@ schema DocdbAwsUpboundIoV1beta1ClusterStatusAtProvider:
     preferredMaintenanceWindow?: str
 
     readerEndpoint?: str
+
+    region?: str
 
     restoreToPointInTime?: DocdbAwsUpboundIoV1beta1ClusterStatusAtProviderRestoreToPointInTime
 
@@ -1356,6 +1301,28 @@ schema DocdbAwsUpboundIoV1beta1ClusterStatusAtProvider:
     tagsAll?: {str:str}
 
     vpcSecurityGroupIds?: [str]
+
+
+schema DocdbAwsUpboundIoV1beta1ClusterStatusAtProviderMasterUserSecretItems0:
+    r"""
+    docdb aws upbound io v1beta1 cluster status at provider master user secret items0
+
+    Attributes
+    ----------
+    kmsKeyId : str, default is Undefined, optional
+        The ARN for the KMS encryption key. When specifying kms_key_id, storage_encrypted needs to be set to true.
+    secretArn : str, default is Undefined, optional
+        Amazon Resource Name (ARN) of cluster
+    secretStatus : str, default is Undefined, optional
+        secret status
+    """
+
+
+    kmsKeyId?: str
+
+    secretArn?: str
+
+    secretStatus?: str
 
 
 schema DocdbAwsUpboundIoV1beta1ClusterStatusAtProviderRestoreToPointInTime:

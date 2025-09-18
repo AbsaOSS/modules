@@ -66,8 +66,6 @@ schema Elbv2AwsUpboundIoV1beta2LBListenerSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : Elbv2AwsUpboundIoV1beta2LBListenerSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : Elbv2AwsUpboundIoV1beta2LBListenerSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : Elbv2AwsUpboundIoV1beta2LBListenerSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema Elbv2AwsUpboundIoV1beta2LBListenerSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: Elbv2AwsUpboundIoV1beta2LBListenerSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: Elbv2AwsUpboundIoV1beta2LBListenerSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: Elbv2AwsUpboundIoV1beta2LBListenerSpecWriteConnectionSecretToRef
 
@@ -113,7 +109,46 @@ schema Elbv2AwsUpboundIoV1beta2LBListenerSpecForProvider:
     $protocol : str, default is Undefined, optional
         Protocol for connections from clients to the load balancer. For Application Load Balancers, valid values are HTTP and HTTPS, with a default of HTTP. For Network Load Balancers, valid values are TCP, TLS, UDP, and TCP_UDP. Not valid to use UDP or TCP_UDP if dual-stack mode is enabled. Not valid for Gateway Load Balancers.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
+    routingHttpRequestXAmznMtlsClientcertHeaderName : str, default is Undefined, optional
+        Enables you to modify the header name of the X-Amzn-Mtls-Clientcert HTTP request header. Can only be set if protocol is HTTPS for Application Load Balancers.
+    routingHttpRequestXAmznMtlsClientcertIssuerHeaderName : str, default is Undefined, optional
+        Enables you to modify the header name of the X-Amzn-Mtls-Clientcert-Issuer HTTP request header. Can only be set if protocol is HTTPS for Application Load Balancers.
+    routingHttpRequestXAmznMtlsClientcertLeafHeaderName : str, default is Undefined, optional
+        Enables you to modify the header name of the X-Amzn-Mtls-Clientcert-Leaf HTTP request header. Can only be set if protocol is HTTPS for Application Load Balancers.
+    routingHttpRequestXAmznMtlsClientcertSerialNumberHeaderName : str, default is Undefined, optional
+        Enables you to modify the header name of the X-Amzn-Mtls-Clientcert-Serial-Number HTTP request header. Can only be set if protocol is HTTPS for Application Load Balancers.
+    routingHttpRequestXAmznMtlsClientcertSubjectHeaderName : str, default is Undefined, optional
+        Enables you to modify the header name of the X-Amzn-Mtls-Clientcert-Subject HTTP request header. Can only be set if protocol is HTTPS for Application Load Balancers.
+    routingHttpRequestXAmznMtlsClientcertValidityHeaderName : str, default is Undefined, optional
+        Enables you to modify the header name of the X-Amzn-Mtls-Clientcert-Validity HTTP request header. Can only be set if protocol is HTTPS for Application Load Balancers.
+    routingHttpRequestXAmznTlsCipherSuiteHeaderName : str, default is Undefined, optional
+        Enables you to modify the header name of the X-Amzn-Tls-Cipher-Suite HTTP request header. Can only be set if protocol is HTTPS for Application Load Balancers.
+    routingHttpRequestXAmznTlsVersionHeaderName : str, default is Undefined, optional
+        Enables you to modify the header name of the X-Amzn-Tls-Version HTTP request header. Can only be set if protocol is HTTPS for Application Load Balancers.
+    routingHttpResponseAccessControlAllowCredentialsHeaderValue : str, default is Undefined, optional
+        Specifies which headers the browser can expose to the requesting client. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. The only valid value is true.
+    routingHttpResponseAccessControlAllowHeadersHeaderValue : str, default is Undefined, optional
+        Specifies which headers can be used during the request. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. Valid values are *, Accept, Accept-Language, Cache-Control, Content-Language, Content-Length, Content-Type, Expires, Last-Modified, Pragma. Dependent on your use-case other headers can be exposed and then set as a value consult the Access-Control-Allow-Headers documentation.
+    routingHttpResponseAccessControlAllowMethodsHeaderValue : str, default is Undefined, optional
+        Set which HTTP methods are allowed when accessing the server from a different origin. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. Valid values are GET, HEAD, POST, DELETE, CONNECT, OPTIONS, TRACE or PATCH.
+    routingHttpResponseAccessControlAllowOriginHeaderValue : str, default is Undefined, optional
+        Specifies which origins are allowed to access the server. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. A valid value is a URI, eg: https://example.com.
+    routingHttpResponseAccessControlExposeHeadersHeaderValue : str, default is Undefined, optional
+        Specifies whether the browser should include credentials such as cookies or authentication when making requests. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. Valid values are *, Cache-Control, Content-Language, Content-Length, Content-Type, Expires, Last-Modified, or Pragma. Dependent on your use-case other headers can be exposed, consult the Access-Control-Expose-Headers documentation.
+    routingHttpResponseAccessControlMaxAgeHeaderValue : str, default is Undefined, optional
+        Specifies how long the results of a preflight request can be cached, in seconds. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. Valid values are between 0 and 86400. This value is browser specific, consult the Access-Control-Max-Age documentation.
+    routingHttpResponseContentSecurityPolicyHeaderValue : str, default is Undefined, optional
+        Specifies restrictions enforced by the browser to help minimize the risk of certain types of security threats. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. Values for this are extensive, and can be impactful when set, consult Content-Security-Policy documentation.
+    routingHttpResponseServerEnabled : bool, default is Undefined, optional
+        Enables you to allow or remove the HTTP response server header. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. Valid values are true or false.
+    routingHttpResponseStrictTransportSecurityHeaderValue : str, default is Undefined, optional
+        Informs browsers that the site should only be accessed using HTTPS, and that any future attempts to access it using HTTP should automatically be converted to HTTPS. Default values are max-age=31536000; includeSubDomains; preload consult the Strict-Transport-Security documentation for further details.
+    routingHttpResponseXContentTypeOptionsHeaderValue : str, default is Undefined, optional
+        Indicates whether the MIME types advertised in the Content-Type headers should be followed and not be changed. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. The only valid value is nosniff.
+    routingHttpResponseXFrameOptionsHeaderValue : str, default is Undefined, optional
+        Indicates whether the browser is allowed to render a page in a frame, iframe, embed or object. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. The only valid values are DENY, SAMEORIGIN, or ALLOW-FROM https://example.com.
     sslPolicy : str, default is Undefined, optional
         Name of the SSL Policy for the listener. Required if protocol is HTTPS or TLS. Default is ELBSecurityPolicy-2016-08.
     tags : {str:str}, default is Undefined, optional
@@ -143,6 +178,44 @@ schema Elbv2AwsUpboundIoV1beta2LBListenerSpecForProvider:
 
     region: str
 
+    routingHttpRequestXAmznMtlsClientcertHeaderName?: str
+
+    routingHttpRequestXAmznMtlsClientcertIssuerHeaderName?: str
+
+    routingHttpRequestXAmznMtlsClientcertLeafHeaderName?: str
+
+    routingHttpRequestXAmznMtlsClientcertSerialNumberHeaderName?: str
+
+    routingHttpRequestXAmznMtlsClientcertSubjectHeaderName?: str
+
+    routingHttpRequestXAmznMtlsClientcertValidityHeaderName?: str
+
+    routingHttpRequestXAmznTlsCipherSuiteHeaderName?: str
+
+    routingHttpRequestXAmznTlsVersionHeaderName?: str
+
+    routingHttpResponseAccessControlAllowCredentialsHeaderValue?: str
+
+    routingHttpResponseAccessControlAllowHeadersHeaderValue?: str
+
+    routingHttpResponseAccessControlAllowMethodsHeaderValue?: str
+
+    routingHttpResponseAccessControlAllowOriginHeaderValue?: str
+
+    routingHttpResponseAccessControlExposeHeadersHeaderValue?: str
+
+    routingHttpResponseAccessControlMaxAgeHeaderValue?: str
+
+    routingHttpResponseContentSecurityPolicyHeaderValue?: str
+
+    routingHttpResponseServerEnabled?: bool
+
+    routingHttpResponseStrictTransportSecurityHeaderValue?: str
+
+    routingHttpResponseXContentTypeOptionsHeaderValue?: str
+
+    routingHttpResponseXFrameOptionsHeaderValue?: str
+
     sslPolicy?: str
 
     tags?: {str:str}
@@ -164,6 +237,8 @@ schema Elbv2AwsUpboundIoV1beta2LBListenerSpecForProviderDefaultActionItems0:
         fixed response
     forward : Elbv2AwsUpboundIoV1beta2LBListenerSpecForProviderDefaultActionItems0Forward, default is Undefined, optional
         forward
+    index : str, default is "default", optional
+        This is an injected field with a default value for being able to merge items of the parent object list.
     order : float, default is Undefined, optional
         Order for the action. The action with the lowest value for order is performed first. Valid values are between 1 and 50000. Defaults to the position in the list of actions.
     redirect : Elbv2AwsUpboundIoV1beta2LBListenerSpecForProviderDefaultActionItems0Redirect, default is Undefined, optional
@@ -186,6 +261,8 @@ schema Elbv2AwsUpboundIoV1beta2LBListenerSpecForProviderDefaultActionItems0:
     fixedResponse?: Elbv2AwsUpboundIoV1beta2LBListenerSpecForProviderDefaultActionItems0FixedResponse
 
     forward?: Elbv2AwsUpboundIoV1beta2LBListenerSpecForProviderDefaultActionItems0Forward
+
+    index?: str = "default"
 
     order?: float
 
@@ -712,9 +789,10 @@ schema Elbv2AwsUpboundIoV1beta2LBListenerSpecForProviderMutualAuthentication:
     advertiseTrustStoreCaNames : str, default is Undefined, optional
         Valid values are off and on.
     ignoreClientCertificateExpiry : bool, default is Undefined, optional
-        Whether client certificate expiry is ignored. Default is false.
+        Whether client certificate expiry is ignored.
+        Default is false.
     mode : str, default is Undefined, optional
-        Valid values are off, verify and passthrough.
+        Valid values are off, passthrough, and verify.
     trustStoreArn : str, default is Undefined, optional
         ARN of the elbv2 Trust Store.
     """
@@ -762,6 +840,44 @@ schema Elbv2AwsUpboundIoV1beta2LBListenerSpecInitProvider:
         Port on which the load balancer is listening. Not valid for Gateway Load Balancers.
     $protocol : str, default is Undefined, optional
         Protocol for connections from clients to the load balancer. For Application Load Balancers, valid values are HTTP and HTTPS, with a default of HTTP. For Network Load Balancers, valid values are TCP, TLS, UDP, and TCP_UDP. Not valid to use UDP or TCP_UDP if dual-stack mode is enabled. Not valid for Gateway Load Balancers.
+    routingHttpRequestXAmznMtlsClientcertHeaderName : str, default is Undefined, optional
+        Enables you to modify the header name of the X-Amzn-Mtls-Clientcert HTTP request header. Can only be set if protocol is HTTPS for Application Load Balancers.
+    routingHttpRequestXAmznMtlsClientcertIssuerHeaderName : str, default is Undefined, optional
+        Enables you to modify the header name of the X-Amzn-Mtls-Clientcert-Issuer HTTP request header. Can only be set if protocol is HTTPS for Application Load Balancers.
+    routingHttpRequestXAmznMtlsClientcertLeafHeaderName : str, default is Undefined, optional
+        Enables you to modify the header name of the X-Amzn-Mtls-Clientcert-Leaf HTTP request header. Can only be set if protocol is HTTPS for Application Load Balancers.
+    routingHttpRequestXAmznMtlsClientcertSerialNumberHeaderName : str, default is Undefined, optional
+        Enables you to modify the header name of the X-Amzn-Mtls-Clientcert-Serial-Number HTTP request header. Can only be set if protocol is HTTPS for Application Load Balancers.
+    routingHttpRequestXAmznMtlsClientcertSubjectHeaderName : str, default is Undefined, optional
+        Enables you to modify the header name of the X-Amzn-Mtls-Clientcert-Subject HTTP request header. Can only be set if protocol is HTTPS for Application Load Balancers.
+    routingHttpRequestXAmznMtlsClientcertValidityHeaderName : str, default is Undefined, optional
+        Enables you to modify the header name of the X-Amzn-Mtls-Clientcert-Validity HTTP request header. Can only be set if protocol is HTTPS for Application Load Balancers.
+    routingHttpRequestXAmznTlsCipherSuiteHeaderName : str, default is Undefined, optional
+        Enables you to modify the header name of the X-Amzn-Tls-Cipher-Suite HTTP request header. Can only be set if protocol is HTTPS for Application Load Balancers.
+    routingHttpRequestXAmznTlsVersionHeaderName : str, default is Undefined, optional
+        Enables you to modify the header name of the X-Amzn-Tls-Version HTTP request header. Can only be set if protocol is HTTPS for Application Load Balancers.
+    routingHttpResponseAccessControlAllowCredentialsHeaderValue : str, default is Undefined, optional
+        Specifies which headers the browser can expose to the requesting client. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. The only valid value is true.
+    routingHttpResponseAccessControlAllowHeadersHeaderValue : str, default is Undefined, optional
+        Specifies which headers can be used during the request. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. Valid values are *, Accept, Accept-Language, Cache-Control, Content-Language, Content-Length, Content-Type, Expires, Last-Modified, Pragma. Dependent on your use-case other headers can be exposed and then set as a value consult the Access-Control-Allow-Headers documentation.
+    routingHttpResponseAccessControlAllowMethodsHeaderValue : str, default is Undefined, optional
+        Set which HTTP methods are allowed when accessing the server from a different origin. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. Valid values are GET, HEAD, POST, DELETE, CONNECT, OPTIONS, TRACE or PATCH.
+    routingHttpResponseAccessControlAllowOriginHeaderValue : str, default is Undefined, optional
+        Specifies which origins are allowed to access the server. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. A valid value is a URI, eg: https://example.com.
+    routingHttpResponseAccessControlExposeHeadersHeaderValue : str, default is Undefined, optional
+        Specifies whether the browser should include credentials such as cookies or authentication when making requests. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. Valid values are *, Cache-Control, Content-Language, Content-Length, Content-Type, Expires, Last-Modified, or Pragma. Dependent on your use-case other headers can be exposed, consult the Access-Control-Expose-Headers documentation.
+    routingHttpResponseAccessControlMaxAgeHeaderValue : str, default is Undefined, optional
+        Specifies how long the results of a preflight request can be cached, in seconds. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. Valid values are between 0 and 86400. This value is browser specific, consult the Access-Control-Max-Age documentation.
+    routingHttpResponseContentSecurityPolicyHeaderValue : str, default is Undefined, optional
+        Specifies restrictions enforced by the browser to help minimize the risk of certain types of security threats. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. Values for this are extensive, and can be impactful when set, consult Content-Security-Policy documentation.
+    routingHttpResponseServerEnabled : bool, default is Undefined, optional
+        Enables you to allow or remove the HTTP response server header. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. Valid values are true or false.
+    routingHttpResponseStrictTransportSecurityHeaderValue : str, default is Undefined, optional
+        Informs browsers that the site should only be accessed using HTTPS, and that any future attempts to access it using HTTP should automatically be converted to HTTPS. Default values are max-age=31536000; includeSubDomains; preload consult the Strict-Transport-Security documentation for further details.
+    routingHttpResponseXContentTypeOptionsHeaderValue : str, default is Undefined, optional
+        Indicates whether the MIME types advertised in the Content-Type headers should be followed and not be changed. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. The only valid value is nosniff.
+    routingHttpResponseXFrameOptionsHeaderValue : str, default is Undefined, optional
+        Indicates whether the browser is allowed to render a page in a frame, iframe, embed or object. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. The only valid values are DENY, SAMEORIGIN, or ALLOW-FROM https://example.com.
     sslPolicy : str, default is Undefined, optional
         Name of the SSL Policy for the listener. Required if protocol is HTTPS or TLS. Default is ELBSecurityPolicy-2016-08.
     tags : {str:str}, default is Undefined, optional
@@ -789,6 +905,44 @@ schema Elbv2AwsUpboundIoV1beta2LBListenerSpecInitProvider:
 
     $protocol?: str
 
+    routingHttpRequestXAmznMtlsClientcertHeaderName?: str
+
+    routingHttpRequestXAmznMtlsClientcertIssuerHeaderName?: str
+
+    routingHttpRequestXAmznMtlsClientcertLeafHeaderName?: str
+
+    routingHttpRequestXAmznMtlsClientcertSerialNumberHeaderName?: str
+
+    routingHttpRequestXAmznMtlsClientcertSubjectHeaderName?: str
+
+    routingHttpRequestXAmznMtlsClientcertValidityHeaderName?: str
+
+    routingHttpRequestXAmznTlsCipherSuiteHeaderName?: str
+
+    routingHttpRequestXAmznTlsVersionHeaderName?: str
+
+    routingHttpResponseAccessControlAllowCredentialsHeaderValue?: str
+
+    routingHttpResponseAccessControlAllowHeadersHeaderValue?: str
+
+    routingHttpResponseAccessControlAllowMethodsHeaderValue?: str
+
+    routingHttpResponseAccessControlAllowOriginHeaderValue?: str
+
+    routingHttpResponseAccessControlExposeHeadersHeaderValue?: str
+
+    routingHttpResponseAccessControlMaxAgeHeaderValue?: str
+
+    routingHttpResponseContentSecurityPolicyHeaderValue?: str
+
+    routingHttpResponseServerEnabled?: bool
+
+    routingHttpResponseStrictTransportSecurityHeaderValue?: str
+
+    routingHttpResponseXContentTypeOptionsHeaderValue?: str
+
+    routingHttpResponseXFrameOptionsHeaderValue?: str
+
     sslPolicy?: str
 
     tags?: {str:str}
@@ -810,6 +964,8 @@ schema Elbv2AwsUpboundIoV1beta2LBListenerSpecInitProviderDefaultActionItems0:
         fixed response
     forward : Elbv2AwsUpboundIoV1beta2LBListenerSpecInitProviderDefaultActionItems0Forward, default is Undefined, optional
         forward
+    index : str, default is "default", optional
+        This is an injected field with a default value for being able to merge items of the parent object list.
     order : float, default is Undefined, optional
         Order for the action. The action with the lowest value for order is performed first. Valid values are between 1 and 50000. Defaults to the position in the list of actions.
     redirect : Elbv2AwsUpboundIoV1beta2LBListenerSpecInitProviderDefaultActionItems0Redirect, default is Undefined, optional
@@ -832,6 +988,8 @@ schema Elbv2AwsUpboundIoV1beta2LBListenerSpecInitProviderDefaultActionItems0:
     fixedResponse?: Elbv2AwsUpboundIoV1beta2LBListenerSpecInitProviderDefaultActionItems0FixedResponse
 
     forward?: Elbv2AwsUpboundIoV1beta2LBListenerSpecInitProviderDefaultActionItems0Forward
+
+    index?: str = "default"
 
     order?: float
 
@@ -1358,9 +1516,10 @@ schema Elbv2AwsUpboundIoV1beta2LBListenerSpecInitProviderMutualAuthentication:
     advertiseTrustStoreCaNames : str, default is Undefined, optional
         Valid values are off and on.
     ignoreClientCertificateExpiry : bool, default is Undefined, optional
-        Whether client certificate expiry is ignored. Default is false.
+        Whether client certificate expiry is ignored.
+        Default is false.
     mode : str, default is Undefined, optional
-        Valid values are off, verify and passthrough.
+        Valid values are off, passthrough, and verify.
     trustStoreArn : str, default is Undefined, optional
         ARN of the elbv2 Trust Store.
     """
@@ -1419,112 +1578,12 @@ schema Elbv2AwsUpboundIoV1beta2LBListenerSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema Elbv2AwsUpboundIoV1beta2LBListenerSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : Elbv2AwsUpboundIoV1beta2LBListenerSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : Elbv2AwsUpboundIoV1beta2LBListenerSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: Elbv2AwsUpboundIoV1beta2LBListenerSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: Elbv2AwsUpboundIoV1beta2LBListenerSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema Elbv2AwsUpboundIoV1beta2LBListenerSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : Elbv2AwsUpboundIoV1beta2LBListenerSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: Elbv2AwsUpboundIoV1beta2LBListenerSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema Elbv2AwsUpboundIoV1beta2LBListenerSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema Elbv2AwsUpboundIoV1beta2LBListenerSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema Elbv2AwsUpboundIoV1beta2LBListenerSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1573,13 +1632,13 @@ schema Elbv2AwsUpboundIoV1beta2LBListenerStatusAtProvider:
     alpnPolicy : str, default is Undefined, optional
         Name of the Application-Layer Protocol Negotiation (ALPN) policy. Can be set if protocol is TLS. Valid values are HTTP1Only, HTTP2Only, HTTP2Optional, HTTP2Preferred, and None.
     arn : str, default is Undefined, optional
-        ARN of the listener (matches id).
+        ARN of the listener.
     certificateArn : str, default is Undefined, optional
         ARN of the default SSL server certificate. Exactly one certificate is required if the protocol is HTTPS. For adding additional SSL certificates, see the aws_lb_listener_certificate resource.
     defaultAction : [Elbv2AwsUpboundIoV1beta2LBListenerStatusAtProviderDefaultActionItems0], default is Undefined, optional
         Configuration block for default actions. See below.
     id : str, default is Undefined, optional
-        ARN of the listener (matches arn).
+        id
     loadBalancerArn : str, default is Undefined, optional
         ARN of the load balancer.
     mutualAuthentication : Elbv2AwsUpboundIoV1beta2LBListenerStatusAtProviderMutualAuthentication, default is Undefined, optional
@@ -1588,6 +1647,47 @@ schema Elbv2AwsUpboundIoV1beta2LBListenerStatusAtProvider:
         Port on which the load balancer is listening. Not valid for Gateway Load Balancers.
     $protocol : str, default is Undefined, optional
         Protocol for connections from clients to the load balancer. For Application Load Balancers, valid values are HTTP and HTTPS, with a default of HTTP. For Network Load Balancers, valid values are TCP, TLS, UDP, and TCP_UDP. Not valid to use UDP or TCP_UDP if dual-stack mode is enabled. Not valid for Gateway Load Balancers.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
+    routingHttpRequestXAmznMtlsClientcertHeaderName : str, default is Undefined, optional
+        Enables you to modify the header name of the X-Amzn-Mtls-Clientcert HTTP request header. Can only be set if protocol is HTTPS for Application Load Balancers.
+    routingHttpRequestXAmznMtlsClientcertIssuerHeaderName : str, default is Undefined, optional
+        Enables you to modify the header name of the X-Amzn-Mtls-Clientcert-Issuer HTTP request header. Can only be set if protocol is HTTPS for Application Load Balancers.
+    routingHttpRequestXAmznMtlsClientcertLeafHeaderName : str, default is Undefined, optional
+        Enables you to modify the header name of the X-Amzn-Mtls-Clientcert-Leaf HTTP request header. Can only be set if protocol is HTTPS for Application Load Balancers.
+    routingHttpRequestXAmznMtlsClientcertSerialNumberHeaderName : str, default is Undefined, optional
+        Enables you to modify the header name of the X-Amzn-Mtls-Clientcert-Serial-Number HTTP request header. Can only be set if protocol is HTTPS for Application Load Balancers.
+    routingHttpRequestXAmznMtlsClientcertSubjectHeaderName : str, default is Undefined, optional
+        Enables you to modify the header name of the X-Amzn-Mtls-Clientcert-Subject HTTP request header. Can only be set if protocol is HTTPS for Application Load Balancers.
+    routingHttpRequestXAmznMtlsClientcertValidityHeaderName : str, default is Undefined, optional
+        Enables you to modify the header name of the X-Amzn-Mtls-Clientcert-Validity HTTP request header. Can only be set if protocol is HTTPS for Application Load Balancers.
+    routingHttpRequestXAmznTlsCipherSuiteHeaderName : str, default is Undefined, optional
+        Enables you to modify the header name of the X-Amzn-Tls-Cipher-Suite HTTP request header. Can only be set if protocol is HTTPS for Application Load Balancers.
+    routingHttpRequestXAmznTlsVersionHeaderName : str, default is Undefined, optional
+        Enables you to modify the header name of the X-Amzn-Tls-Version HTTP request header. Can only be set if protocol is HTTPS for Application Load Balancers.
+    routingHttpResponseAccessControlAllowCredentialsHeaderValue : str, default is Undefined, optional
+        Specifies which headers the browser can expose to the requesting client. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. The only valid value is true.
+    routingHttpResponseAccessControlAllowHeadersHeaderValue : str, default is Undefined, optional
+        Specifies which headers can be used during the request. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. Valid values are *, Accept, Accept-Language, Cache-Control, Content-Language, Content-Length, Content-Type, Expires, Last-Modified, Pragma. Dependent on your use-case other headers can be exposed and then set as a value consult the Access-Control-Allow-Headers documentation.
+    routingHttpResponseAccessControlAllowMethodsHeaderValue : str, default is Undefined, optional
+        Set which HTTP methods are allowed when accessing the server from a different origin. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. Valid values are GET, HEAD, POST, DELETE, CONNECT, OPTIONS, TRACE or PATCH.
+    routingHttpResponseAccessControlAllowOriginHeaderValue : str, default is Undefined, optional
+        Specifies which origins are allowed to access the server. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. A valid value is a URI, eg: https://example.com.
+    routingHttpResponseAccessControlExposeHeadersHeaderValue : str, default is Undefined, optional
+        Specifies whether the browser should include credentials such as cookies or authentication when making requests. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. Valid values are *, Cache-Control, Content-Language, Content-Length, Content-Type, Expires, Last-Modified, or Pragma. Dependent on your use-case other headers can be exposed, consult the Access-Control-Expose-Headers documentation.
+    routingHttpResponseAccessControlMaxAgeHeaderValue : str, default is Undefined, optional
+        Specifies how long the results of a preflight request can be cached, in seconds. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. Valid values are between 0 and 86400. This value is browser specific, consult the Access-Control-Max-Age documentation.
+    routingHttpResponseContentSecurityPolicyHeaderValue : str, default is Undefined, optional
+        Specifies restrictions enforced by the browser to help minimize the risk of certain types of security threats. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. Values for this are extensive, and can be impactful when set, consult Content-Security-Policy documentation.
+    routingHttpResponseServerEnabled : bool, default is Undefined, optional
+        Enables you to allow or remove the HTTP response server header. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. Valid values are true or false.
+    routingHttpResponseStrictTransportSecurityHeaderValue : str, default is Undefined, optional
+        Informs browsers that the site should only be accessed using HTTPS, and that any future attempts to access it using HTTP should automatically be converted to HTTPS. Default values are max-age=31536000; includeSubDomains; preload consult the Strict-Transport-Security documentation for further details.
+    routingHttpResponseXContentTypeOptionsHeaderValue : str, default is Undefined, optional
+        Indicates whether the MIME types advertised in the Content-Type headers should be followed and not be changed. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. The only valid value is nosniff.
+    routingHttpResponseXFrameOptionsHeaderValue : str, default is Undefined, optional
+        Indicates whether the browser is allowed to render a page in a frame, iframe, embed or object. Can only be set if protocol is HTTP or HTTPS for Application Load Balancers. Not supported for Network Load Balancer, or with a Gateway Load Balancer. The only valid values are DENY, SAMEORIGIN, or ALLOW-FROM https://example.com.
     sslPolicy : str, default is Undefined, optional
         Name of the SSL Policy for the listener. Required if protocol is HTTPS or TLS. Default is ELBSecurityPolicy-2016-08.
     tags : {str:str}, default is Undefined, optional
@@ -1617,6 +1717,46 @@ schema Elbv2AwsUpboundIoV1beta2LBListenerStatusAtProvider:
 
     $protocol?: str
 
+    region?: str
+
+    routingHttpRequestXAmznMtlsClientcertHeaderName?: str
+
+    routingHttpRequestXAmznMtlsClientcertIssuerHeaderName?: str
+
+    routingHttpRequestXAmznMtlsClientcertLeafHeaderName?: str
+
+    routingHttpRequestXAmznMtlsClientcertSerialNumberHeaderName?: str
+
+    routingHttpRequestXAmznMtlsClientcertSubjectHeaderName?: str
+
+    routingHttpRequestXAmznMtlsClientcertValidityHeaderName?: str
+
+    routingHttpRequestXAmznTlsCipherSuiteHeaderName?: str
+
+    routingHttpRequestXAmznTlsVersionHeaderName?: str
+
+    routingHttpResponseAccessControlAllowCredentialsHeaderValue?: str
+
+    routingHttpResponseAccessControlAllowHeadersHeaderValue?: str
+
+    routingHttpResponseAccessControlAllowMethodsHeaderValue?: str
+
+    routingHttpResponseAccessControlAllowOriginHeaderValue?: str
+
+    routingHttpResponseAccessControlExposeHeadersHeaderValue?: str
+
+    routingHttpResponseAccessControlMaxAgeHeaderValue?: str
+
+    routingHttpResponseContentSecurityPolicyHeaderValue?: str
+
+    routingHttpResponseServerEnabled?: bool
+
+    routingHttpResponseStrictTransportSecurityHeaderValue?: str
+
+    routingHttpResponseXContentTypeOptionsHeaderValue?: str
+
+    routingHttpResponseXFrameOptionsHeaderValue?: str
+
     sslPolicy?: str
 
     tags?: {str:str}
@@ -1640,6 +1780,8 @@ schema Elbv2AwsUpboundIoV1beta2LBListenerStatusAtProviderDefaultActionItems0:
         fixed response
     forward : Elbv2AwsUpboundIoV1beta2LBListenerStatusAtProviderDefaultActionItems0Forward, default is Undefined, optional
         forward
+    index : str, default is "default", optional
+        This is an injected field with a default value for being able to merge items of the parent object list.
     order : float, default is Undefined, optional
         Order for the action. The action with the lowest value for order is performed first. Valid values are between 1 and 50000. Defaults to the position in the list of actions.
     redirect : Elbv2AwsUpboundIoV1beta2LBListenerStatusAtProviderDefaultActionItems0Redirect, default is Undefined, optional
@@ -1658,6 +1800,8 @@ schema Elbv2AwsUpboundIoV1beta2LBListenerStatusAtProviderDefaultActionItems0:
     fixedResponse?: Elbv2AwsUpboundIoV1beta2LBListenerStatusAtProviderDefaultActionItems0FixedResponse
 
     forward?: Elbv2AwsUpboundIoV1beta2LBListenerStatusAtProviderDefaultActionItems0Forward
+
+    index?: str = "default"
 
     order?: float
 
@@ -1879,9 +2023,10 @@ schema Elbv2AwsUpboundIoV1beta2LBListenerStatusAtProviderMutualAuthentication:
     advertiseTrustStoreCaNames : str, default is Undefined, optional
         Valid values are off and on.
     ignoreClientCertificateExpiry : bool, default is Undefined, optional
-        Whether client certificate expiry is ignored. Default is false.
+        Whether client certificate expiry is ignored.
+        Default is false.
     mode : str, default is Undefined, optional
-        Valid values are off, verify and passthrough.
+        Valid values are off, passthrough, and verify.
     trustStoreArn : str, default is Undefined, optional
         ARN of the elbv2 Trust Store.
     """

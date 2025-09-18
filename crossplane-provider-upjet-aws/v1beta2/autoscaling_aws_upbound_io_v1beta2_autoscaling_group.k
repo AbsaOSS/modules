@@ -66,8 +66,6 @@ schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecWriteConnectionSecretToRef
 
@@ -100,6 +96,8 @@ schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecForProvider:
         A list of Availability Zones where instances in the Auto Scaling group can be created. Used for launching into the default VPC subnet in each Availability Zone when not using the vpc_zone_identifier attribute, or for attaching a network interface when an existing network interface ID is specified in a launch template. Conflicts with vpc_zone_identifier.
     capacityRebalance : bool, default is Undefined, optional
         Whether capacity rebalance is enabled. Otherwise, capacity rebalance is disabled.
+    capacityReservationSpecification : [AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecForProviderCapacityReservationSpecificationItems0], default is Undefined, optional
+        Demand Capacity Reservations. See Capacity Reservation Specification below for more details.
     context : str, default is Undefined, optional
         Reserved.
     defaultCooldown : float, default is Undefined, optional
@@ -176,6 +174,7 @@ schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecForProvider:
         on scale in, see Using instance scale-in protection
         in the Amazon EC2 Auto Scaling User Guide.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     serviceLinkedRoleArn : str, default is Undefined, optional
         ARN of the service-linked role that the ASG will use to call other AWS services
@@ -216,6 +215,8 @@ schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecForProvider:
     availabilityZones?: [str]
 
     capacityRebalance?: bool
+
+    capacityReservationSpecification?: [AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecForProviderCapacityReservationSpecificationItems0]
 
     context?: str
 
@@ -314,6 +315,42 @@ schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecForProviderAvailability
 
 
     capacityDistributionStrategy?: str
+
+
+schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecForProviderCapacityReservationSpecificationItems0:
+    r"""
+    autoscaling aws upbound io v1beta2 autoscaling group spec for provider capacity reservation specification items0
+
+    Attributes
+    ----------
+    capacityReservationPreference : str, default is Undefined, optional
+        Capacity Reservation preference helps you use Capacity Reservations efficiently by prioritizing reserved capacity in a Capacity Reservation before using On-Demand capacity. Valid values are default, capacity-reservations-only, capacity-reservations-first and none. Default is default.
+    capacityReservationTarget : [AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecForProviderCapacityReservationSpecificationItems0CapacityReservationTargetItems0], default is Undefined, optional
+        Describes a target Capacity Reservation or Capacity Reservation resource group.
+    """
+
+
+    capacityReservationPreference?: str
+
+    capacityReservationTarget?: [AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecForProviderCapacityReservationSpecificationItems0CapacityReservationTargetItems0]
+
+
+schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecForProviderCapacityReservationSpecificationItems0CapacityReservationTargetItems0:
+    r"""
+    autoscaling aws upbound io v1beta2 autoscaling group spec for provider capacity reservation specification items0 capacity reservation target items0
+
+    Attributes
+    ----------
+    capacityReservationIds : [str], default is Undefined, optional
+        List of On-Demand Capacity Reservation Ids. Conflicts with capacity_reservation_resource_group_arns.
+    capacityReservationResourceGroupArns : [str], default is Undefined, optional
+        List of On-Demand Capacity Reservation Resource Group Arns. Conflicts with capacity_reservation_ids.
+    """
+
+
+    capacityReservationIds?: [str]
+
+    capacityReservationResourceGroupArns?: [str]
 
 
 schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecForProviderInitialLifecycleHookItems0:
@@ -1642,6 +1679,8 @@ schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecInitProvider:
         A list of Availability Zones where instances in the Auto Scaling group can be created. Used for launching into the default VPC subnet in each Availability Zone when not using the vpc_zone_identifier attribute, or for attaching a network interface when an existing network interface ID is specified in a launch template. Conflicts with vpc_zone_identifier.
     capacityRebalance : bool, default is Undefined, optional
         Whether capacity rebalance is enabled. Otherwise, capacity rebalance is disabled.
+    capacityReservationSpecification : [AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecInitProviderCapacityReservationSpecificationItems0], default is Undefined, optional
+        Demand Capacity Reservations. See Capacity Reservation Specification below for more details.
     context : str, default is Undefined, optional
         Reserved.
     defaultCooldown : float, default is Undefined, optional
@@ -1757,6 +1796,8 @@ schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecInitProvider:
 
     capacityRebalance?: bool
 
+    capacityReservationSpecification?: [AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecInitProviderCapacityReservationSpecificationItems0]
+
     context?: str
 
     defaultCooldown?: float
@@ -1852,6 +1893,42 @@ schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecInitProviderAvailabilit
 
 
     capacityDistributionStrategy?: str
+
+
+schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecInitProviderCapacityReservationSpecificationItems0:
+    r"""
+    autoscaling aws upbound io v1beta2 autoscaling group spec init provider capacity reservation specification items0
+
+    Attributes
+    ----------
+    capacityReservationPreference : str, default is Undefined, optional
+        Capacity Reservation preference helps you use Capacity Reservations efficiently by prioritizing reserved capacity in a Capacity Reservation before using On-Demand capacity. Valid values are default, capacity-reservations-only, capacity-reservations-first and none. Default is default.
+    capacityReservationTarget : [AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecInitProviderCapacityReservationSpecificationItems0CapacityReservationTargetItems0], default is Undefined, optional
+        Describes a target Capacity Reservation or Capacity Reservation resource group.
+    """
+
+
+    capacityReservationPreference?: str
+
+    capacityReservationTarget?: [AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecInitProviderCapacityReservationSpecificationItems0CapacityReservationTargetItems0]
+
+
+schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecInitProviderCapacityReservationSpecificationItems0CapacityReservationTargetItems0:
+    r"""
+    autoscaling aws upbound io v1beta2 autoscaling group spec init provider capacity reservation specification items0 capacity reservation target items0
+
+    Attributes
+    ----------
+    capacityReservationIds : [str], default is Undefined, optional
+        List of On-Demand Capacity Reservation Ids. Conflicts with capacity_reservation_resource_group_arns.
+    capacityReservationResourceGroupArns : [str], default is Undefined, optional
+        List of On-Demand Capacity Reservation Resource Group Arns. Conflicts with capacity_reservation_ids.
+    """
+
+
+    capacityReservationIds?: [str]
+
+    capacityReservationResourceGroupArns?: [str]
 
 
 schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecInitProviderInitialLifecycleHookItems0:
@@ -3203,112 +3280,12 @@ schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecProviderConfigRefPolicy
     resolve?: "Always" | "IfNotPresent"
 
 
-schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -3362,6 +3339,8 @@ schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupStatusAtProvider:
         A list of Availability Zones where instances in the Auto Scaling group can be created. Used for launching into the default VPC subnet in each Availability Zone when not using the vpc_zone_identifier attribute, or for attaching a network interface when an existing network interface ID is specified in a launch template. Conflicts with vpc_zone_identifier.
     capacityRebalance : bool, default is Undefined, optional
         Whether capacity rebalance is enabled. Otherwise, capacity rebalance is disabled.
+    capacityReservationSpecification : [AutoscalingAwsUpboundIoV1beta2AutoscalingGroupStatusAtProviderCapacityReservationSpecificationItems0], default is Undefined, optional
+        Demand Capacity Reservations. See Capacity Reservation Specification below for more details.
     context : str, default is Undefined, optional
         Reserved.
     defaultCooldown : float, default is Undefined, optional
@@ -3436,6 +3415,9 @@ schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupStatusAtProvider:
         scaling in. For more information about preventing instances from terminating
         on scale in, see Using instance scale-in protection
         in the Amazon EC2 Auto Scaling User Guide.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     serviceLinkedRoleArn : str, default is Undefined, optional
         ARN of the service-linked role that the ASG will use to call other AWS services
     suspendedProcesses : [str], default is Undefined, optional
@@ -3473,6 +3455,8 @@ schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupStatusAtProvider:
     availabilityZones?: [str]
 
     capacityRebalance?: bool
+
+    capacityReservationSpecification?: [AutoscalingAwsUpboundIoV1beta2AutoscalingGroupStatusAtProviderCapacityReservationSpecificationItems0]
 
     context?: str
 
@@ -3528,6 +3512,8 @@ schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupStatusAtProvider:
 
     protectFromScaleIn?: bool
 
+    region?: str
+
     serviceLinkedRoleArn?: str
 
     suspendedProcesses?: [str]
@@ -3563,6 +3549,42 @@ schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupStatusAtProviderAvailabilit
 
 
     capacityDistributionStrategy?: str
+
+
+schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupStatusAtProviderCapacityReservationSpecificationItems0:
+    r"""
+    autoscaling aws upbound io v1beta2 autoscaling group status at provider capacity reservation specification items0
+
+    Attributes
+    ----------
+    capacityReservationPreference : str, default is Undefined, optional
+        Capacity Reservation preference helps you use Capacity Reservations efficiently by prioritizing reserved capacity in a Capacity Reservation before using On-Demand capacity. Valid values are default, capacity-reservations-only, capacity-reservations-first and none. Default is default.
+    capacityReservationTarget : [AutoscalingAwsUpboundIoV1beta2AutoscalingGroupStatusAtProviderCapacityReservationSpecificationItems0CapacityReservationTargetItems0], default is Undefined, optional
+        Describes a target Capacity Reservation or Capacity Reservation resource group.
+    """
+
+
+    capacityReservationPreference?: str
+
+    capacityReservationTarget?: [AutoscalingAwsUpboundIoV1beta2AutoscalingGroupStatusAtProviderCapacityReservationSpecificationItems0CapacityReservationTargetItems0]
+
+
+schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupStatusAtProviderCapacityReservationSpecificationItems0CapacityReservationTargetItems0:
+    r"""
+    autoscaling aws upbound io v1beta2 autoscaling group status at provider capacity reservation specification items0 capacity reservation target items0
+
+    Attributes
+    ----------
+    capacityReservationIds : [str], default is Undefined, optional
+        List of On-Demand Capacity Reservation Ids. Conflicts with capacity_reservation_resource_group_arns.
+    capacityReservationResourceGroupArns : [str], default is Undefined, optional
+        List of On-Demand Capacity Reservation Resource Group Arns. Conflicts with capacity_reservation_ids.
+    """
+
+
+    capacityReservationIds?: [str]
+
+    capacityReservationResourceGroupArns?: [str]
 
 
 schema AutoscalingAwsUpboundIoV1beta2AutoscalingGroupStatusAtProviderInitialLifecycleHookItems0:

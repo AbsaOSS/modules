@@ -66,8 +66,6 @@ schema DmsAwsUpboundIoV1beta1S3EndpointSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : DmsAwsUpboundIoV1beta1S3EndpointSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : DmsAwsUpboundIoV1beta1S3EndpointSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : DmsAwsUpboundIoV1beta1S3EndpointSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema DmsAwsUpboundIoV1beta1S3EndpointSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: DmsAwsUpboundIoV1beta1S3EndpointSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: DmsAwsUpboundIoV1beta1S3EndpointSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: DmsAwsUpboundIoV1beta1S3EndpointSpecWriteConnectionSecretToRef
 
@@ -113,7 +109,7 @@ schema DmsAwsUpboundIoV1beta1S3EndpointSpecForProvider:
     cdcMinFileSize : float, default is Undefined, optional
         Minimum file size condition as defined in kilobytes to output a file to Amazon S3. (AWS default is 32000 KB.)
     cdcPath : str, default is Undefined, optional
-        Folder path of CDC files. If cdc_path is set, AWS DMS reads CDC files from this path and replicates the data changes to the target endpoint. Supported in AWS DMS versions 3.4.2 and later.
+        Folder path of CDC files. If cdc_path is set, AWS DMS reads CDC files from this path and replicates the data changes to the target endpoint. Supported in AWS DMS versions 3.4.2 and later. Required for CDC.
     certificateArn : str, default is Undefined, optional
         ARN for the certificate.
     compressionType : str, default is Undefined, optional
@@ -153,7 +149,7 @@ schema DmsAwsUpboundIoV1beta1S3EndpointSpecForProvider:
     expectedBucketOwner : str, default is Undefined, optional
         Bucket owner to prevent sniping. Value is an AWS account ID.
     externalTableDefinition : str, default is Undefined, optional
-        JSON document that describes how AWS DMS should interpret the data.
+        JSON document that describes how AWS DMS should interpret the data. Required for source endpoints.
     glueCatalogGeneration : bool, default is Undefined, optional
         Whether to integrate AWS Glue Data Catalog with an Amazon S3 target. See Using AWS Glue Data Catalog with an Amazon S3 target for AWS DMS for more information. Default is false.
     ignoreHeaderRows : float, default is Undefined, optional
@@ -175,6 +171,7 @@ schema DmsAwsUpboundIoV1beta1S3EndpointSpecForProvider:
     preserveTransactions : bool, default is Undefined, optional
         Whether DMS saves the transaction order for a CDC load on the S3 target specified by cdc_path. Default is false. (Ignored for source endpoints.)
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     rfc4180 : bool, default is Undefined, optional
         For an S3 source, whether each leading double quotation mark has to be followed by an ending double quotation mark. Default is true.
@@ -615,7 +612,7 @@ schema DmsAwsUpboundIoV1beta1S3EndpointSpecInitProvider:
     cdcMinFileSize : float, default is Undefined, optional
         Minimum file size condition as defined in kilobytes to output a file to Amazon S3. (AWS default is 32000 KB.)
     cdcPath : str, default is Undefined, optional
-        Folder path of CDC files. If cdc_path is set, AWS DMS reads CDC files from this path and replicates the data changes to the target endpoint. Supported in AWS DMS versions 3.4.2 and later.
+        Folder path of CDC files. If cdc_path is set, AWS DMS reads CDC files from this path and replicates the data changes to the target endpoint. Supported in AWS DMS versions 3.4.2 and later. Required for CDC.
     certificateArn : str, default is Undefined, optional
         ARN for the certificate.
     compressionType : str, default is Undefined, optional
@@ -655,7 +652,7 @@ schema DmsAwsUpboundIoV1beta1S3EndpointSpecInitProvider:
     expectedBucketOwner : str, default is Undefined, optional
         Bucket owner to prevent sniping. Value is an AWS account ID.
     externalTableDefinition : str, default is Undefined, optional
-        JSON document that describes how AWS DMS should interpret the data.
+        JSON document that describes how AWS DMS should interpret the data. Required for source endpoints.
     glueCatalogGeneration : bool, default is Undefined, optional
         Whether to integrate AWS Glue Data Catalog with an Amazon S3 target. See Using AWS Glue Data Catalog with an Amazon S3 target for AWS DMS for more information. Default is false.
     ignoreHeaderRows : float, default is Undefined, optional
@@ -1123,112 +1120,12 @@ schema DmsAwsUpboundIoV1beta1S3EndpointSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema DmsAwsUpboundIoV1beta1S3EndpointSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : DmsAwsUpboundIoV1beta1S3EndpointSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : DmsAwsUpboundIoV1beta1S3EndpointSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: DmsAwsUpboundIoV1beta1S3EndpointSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: DmsAwsUpboundIoV1beta1S3EndpointSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema DmsAwsUpboundIoV1beta1S3EndpointSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : DmsAwsUpboundIoV1beta1S3EndpointSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: DmsAwsUpboundIoV1beta1S3EndpointSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema DmsAwsUpboundIoV1beta1S3EndpointSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema DmsAwsUpboundIoV1beta1S3EndpointSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema DmsAwsUpboundIoV1beta1S3EndpointSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1293,7 +1190,7 @@ schema DmsAwsUpboundIoV1beta1S3EndpointStatusAtProvider:
     cdcMinFileSize : float, default is Undefined, optional
         Minimum file size condition as defined in kilobytes to output a file to Amazon S3. (AWS default is 32000 KB.)
     cdcPath : str, default is Undefined, optional
-        Folder path of CDC files. If cdc_path is set, AWS DMS reads CDC files from this path and replicates the data changes to the target endpoint. Supported in AWS DMS versions 3.4.2 and later.
+        Folder path of CDC files. If cdc_path is set, AWS DMS reads CDC files from this path and replicates the data changes to the target endpoint. Supported in AWS DMS versions 3.4.2 and later. Required for CDC.
     certificateArn : str, default is Undefined, optional
         ARN for the certificate.
     compressionType : str, default is Undefined, optional
@@ -1339,7 +1236,7 @@ schema DmsAwsUpboundIoV1beta1S3EndpointStatusAtProvider:
     externalId : str, default is Undefined, optional
         Can be used for cross-account validation. Use it in another account with aws_dms_s3_endpoint to create the endpoint cross-account.
     externalTableDefinition : str, default is Undefined, optional
-        JSON document that describes how AWS DMS should interpret the data.
+        JSON document that describes how AWS DMS should interpret the data. Required for source endpoints.
     glueCatalogGeneration : bool, default is Undefined, optional
         Whether to integrate AWS Glue Data Catalog with an Amazon S3 target. See Using AWS Glue Data Catalog with an Amazon S3 target for AWS DMS for more information. Default is false.
     id : str, default is Undefined, optional
@@ -1358,6 +1255,9 @@ schema DmsAwsUpboundIoV1beta1S3EndpointStatusAtProvider:
         Version of the .parquet file format. Valid values are parquet-1-0 and parquet-2-0. (AWS default is parquet-1-0.) (Ignored for source endpoints.)
     preserveTransactions : bool, default is Undefined, optional
         Whether DMS saves the transaction order for a CDC load on the S3 target specified by cdc_path. Default is false. (Ignored for source endpoints.)
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     rfc4180 : bool, default is Undefined, optional
         For an S3 source, whether each leading double quotation mark has to be followed by an ending double quotation mark. Default is true.
     rowGroupLength : float, default is Undefined, optional
@@ -1466,6 +1366,8 @@ schema DmsAwsUpboundIoV1beta1S3EndpointStatusAtProvider:
     parquetVersion?: str
 
     preserveTransactions?: bool
+
+    region?: str
 
     rfc4180?: bool
 

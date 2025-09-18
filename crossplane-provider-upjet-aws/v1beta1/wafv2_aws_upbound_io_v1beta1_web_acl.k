@@ -66,8 +66,6 @@ schema Wafv2AwsUpboundIoV1beta1WebACLSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : Wafv2AwsUpboundIoV1beta1WebACLSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : Wafv2AwsUpboundIoV1beta1WebACLSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : Wafv2AwsUpboundIoV1beta1WebACLSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema Wafv2AwsUpboundIoV1beta1WebACLSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: Wafv2AwsUpboundIoV1beta1WebACLSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: Wafv2AwsUpboundIoV1beta1WebACLSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: Wafv2AwsUpboundIoV1beta1WebACLSpecWriteConnectionSecretToRef
 
@@ -102,13 +98,16 @@ schema Wafv2AwsUpboundIoV1beta1WebACLSpecForProvider:
         challenge config
     customResponseBody : [Wafv2AwsUpboundIoV1beta1WebACLSpecForProviderCustomResponseBodyItems0], default is Undefined, optional
         Defines custom response bodies that can be referenced by custom_response actions. See custom_response_body below for details.
+    dataProtectionConfig : Wafv2AwsUpboundIoV1beta1WebACLSpecForProviderDataProtectionConfig, default is Undefined, optional
+        data protection config
     defaultAction : Wafv2AwsUpboundIoV1beta1WebACLSpecForProviderDefaultAction, default is Undefined, optional
         default action
     description : str, default is Undefined, optional
         Friendly description of the WebACL.
     name : str, default is Undefined, optional
-        Friendly name of the WebACL.
+        Friendly name of the WebACL. Conflicts with name_prefix.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     ruleJson : str, default is Undefined, optional
         A raw JSON string used to define the rules for allowing, blocking, or counting web requests. When this field is used, Crossplane cannot observe changes in the configuration through the AWS API; therefore, drift detection cannot be performed. Refer to the AWS documentation for the expected JSON structure: https://docs.aws.amazon.com/waf/latest/APIReference/API_CreateWebACL.html
@@ -130,6 +129,8 @@ schema Wafv2AwsUpboundIoV1beta1WebACLSpecForProvider:
     challengeConfig?: Wafv2AwsUpboundIoV1beta1WebACLSpecForProviderChallengeConfig
 
     customResponseBody?: [Wafv2AwsUpboundIoV1beta1WebACLSpecForProviderCustomResponseBodyItems0]
+
+    dataProtectionConfig?: Wafv2AwsUpboundIoV1beta1WebACLSpecForProviderDataProtectionConfig
 
     defaultAction?: Wafv2AwsUpboundIoV1beta1WebACLSpecForProviderDefaultAction
 
@@ -342,6 +343,64 @@ schema Wafv2AwsUpboundIoV1beta1WebACLSpecForProviderCustomResponseBodyItems0:
     key?: str
 
 
+schema Wafv2AwsUpboundIoV1beta1WebACLSpecForProviderDataProtectionConfig:
+    r"""
+    Specifies data protection to apply to the web request data for the web ACL. This is a web ACL level data protection option. See data_protection_config below for details.
+
+    Attributes
+    ----------
+    dataProtection : [Wafv2AwsUpboundIoV1beta1WebACLSpecForProviderDataProtectionConfigDataProtectionItems0], default is Undefined, optional
+        A block for data protection configurations for specific web request field types. See data_protection block for details.
+    """
+
+
+    dataProtection?: [Wafv2AwsUpboundIoV1beta1WebACLSpecForProviderDataProtectionConfigDataProtectionItems0]
+
+
+schema Wafv2AwsUpboundIoV1beta1WebACLSpecForProviderDataProtectionConfigDataProtectionItems0:
+    r"""
+    wafv2 aws upbound io v1beta1 web ACL spec for provider data protection config data protection items0
+
+    Attributes
+    ----------
+    action : str, default is Undefined, optional
+        Specifies how to protect the field. Valid values are SUBSTITUTION or HASH.
+    excludeRateBasedDetails : bool, default is Undefined, optional
+        Boolean to specify whether to also exclude any rate-based rule details from the data protection you have enabled for a given field.
+    excludeRuleMatchDetails : bool, default is Undefined, optional
+        Boolean to specify whether to also exclude any rule match details from the data protection you have enabled for a given field. AWS WAF logs these details for non-terminating matching rules and for the terminating matching rule.
+    field : Wafv2AwsUpboundIoV1beta1WebACLSpecForProviderDataProtectionConfigDataProtectionItems0Field, default is Undefined, optional
+        field
+    """
+
+
+    action?: str
+
+    excludeRateBasedDetails?: bool
+
+    excludeRuleMatchDetails?: bool
+
+    field?: Wafv2AwsUpboundIoV1beta1WebACLSpecForProviderDataProtectionConfigDataProtectionItems0Field
+
+
+schema Wafv2AwsUpboundIoV1beta1WebACLSpecForProviderDataProtectionConfigDataProtectionItems0Field:
+    r"""
+    Specifies the field type and optional keys to apply the protection behavior to. See field block below for details.
+
+    Attributes
+    ----------
+    fieldKeys : [str], default is Undefined, optional
+        Array of strings to specify the keys to protect for the specified field type. If you don't specify any key, then all keys for the field type are protected.
+    fieldType : str, default is Undefined, optional
+        Specifies the web request component type to protect. Valid Values are SINGLE_HEADER, SINGLE_COOKIE, SINGLE_QUERY_ARGUMENT, QUERY_STRING, BODY.
+    """
+
+
+    fieldKeys?: [str]
+
+    fieldType?: str
+
+
 schema Wafv2AwsUpboundIoV1beta1WebACLSpecForProviderDefaultAction:
     r"""
     Action to perform if none of the rules contained in the WebACL match. See default_action below for details.
@@ -505,12 +564,14 @@ schema Wafv2AwsUpboundIoV1beta1WebACLSpecInitProvider:
         challenge config
     customResponseBody : [Wafv2AwsUpboundIoV1beta1WebACLSpecInitProviderCustomResponseBodyItems0], default is Undefined, optional
         Defines custom response bodies that can be referenced by custom_response actions. See custom_response_body below for details.
+    dataProtectionConfig : Wafv2AwsUpboundIoV1beta1WebACLSpecInitProviderDataProtectionConfig, default is Undefined, optional
+        data protection config
     defaultAction : Wafv2AwsUpboundIoV1beta1WebACLSpecInitProviderDefaultAction, default is Undefined, optional
         default action
     description : str, default is Undefined, optional
         Friendly description of the WebACL.
     name : str, default is Undefined, optional
-        Friendly name of the WebACL.
+        Friendly name of the WebACL. Conflicts with name_prefix.
     ruleJson : str, default is Undefined, optional
         A raw JSON string used to define the rules for allowing, blocking, or counting web requests. When this field is used, Crossplane cannot observe changes in the configuration through the AWS API; therefore, drift detection cannot be performed. Refer to the AWS documentation for the expected JSON structure: https://docs.aws.amazon.com/waf/latest/APIReference/API_CreateWebACL.html
     scope : str, default is Undefined, optional
@@ -531,6 +592,8 @@ schema Wafv2AwsUpboundIoV1beta1WebACLSpecInitProvider:
     challengeConfig?: Wafv2AwsUpboundIoV1beta1WebACLSpecInitProviderChallengeConfig
 
     customResponseBody?: [Wafv2AwsUpboundIoV1beta1WebACLSpecInitProviderCustomResponseBodyItems0]
+
+    dataProtectionConfig?: Wafv2AwsUpboundIoV1beta1WebACLSpecInitProviderDataProtectionConfig
 
     defaultAction?: Wafv2AwsUpboundIoV1beta1WebACLSpecInitProviderDefaultAction
 
@@ -741,6 +804,64 @@ schema Wafv2AwsUpboundIoV1beta1WebACLSpecInitProviderCustomResponseBodyItems0:
     key?: str
 
 
+schema Wafv2AwsUpboundIoV1beta1WebACLSpecInitProviderDataProtectionConfig:
+    r"""
+    Specifies data protection to apply to the web request data for the web ACL. This is a web ACL level data protection option. See data_protection_config below for details.
+
+    Attributes
+    ----------
+    dataProtection : [Wafv2AwsUpboundIoV1beta1WebACLSpecInitProviderDataProtectionConfigDataProtectionItems0], default is Undefined, optional
+        A block for data protection configurations for specific web request field types. See data_protection block for details.
+    """
+
+
+    dataProtection?: [Wafv2AwsUpboundIoV1beta1WebACLSpecInitProviderDataProtectionConfigDataProtectionItems0]
+
+
+schema Wafv2AwsUpboundIoV1beta1WebACLSpecInitProviderDataProtectionConfigDataProtectionItems0:
+    r"""
+    wafv2 aws upbound io v1beta1 web ACL spec init provider data protection config data protection items0
+
+    Attributes
+    ----------
+    action : str, default is Undefined, optional
+        Specifies how to protect the field. Valid values are SUBSTITUTION or HASH.
+    excludeRateBasedDetails : bool, default is Undefined, optional
+        Boolean to specify whether to also exclude any rate-based rule details from the data protection you have enabled for a given field.
+    excludeRuleMatchDetails : bool, default is Undefined, optional
+        Boolean to specify whether to also exclude any rule match details from the data protection you have enabled for a given field. AWS WAF logs these details for non-terminating matching rules and for the terminating matching rule.
+    field : Wafv2AwsUpboundIoV1beta1WebACLSpecInitProviderDataProtectionConfigDataProtectionItems0Field, default is Undefined, optional
+        field
+    """
+
+
+    action?: str
+
+    excludeRateBasedDetails?: bool
+
+    excludeRuleMatchDetails?: bool
+
+    field?: Wafv2AwsUpboundIoV1beta1WebACLSpecInitProviderDataProtectionConfigDataProtectionItems0Field
+
+
+schema Wafv2AwsUpboundIoV1beta1WebACLSpecInitProviderDataProtectionConfigDataProtectionItems0Field:
+    r"""
+    Specifies the field type and optional keys to apply the protection behavior to. See field block below for details.
+
+    Attributes
+    ----------
+    fieldKeys : [str], default is Undefined, optional
+        Array of strings to specify the keys to protect for the specified field type. If you don't specify any key, then all keys for the field type are protected.
+    fieldType : str, default is Undefined, optional
+        Specifies the web request component type to protect. Valid Values are SINGLE_HEADER, SINGLE_COOKIE, SINGLE_QUERY_ARGUMENT, QUERY_STRING, BODY.
+    """
+
+
+    fieldKeys?: [str]
+
+    fieldType?: str
+
+
 schema Wafv2AwsUpboundIoV1beta1WebACLSpecInitProviderDefaultAction:
     r"""
     Action to perform if none of the rules contained in the WebACL match. See default_action below for details.
@@ -925,112 +1046,12 @@ schema Wafv2AwsUpboundIoV1beta1WebACLSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema Wafv2AwsUpboundIoV1beta1WebACLSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : Wafv2AwsUpboundIoV1beta1WebACLSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : Wafv2AwsUpboundIoV1beta1WebACLSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: Wafv2AwsUpboundIoV1beta1WebACLSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: Wafv2AwsUpboundIoV1beta1WebACLSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema Wafv2AwsUpboundIoV1beta1WebACLSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : Wafv2AwsUpboundIoV1beta1WebACLSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: Wafv2AwsUpboundIoV1beta1WebACLSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema Wafv2AwsUpboundIoV1beta1WebACLSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema Wafv2AwsUpboundIoV1beta1WebACLSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema Wafv2AwsUpboundIoV1beta1WebACLSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1090,6 +1111,8 @@ schema Wafv2AwsUpboundIoV1beta1WebACLStatusAtProvider:
         challenge config
     customResponseBody : [Wafv2AwsUpboundIoV1beta1WebACLStatusAtProviderCustomResponseBodyItems0], default is Undefined, optional
         Defines custom response bodies that can be referenced by custom_response actions. See custom_response_body below for details.
+    dataProtectionConfig : Wafv2AwsUpboundIoV1beta1WebACLStatusAtProviderDataProtectionConfig, default is Undefined, optional
+        data protection config
     defaultAction : Wafv2AwsUpboundIoV1beta1WebACLStatusAtProviderDefaultAction, default is Undefined, optional
         default action
     description : str, default is Undefined, optional
@@ -1099,7 +1122,10 @@ schema Wafv2AwsUpboundIoV1beta1WebACLStatusAtProvider:
     lockToken : str, default is Undefined, optional
         lock token
     name : str, default is Undefined, optional
-        Friendly name of the WebACL.
+        Friendly name of the WebACL. Conflicts with name_prefix.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     ruleJson : str, default is Undefined, optional
         A raw JSON string used to define the rules for allowing, blocking, or counting web requests. When this field is used, Crossplane cannot observe changes in the configuration through the AWS API; therefore, drift detection cannot be performed. Refer to the AWS documentation for the expected JSON structure: https://docs.aws.amazon.com/waf/latest/APIReference/API_CreateWebACL.html
     scope : str, default is Undefined, optional
@@ -1129,6 +1155,8 @@ schema Wafv2AwsUpboundIoV1beta1WebACLStatusAtProvider:
 
     customResponseBody?: [Wafv2AwsUpboundIoV1beta1WebACLStatusAtProviderCustomResponseBodyItems0]
 
+    dataProtectionConfig?: Wafv2AwsUpboundIoV1beta1WebACLStatusAtProviderDataProtectionConfig
+
     defaultAction?: Wafv2AwsUpboundIoV1beta1WebACLStatusAtProviderDefaultAction
 
     description?: str
@@ -1138,6 +1166,8 @@ schema Wafv2AwsUpboundIoV1beta1WebACLStatusAtProvider:
     lockToken?: str
 
     name?: str
+
+    region?: str
 
     ruleJson?: str
 
@@ -1342,6 +1372,64 @@ schema Wafv2AwsUpboundIoV1beta1WebACLStatusAtProviderCustomResponseBodyItems0:
     contentType?: str
 
     key?: str
+
+
+schema Wafv2AwsUpboundIoV1beta1WebACLStatusAtProviderDataProtectionConfig:
+    r"""
+    Specifies data protection to apply to the web request data for the web ACL. This is a web ACL level data protection option. See data_protection_config below for details.
+
+    Attributes
+    ----------
+    dataProtection : [Wafv2AwsUpboundIoV1beta1WebACLStatusAtProviderDataProtectionConfigDataProtectionItems0], default is Undefined, optional
+        A block for data protection configurations for specific web request field types. See data_protection block for details.
+    """
+
+
+    dataProtection?: [Wafv2AwsUpboundIoV1beta1WebACLStatusAtProviderDataProtectionConfigDataProtectionItems0]
+
+
+schema Wafv2AwsUpboundIoV1beta1WebACLStatusAtProviderDataProtectionConfigDataProtectionItems0:
+    r"""
+    wafv2 aws upbound io v1beta1 web ACL status at provider data protection config data protection items0
+
+    Attributes
+    ----------
+    action : str, default is Undefined, optional
+        Specifies how to protect the field. Valid values are SUBSTITUTION or HASH.
+    excludeRateBasedDetails : bool, default is Undefined, optional
+        Boolean to specify whether to also exclude any rate-based rule details from the data protection you have enabled for a given field.
+    excludeRuleMatchDetails : bool, default is Undefined, optional
+        Boolean to specify whether to also exclude any rule match details from the data protection you have enabled for a given field. AWS WAF logs these details for non-terminating matching rules and for the terminating matching rule.
+    field : Wafv2AwsUpboundIoV1beta1WebACLStatusAtProviderDataProtectionConfigDataProtectionItems0Field, default is Undefined, optional
+        field
+    """
+
+
+    action?: str
+
+    excludeRateBasedDetails?: bool
+
+    excludeRuleMatchDetails?: bool
+
+    field?: Wafv2AwsUpboundIoV1beta1WebACLStatusAtProviderDataProtectionConfigDataProtectionItems0Field
+
+
+schema Wafv2AwsUpboundIoV1beta1WebACLStatusAtProviderDataProtectionConfigDataProtectionItems0Field:
+    r"""
+    Specifies the field type and optional keys to apply the protection behavior to. See field block below for details.
+
+    Attributes
+    ----------
+    fieldKeys : [str], default is Undefined, optional
+        Array of strings to specify the keys to protect for the specified field type. If you don't specify any key, then all keys for the field type are protected.
+    fieldType : str, default is Undefined, optional
+        Specifies the web request component type to protect. Valid Values are SINGLE_HEADER, SINGLE_COOKIE, SINGLE_QUERY_ARGUMENT, QUERY_STRING, BODY.
+    """
+
+
+    fieldKeys?: [str]
+
+    fieldType?: str
 
 
 schema Wafv2AwsUpboundIoV1beta1WebACLStatusAtProviderDefaultAction:

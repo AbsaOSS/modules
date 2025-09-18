@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema LayerVersion:
     r"""
-    LayerVersion is the Schema for the LayerVersions API. Provides a Lambda Layer Version resource. Lambda Layers allow you to reuse shared bits of code across multiple lambda functions.
+    LayerVersion is the Schema for the LayerVersions API. Manages an AWS Lambda Layer Version.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema LambdaAwsUpboundIoV1beta1LayerVersionSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : LambdaAwsUpboundIoV1beta1LayerVersionSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : LambdaAwsUpboundIoV1beta1LayerVersionSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : LambdaAwsUpboundIoV1beta1LayerVersionSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema LambdaAwsUpboundIoV1beta1LayerVersionSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: LambdaAwsUpboundIoV1beta1LayerVersionSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: LambdaAwsUpboundIoV1beta1LayerVersionSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: LambdaAwsUpboundIoV1beta1LayerVersionSpecWriteConnectionSecretToRef
 
@@ -101,23 +97,32 @@ schema LambdaAwsUpboundIoV1beta1LayerVersionSpecForProvider:
     description : str, default is Undefined, optional
         Description of what your Lambda Layer does.
     filename : str, default is Undefined, optional
-        prefixed options cannot be used.
+        Path to the function's deployment package within the local filesystem. If defined, The s3_-prefixed options cannot be used.
     layerName : str, default is Undefined, optional
-        Unique name for your Lambda Layer
+        Unique name for your Lambda Layer.
     licenseInfo : str, default is Undefined, optional
         License info for your Lambda Layer. See License Info.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     s3Bucket : str, default is Undefined, optional
         S3 bucket location containing the function's deployment package. Conflicts with filename. This bucket must reside in the same AWS region where you are creating the Lambda function.
+    s3BucketRef : LambdaAwsUpboundIoV1beta1LayerVersionSpecForProviderS3BucketRef, default is Undefined, optional
+        s3 bucket ref
+    s3BucketSelector : LambdaAwsUpboundIoV1beta1LayerVersionSpecForProviderS3BucketSelector, default is Undefined, optional
+        s3 bucket selector
     s3Key : str, default is Undefined, optional
         S3 key of an object containing the function's deployment package. Conflicts with filename.
+    s3KeyRef : LambdaAwsUpboundIoV1beta1LayerVersionSpecForProviderS3KeyRef, default is Undefined, optional
+        s3 key ref
+    s3KeySelector : LambdaAwsUpboundIoV1beta1LayerVersionSpecForProviderS3KeySelector, default is Undefined, optional
+        s3 key selector
     s3ObjectVersion : str, default is Undefined, optional
         Object version containing the function's deployment package. Conflicts with filename.
     skipDestroy : bool, default is Undefined, optional
         Whether to retain the old version of a previously deployed Lambda Layer. Default is false. When this is not set to true, changing any of compatible_architectures, compatible_runtimes, description, filename, layer_name, license_info, s3_bucket, s3_key, s3_object_version, or source_code_hash forces deletion of the existing layer version and creation of a new layer version.
     sourceCodeHash : str, default is Undefined, optional
-        Virtual attribute used to trigger replacement when source code changes. Must be set to a base64-encoded SHA256 hash of the package file specified with either filename or s3_key. The usual way to set this is ${filebase64sha256("file.11.12 or later) or ${base64sha256(file("file.11.11 and earlier), where "file.zip" is the local filename of the lambda layer source archive.
+        Virtual attribute used to trigger replacement when source code changes. Must be set to a base64-encoded SHA256 hash of the package file specified with either filename or s3_key. The usual way to set this is filebase64sha256("file.11.12 or later) or base64sha256(file("file.11.11 and earlier), where "file.zip" is the local filename of the lambda layer source archive.
     """
 
 
@@ -137,13 +142,199 @@ schema LambdaAwsUpboundIoV1beta1LayerVersionSpecForProvider:
 
     s3Bucket?: str
 
+    s3BucketRef?: LambdaAwsUpboundIoV1beta1LayerVersionSpecForProviderS3BucketRef
+
+    s3BucketSelector?: LambdaAwsUpboundIoV1beta1LayerVersionSpecForProviderS3BucketSelector
+
     s3Key?: str
+
+    s3KeyRef?: LambdaAwsUpboundIoV1beta1LayerVersionSpecForProviderS3KeyRef
+
+    s3KeySelector?: LambdaAwsUpboundIoV1beta1LayerVersionSpecForProviderS3KeySelector
 
     s3ObjectVersion?: str
 
     skipDestroy?: bool
 
     sourceCodeHash?: str
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionSpecForProviderS3BucketRef:
+    r"""
+    Reference to a Object in s3 to populate s3Bucket.
+
+    Attributes
+    ----------
+    name : str, default is Undefined, required
+        Name of the referenced object.
+    policy : LambdaAwsUpboundIoV1beta1LayerVersionSpecForProviderS3BucketRefPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    name: str
+
+    policy?: LambdaAwsUpboundIoV1beta1LayerVersionSpecForProviderS3BucketRefPolicy
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionSpecForProviderS3BucketRefPolicy:
+    r"""
+    Policies for referencing.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionSpecForProviderS3BucketSelector:
+    r"""
+    Selector for a Object in s3 to populate s3Bucket.
+
+    Attributes
+    ----------
+    matchControllerRef : bool, default is Undefined, optional
+        MatchControllerRef ensures an object with the same controller reference
+        as the selecting object is selected.
+    matchLabels : {str:str}, default is Undefined, optional
+        MatchLabels ensures an object with matching labels is selected.
+    policy : LambdaAwsUpboundIoV1beta1LayerVersionSpecForProviderS3BucketSelectorPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    matchControllerRef?: bool
+
+    matchLabels?: {str:str}
+
+    policy?: LambdaAwsUpboundIoV1beta1LayerVersionSpecForProviderS3BucketSelectorPolicy
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionSpecForProviderS3BucketSelectorPolicy:
+    r"""
+    Policies for selection.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionSpecForProviderS3KeyRef:
+    r"""
+    Reference to a Object in s3 to populate s3Key.
+
+    Attributes
+    ----------
+    name : str, default is Undefined, required
+        Name of the referenced object.
+    policy : LambdaAwsUpboundIoV1beta1LayerVersionSpecForProviderS3KeyRefPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    name: str
+
+    policy?: LambdaAwsUpboundIoV1beta1LayerVersionSpecForProviderS3KeyRefPolicy
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionSpecForProviderS3KeyRefPolicy:
+    r"""
+    Policies for referencing.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionSpecForProviderS3KeySelector:
+    r"""
+    Selector for a Object in s3 to populate s3Key.
+
+    Attributes
+    ----------
+    matchControllerRef : bool, default is Undefined, optional
+        MatchControllerRef ensures an object with the same controller reference
+        as the selecting object is selected.
+    matchLabels : {str:str}, default is Undefined, optional
+        MatchLabels ensures an object with matching labels is selected.
+    policy : LambdaAwsUpboundIoV1beta1LayerVersionSpecForProviderS3KeySelectorPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    matchControllerRef?: bool
+
+    matchLabels?: {str:str}
+
+    policy?: LambdaAwsUpboundIoV1beta1LayerVersionSpecForProviderS3KeySelectorPolicy
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionSpecForProviderS3KeySelectorPolicy:
+    r"""
+    Policies for selection.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
 
 
 schema LambdaAwsUpboundIoV1beta1LayerVersionSpecInitProvider:
@@ -168,21 +359,29 @@ schema LambdaAwsUpboundIoV1beta1LayerVersionSpecInitProvider:
     description : str, default is Undefined, optional
         Description of what your Lambda Layer does.
     filename : str, default is Undefined, optional
-        prefixed options cannot be used.
+        Path to the function's deployment package within the local filesystem. If defined, The s3_-prefixed options cannot be used.
     layerName : str, default is Undefined, optional
-        Unique name for your Lambda Layer
+        Unique name for your Lambda Layer.
     licenseInfo : str, default is Undefined, optional
         License info for your Lambda Layer. See License Info.
     s3Bucket : str, default is Undefined, optional
         S3 bucket location containing the function's deployment package. Conflicts with filename. This bucket must reside in the same AWS region where you are creating the Lambda function.
+    s3BucketRef : LambdaAwsUpboundIoV1beta1LayerVersionSpecInitProviderS3BucketRef, default is Undefined, optional
+        s3 bucket ref
+    s3BucketSelector : LambdaAwsUpboundIoV1beta1LayerVersionSpecInitProviderS3BucketSelector, default is Undefined, optional
+        s3 bucket selector
     s3Key : str, default is Undefined, optional
         S3 key of an object containing the function's deployment package. Conflicts with filename.
+    s3KeyRef : LambdaAwsUpboundIoV1beta1LayerVersionSpecInitProviderS3KeyRef, default is Undefined, optional
+        s3 key ref
+    s3KeySelector : LambdaAwsUpboundIoV1beta1LayerVersionSpecInitProviderS3KeySelector, default is Undefined, optional
+        s3 key selector
     s3ObjectVersion : str, default is Undefined, optional
         Object version containing the function's deployment package. Conflicts with filename.
     skipDestroy : bool, default is Undefined, optional
         Whether to retain the old version of a previously deployed Lambda Layer. Default is false. When this is not set to true, changing any of compatible_architectures, compatible_runtimes, description, filename, layer_name, license_info, s3_bucket, s3_key, s3_object_version, or source_code_hash forces deletion of the existing layer version and creation of a new layer version.
     sourceCodeHash : str, default is Undefined, optional
-        Virtual attribute used to trigger replacement when source code changes. Must be set to a base64-encoded SHA256 hash of the package file specified with either filename or s3_key. The usual way to set this is ${filebase64sha256("file.11.12 or later) or ${base64sha256(file("file.11.11 and earlier), where "file.zip" is the local filename of the lambda layer source archive.
+        Virtual attribute used to trigger replacement when source code changes. Must be set to a base64-encoded SHA256 hash of the package file specified with either filename or s3_key. The usual way to set this is filebase64sha256("file.11.12 or later) or base64sha256(file("file.11.11 and earlier), where "file.zip" is the local filename of the lambda layer source archive.
     """
 
 
@@ -200,13 +399,199 @@ schema LambdaAwsUpboundIoV1beta1LayerVersionSpecInitProvider:
 
     s3Bucket?: str
 
+    s3BucketRef?: LambdaAwsUpboundIoV1beta1LayerVersionSpecInitProviderS3BucketRef
+
+    s3BucketSelector?: LambdaAwsUpboundIoV1beta1LayerVersionSpecInitProviderS3BucketSelector
+
     s3Key?: str
+
+    s3KeyRef?: LambdaAwsUpboundIoV1beta1LayerVersionSpecInitProviderS3KeyRef
+
+    s3KeySelector?: LambdaAwsUpboundIoV1beta1LayerVersionSpecInitProviderS3KeySelector
 
     s3ObjectVersion?: str
 
     skipDestroy?: bool
 
     sourceCodeHash?: str
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionSpecInitProviderS3BucketRef:
+    r"""
+    Reference to a Object in s3 to populate s3Bucket.
+
+    Attributes
+    ----------
+    name : str, default is Undefined, required
+        Name of the referenced object.
+    policy : LambdaAwsUpboundIoV1beta1LayerVersionSpecInitProviderS3BucketRefPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    name: str
+
+    policy?: LambdaAwsUpboundIoV1beta1LayerVersionSpecInitProviderS3BucketRefPolicy
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionSpecInitProviderS3BucketRefPolicy:
+    r"""
+    Policies for referencing.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionSpecInitProviderS3BucketSelector:
+    r"""
+    Selector for a Object in s3 to populate s3Bucket.
+
+    Attributes
+    ----------
+    matchControllerRef : bool, default is Undefined, optional
+        MatchControllerRef ensures an object with the same controller reference
+        as the selecting object is selected.
+    matchLabels : {str:str}, default is Undefined, optional
+        MatchLabels ensures an object with matching labels is selected.
+    policy : LambdaAwsUpboundIoV1beta1LayerVersionSpecInitProviderS3BucketSelectorPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    matchControllerRef?: bool
+
+    matchLabels?: {str:str}
+
+    policy?: LambdaAwsUpboundIoV1beta1LayerVersionSpecInitProviderS3BucketSelectorPolicy
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionSpecInitProviderS3BucketSelectorPolicy:
+    r"""
+    Policies for selection.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionSpecInitProviderS3KeyRef:
+    r"""
+    Reference to a Object in s3 to populate s3Key.
+
+    Attributes
+    ----------
+    name : str, default is Undefined, required
+        Name of the referenced object.
+    policy : LambdaAwsUpboundIoV1beta1LayerVersionSpecInitProviderS3KeyRefPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    name: str
+
+    policy?: LambdaAwsUpboundIoV1beta1LayerVersionSpecInitProviderS3KeyRefPolicy
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionSpecInitProviderS3KeyRefPolicy:
+    r"""
+    Policies for referencing.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionSpecInitProviderS3KeySelector:
+    r"""
+    Selector for a Object in s3 to populate s3Key.
+
+    Attributes
+    ----------
+    matchControllerRef : bool, default is Undefined, optional
+        MatchControllerRef ensures an object with the same controller reference
+        as the selecting object is selected.
+    matchLabels : {str:str}, default is Undefined, optional
+        MatchLabels ensures an object with matching labels is selected.
+    policy : LambdaAwsUpboundIoV1beta1LayerVersionSpecInitProviderS3KeySelectorPolicy, default is Undefined, optional
+        policy
+    """
+
+
+    matchControllerRef?: bool
+
+    matchLabels?: {str:str}
+
+    policy?: LambdaAwsUpboundIoV1beta1LayerVersionSpecInitProviderS3KeySelectorPolicy
+
+
+schema LambdaAwsUpboundIoV1beta1LayerVersionSpecInitProviderS3KeySelectorPolicy:
+    r"""
+    Policies for selection.
+
+    Attributes
+    ----------
+    resolution : str, default is "Required", optional
+        Resolution specifies whether resolution of this reference is required.
+        The default is 'Required', which means the reconcile will fail if the
+        reference cannot be resolved. 'Optional' means this reference will be
+        a no-op if it cannot be resolved.
+    resolve : str, default is Undefined, optional
+        Resolve specifies when this reference should be resolved. The default
+        is 'IfNotPresent', which will attempt to resolve the reference only when
+        the corresponding field is not present. Use 'Always' to resolve the
+        reference on every reconcile.
+    """
+
+
+    resolution?: "Required" | "Optional" = "Required"
+
+    resolve?: "Always" | "IfNotPresent"
 
 
 schema LambdaAwsUpboundIoV1beta1LayerVersionSpecProviderConfigRef:
@@ -253,112 +638,12 @@ schema LambdaAwsUpboundIoV1beta1LayerVersionSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema LambdaAwsUpboundIoV1beta1LayerVersionSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : LambdaAwsUpboundIoV1beta1LayerVersionSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : LambdaAwsUpboundIoV1beta1LayerVersionSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: LambdaAwsUpboundIoV1beta1LayerVersionSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: LambdaAwsUpboundIoV1beta1LayerVersionSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema LambdaAwsUpboundIoV1beta1LayerVersionSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : LambdaAwsUpboundIoV1beta1LayerVersionSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: LambdaAwsUpboundIoV1beta1LayerVersionSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema LambdaAwsUpboundIoV1beta1LayerVersionSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema LambdaAwsUpboundIoV1beta1LayerVersionSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema LambdaAwsUpboundIoV1beta1LayerVersionSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -417,15 +702,18 @@ schema LambdaAwsUpboundIoV1beta1LayerVersionStatusAtProvider:
     description : str, default is Undefined, optional
         Description of what your Lambda Layer does.
     filename : str, default is Undefined, optional
-        prefixed options cannot be used.
+        Path to the function's deployment package within the local filesystem. If defined, The s3_-prefixed options cannot be used.
     id : str, default is Undefined, optional
         id
     layerArn : str, default is Undefined, optional
         ARN of the Lambda Layer without version.
     layerName : str, default is Undefined, optional
-        Unique name for your Lambda Layer
+        Unique name for your Lambda Layer.
     licenseInfo : str, default is Undefined, optional
         License info for your Lambda Layer. See License Info.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     s3Bucket : str, default is Undefined, optional
         S3 bucket location containing the function's deployment package. Conflicts with filename. This bucket must reside in the same AWS region where you are creating the Lambda function.
     s3Key : str, default is Undefined, optional
@@ -439,7 +727,7 @@ schema LambdaAwsUpboundIoV1beta1LayerVersionStatusAtProvider:
     skipDestroy : bool, default is Undefined, optional
         Whether to retain the old version of a previously deployed Lambda Layer. Default is false. When this is not set to true, changing any of compatible_architectures, compatible_runtimes, description, filename, layer_name, license_info, s3_bucket, s3_key, s3_object_version, or source_code_hash forces deletion of the existing layer version and creation of a new layer version.
     sourceCodeHash : str, default is Undefined, optional
-        Virtual attribute used to trigger replacement when source code changes. Must be set to a base64-encoded SHA256 hash of the package file specified with either filename or s3_key. The usual way to set this is ${filebase64sha256("file.11.12 or later) or ${base64sha256(file("file.11.11 and earlier), where "file.zip" is the local filename of the lambda layer source archive.
+        Virtual attribute used to trigger replacement when source code changes. Must be set to a base64-encoded SHA256 hash of the package file specified with either filename or s3_key. The usual way to set this is filebase64sha256("file.11.12 or later) or base64sha256(file("file.11.11 and earlier), where "file.zip" is the local filename of the lambda layer source archive.
     sourceCodeSize : float, default is Undefined, optional
         Size in bytes of the function .zip file.
     version : str, default is Undefined, optional
@@ -468,6 +756,8 @@ schema LambdaAwsUpboundIoV1beta1LayerVersionStatusAtProvider:
     layerName?: str
 
     licenseInfo?: str
+
+    region?: str
 
     s3Bucket?: str
 

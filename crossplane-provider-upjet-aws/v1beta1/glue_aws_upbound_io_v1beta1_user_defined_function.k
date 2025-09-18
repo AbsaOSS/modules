@@ -66,8 +66,6 @@ schema GlueAwsUpboundIoV1beta1UserDefinedFunctionSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : GlueAwsUpboundIoV1beta1UserDefinedFunctionSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : GlueAwsUpboundIoV1beta1UserDefinedFunctionSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : GlueAwsUpboundIoV1beta1UserDefinedFunctionSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema GlueAwsUpboundIoV1beta1UserDefinedFunctionSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: GlueAwsUpboundIoV1beta1UserDefinedFunctionSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: GlueAwsUpboundIoV1beta1UserDefinedFunctionSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: GlueAwsUpboundIoV1beta1UserDefinedFunctionSpecWriteConnectionSecretToRef
 
@@ -109,6 +105,7 @@ schema GlueAwsUpboundIoV1beta1UserDefinedFunctionSpecForProvider:
     ownerType : str, default is Undefined, optional
         The owner type. can be one of USER, ROLE, and GROUP.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     resourceUris : [GlueAwsUpboundIoV1beta1UserDefinedFunctionSpecForProviderResourceUrisItems0], default is Undefined, optional
         The configuration block for Resource URIs. See resource uris below for more details.
@@ -338,112 +335,12 @@ schema GlueAwsUpboundIoV1beta1UserDefinedFunctionSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema GlueAwsUpboundIoV1beta1UserDefinedFunctionSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : GlueAwsUpboundIoV1beta1UserDefinedFunctionSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : GlueAwsUpboundIoV1beta1UserDefinedFunctionSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: GlueAwsUpboundIoV1beta1UserDefinedFunctionSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: GlueAwsUpboundIoV1beta1UserDefinedFunctionSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema GlueAwsUpboundIoV1beta1UserDefinedFunctionSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : GlueAwsUpboundIoV1beta1UserDefinedFunctionSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: GlueAwsUpboundIoV1beta1UserDefinedFunctionSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema GlueAwsUpboundIoV1beta1UserDefinedFunctionSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema GlueAwsUpboundIoV1beta1UserDefinedFunctionSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema GlueAwsUpboundIoV1beta1UserDefinedFunctionSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -505,6 +402,9 @@ schema GlueAwsUpboundIoV1beta1UserDefinedFunctionStatusAtProvider:
         The owner of the function.
     ownerType : str, default is Undefined, optional
         The owner type. can be one of USER, ROLE, and GROUP.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     resourceUris : [GlueAwsUpboundIoV1beta1UserDefinedFunctionStatusAtProviderResourceUrisItems0], default is Undefined, optional
         The configuration block for Resource URIs. See resource uris below for more details.
     """
@@ -525,6 +425,8 @@ schema GlueAwsUpboundIoV1beta1UserDefinedFunctionStatusAtProvider:
     ownerName?: str
 
     ownerType?: str
+
+    region?: str
 
     resourceUris?: [GlueAwsUpboundIoV1beta1UserDefinedFunctionStatusAtProviderResourceUrisItems0]
 

@@ -66,8 +66,6 @@ schema DatasyncAwsUpboundIoV1beta1TaskSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : DatasyncAwsUpboundIoV1beta1TaskSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : DatasyncAwsUpboundIoV1beta1TaskSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : DatasyncAwsUpboundIoV1beta1TaskSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema DatasyncAwsUpboundIoV1beta1TaskSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: DatasyncAwsUpboundIoV1beta1TaskSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: DatasyncAwsUpboundIoV1beta1TaskSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: DatasyncAwsUpboundIoV1beta1TaskSpecWriteConnectionSecretToRef
 
@@ -115,6 +111,7 @@ schema DatasyncAwsUpboundIoV1beta1TaskSpecForProvider:
     options : [DatasyncAwsUpboundIoV1beta1TaskSpecForProviderOptionsItems0], default is Undefined, optional
         Configuration block containing option that controls the default behavior when you start an execution of this DataSync Task. For each individual task execution, you can override these options by specifying an overriding configuration in those executions.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     schedule : [DatasyncAwsUpboundIoV1beta1TaskSpecForProviderScheduleItems0], default is Undefined, optional
         Specifies a schedule used to periodically transfer files from a source to a destination location.
@@ -126,6 +123,8 @@ schema DatasyncAwsUpboundIoV1beta1TaskSpecForProvider:
         source location arn selector
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
+    taskMode : str, default is Undefined, optional
+        One of the following task modes for your data transfer:
     taskReportConfig : [DatasyncAwsUpboundIoV1beta1TaskSpecForProviderTaskReportConfigItems0], default is Undefined, optional
         Configuration block containing the configuration of a DataSync Task Report. See task_report_config below.
     """
@@ -162,6 +161,8 @@ schema DatasyncAwsUpboundIoV1beta1TaskSpecForProvider:
     sourceLocationArnSelector?: DatasyncAwsUpboundIoV1beta1TaskSpecForProviderSourceLocationArnSelector
 
     tags?: {str:str}
+
+    taskMode?: str
 
     taskReportConfig?: [DatasyncAwsUpboundIoV1beta1TaskSpecForProviderTaskReportConfigItems0]
 
@@ -676,6 +677,8 @@ schema DatasyncAwsUpboundIoV1beta1TaskSpecInitProvider:
         source location arn selector
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
+    taskMode : str, default is Undefined, optional
+        One of the following task modes for your data transfer:
     taskReportConfig : [DatasyncAwsUpboundIoV1beta1TaskSpecInitProviderTaskReportConfigItems0], default is Undefined, optional
         Configuration block containing the configuration of a DataSync Task Report. See task_report_config below.
     """
@@ -710,6 +713,8 @@ schema DatasyncAwsUpboundIoV1beta1TaskSpecInitProvider:
     sourceLocationArnSelector?: DatasyncAwsUpboundIoV1beta1TaskSpecInitProviderSourceLocationArnSelector
 
     tags?: {str:str}
+
+    taskMode?: str
 
     taskReportConfig?: [DatasyncAwsUpboundIoV1beta1TaskSpecInitProviderTaskReportConfigItems0]
 
@@ -1223,112 +1228,12 @@ schema DatasyncAwsUpboundIoV1beta1TaskSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema DatasyncAwsUpboundIoV1beta1TaskSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : DatasyncAwsUpboundIoV1beta1TaskSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : DatasyncAwsUpboundIoV1beta1TaskSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: DatasyncAwsUpboundIoV1beta1TaskSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: DatasyncAwsUpboundIoV1beta1TaskSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema DatasyncAwsUpboundIoV1beta1TaskSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : DatasyncAwsUpboundIoV1beta1TaskSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: DatasyncAwsUpboundIoV1beta1TaskSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema DatasyncAwsUpboundIoV1beta1TaskSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema DatasyncAwsUpboundIoV1beta1TaskSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema DatasyncAwsUpboundIoV1beta1TaskSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1390,6 +1295,9 @@ schema DatasyncAwsUpboundIoV1beta1TaskStatusAtProvider:
         Name of the DataSync Task.
     options : [DatasyncAwsUpboundIoV1beta1TaskStatusAtProviderOptionsItems0], default is Undefined, optional
         Configuration block containing option that controls the default behavior when you start an execution of this DataSync Task. For each individual task execution, you can override these options by specifying an overriding configuration in those executions.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     schedule : [DatasyncAwsUpboundIoV1beta1TaskStatusAtProviderScheduleItems0], default is Undefined, optional
         Specifies a schedule used to periodically transfer files from a source to a destination location.
     sourceLocationArn : str, default is Undefined, optional
@@ -1398,6 +1306,8 @@ schema DatasyncAwsUpboundIoV1beta1TaskStatusAtProvider:
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
         A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
+    taskMode : str, default is Undefined, optional
+        One of the following task modes for your data transfer:
     taskReportConfig : [DatasyncAwsUpboundIoV1beta1TaskStatusAtProviderTaskReportConfigItems0], default is Undefined, optional
         Configuration block containing the configuration of a DataSync Task Report. See task_report_config below.
     """
@@ -1419,6 +1329,8 @@ schema DatasyncAwsUpboundIoV1beta1TaskStatusAtProvider:
 
     options?: [DatasyncAwsUpboundIoV1beta1TaskStatusAtProviderOptionsItems0]
 
+    region?: str
+
     schedule?: [DatasyncAwsUpboundIoV1beta1TaskStatusAtProviderScheduleItems0]
 
     sourceLocationArn?: str
@@ -1426,6 +1338,8 @@ schema DatasyncAwsUpboundIoV1beta1TaskStatusAtProvider:
     tags?: {str:str}
 
     tagsAll?: {str:str}
+
+    taskMode?: str
 
     taskReportConfig?: [DatasyncAwsUpboundIoV1beta1TaskStatusAtProviderTaskReportConfigItems0]
 

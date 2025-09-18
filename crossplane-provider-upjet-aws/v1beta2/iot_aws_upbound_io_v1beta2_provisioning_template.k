@@ -66,8 +66,6 @@ schema IotAwsUpboundIoV1beta2ProvisioningTemplateSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : IotAwsUpboundIoV1beta2ProvisioningTemplateSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : IotAwsUpboundIoV1beta2ProvisioningTemplateSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : IotAwsUpboundIoV1beta2ProvisioningTemplateSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema IotAwsUpboundIoV1beta2ProvisioningTemplateSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: IotAwsUpboundIoV1beta2ProvisioningTemplateSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: IotAwsUpboundIoV1beta2ProvisioningTemplateSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: IotAwsUpboundIoV1beta2ProvisioningTemplateSpecWriteConnectionSecretToRef
 
@@ -107,6 +103,7 @@ schema IotAwsUpboundIoV1beta2ProvisioningTemplateSpecForProvider:
     provisioningRoleArnSelector : IotAwsUpboundIoV1beta2ProvisioningTemplateSpecForProviderProvisioningRoleArnSelector, default is Undefined, optional
         provisioning role arn selector
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
@@ -451,112 +448,12 @@ schema IotAwsUpboundIoV1beta2ProvisioningTemplateSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema IotAwsUpboundIoV1beta2ProvisioningTemplateSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : IotAwsUpboundIoV1beta2ProvisioningTemplateSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : IotAwsUpboundIoV1beta2ProvisioningTemplateSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: IotAwsUpboundIoV1beta2ProvisioningTemplateSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: IotAwsUpboundIoV1beta2ProvisioningTemplateSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema IotAwsUpboundIoV1beta2ProvisioningTemplateSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : IotAwsUpboundIoV1beta2ProvisioningTemplateSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: IotAwsUpboundIoV1beta2ProvisioningTemplateSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema IotAwsUpboundIoV1beta2ProvisioningTemplateSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema IotAwsUpboundIoV1beta2ProvisioningTemplateSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema IotAwsUpboundIoV1beta2ProvisioningTemplateSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -616,6 +513,9 @@ schema IotAwsUpboundIoV1beta2ProvisioningTemplateStatusAtProvider:
         pre provisioning hook
     provisioningRoleArn : str, default is Undefined, optional
         The role ARN for the role associated with the fleet provisioning template. This IoT role grants permission to provision a device.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
@@ -640,6 +540,8 @@ schema IotAwsUpboundIoV1beta2ProvisioningTemplateStatusAtProvider:
     preProvisioningHook?: IotAwsUpboundIoV1beta2ProvisioningTemplateStatusAtProviderPreProvisioningHook
 
     provisioningRoleArn?: str
+
+    region?: str
 
     tags?: {str:str}
 

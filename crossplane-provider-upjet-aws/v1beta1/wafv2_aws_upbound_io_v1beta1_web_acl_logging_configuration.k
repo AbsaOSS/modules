@@ -66,8 +66,6 @@ schema Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationSpecWriteConnectionSecretToRef
 
@@ -107,6 +103,7 @@ schema Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationSpecForProvider:
         Configuration for parts of the request that you want to keep out of the logs. Up to 100 redacted_fields blocks are supported. See Redacted Fields below for more details.
         Parts of the request to exclude from logs
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     resourceArn : str, default is Undefined, optional
         Amazon Resource Name (ARN) of the web ACL that you want to associate with log_destination_configs.
@@ -291,7 +288,7 @@ schema Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationSpecForProviderLoggingF
     Attributes
     ----------
     action : str, default is Undefined, optional
-        Action setting that a log record must contain in order to meet the condition. Valid values for action are ALLOW, BLOCK, and COUNT.
+        Action setting that a log record must contain in order to meet the condition. Valid values for action are ALLOW, BLOCK, COUNT, CAPTCHA, CHALLENGE and EXCLUDED_AS_COUNT.
     """
 
 
@@ -636,7 +633,7 @@ schema Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationSpecInitProviderLogging
     Attributes
     ----------
     action : str, default is Undefined, optional
-        Action setting that a log record must contain in order to meet the condition. Valid values for action are ALLOW, BLOCK, and COUNT.
+        Action setting that a log record must contain in order to meet the condition. Valid values for action are ALLOW, BLOCK, COUNT, CAPTCHA, CHALLENGE and EXCLUDED_AS_COUNT.
     """
 
 
@@ -741,112 +738,12 @@ schema Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationSpecProviderConfigRefPo
     resolve?: "Always" | "IfNotPresent"
 
 
-schema Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -902,6 +799,9 @@ schema Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationStatusAtProvider:
     redactedFields : [Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationStatusAtProviderRedactedFieldsItems0], default is Undefined, optional
         Configuration for parts of the request that you want to keep out of the logs. Up to 100 redacted_fields blocks are supported. See Redacted Fields below for more details.
         Parts of the request to exclude from logs
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     resourceArn : str, default is Undefined, optional
         Amazon Resource Name (ARN) of the web ACL that you want to associate with log_destination_configs.
         AWS WebACL ARN
@@ -915,6 +815,8 @@ schema Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationStatusAtProvider:
     loggingFilter?: Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationStatusAtProviderLoggingFilter
 
     redactedFields?: [Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationStatusAtProviderRedactedFieldsItems0]
+
+    region?: str
 
     resourceArn?: str
 
@@ -984,7 +886,7 @@ schema Wafv2AwsUpboundIoV1beta1WebACLLoggingConfigurationStatusAtProviderLogging
     Attributes
     ----------
     action : str, default is Undefined, optional
-        Action setting that a log record must contain in order to meet the condition. Valid values for action are ALLOW, BLOCK, and COUNT.
+        Action setting that a log record must contain in order to meet the condition. Valid values for action are ALLOW, BLOCK, COUNT, CAPTCHA, CHALLENGE and EXCLUDED_AS_COUNT.
     """
 
 

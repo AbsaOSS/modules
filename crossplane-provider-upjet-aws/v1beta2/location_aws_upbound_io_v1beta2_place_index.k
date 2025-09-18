@@ -66,8 +66,6 @@ schema LocationAwsUpboundIoV1beta2PlaceIndexSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : LocationAwsUpboundIoV1beta2PlaceIndexSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : LocationAwsUpboundIoV1beta2PlaceIndexSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : LocationAwsUpboundIoV1beta2PlaceIndexSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema LocationAwsUpboundIoV1beta2PlaceIndexSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: LocationAwsUpboundIoV1beta2PlaceIndexSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: LocationAwsUpboundIoV1beta2PlaceIndexSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: LocationAwsUpboundIoV1beta2PlaceIndexSpecWriteConnectionSecretToRef
 
@@ -101,6 +97,7 @@ schema LocationAwsUpboundIoV1beta2PlaceIndexSpecForProvider:
     description : str, default is Undefined, optional
         The optional description for the place index resource.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
@@ -225,112 +222,12 @@ schema LocationAwsUpboundIoV1beta2PlaceIndexSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema LocationAwsUpboundIoV1beta2PlaceIndexSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : LocationAwsUpboundIoV1beta2PlaceIndexSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : LocationAwsUpboundIoV1beta2PlaceIndexSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: LocationAwsUpboundIoV1beta2PlaceIndexSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: LocationAwsUpboundIoV1beta2PlaceIndexSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema LocationAwsUpboundIoV1beta2PlaceIndexSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : LocationAwsUpboundIoV1beta2PlaceIndexSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: LocationAwsUpboundIoV1beta2PlaceIndexSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema LocationAwsUpboundIoV1beta2PlaceIndexSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema LocationAwsUpboundIoV1beta2PlaceIndexSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema LocationAwsUpboundIoV1beta2PlaceIndexSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -388,6 +285,9 @@ schema LocationAwsUpboundIoV1beta2PlaceIndexStatusAtProvider:
         id
     indexArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) for the place index resource. Used to specify a resource across AWS.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
@@ -408,6 +308,8 @@ schema LocationAwsUpboundIoV1beta2PlaceIndexStatusAtProvider:
     id?: str
 
     indexArn?: str
+
+    region?: str
 
     tags?: {str:str}
 

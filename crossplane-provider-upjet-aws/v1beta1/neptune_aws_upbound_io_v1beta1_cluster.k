@@ -66,8 +66,6 @@ schema NeptuneAwsUpboundIoV1beta1ClusterSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : NeptuneAwsUpboundIoV1beta1ClusterSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : NeptuneAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : NeptuneAwsUpboundIoV1beta1ClusterSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema NeptuneAwsUpboundIoV1beta1ClusterSpec:
 
     providerConfigRef?: NeptuneAwsUpboundIoV1beta1ClusterSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: NeptuneAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: NeptuneAwsUpboundIoV1beta1ClusterSpecWriteConnectionSecretToRef
 
 
@@ -95,62 +91,63 @@ schema NeptuneAwsUpboundIoV1beta1ClusterSpecForProvider:
     Attributes
     ----------
     allowMajorVersionUpgrade : bool, default is Undefined, optional
-        Specifies whether upgrades between different major versions are allowed. You must set it to true when providing an engine_version parameter that uses a different major version than the DB cluster's current version. Default is false.
+        Whether upgrades between different major versions are allowed. You must set it to true when providing an engine_version parameter that uses a different major version than the DB cluster's current version. Default is false.
     applyImmediately : bool, default is Undefined, optional
-        Specifies whether any cluster modifications are applied immediately, or during the next maintenance window. Default is false.
+        Whether any cluster modifications are applied immediately, or during the next maintenance window. Default is false.
     availabilityZones : [str], default is Undefined, optional
-        A list of EC2 Availability Zones that instances in the Neptune cluster can be created in.
+        List of EC2 Availability Zones that instances in the Neptune cluster can be created in.
     backupRetentionPeriod : float, default is Undefined, optional
-        The days to retain backups for. Default 1
+        Days to retain backups for. Default 1
     copyTagsToSnapshot : bool, default is Undefined, optional
         If set to true, tags are copied to any snapshot of the DB cluster that is created.
     deletionProtection : bool, default is Undefined, optional
-        A value that indicates whether the DB cluster has deletion protection enabled.The database can't be deleted when deletion protection is enabled. By default, deletion protection is disabled.
+        Value that indicates whether the DB cluster has deletion protection enabled.The database can't be deleted when deletion protection is enabled. By default, deletion protection is disabled.
     enableCloudwatchLogsExports : [str], default is Undefined, optional
-        A list of the log types this DB cluster is configured to export to Cloudwatch Logs. Currently only supports audit and slowquery.
+        List of the log types this DB cluster is configured to export to Cloudwatch Logs. Currently only supports audit and slowquery.
     engine : str, default is Undefined, optional
-        The name of the database engine to be used for this Neptune cluster. Defaults to neptune.
+        Name of the database engine to be used for this Neptune cluster. Defaults to neptune.
     engineVersion : str, default is Undefined, optional
-        The database engine version.
+        Database engine version.
     finalSnapshotIdentifier : str, default is Undefined, optional
-        The name of your final Neptune snapshot when this Neptune cluster is deleted. If omitted, no final snapshot will be made.
+        Name of your final Neptune snapshot when this Neptune cluster is deleted. If omitted, no final snapshot will be made.
     globalClusterIdentifier : str, default is Undefined, optional
-        The global cluster identifier specified on aws_neptune_global_cluster.
+        Global cluster identifier specified on aws_neptune_global_cluster.
     iamDatabaseAuthenticationEnabled : bool, default is Undefined, optional
-        Specifies whether or not mappings of AWS Identity and Access Management (IAM) accounts to database accounts is enabled.
+        Whether or not mappings of AWS Identity and Access Management (IAM) accounts to database accounts is enabled.
     iamRoleRefs : [NeptuneAwsUpboundIoV1beta1ClusterSpecForProviderIamRoleRefsItems0], default is Undefined, optional
         References to Role in iam to populate iamRoles.
     iamRoleSelector : NeptuneAwsUpboundIoV1beta1ClusterSpecForProviderIamRoleSelector, default is Undefined, optional
         iam role selector
     iamRoles : [str], default is Undefined, optional
-        A List of ARNs for the IAM roles to associate to the Neptune Cluster.
+        List of ARNs for the IAM roles to associate to the Neptune Cluster.
     kmsKeyArn : str, default is Undefined, optional
-        The ARN for the KMS encryption key. When specifying kms_key_arn, storage_encrypted needs to be set to true.
+        ARN for the KMS encryption key. When specifying kms_key_arn, storage_encrypted needs to be set to true.
     kmsKeyArnRef : NeptuneAwsUpboundIoV1beta1ClusterSpecForProviderKmsKeyArnRef, default is Undefined, optional
         kms key arn ref
     kmsKeyArnSelector : NeptuneAwsUpboundIoV1beta1ClusterSpecForProviderKmsKeyArnSelector, default is Undefined, optional
         kms key arn selector
     neptuneClusterParameterGroupName : str, default is Undefined, optional
-        A cluster parameter group to associate with the cluster.
+        Cluster parameter group to associate with the cluster.
     neptuneClusterParameterGroupNameRef : NeptuneAwsUpboundIoV1beta1ClusterSpecForProviderNeptuneClusterParameterGroupNameRef, default is Undefined, optional
         neptune cluster parameter group name ref
     neptuneClusterParameterGroupNameSelector : NeptuneAwsUpboundIoV1beta1ClusterSpecForProviderNeptuneClusterParameterGroupNameSelector, default is Undefined, optional
         neptune cluster parameter group name selector
     neptuneInstanceParameterGroupName : str, default is Undefined, optional
-        The name of the DB parameter group to apply to all instances of the DB cluster.
+        –  Name of DB parameter group to apply to all instances in the cluster. When upgrading, AWS does not return this value, so do not reference it in other arguments—either leave it unset, configure each instance directly, or ensure it matches the engine_version.
     neptuneSubnetGroupName : str, default is Undefined, optional
-        A Neptune subnet group to associate with this Neptune instance.
+        Neptune subnet group to associate with this Neptune instance.
     neptuneSubnetGroupNameRef : NeptuneAwsUpboundIoV1beta1ClusterSpecForProviderNeptuneSubnetGroupNameRef, default is Undefined, optional
         neptune subnet group name ref
     neptuneSubnetGroupNameSelector : NeptuneAwsUpboundIoV1beta1ClusterSpecForProviderNeptuneSubnetGroupNameSelector, default is Undefined, optional
         neptune subnet group name selector
     port : float, default is Undefined, optional
-        The port on which the Neptune accepts connections. Default is 8182.
+        Port on which the Neptune accepts connections. Default is 8182.
     preferredBackupWindow : str, default is Undefined, optional
-        The daily time range during which automated backups are created if automated backups are enabled using the BackupRetentionPeriod parameter. Time in UTC. Default: A 30-minute window selected at random from an 8-hour block of time per regionE.g., 04:00-09:00
+        Daily time range during which automated backups are created if automated backups are enabled using the BackupRetentionPeriod parameter. Time in UTC. Default: A 30-minute window selected at random from an 8-hour block of time per regionE.g., 04:00-09:00
     preferredMaintenanceWindow : str, default is Undefined, optional
-        The weekly time range during which system maintenance can occur, in (UTC) e.g., wed:04:00-wed:04:30
+        Weekly time range during which system maintenance can occur, in (UTC) e.g., wed:04:00-wed:04:30
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     replicationSourceIdentifier : str, default is Undefined, optional
         ARN of a source Neptune cluster or Neptune instance if this Neptune cluster is to be created as a Read Replica.
@@ -161,17 +158,17 @@ schema NeptuneAwsUpboundIoV1beta1ClusterSpecForProvider:
     serverlessV2ScalingConfiguration : [NeptuneAwsUpboundIoV1beta1ClusterSpecForProviderServerlessV2ScalingConfigurationItems0], default is Undefined, optional
         If set, create the Neptune cluster as a serverless one. See Serverless for example block attributes.
     skipFinalSnapshot : bool, default is Undefined, optional
-        Determines whether a final Neptune snapshot is created before the Neptune cluster is deleted. If true is specified, no Neptune snapshot is created. If false is specified, a Neptune snapshot is created before the Neptune cluster is deleted, using the value from final_snapshot_identifier. Default is false.
+        Whether a final Neptune snapshot is created before the Neptune cluster is deleted. If true is specified, no Neptune snapshot is created. If false is specified, a Neptune snapshot is created before the Neptune cluster is deleted, using the value from final_snapshot_identifier. Default is false.
     snapshotIdentifier : str, default is Undefined, optional
-        Specifies whether or not to create this cluster from a snapshot. You can use either the name or ARN when specifying a Neptune cluster snapshot, or the ARN when specifying a Neptune snapshot. Automated snapshots should not be used for this attribute, unless from a different cluster. Automated snapshots are deleted as part of cluster destruction when the resource is replaced.
+        Whether or not to create this cluster from a snapshot. You can use either the name or ARN when specifying a Neptune cluster snapshot, or the ARN when specifying a Neptune snapshot. Automated snapshots should not be used for this attribute, unless from a different cluster. Automated snapshots are deleted as part of cluster destruction when the resource is replaced.
     snapshotIdentifierRef : NeptuneAwsUpboundIoV1beta1ClusterSpecForProviderSnapshotIdentifierRef, default is Undefined, optional
         snapshot identifier ref
     snapshotIdentifierSelector : NeptuneAwsUpboundIoV1beta1ClusterSpecForProviderSnapshotIdentifierSelector, default is Undefined, optional
         snapshot identifier selector
     storageEncrypted : bool, default is Undefined, optional
-        Specifies whether the Neptune cluster is encrypted. The default is false if not specified.
+        Whether the Neptune cluster is encrypted. The default is false if not specified.
     storageType : str, default is Undefined, optional
-        Storage type associated with the cluster standard/iopt1. Default: standard
+        Storage type associated with the cluster standard/iopt1. Default: standard.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     vpcSecurityGroupIdRefs : [NeptuneAwsUpboundIoV1beta1ClusterSpecForProviderVpcSecurityGroupIDRefsItems0], default is Undefined, optional
@@ -722,9 +719,9 @@ schema NeptuneAwsUpboundIoV1beta1ClusterSpecForProviderServerlessV2ScalingConfig
     Attributes
     ----------
     maxCapacity : float, default is Undefined, optional
-        : (default: 128) The maximum Neptune Capacity Units (NCUs) for this cluster. Must be lower or equal than 128. See AWS Documentation for more details.
+        : (default: 128) Maximum Neptune Capacity Units (NCUs) for this cluster. Must be lower or equal than 128. See AWS Documentation for more details.
     minCapacity : float, default is Undefined, optional
-        : (default: 2.5) The minimum Neptune Capacity Units (NCUs) for this cluster. Must be greater or equal than 1. See AWS Documentation for more details.
+        : (default: 2.5) Minimum Neptune Capacity Units (NCUs) for this cluster. Must be greater or equal than 1. See AWS Documentation for more details.
     """
 
 
@@ -927,61 +924,61 @@ schema NeptuneAwsUpboundIoV1beta1ClusterSpecInitProvider:
     Attributes
     ----------
     allowMajorVersionUpgrade : bool, default is Undefined, optional
-        Specifies whether upgrades between different major versions are allowed. You must set it to true when providing an engine_version parameter that uses a different major version than the DB cluster's current version. Default is false.
+        Whether upgrades between different major versions are allowed. You must set it to true when providing an engine_version parameter that uses a different major version than the DB cluster's current version. Default is false.
     applyImmediately : bool, default is Undefined, optional
-        Specifies whether any cluster modifications are applied immediately, or during the next maintenance window. Default is false.
+        Whether any cluster modifications are applied immediately, or during the next maintenance window. Default is false.
     availabilityZones : [str], default is Undefined, optional
-        A list of EC2 Availability Zones that instances in the Neptune cluster can be created in.
+        List of EC2 Availability Zones that instances in the Neptune cluster can be created in.
     backupRetentionPeriod : float, default is Undefined, optional
-        The days to retain backups for. Default 1
+        Days to retain backups for. Default 1
     copyTagsToSnapshot : bool, default is Undefined, optional
         If set to true, tags are copied to any snapshot of the DB cluster that is created.
     deletionProtection : bool, default is Undefined, optional
-        A value that indicates whether the DB cluster has deletion protection enabled.The database can't be deleted when deletion protection is enabled. By default, deletion protection is disabled.
+        Value that indicates whether the DB cluster has deletion protection enabled.The database can't be deleted when deletion protection is enabled. By default, deletion protection is disabled.
     enableCloudwatchLogsExports : [str], default is Undefined, optional
-        A list of the log types this DB cluster is configured to export to Cloudwatch Logs. Currently only supports audit and slowquery.
+        List of the log types this DB cluster is configured to export to Cloudwatch Logs. Currently only supports audit and slowquery.
     engine : str, default is Undefined, optional
-        The name of the database engine to be used for this Neptune cluster. Defaults to neptune.
+        Name of the database engine to be used for this Neptune cluster. Defaults to neptune.
     engineVersion : str, default is Undefined, optional
-        The database engine version.
+        Database engine version.
     finalSnapshotIdentifier : str, default is Undefined, optional
-        The name of your final Neptune snapshot when this Neptune cluster is deleted. If omitted, no final snapshot will be made.
+        Name of your final Neptune snapshot when this Neptune cluster is deleted. If omitted, no final snapshot will be made.
     globalClusterIdentifier : str, default is Undefined, optional
-        The global cluster identifier specified on aws_neptune_global_cluster.
+        Global cluster identifier specified on aws_neptune_global_cluster.
     iamDatabaseAuthenticationEnabled : bool, default is Undefined, optional
-        Specifies whether or not mappings of AWS Identity and Access Management (IAM) accounts to database accounts is enabled.
+        Whether or not mappings of AWS Identity and Access Management (IAM) accounts to database accounts is enabled.
     iamRoleRefs : [NeptuneAwsUpboundIoV1beta1ClusterSpecInitProviderIamRoleRefsItems0], default is Undefined, optional
         References to Role in iam to populate iamRoles.
     iamRoleSelector : NeptuneAwsUpboundIoV1beta1ClusterSpecInitProviderIamRoleSelector, default is Undefined, optional
         iam role selector
     iamRoles : [str], default is Undefined, optional
-        A List of ARNs for the IAM roles to associate to the Neptune Cluster.
+        List of ARNs for the IAM roles to associate to the Neptune Cluster.
     kmsKeyArn : str, default is Undefined, optional
-        The ARN for the KMS encryption key. When specifying kms_key_arn, storage_encrypted needs to be set to true.
+        ARN for the KMS encryption key. When specifying kms_key_arn, storage_encrypted needs to be set to true.
     kmsKeyArnRef : NeptuneAwsUpboundIoV1beta1ClusterSpecInitProviderKmsKeyArnRef, default is Undefined, optional
         kms key arn ref
     kmsKeyArnSelector : NeptuneAwsUpboundIoV1beta1ClusterSpecInitProviderKmsKeyArnSelector, default is Undefined, optional
         kms key arn selector
     neptuneClusterParameterGroupName : str, default is Undefined, optional
-        A cluster parameter group to associate with the cluster.
+        Cluster parameter group to associate with the cluster.
     neptuneClusterParameterGroupNameRef : NeptuneAwsUpboundIoV1beta1ClusterSpecInitProviderNeptuneClusterParameterGroupNameRef, default is Undefined, optional
         neptune cluster parameter group name ref
     neptuneClusterParameterGroupNameSelector : NeptuneAwsUpboundIoV1beta1ClusterSpecInitProviderNeptuneClusterParameterGroupNameSelector, default is Undefined, optional
         neptune cluster parameter group name selector
     neptuneInstanceParameterGroupName : str, default is Undefined, optional
-        The name of the DB parameter group to apply to all instances of the DB cluster.
+        –  Name of DB parameter group to apply to all instances in the cluster. When upgrading, AWS does not return this value, so do not reference it in other arguments—either leave it unset, configure each instance directly, or ensure it matches the engine_version.
     neptuneSubnetGroupName : str, default is Undefined, optional
-        A Neptune subnet group to associate with this Neptune instance.
+        Neptune subnet group to associate with this Neptune instance.
     neptuneSubnetGroupNameRef : NeptuneAwsUpboundIoV1beta1ClusterSpecInitProviderNeptuneSubnetGroupNameRef, default is Undefined, optional
         neptune subnet group name ref
     neptuneSubnetGroupNameSelector : NeptuneAwsUpboundIoV1beta1ClusterSpecInitProviderNeptuneSubnetGroupNameSelector, default is Undefined, optional
         neptune subnet group name selector
     port : float, default is Undefined, optional
-        The port on which the Neptune accepts connections. Default is 8182.
+        Port on which the Neptune accepts connections. Default is 8182.
     preferredBackupWindow : str, default is Undefined, optional
-        The daily time range during which automated backups are created if automated backups are enabled using the BackupRetentionPeriod parameter. Time in UTC. Default: A 30-minute window selected at random from an 8-hour block of time per regionE.g., 04:00-09:00
+        Daily time range during which automated backups are created if automated backups are enabled using the BackupRetentionPeriod parameter. Time in UTC. Default: A 30-minute window selected at random from an 8-hour block of time per regionE.g., 04:00-09:00
     preferredMaintenanceWindow : str, default is Undefined, optional
-        The weekly time range during which system maintenance can occur, in (UTC) e.g., wed:04:00-wed:04:30
+        Weekly time range during which system maintenance can occur, in (UTC) e.g., wed:04:00-wed:04:30
     replicationSourceIdentifier : str, default is Undefined, optional
         ARN of a source Neptune cluster or Neptune instance if this Neptune cluster is to be created as a Read Replica.
     replicationSourceIdentifierRef : NeptuneAwsUpboundIoV1beta1ClusterSpecInitProviderReplicationSourceIdentifierRef, default is Undefined, optional
@@ -991,17 +988,17 @@ schema NeptuneAwsUpboundIoV1beta1ClusterSpecInitProvider:
     serverlessV2ScalingConfiguration : [NeptuneAwsUpboundIoV1beta1ClusterSpecInitProviderServerlessV2ScalingConfigurationItems0], default is Undefined, optional
         If set, create the Neptune cluster as a serverless one. See Serverless for example block attributes.
     skipFinalSnapshot : bool, default is Undefined, optional
-        Determines whether a final Neptune snapshot is created before the Neptune cluster is deleted. If true is specified, no Neptune snapshot is created. If false is specified, a Neptune snapshot is created before the Neptune cluster is deleted, using the value from final_snapshot_identifier. Default is false.
+        Whether a final Neptune snapshot is created before the Neptune cluster is deleted. If true is specified, no Neptune snapshot is created. If false is specified, a Neptune snapshot is created before the Neptune cluster is deleted, using the value from final_snapshot_identifier. Default is false.
     snapshotIdentifier : str, default is Undefined, optional
-        Specifies whether or not to create this cluster from a snapshot. You can use either the name or ARN when specifying a Neptune cluster snapshot, or the ARN when specifying a Neptune snapshot. Automated snapshots should not be used for this attribute, unless from a different cluster. Automated snapshots are deleted as part of cluster destruction when the resource is replaced.
+        Whether or not to create this cluster from a snapshot. You can use either the name or ARN when specifying a Neptune cluster snapshot, or the ARN when specifying a Neptune snapshot. Automated snapshots should not be used for this attribute, unless from a different cluster. Automated snapshots are deleted as part of cluster destruction when the resource is replaced.
     snapshotIdentifierRef : NeptuneAwsUpboundIoV1beta1ClusterSpecInitProviderSnapshotIdentifierRef, default is Undefined, optional
         snapshot identifier ref
     snapshotIdentifierSelector : NeptuneAwsUpboundIoV1beta1ClusterSpecInitProviderSnapshotIdentifierSelector, default is Undefined, optional
         snapshot identifier selector
     storageEncrypted : bool, default is Undefined, optional
-        Specifies whether the Neptune cluster is encrypted. The default is false if not specified.
+        Whether the Neptune cluster is encrypted. The default is false if not specified.
     storageType : str, default is Undefined, optional
-        Storage type associated with the cluster standard/iopt1. Default: standard
+        Storage type associated with the cluster standard/iopt1. Default: standard.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     vpcSecurityGroupIdRefs : [NeptuneAwsUpboundIoV1beta1ClusterSpecInitProviderVpcSecurityGroupIDRefsItems0], default is Undefined, optional
@@ -1550,9 +1547,9 @@ schema NeptuneAwsUpboundIoV1beta1ClusterSpecInitProviderServerlessV2ScalingConfi
     Attributes
     ----------
     maxCapacity : float, default is Undefined, optional
-        : (default: 128) The maximum Neptune Capacity Units (NCUs) for this cluster. Must be lower or equal than 128. See AWS Documentation for more details.
+        : (default: 128) Maximum Neptune Capacity Units (NCUs) for this cluster. Must be lower or equal than 128. See AWS Documentation for more details.
     minCapacity : float, default is Undefined, optional
-        : (default: 2.5) The minimum Neptune Capacity Units (NCUs) for this cluster. Must be greater or equal than 1. See AWS Documentation for more details.
+        : (default: 2.5) Minimum Neptune Capacity Units (NCUs) for this cluster. Must be greater or equal than 1. See AWS Documentation for more details.
     """
 
 
@@ -1783,112 +1780,12 @@ schema NeptuneAwsUpboundIoV1beta1ClusterSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema NeptuneAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : NeptuneAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : NeptuneAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: NeptuneAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: NeptuneAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema NeptuneAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : NeptuneAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: NeptuneAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema NeptuneAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema NeptuneAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema NeptuneAwsUpboundIoV1beta1ClusterSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1935,75 +1832,78 @@ schema NeptuneAwsUpboundIoV1beta1ClusterStatusAtProvider:
     Attributes
     ----------
     allowMajorVersionUpgrade : bool, default is Undefined, optional
-        Specifies whether upgrades between different major versions are allowed. You must set it to true when providing an engine_version parameter that uses a different major version than the DB cluster's current version. Default is false.
+        Whether upgrades between different major versions are allowed. You must set it to true when providing an engine_version parameter that uses a different major version than the DB cluster's current version. Default is false.
     applyImmediately : bool, default is Undefined, optional
-        Specifies whether any cluster modifications are applied immediately, or during the next maintenance window. Default is false.
+        Whether any cluster modifications are applied immediately, or during the next maintenance window. Default is false.
     arn : str, default is Undefined, optional
-        The Neptune Cluster Amazon Resource Name (ARN)
+        Neptune Cluster ARN
     availabilityZones : [str], default is Undefined, optional
-        A list of EC2 Availability Zones that instances in the Neptune cluster can be created in.
+        List of EC2 Availability Zones that instances in the Neptune cluster can be created in.
     backupRetentionPeriod : float, default is Undefined, optional
-        The days to retain backups for. Default 1
+        Days to retain backups for. Default 1
     clusterMembers : [str], default is Undefined, optional
         – List of Neptune Instances that are a part of this cluster
     clusterResourceId : str, default is Undefined, optional
-        The Neptune Cluster Resource ID
+        Neptune Cluster Resource ID
     copyTagsToSnapshot : bool, default is Undefined, optional
         If set to true, tags are copied to any snapshot of the DB cluster that is created.
     deletionProtection : bool, default is Undefined, optional
-        A value that indicates whether the DB cluster has deletion protection enabled.The database can't be deleted when deletion protection is enabled. By default, deletion protection is disabled.
+        Value that indicates whether the DB cluster has deletion protection enabled.The database can't be deleted when deletion protection is enabled. By default, deletion protection is disabled.
     enableCloudwatchLogsExports : [str], default is Undefined, optional
-        A list of the log types this DB cluster is configured to export to Cloudwatch Logs. Currently only supports audit and slowquery.
+        List of the log types this DB cluster is configured to export to Cloudwatch Logs. Currently only supports audit and slowquery.
     endpoint : str, default is Undefined, optional
-        The DNS address of the Neptune instance
+        DNS address of the Neptune instance
     engine : str, default is Undefined, optional
-        The name of the database engine to be used for this Neptune cluster. Defaults to neptune.
+        Name of the database engine to be used for this Neptune cluster. Defaults to neptune.
     engineVersion : str, default is Undefined, optional
-        The database engine version.
+        Database engine version.
     finalSnapshotIdentifier : str, default is Undefined, optional
-        The name of your final Neptune snapshot when this Neptune cluster is deleted. If omitted, no final snapshot will be made.
+        Name of your final Neptune snapshot when this Neptune cluster is deleted. If omitted, no final snapshot will be made.
     globalClusterIdentifier : str, default is Undefined, optional
-        The global cluster identifier specified on aws_neptune_global_cluster.
+        Global cluster identifier specified on aws_neptune_global_cluster.
     hostedZoneId : str, default is Undefined, optional
-        The Route53 Hosted Zone ID of the endpoint
+        Route53 Hosted Zone ID of the endpoint
     iamDatabaseAuthenticationEnabled : bool, default is Undefined, optional
-        Specifies whether or not mappings of AWS Identity and Access Management (IAM) accounts to database accounts is enabled.
+        Whether or not mappings of AWS Identity and Access Management (IAM) accounts to database accounts is enabled.
     iamRoles : [str], default is Undefined, optional
-        A List of ARNs for the IAM roles to associate to the Neptune Cluster.
+        List of ARNs for the IAM roles to associate to the Neptune Cluster.
     id : str, default is Undefined, optional
-        The Neptune Cluster Identifier
+        Neptune Cluster Identifier
     kmsKeyArn : str, default is Undefined, optional
-        The ARN for the KMS encryption key. When specifying kms_key_arn, storage_encrypted needs to be set to true.
+        ARN for the KMS encryption key. When specifying kms_key_arn, storage_encrypted needs to be set to true.
     neptuneClusterParameterGroupName : str, default is Undefined, optional
-        A cluster parameter group to associate with the cluster.
+        Cluster parameter group to associate with the cluster.
     neptuneInstanceParameterGroupName : str, default is Undefined, optional
-        The name of the DB parameter group to apply to all instances of the DB cluster.
+        –  Name of DB parameter group to apply to all instances in the cluster. When upgrading, AWS does not return this value, so do not reference it in other arguments—either leave it unset, configure each instance directly, or ensure it matches the engine_version.
     neptuneSubnetGroupName : str, default is Undefined, optional
-        A Neptune subnet group to associate with this Neptune instance.
+        Neptune subnet group to associate with this Neptune instance.
     port : float, default is Undefined, optional
-        The port on which the Neptune accepts connections. Default is 8182.
+        Port on which the Neptune accepts connections. Default is 8182.
     preferredBackupWindow : str, default is Undefined, optional
-        The daily time range during which automated backups are created if automated backups are enabled using the BackupRetentionPeriod parameter. Time in UTC. Default: A 30-minute window selected at random from an 8-hour block of time per regionE.g., 04:00-09:00
+        Daily time range during which automated backups are created if automated backups are enabled using the BackupRetentionPeriod parameter. Time in UTC. Default: A 30-minute window selected at random from an 8-hour block of time per regionE.g., 04:00-09:00
     preferredMaintenanceWindow : str, default is Undefined, optional
-        The weekly time range during which system maintenance can occur, in (UTC) e.g., wed:04:00-wed:04:30
+        Weekly time range during which system maintenance can occur, in (UTC) e.g., wed:04:00-wed:04:30
     readerEndpoint : str, default is Undefined, optional
-        A read-only endpoint for the Neptune cluster, automatically load-balanced across replicas
+        Read-only endpoint for the Neptune cluster, automatically load-balanced across replicas
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     replicationSourceIdentifier : str, default is Undefined, optional
         ARN of a source Neptune cluster or Neptune instance if this Neptune cluster is to be created as a Read Replica.
     serverlessV2ScalingConfiguration : [NeptuneAwsUpboundIoV1beta1ClusterStatusAtProviderServerlessV2ScalingConfigurationItems0], default is Undefined, optional
         If set, create the Neptune cluster as a serverless one. See Serverless for example block attributes.
     skipFinalSnapshot : bool, default is Undefined, optional
-        Determines whether a final Neptune snapshot is created before the Neptune cluster is deleted. If true is specified, no Neptune snapshot is created. If false is specified, a Neptune snapshot is created before the Neptune cluster is deleted, using the value from final_snapshot_identifier. Default is false.
+        Whether a final Neptune snapshot is created before the Neptune cluster is deleted. If true is specified, no Neptune snapshot is created. If false is specified, a Neptune snapshot is created before the Neptune cluster is deleted, using the value from final_snapshot_identifier. Default is false.
     snapshotIdentifier : str, default is Undefined, optional
-        Specifies whether or not to create this cluster from a snapshot. You can use either the name or ARN when specifying a Neptune cluster snapshot, or the ARN when specifying a Neptune snapshot. Automated snapshots should not be used for this attribute, unless from a different cluster. Automated snapshots are deleted as part of cluster destruction when the resource is replaced.
+        Whether or not to create this cluster from a snapshot. You can use either the name or ARN when specifying a Neptune cluster snapshot, or the ARN when specifying a Neptune snapshot. Automated snapshots should not be used for this attribute, unless from a different cluster. Automated snapshots are deleted as part of cluster destruction when the resource is replaced.
     storageEncrypted : bool, default is Undefined, optional
-        Specifies whether the Neptune cluster is encrypted. The default is false if not specified.
+        Whether the Neptune cluster is encrypted. The default is false if not specified.
     storageType : str, default is Undefined, optional
-        Storage type associated with the cluster standard/iopt1. Default: standard
+        Storage type associated with the cluster standard/iopt1. Default: standard.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
-        A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
+        Map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     vpcSecurityGroupIds : [str], default is Undefined, optional
         List of VPC security groups to associate with the Cluster
     """
@@ -2063,6 +1963,8 @@ schema NeptuneAwsUpboundIoV1beta1ClusterStatusAtProvider:
 
     readerEndpoint?: str
 
+    region?: str
+
     replicationSourceIdentifier?: str
 
     serverlessV2ScalingConfiguration?: [NeptuneAwsUpboundIoV1beta1ClusterStatusAtProviderServerlessV2ScalingConfigurationItems0]
@@ -2089,9 +1991,9 @@ schema NeptuneAwsUpboundIoV1beta1ClusterStatusAtProviderServerlessV2ScalingConfi
     Attributes
     ----------
     maxCapacity : float, default is Undefined, optional
-        : (default: 128) The maximum Neptune Capacity Units (NCUs) for this cluster. Must be lower or equal than 128. See AWS Documentation for more details.
+        : (default: 128) Maximum Neptune Capacity Units (NCUs) for this cluster. Must be lower or equal than 128. See AWS Documentation for more details.
     minCapacity : float, default is Undefined, optional
-        : (default: 2.5) The minimum Neptune Capacity Units (NCUs) for this cluster. Must be greater or equal than 1. See AWS Documentation for more details.
+        : (default: 2.5) Minimum Neptune Capacity Units (NCUs) for this cluster. Must be greater or equal than 1. See AWS Documentation for more details.
     """
 
 

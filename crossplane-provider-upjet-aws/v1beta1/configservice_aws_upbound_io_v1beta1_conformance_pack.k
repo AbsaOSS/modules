@@ -66,8 +66,6 @@ schema ConfigserviceAwsUpboundIoV1beta1ConformancePackSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : ConfigserviceAwsUpboundIoV1beta1ConformancePackSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : ConfigserviceAwsUpboundIoV1beta1ConformancePackSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : ConfigserviceAwsUpboundIoV1beta1ConformancePackSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema ConfigserviceAwsUpboundIoV1beta1ConformancePackSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: ConfigserviceAwsUpboundIoV1beta1ConformancePackSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: ConfigserviceAwsUpboundIoV1beta1ConformancePackSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: ConfigserviceAwsUpboundIoV1beta1ConformancePackSpecWriteConnectionSecretToRef
 
@@ -101,6 +97,7 @@ schema ConfigserviceAwsUpboundIoV1beta1ConformancePackSpecForProvider:
     inputParameter : [ConfigserviceAwsUpboundIoV1beta1ConformancePackSpecForProviderInputParameterItems0], default is Undefined, optional
         Set of configuration blocks describing input parameters passed to the conformance pack template. Documented below. When configured, the parameters must also be included in the template_body or in the template stored in Amazon S3 if using template_s3_uri.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     templateBody : str, default is Undefined, optional
         A string containing full conformance pack template body. Maximum length of 51200. Drift detection is not possible with this argument.
@@ -241,112 +238,12 @@ schema ConfigserviceAwsUpboundIoV1beta1ConformancePackSpecProviderConfigRefPolic
     resolve?: "Always" | "IfNotPresent"
 
 
-schema ConfigserviceAwsUpboundIoV1beta1ConformancePackSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : ConfigserviceAwsUpboundIoV1beta1ConformancePackSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : ConfigserviceAwsUpboundIoV1beta1ConformancePackSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: ConfigserviceAwsUpboundIoV1beta1ConformancePackSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: ConfigserviceAwsUpboundIoV1beta1ConformancePackSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema ConfigserviceAwsUpboundIoV1beta1ConformancePackSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : ConfigserviceAwsUpboundIoV1beta1ConformancePackSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: ConfigserviceAwsUpboundIoV1beta1ConformancePackSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema ConfigserviceAwsUpboundIoV1beta1ConformancePackSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema ConfigserviceAwsUpboundIoV1beta1ConformancePackSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema ConfigserviceAwsUpboundIoV1beta1ConformancePackSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -402,6 +299,9 @@ schema ConfigserviceAwsUpboundIoV1beta1ConformancePackStatusAtProvider:
         id
     inputParameter : [ConfigserviceAwsUpboundIoV1beta1ConformancePackStatusAtProviderInputParameterItems0], default is Undefined, optional
         Set of configuration blocks describing input parameters passed to the conformance pack template. Documented below. When configured, the parameters must also be included in the template_body or in the template stored in Amazon S3 if using template_s3_uri.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     templateBody : str, default is Undefined, optional
         A string containing full conformance pack template body. Maximum length of 51200. Drift detection is not possible with this argument.
     templateS3Uri : str, default is Undefined, optional
@@ -418,6 +318,8 @@ schema ConfigserviceAwsUpboundIoV1beta1ConformancePackStatusAtProvider:
     id?: str
 
     inputParameter?: [ConfigserviceAwsUpboundIoV1beta1ConformancePackStatusAtProviderInputParameterItems0]
+
+    region?: str
 
     templateBody?: str
 

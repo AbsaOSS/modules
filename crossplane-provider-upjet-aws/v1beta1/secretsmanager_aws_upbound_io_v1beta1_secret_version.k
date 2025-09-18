@@ -66,8 +66,6 @@ schema SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpec:
 
     providerConfigRef?: SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecWriteConnectionSecretToRef
 
 
@@ -95,6 +91,7 @@ schema SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecForProvider:
     Attributes
     ----------
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     secretBinarySecretRef : SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecForProviderSecretBinarySecretRef, default is Undefined, optional
         secret binary secret ref
@@ -106,6 +103,10 @@ schema SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecForProvider:
         secret Id selector
     secretStringSecretRef : SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecForProviderSecretStringSecretRef, default is Undefined, optional
         secret string secret ref
+    secretStringWoSecretRef : SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecForProviderSecretStringWoSecretRef, default is Undefined, optional
+        secret string wo secret ref
+    secretStringWoVersion : float, default is Undefined, optional
+        Used together with secret_string_wo to trigger an update. Increment this value when an update to secret_string_wo is required.
     versionStages : [str], default is Undefined, optional
         Specifies a list of staging labels that are attached to this version of the secret. A staging label must be unique to a single version of the secret. If you specify a staging label that's already associated with a different version of the same secret then that staging label is automatically removed from the other version and attached to this version. If you do not specify a value, then AWS Secrets Manager automatically moves the staging label AWSCURRENT to this new version on creation.
     """
@@ -123,12 +124,16 @@ schema SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecForProvider:
 
     secretStringSecretRef?: SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecForProviderSecretStringSecretRef
 
+    secretStringWoSecretRef?: SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecForProviderSecretStringWoSecretRef
+
+    secretStringWoVersion?: float
+
     versionStages?: [str]
 
 
 schema SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecForProviderSecretBinarySecretRef:
     r"""
-    Specifies binary data that you want to encrypt and store in this version of the secret. This is required if secret_string is not set. Needs to be encoded to base64.
+    Specifies binary data that you want to encrypt and store in this version of the secret. This is required if secret_string or secret_string_wo is not set. Needs to be encoded to base64.
 
     Attributes
     ----------
@@ -239,7 +244,29 @@ schema SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecForProviderSecretIDSele
 
 schema SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecForProviderSecretStringSecretRef:
     r"""
-    Specifies text data that you want to encrypt and store in this version of the secret. This is required if secret_binary is not set.
+    Specifies text data that you want to encrypt and store in this version of the secret. This is required if secret_binary or secret_string_wo is not set.
+
+    Attributes
+    ----------
+    key : str, default is Undefined, required
+        The key to select.
+    name : str, default is Undefined, required
+        Name of the secret.
+    namespace : str, default is Undefined, required
+        Namespace of the secret.
+    """
+
+
+    key: str
+
+    name: str
+
+    namespace: str
+
+
+schema SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecForProviderSecretStringWoSecretRef:
+    r"""
+    Specifies text data that you want to encrypt and store in this version of the secret. This is required if secret_binary or secret_string is not set.
 
     Attributes
     ----------
@@ -284,6 +311,10 @@ schema SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecInitProvider:
         secret Id selector
     secretStringSecretRef : SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecInitProviderSecretStringSecretRef, default is Undefined, optional
         secret string secret ref
+    secretStringWoSecretRef : SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecInitProviderSecretStringWoSecretRef, default is Undefined, optional
+        secret string wo secret ref
+    secretStringWoVersion : float, default is Undefined, optional
+        Used together with secret_string_wo to trigger an update. Increment this value when an update to secret_string_wo is required.
     versionStages : [str], default is Undefined, optional
         Specifies a list of staging labels that are attached to this version of the secret. A staging label must be unique to a single version of the secret. If you specify a staging label that's already associated with a different version of the same secret then that staging label is automatically removed from the other version and attached to this version. If you do not specify a value, then AWS Secrets Manager automatically moves the staging label AWSCURRENT to this new version on creation.
     """
@@ -299,12 +330,16 @@ schema SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecInitProvider:
 
     secretStringSecretRef?: SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecInitProviderSecretStringSecretRef
 
+    secretStringWoSecretRef?: SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecInitProviderSecretStringWoSecretRef
+
+    secretStringWoVersion?: float
+
     versionStages?: [str]
 
 
 schema SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecInitProviderSecretBinarySecretRef:
     r"""
-    Specifies binary data that you want to encrypt and store in this version of the secret. This is required if secret_string is not set. Needs to be encoded to base64.
+    Specifies binary data that you want to encrypt and store in this version of the secret. This is required if secret_string or secret_string_wo is not set. Needs to be encoded to base64.
 
     Attributes
     ----------
@@ -415,7 +450,29 @@ schema SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecInitProviderSecretIDSel
 
 schema SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecInitProviderSecretStringSecretRef:
     r"""
-    Specifies text data that you want to encrypt and store in this version of the secret. This is required if secret_binary is not set.
+    Specifies text data that you want to encrypt and store in this version of the secret. This is required if secret_binary or secret_string_wo is not set.
+
+    Attributes
+    ----------
+    key : str, default is Undefined, required
+        The key to select.
+    name : str, default is Undefined, required
+        Name of the secret.
+    namespace : str, default is Undefined, required
+        Namespace of the secret.
+    """
+
+
+    key: str
+
+    name: str
+
+    namespace: str
+
+
+schema SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecInitProviderSecretStringWoSecretRef:
+    r"""
+    Specifies text data that you want to encrypt and store in this version of the secret. This is required if secret_binary or secret_string is not set.
 
     Attributes
     ----------
@@ -479,112 +536,12 @@ schema SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecProviderConfigRefPolicy
     resolve?: "Always" | "IfNotPresent"
 
 
-schema SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema SecretsmanagerAwsUpboundIoV1beta1SecretVersionSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -632,10 +589,17 @@ schema SecretsmanagerAwsUpboundIoV1beta1SecretVersionStatusAtProvider:
     ----------
     arn : str, default is Undefined, optional
         The ARN of the secret.
+    hasSecretStringWo : bool, default is Undefined, optional
+        Specifies text data that you want to encrypt and store in this version of the secret. This is required if secret_binary or secret_string is not set.
     id : str, default is Undefined, optional
         A pipe delimited combination of secret ID and version ID.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     secretId : str, default is Undefined, optional
         Specifies the secret to which you want to add a new version. You can specify either the Amazon Resource Name (ARN) or the friendly name of the secret. The secret must already exist.
+    secretStringWoVersion : float, default is Undefined, optional
+        Used together with secret_string_wo to trigger an update. Increment this value when an update to secret_string_wo is required.
     versionId : str, default is Undefined, optional
         The unique identifier of the version of the secret.
     versionStages : [str], default is Undefined, optional
@@ -645,9 +609,15 @@ schema SecretsmanagerAwsUpboundIoV1beta1SecretVersionStatusAtProvider:
 
     arn?: str
 
+    hasSecretStringWo?: bool
+
     id?: str
 
+    region?: str
+
     secretId?: str
+
+    secretStringWoVersion?: float
 
     versionId?: str
 

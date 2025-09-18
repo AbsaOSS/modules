@@ -66,8 +66,6 @@ schema SnsAwsUpboundIoV1beta1SMSPreferencesSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : SnsAwsUpboundIoV1beta1SMSPreferencesSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : SnsAwsUpboundIoV1beta1SMSPreferencesSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : SnsAwsUpboundIoV1beta1SMSPreferencesSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema SnsAwsUpboundIoV1beta1SMSPreferencesSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: SnsAwsUpboundIoV1beta1SMSPreferencesSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: SnsAwsUpboundIoV1beta1SMSPreferencesSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: SnsAwsUpboundIoV1beta1SMSPreferencesSpecWriteConnectionSecretToRef
 
@@ -109,6 +105,7 @@ schema SnsAwsUpboundIoV1beta1SMSPreferencesSpecForProvider:
     monthlySpendLimit : float, default is Undefined, optional
         The maximum amount in USD that you are willing to spend each month to send SMS messages.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     usageReportS3Bucket : str, default is Undefined, optional
         The name of the Amazon S3 bucket to receive daily SMS usage reports from Amazon SNS.
@@ -407,112 +404,12 @@ schema SnsAwsUpboundIoV1beta1SMSPreferencesSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema SnsAwsUpboundIoV1beta1SMSPreferencesSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : SnsAwsUpboundIoV1beta1SMSPreferencesSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : SnsAwsUpboundIoV1beta1SMSPreferencesSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: SnsAwsUpboundIoV1beta1SMSPreferencesSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: SnsAwsUpboundIoV1beta1SMSPreferencesSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema SnsAwsUpboundIoV1beta1SMSPreferencesSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : SnsAwsUpboundIoV1beta1SMSPreferencesSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: SnsAwsUpboundIoV1beta1SMSPreferencesSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema SnsAwsUpboundIoV1beta1SMSPreferencesSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema SnsAwsUpboundIoV1beta1SMSPreferencesSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema SnsAwsUpboundIoV1beta1SMSPreferencesSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -570,6 +467,9 @@ schema SnsAwsUpboundIoV1beta1SMSPreferencesStatusAtProvider:
         id
     monthlySpendLimit : float, default is Undefined, optional
         The maximum amount in USD that you are willing to spend each month to send SMS messages.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     usageReportS3Bucket : str, default is Undefined, optional
         The name of the Amazon S3 bucket to receive daily SMS usage reports from Amazon SNS.
     """
@@ -586,6 +486,8 @@ schema SnsAwsUpboundIoV1beta1SMSPreferencesStatusAtProvider:
     id?: str
 
     monthlySpendLimit?: float
+
+    region?: str
 
     usageReportS3Bucket?: str
 

@@ -66,8 +66,6 @@ schema AppintegrationsAwsUpboundIoV1beta2EventIntegrationSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : AppintegrationsAwsUpboundIoV1beta2EventIntegrationSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : AppintegrationsAwsUpboundIoV1beta2EventIntegrationSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : AppintegrationsAwsUpboundIoV1beta2EventIntegrationSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema AppintegrationsAwsUpboundIoV1beta2EventIntegrationSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: AppintegrationsAwsUpboundIoV1beta2EventIntegrationSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: AppintegrationsAwsUpboundIoV1beta2EventIntegrationSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: AppintegrationsAwsUpboundIoV1beta2EventIntegrationSpecWriteConnectionSecretToRef
 
@@ -101,6 +97,7 @@ schema AppintegrationsAwsUpboundIoV1beta2EventIntegrationSpecForProvider:
     eventbridgeBus : str, default is Undefined, optional
         EventBridge bus.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
@@ -225,112 +222,12 @@ schema AppintegrationsAwsUpboundIoV1beta2EventIntegrationSpecProviderConfigRefPo
     resolve?: "Always" | "IfNotPresent"
 
 
-schema AppintegrationsAwsUpboundIoV1beta2EventIntegrationSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : AppintegrationsAwsUpboundIoV1beta2EventIntegrationSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : AppintegrationsAwsUpboundIoV1beta2EventIntegrationSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: AppintegrationsAwsUpboundIoV1beta2EventIntegrationSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: AppintegrationsAwsUpboundIoV1beta2EventIntegrationSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema AppintegrationsAwsUpboundIoV1beta2EventIntegrationSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : AppintegrationsAwsUpboundIoV1beta2EventIntegrationSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: AppintegrationsAwsUpboundIoV1beta2EventIntegrationSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema AppintegrationsAwsUpboundIoV1beta2EventIntegrationSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema AppintegrationsAwsUpboundIoV1beta2EventIntegrationSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema AppintegrationsAwsUpboundIoV1beta2EventIntegrationSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -386,6 +283,9 @@ schema AppintegrationsAwsUpboundIoV1beta2EventIntegrationStatusAtProvider:
         EventBridge bus.
     id : str, default is Undefined, optional
         Identifier of the Event Integration which is the name of the Event Integration.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
@@ -402,6 +302,8 @@ schema AppintegrationsAwsUpboundIoV1beta2EventIntegrationStatusAtProvider:
     eventbridgeBus?: str
 
     id?: str
+
+    region?: str
 
     tags?: {str:str}
 

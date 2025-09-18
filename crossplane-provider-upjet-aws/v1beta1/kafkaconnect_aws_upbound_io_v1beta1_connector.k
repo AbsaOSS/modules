@@ -66,8 +66,6 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : KafkaconnectAwsUpboundIoV1beta1ConnectorSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : KafkaconnectAwsUpboundIoV1beta1ConnectorSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : KafkaconnectAwsUpboundIoV1beta1ConnectorSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpec:
 
     providerConfigRef?: KafkaconnectAwsUpboundIoV1beta1ConnectorSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: KafkaconnectAwsUpboundIoV1beta1ConnectorSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: KafkaconnectAwsUpboundIoV1beta1ConnectorSpecWriteConnectionSecretToRef
 
 
@@ -95,26 +91,27 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProvider:
     Attributes
     ----------
     capacity : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderCapacityItems0], default is Undefined, optional
-        Information about the capacity allocated to the connector. See below.
+        Information about the capacity allocated to the connector. See capacity Block for details.
     connectorConfiguration : {str:str}, default is Undefined, optional
         A map of keys to values that represent the configuration for the connector.
     description : str, default is Undefined, optional
         A summary description of the connector.
     kafkaCluster : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderKafkaClusterItems0], default is Undefined, optional
-        Specifies which Apache Kafka cluster to connect to. See below.
+        Specifies which Apache Kafka cluster to connect to. See kafka_cluster Block for details.
     kafkaClusterClientAuthentication : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderKafkaClusterClientAuthenticationItems0], default is Undefined, optional
-        Details of the client authentication used by the Apache Kafka cluster. See below.
+        Details of the client authentication used by the Apache Kafka cluster. See kafka_cluster_client_authentication Block for details.
     kafkaClusterEncryptionInTransit : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderKafkaClusterEncryptionInTransitItems0], default is Undefined, optional
-        Details of encryption in transit to the Apache Kafka cluster. See below.
+        Details of encryption in transit to the Apache Kafka cluster. See kafka_cluster_encryption_in_transit Block for details.
     kafkaconnectVersion : str, default is Undefined, optional
         The version of Kafka Connect. It has to be compatible with both the Apache Kafka cluster's version and the plugins.
     logDelivery : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderLogDeliveryItems0], default is Undefined, optional
-        Details about log delivery. See below.
+        Details about log delivery. See log_delivery Block for details.
     name : str, default is Undefined, required
         The name of the connector.
     plugin : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderPluginItems0], default is Undefined, optional
-        Specifies which plugins to use for the connector. See below.
+        Specifies which plugins to use for the connector. See plugin Block for details.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     serviceExecutionRoleArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the IAM role used by the connector to access the Amazon Web Services resources that it needs. The types of resources depends on the logic of the connector. For example, a connector that has Amazon S3 as a destination must have permissions that allow it to write to the S3 destination bucket.
@@ -125,7 +122,7 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProvider:
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     workerConfiguration : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderWorkerConfigurationItems0], default is Undefined, optional
-        Specifies which worker configuration to use with the connector. See below.
+        Specifies which worker configuration to use with the connector. See worker_configuration Block for details.
     """
 
 
@@ -169,9 +166,9 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderCapacityItems0:
     Attributes
     ----------
     autoscaling : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderCapacityItems0AutoscalingItems0], default is Undefined, optional
-        Information about the auto scaling parameters for the connector. See below.
+        Information about the auto scaling parameters for the connector. See autoscaling Block for details.
     provisionedCapacity : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderCapacityItems0ProvisionedCapacityItems0], default is Undefined, optional
-        Details about a fixed capacity allocated to a connector. See below.
+        Details about a fixed capacity allocated to a connector. See provisioned_capacity Block for details.
     """
 
 
@@ -193,9 +190,9 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderCapacityItems0Auto
     minWorkerCount : float, default is Undefined, optional
         The minimum number of workers allocated to the connector.
     scaleInPolicy : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderCapacityItems0AutoscalingItems0ScaleInPolicyItems0], default is Undefined, optional
-        The scale-in policy for the connector. See below.
+        The scale-in policy for the connector. See scale_in_policy Block for details.
     scaleOutPolicy : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderCapacityItems0AutoscalingItems0ScaleOutPolicyItems0], default is Undefined, optional
-        The scale-out policy for the connector. See below.
+        The scale-out policy for the connector. See scale_out_policy Block for details.
     """
 
 
@@ -217,7 +214,7 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderCapacityItems0Auto
     Attributes
     ----------
     cpuUtilizationPercentage : float, default is Undefined, optional
-        The CPU utilization percentage threshold at which you want connector scale out to be triggered.
+        Specifies the CPU utilization percentage threshold at which you want connector scale in to be triggered.
     """
 
 
@@ -291,7 +288,7 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderKafkaClusterItems0
     Attributes
     ----------
     apacheKafkaCluster : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderKafkaClusterItems0ApacheKafkaClusterItems0], default is Undefined, optional
-        The Apache Kafka cluster to which the connector is connected.
+        The Apache Kafka cluster to which the connector is connected. See apache_kafka_cluster Block for details.
     """
 
 
@@ -307,7 +304,7 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderKafkaClusterItems0
     bootstrapServers : str, default is Undefined, optional
         The bootstrap servers of the cluster.
     vpc : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderKafkaClusterItems0ApacheKafkaClusterItems0VpcItems0], default is Undefined, optional
-        Details of an Amazon VPC which has network connectivity to the Apache Kafka cluster.
+        Details of an Amazon VPC which has network connectivity to the Apache Kafka cluster. See vpc Block for details.
     """
 
 
@@ -535,7 +532,7 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderLogDeliveryItems0:
     Attributes
     ----------
     workerLogDelivery : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderLogDeliveryItems0WorkerLogDeliveryItems0], default is Undefined, optional
-        The workers can send worker logs to different destination types. This configuration specifies the details of these destinations. See below.
+        The workers can send worker logs to different destination types. This configuration specifies the details of these destinations. See worker_log_delivery Block for details.
     """
 
 
@@ -549,11 +546,11 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderLogDeliveryItems0W
     Attributes
     ----------
     cloudwatchLogs : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderLogDeliveryItems0WorkerLogDeliveryItems0CloudwatchLogsItems0], default is Undefined, optional
-        Details about delivering logs to Amazon CloudWatch Logs. See below.
+        Details about delivering logs to Amazon CloudWatch Logs. See cloudwatch_logs Block for details.
     firehose : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderLogDeliveryItems0WorkerLogDeliveryItems0FirehoseItems0], default is Undefined, optional
-        Details about delivering logs to Amazon Kinesis Data Firehose. See below.
+        Details about delivering logs to Amazon Kinesis Data Firehose. See firehose Block for details.
     s3 : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderLogDeliveryItems0WorkerLogDeliveryItems0S3Items0], default is Undefined, optional
-        Details about delivering logs to Amazon S3. See below.
+        Details about delivering logs to Amazon S3. See s3 Block for deetails.
     """
 
 
@@ -571,7 +568,7 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderLogDeliveryItems0W
     Attributes
     ----------
     enabled : bool, default is Undefined, optional
-        Specifies whether connector logs get sent to the specified Amazon S3 destination.
+        Whether log delivery to Amazon CloudWatch Logs is enabled.
     logGroup : str, default is Undefined, optional
         The name of the CloudWatch log group that is the destination for log delivery.
     logGroupRef : KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderLogDeliveryItems0WorkerLogDeliveryItems0CloudwatchLogsItems0LogGroupRef, default is Undefined, optional
@@ -920,7 +917,7 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderPluginItems0:
     Attributes
     ----------
     customPlugin : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderPluginItems0CustomPluginItems0], default is Undefined, optional
-        Details about a custom plugin. See below.
+        Details about a custom plugin. See custom_plugin Block for details.
     """
 
 
@@ -934,13 +931,13 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderPluginItems0Custom
     Attributes
     ----------
     arn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the worker configuration.
+        The Amazon Resource Name (ARN) of the custom plugin.
     arnRef : KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderPluginItems0CustomPluginItems0ArnRef, default is Undefined, optional
         arn ref
     arnSelector : KafkaconnectAwsUpboundIoV1beta1ConnectorSpecForProviderPluginItems0CustomPluginItems0ArnSelector, default is Undefined, optional
         arn selector
     revision : float, default is Undefined, optional
-        The revision of the worker configuration.
+        The revision of the custom plugin.
     """
 
 
@@ -1262,23 +1259,23 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProvider:
     Attributes
     ----------
     capacity : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderCapacityItems0], default is Undefined, optional
-        Information about the capacity allocated to the connector. See below.
+        Information about the capacity allocated to the connector. See capacity Block for details.
     connectorConfiguration : {str:str}, default is Undefined, optional
         A map of keys to values that represent the configuration for the connector.
     description : str, default is Undefined, optional
         A summary description of the connector.
     kafkaCluster : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderKafkaClusterItems0], default is Undefined, optional
-        Specifies which Apache Kafka cluster to connect to. See below.
+        Specifies which Apache Kafka cluster to connect to. See kafka_cluster Block for details.
     kafkaClusterClientAuthentication : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderKafkaClusterClientAuthenticationItems0], default is Undefined, optional
-        Details of the client authentication used by the Apache Kafka cluster. See below.
+        Details of the client authentication used by the Apache Kafka cluster. See kafka_cluster_client_authentication Block for details.
     kafkaClusterEncryptionInTransit : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderKafkaClusterEncryptionInTransitItems0], default is Undefined, optional
-        Details of encryption in transit to the Apache Kafka cluster. See below.
+        Details of encryption in transit to the Apache Kafka cluster. See kafka_cluster_encryption_in_transit Block for details.
     kafkaconnectVersion : str, default is Undefined, optional
         The version of Kafka Connect. It has to be compatible with both the Apache Kafka cluster's version and the plugins.
     logDelivery : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderLogDeliveryItems0], default is Undefined, optional
-        Details about log delivery. See below.
+        Details about log delivery. See log_delivery Block for details.
     plugin : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderPluginItems0], default is Undefined, optional
-        Specifies which plugins to use for the connector. See below.
+        Specifies which plugins to use for the connector. See plugin Block for details.
     serviceExecutionRoleArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the IAM role used by the connector to access the Amazon Web Services resources that it needs. The types of resources depends on the logic of the connector. For example, a connector that has Amazon S3 as a destination must have permissions that allow it to write to the S3 destination bucket.
     serviceExecutionRoleArnRef : KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderServiceExecutionRoleArnRef, default is Undefined, optional
@@ -1288,7 +1285,7 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProvider:
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     workerConfiguration : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderWorkerConfigurationItems0], default is Undefined, optional
-        Specifies which worker configuration to use with the connector. See below.
+        Specifies which worker configuration to use with the connector. See worker_configuration Block for details.
     """
 
 
@@ -1328,9 +1325,9 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderCapacityItems0:
     Attributes
     ----------
     autoscaling : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderCapacityItems0AutoscalingItems0], default is Undefined, optional
-        Information about the auto scaling parameters for the connector. See below.
+        Information about the auto scaling parameters for the connector. See autoscaling Block for details.
     provisionedCapacity : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderCapacityItems0ProvisionedCapacityItems0], default is Undefined, optional
-        Details about a fixed capacity allocated to a connector. See below.
+        Details about a fixed capacity allocated to a connector. See provisioned_capacity Block for details.
     """
 
 
@@ -1352,9 +1349,9 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderCapacityItems0Aut
     minWorkerCount : float, default is Undefined, optional
         The minimum number of workers allocated to the connector.
     scaleInPolicy : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderCapacityItems0AutoscalingItems0ScaleInPolicyItems0], default is Undefined, optional
-        The scale-in policy for the connector. See below.
+        The scale-in policy for the connector. See scale_in_policy Block for details.
     scaleOutPolicy : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderCapacityItems0AutoscalingItems0ScaleOutPolicyItems0], default is Undefined, optional
-        The scale-out policy for the connector. See below.
+        The scale-out policy for the connector. See scale_out_policy Block for details.
     """
 
 
@@ -1376,7 +1373,7 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderCapacityItems0Aut
     Attributes
     ----------
     cpuUtilizationPercentage : float, default is Undefined, optional
-        The CPU utilization percentage threshold at which you want connector scale out to be triggered.
+        Specifies the CPU utilization percentage threshold at which you want connector scale in to be triggered.
     """
 
 
@@ -1450,7 +1447,7 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderKafkaClusterItems
     Attributes
     ----------
     apacheKafkaCluster : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderKafkaClusterItems0ApacheKafkaClusterItems0], default is Undefined, optional
-        The Apache Kafka cluster to which the connector is connected.
+        The Apache Kafka cluster to which the connector is connected. See apache_kafka_cluster Block for details.
     """
 
 
@@ -1466,7 +1463,7 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderKafkaClusterItems
     bootstrapServers : str, default is Undefined, optional
         The bootstrap servers of the cluster.
     vpc : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderKafkaClusterItems0ApacheKafkaClusterItems0VpcItems0], default is Undefined, optional
-        Details of an Amazon VPC which has network connectivity to the Apache Kafka cluster.
+        Details of an Amazon VPC which has network connectivity to the Apache Kafka cluster. See vpc Block for details.
     """
 
 
@@ -1694,7 +1691,7 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderLogDeliveryItems0
     Attributes
     ----------
     workerLogDelivery : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderLogDeliveryItems0WorkerLogDeliveryItems0], default is Undefined, optional
-        The workers can send worker logs to different destination types. This configuration specifies the details of these destinations. See below.
+        The workers can send worker logs to different destination types. This configuration specifies the details of these destinations. See worker_log_delivery Block for details.
     """
 
 
@@ -1708,11 +1705,11 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderLogDeliveryItems0
     Attributes
     ----------
     cloudwatchLogs : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderLogDeliveryItems0WorkerLogDeliveryItems0CloudwatchLogsItems0], default is Undefined, optional
-        Details about delivering logs to Amazon CloudWatch Logs. See below.
+        Details about delivering logs to Amazon CloudWatch Logs. See cloudwatch_logs Block for details.
     firehose : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderLogDeliveryItems0WorkerLogDeliveryItems0FirehoseItems0], default is Undefined, optional
-        Details about delivering logs to Amazon Kinesis Data Firehose. See below.
+        Details about delivering logs to Amazon Kinesis Data Firehose. See firehose Block for details.
     s3 : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderLogDeliveryItems0WorkerLogDeliveryItems0S3Items0], default is Undefined, optional
-        Details about delivering logs to Amazon S3. See below.
+        Details about delivering logs to Amazon S3. See s3 Block for deetails.
     """
 
 
@@ -1730,7 +1727,7 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderLogDeliveryItems0
     Attributes
     ----------
     enabled : bool, default is Undefined, optional
-        Specifies whether connector logs get sent to the specified Amazon S3 destination.
+        Whether log delivery to Amazon CloudWatch Logs is enabled.
     logGroup : str, default is Undefined, optional
         The name of the CloudWatch log group that is the destination for log delivery.
     logGroupRef : KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderLogDeliveryItems0WorkerLogDeliveryItems0CloudwatchLogsItems0LogGroupRef, default is Undefined, optional
@@ -2079,7 +2076,7 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderPluginItems0:
     Attributes
     ----------
     customPlugin : [KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderPluginItems0CustomPluginItems0], default is Undefined, optional
-        Details about a custom plugin. See below.
+        Details about a custom plugin. See custom_plugin Block for details.
     """
 
 
@@ -2093,13 +2090,13 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderPluginItems0Custo
     Attributes
     ----------
     arn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the worker configuration.
+        The Amazon Resource Name (ARN) of the custom plugin.
     arnRef : KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderPluginItems0CustomPluginItems0ArnRef, default is Undefined, optional
         arn ref
     arnSelector : KafkaconnectAwsUpboundIoV1beta1ConnectorSpecInitProviderPluginItems0CustomPluginItems0ArnSelector, default is Undefined, optional
         arn selector
     revision : float, default is Undefined, optional
-        The revision of the worker configuration.
+        The revision of the custom plugin.
     """
 
 
@@ -2449,112 +2446,12 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : KafkaconnectAwsUpboundIoV1beta1ConnectorSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : KafkaconnectAwsUpboundIoV1beta1ConnectorSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: KafkaconnectAwsUpboundIoV1beta1ConnectorSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: KafkaconnectAwsUpboundIoV1beta1ConnectorSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : KafkaconnectAwsUpboundIoV1beta1ConnectorSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: KafkaconnectAwsUpboundIoV1beta1ConnectorSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema KafkaconnectAwsUpboundIoV1beta1ConnectorSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -2601,9 +2498,9 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProvider:
     Attributes
     ----------
     arn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the custom plugin.
+        The Amazon Resource Name (ARN) of the connector.
     capacity : [KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderCapacityItems0], default is Undefined, optional
-        Information about the capacity allocated to the connector. See below.
+        Information about the capacity allocated to the connector. See capacity Block for details.
     connectorConfiguration : {str:str}, default is Undefined, optional
         A map of keys to values that represent the configuration for the connector.
     description : str, default is Undefined, optional
@@ -2611,19 +2508,22 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProvider:
     id : str, default is Undefined, optional
         id
     kafkaCluster : [KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderKafkaClusterItems0], default is Undefined, optional
-        Specifies which Apache Kafka cluster to connect to. See below.
+        Specifies which Apache Kafka cluster to connect to. See kafka_cluster Block for details.
     kafkaClusterClientAuthentication : [KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderKafkaClusterClientAuthenticationItems0], default is Undefined, optional
-        Details of the client authentication used by the Apache Kafka cluster. See below.
+        Details of the client authentication used by the Apache Kafka cluster. See kafka_cluster_client_authentication Block for details.
     kafkaClusterEncryptionInTransit : [KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderKafkaClusterEncryptionInTransitItems0], default is Undefined, optional
-        Details of encryption in transit to the Apache Kafka cluster. See below.
+        Details of encryption in transit to the Apache Kafka cluster. See kafka_cluster_encryption_in_transit Block for details.
     kafkaconnectVersion : str, default is Undefined, optional
         The version of Kafka Connect. It has to be compatible with both the Apache Kafka cluster's version and the plugins.
     logDelivery : [KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderLogDeliveryItems0], default is Undefined, optional
-        Details about log delivery. See below.
+        Details about log delivery. See log_delivery Block for details.
     name : str, default is Undefined, optional
         The name of the connector.
     plugin : [KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderPluginItems0], default is Undefined, optional
-        Specifies which plugins to use for the connector. See below.
+        Specifies which plugins to use for the connector. See plugin Block for details.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     serviceExecutionRoleArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the IAM role used by the connector to access the Amazon Web Services resources that it needs. The types of resources depends on the logic of the connector. For example, a connector that has Amazon S3 as a destination must have permissions that allow it to write to the S3 destination bucket.
     tags : {str:str}, default is Undefined, optional
@@ -2633,7 +2533,7 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProvider:
     version : str, default is Undefined, optional
         The current version of the connector.
     workerConfiguration : [KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderWorkerConfigurationItems0], default is Undefined, optional
-        Specifies which worker configuration to use with the connector. See below.
+        Specifies which worker configuration to use with the connector. See worker_configuration Block for details.
     """
 
 
@@ -2661,6 +2561,8 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProvider:
 
     plugin?: [KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderPluginItems0]
 
+    region?: str
+
     serviceExecutionRoleArn?: str
 
     tags?: {str:str}
@@ -2679,9 +2581,9 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderCapacityItems0:
     Attributes
     ----------
     autoscaling : [KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderCapacityItems0AutoscalingItems0], default is Undefined, optional
-        Information about the auto scaling parameters for the connector. See below.
+        Information about the auto scaling parameters for the connector. See autoscaling Block for details.
     provisionedCapacity : [KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderCapacityItems0ProvisionedCapacityItems0], default is Undefined, optional
-        Details about a fixed capacity allocated to a connector. See below.
+        Details about a fixed capacity allocated to a connector. See provisioned_capacity Block for details.
     """
 
 
@@ -2703,9 +2605,9 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderCapacityItems0Aut
     minWorkerCount : float, default is Undefined, optional
         The minimum number of workers allocated to the connector.
     scaleInPolicy : [KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderCapacityItems0AutoscalingItems0ScaleInPolicyItems0], default is Undefined, optional
-        The scale-in policy for the connector. See below.
+        The scale-in policy for the connector. See scale_in_policy Block for details.
     scaleOutPolicy : [KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderCapacityItems0AutoscalingItems0ScaleOutPolicyItems0], default is Undefined, optional
-        The scale-out policy for the connector. See below.
+        The scale-out policy for the connector. See scale_out_policy Block for details.
     """
 
 
@@ -2727,7 +2629,7 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderCapacityItems0Aut
     Attributes
     ----------
     cpuUtilizationPercentage : float, default is Undefined, optional
-        The CPU utilization percentage threshold at which you want connector scale out to be triggered.
+        Specifies the CPU utilization percentage threshold at which you want connector scale in to be triggered.
     """
 
 
@@ -2801,7 +2703,7 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderKafkaClusterItems
     Attributes
     ----------
     apacheKafkaCluster : [KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderKafkaClusterItems0ApacheKafkaClusterItems0], default is Undefined, optional
-        The Apache Kafka cluster to which the connector is connected.
+        The Apache Kafka cluster to which the connector is connected. See apache_kafka_cluster Block for details.
     """
 
 
@@ -2817,7 +2719,7 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderKafkaClusterItems
     bootstrapServers : str, default is Undefined, optional
         The bootstrap servers of the cluster.
     vpc : [KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderKafkaClusterItems0ApacheKafkaClusterItems0VpcItems0], default is Undefined, optional
-        Details of an Amazon VPC which has network connectivity to the Apache Kafka cluster.
+        Details of an Amazon VPC which has network connectivity to the Apache Kafka cluster. See vpc Block for details.
     """
 
 
@@ -2851,7 +2753,7 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderLogDeliveryItems0
     Attributes
     ----------
     workerLogDelivery : [KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderLogDeliveryItems0WorkerLogDeliveryItems0], default is Undefined, optional
-        The workers can send worker logs to different destination types. This configuration specifies the details of these destinations. See below.
+        The workers can send worker logs to different destination types. This configuration specifies the details of these destinations. See worker_log_delivery Block for details.
     """
 
 
@@ -2865,11 +2767,11 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderLogDeliveryItems0
     Attributes
     ----------
     cloudwatchLogs : [KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderLogDeliveryItems0WorkerLogDeliveryItems0CloudwatchLogsItems0], default is Undefined, optional
-        Details about delivering logs to Amazon CloudWatch Logs. See below.
+        Details about delivering logs to Amazon CloudWatch Logs. See cloudwatch_logs Block for details.
     firehose : [KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderLogDeliveryItems0WorkerLogDeliveryItems0FirehoseItems0], default is Undefined, optional
-        Details about delivering logs to Amazon Kinesis Data Firehose. See below.
+        Details about delivering logs to Amazon Kinesis Data Firehose. See firehose Block for details.
     s3 : [KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderLogDeliveryItems0WorkerLogDeliveryItems0S3Items0], default is Undefined, optional
-        Details about delivering logs to Amazon S3. See below.
+        Details about delivering logs to Amazon S3. See s3 Block for deetails.
     """
 
 
@@ -2887,7 +2789,7 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderLogDeliveryItems0
     Attributes
     ----------
     enabled : bool, default is Undefined, optional
-        Specifies whether connector logs get sent to the specified Amazon S3 destination.
+        Whether log delivery to Amazon CloudWatch Logs is enabled.
     logGroup : str, default is Undefined, optional
         The name of the CloudWatch log group that is the destination for log delivery.
     """
@@ -2945,7 +2847,7 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderPluginItems0:
     Attributes
     ----------
     customPlugin : [KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderPluginItems0CustomPluginItems0], default is Undefined, optional
-        Details about a custom plugin. See below.
+        Details about a custom plugin. See custom_plugin Block for details.
     """
 
 
@@ -2959,9 +2861,9 @@ schema KafkaconnectAwsUpboundIoV1beta1ConnectorStatusAtProviderPluginItems0Custo
     Attributes
     ----------
     arn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the worker configuration.
+        The Amazon Resource Name (ARN) of the custom plugin.
     revision : float, default is Undefined, optional
-        The revision of the worker configuration.
+        The revision of the custom plugin.
     """
 
 

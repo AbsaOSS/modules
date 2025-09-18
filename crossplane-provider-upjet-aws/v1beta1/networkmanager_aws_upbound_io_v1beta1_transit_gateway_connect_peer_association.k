@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema TransitGatewayConnectPeerAssociation:
     r"""
-    TransitGatewayConnectPeerAssociation is the Schema for the TransitGatewayConnectPeerAssociations API. Associates a transit gateway Connect peer with a device, and optionally, with a link.
+    TransitGatewayConnectPeerAssociation is the Schema for the TransitGatewayConnectPeerAssociations API. Manages a Network Manager transit gateway Connect peer association.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpec
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpec
 
     providerConfigRef?: NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpecWriteConnectionSecretToRef
 
 
@@ -95,23 +91,21 @@ schema NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpec
     Attributes
     ----------
     deviceId : str, default is Undefined, optional
-        The ID of the device.
+        ID of the device.
     deviceIdRef : NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpecForProviderDeviceIDRef, default is Undefined, optional
         device Id ref
     deviceIdSelector : NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpecForProviderDeviceIDSelector, default is Undefined, optional
         device Id selector
     globalNetworkId : str, default is Undefined, optional
-        The ID of the global network.
+        ID of the global network.
     globalNetworkIdRef : NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpecForProviderGlobalNetworkIDRef, default is Undefined, optional
         global network Id ref
     globalNetworkIdSelector : NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpecForProviderGlobalNetworkIDSelector, default is Undefined, optional
         global network Id selector
     linkId : str, default is Undefined, optional
-        The ID of the link.
-    region : str, default is Undefined, required
-        Region is the region you'd like your resource to be created in.
+        ID of the link.
     transitGatewayConnectPeerArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the Connect peer.
+        ARN of the Connect peer.
     transitGatewayConnectPeerArnRef : NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpecForProviderTransitGatewayConnectPeerArnRef, default is Undefined, optional
         transit gateway connect peer arn ref
     transitGatewayConnectPeerArnSelector : NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpecForProviderTransitGatewayConnectPeerArnSelector, default is Undefined, optional
@@ -132,8 +126,6 @@ schema NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpec
     globalNetworkIdSelector?: NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpecForProviderGlobalNetworkIDSelector
 
     linkId?: str
-
-    region: str
 
     transitGatewayConnectPeerArn?: str
 
@@ -425,13 +417,13 @@ schema NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpec
     Attributes
     ----------
     deviceId : str, default is Undefined, optional
-        The ID of the device.
+        ID of the device.
     deviceIdRef : NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpecInitProviderDeviceIDRef, default is Undefined, optional
         device Id ref
     deviceIdSelector : NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpecInitProviderDeviceIDSelector, default is Undefined, optional
         device Id selector
     linkId : str, default is Undefined, optional
-        The ID of the link.
+        ID of the link.
     """
 
 
@@ -577,112 +569,12 @@ schema NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpec
     resolve?: "Always" | "IfNotPresent"
 
 
-schema NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -729,15 +621,15 @@ schema NetworkmanagerAwsUpboundIoV1beta1TransitGatewayConnectPeerAssociationStat
     Attributes
     ----------
     deviceId : str, default is Undefined, optional
-        The ID of the device.
+        ID of the device.
     globalNetworkId : str, default is Undefined, optional
-        The ID of the global network.
+        ID of the global network.
     id : str, default is Undefined, optional
         id
     linkId : str, default is Undefined, optional
-        The ID of the link.
+        ID of the link.
     transitGatewayConnectPeerArn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) of the Connect peer.
+        ARN of the Connect peer.
     """
 
 

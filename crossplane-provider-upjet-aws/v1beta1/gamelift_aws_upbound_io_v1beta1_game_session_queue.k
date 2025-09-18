@@ -66,8 +66,6 @@ schema GameliftAwsUpboundIoV1beta1GameSessionQueueSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : GameliftAwsUpboundIoV1beta1GameSessionQueueSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : GameliftAwsUpboundIoV1beta1GameSessionQueueSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : GameliftAwsUpboundIoV1beta1GameSessionQueueSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema GameliftAwsUpboundIoV1beta1GameSessionQueueSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: GameliftAwsUpboundIoV1beta1GameSessionQueueSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: GameliftAwsUpboundIoV1beta1GameSessionQueueSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: GameliftAwsUpboundIoV1beta1GameSessionQueueSpecWriteConnectionSecretToRef
 
@@ -111,6 +107,7 @@ schema GameliftAwsUpboundIoV1beta1GameSessionQueueSpecForProvider:
     playerLatencyPolicy : [GameliftAwsUpboundIoV1beta1GameSessionQueueSpecForProviderPlayerLatencyPolicyItems0], default is Undefined, optional
         One or more policies used to choose fleet based on player latency. See below.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
@@ -637,112 +634,12 @@ schema GameliftAwsUpboundIoV1beta1GameSessionQueueSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema GameliftAwsUpboundIoV1beta1GameSessionQueueSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : GameliftAwsUpboundIoV1beta1GameSessionQueueSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : GameliftAwsUpboundIoV1beta1GameSessionQueueSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: GameliftAwsUpboundIoV1beta1GameSessionQueueSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: GameliftAwsUpboundIoV1beta1GameSessionQueueSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema GameliftAwsUpboundIoV1beta1GameSessionQueueSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : GameliftAwsUpboundIoV1beta1GameSessionQueueSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: GameliftAwsUpboundIoV1beta1GameSessionQueueSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema GameliftAwsUpboundIoV1beta1GameSessionQueueSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema GameliftAwsUpboundIoV1beta1GameSessionQueueSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema GameliftAwsUpboundIoV1beta1GameSessionQueueSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -800,6 +697,9 @@ schema GameliftAwsUpboundIoV1beta1GameSessionQueueStatusAtProvider:
         An SNS topic ARN that is set up to receive game session placement notifications.
     playerLatencyPolicy : [GameliftAwsUpboundIoV1beta1GameSessionQueueStatusAtProviderPlayerLatencyPolicyItems0], default is Undefined, optional
         One or more policies used to choose fleet based on player latency. See below.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
@@ -820,6 +720,8 @@ schema GameliftAwsUpboundIoV1beta1GameSessionQueueStatusAtProvider:
     notificationTarget?: str
 
     playerLatencyPolicy?: [GameliftAwsUpboundIoV1beta1GameSessionQueueStatusAtProviderPlayerLatencyPolicyItems0]
+
+    region?: str
 
     tags?: {str:str}
 

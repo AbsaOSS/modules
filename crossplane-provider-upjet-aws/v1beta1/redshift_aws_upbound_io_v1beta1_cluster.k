@@ -66,8 +66,6 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : RedshiftAwsUpboundIoV1beta1ClusterSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : RedshiftAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : RedshiftAwsUpboundIoV1beta1ClusterSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: RedshiftAwsUpboundIoV1beta1ClusterSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: RedshiftAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: RedshiftAwsUpboundIoV1beta1ClusterSpecWriteConnectionSecretToRef
 
@@ -110,10 +106,6 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpecForProvider:
         If true, the cluster can be relocated to another availabity zone, either automatically by AWS or when requested. Default is false. Available for use on clusters from the RA3 instance family.
     clusterParameterGroupName : str, default is Undefined, optional
         The name of the parameter group to be associated with this cluster.
-    clusterPublicKey : str, default is Undefined, optional
-        The public key for the cluster
-    clusterRevisionNumber : str, default is Undefined, optional
-        The specific revision number of the database in the cluster
     clusterSubnetGroupName : str, default is Undefined, optional
         The name of a cluster subnet group to be associated with this cluster. If this parameter is not provided the resulting cluster will be deployed outside virtual private cloud (VPC).
     clusterType : str, default is Undefined, optional
@@ -132,10 +124,9 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpecForProvider:
         default iam role arn selector
     elasticIp : str, default is Undefined, optional
         The Elastic IP (EIP) address for the cluster.
-    encrypted : bool, default is Undefined, optional
+    encrypted : str, default is Undefined, optional
         If true , the data in the cluster is encrypted at rest.
-    endpoint : str, default is Undefined, optional
-        The connection endpoint
+        Default is true.
     enhancedVpcRouting : bool, default is Undefined, optional
         If true , enhanced VPC routing is enabled.
     finalSnapshotIdentifier : str, default is Undefined, optional
@@ -152,13 +143,11 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpecForProvider:
         kms key Id ref
     kmsKeyIdSelector : RedshiftAwsUpboundIoV1beta1ClusterSpecForProviderKmsKeyIDSelector, default is Undefined, optional
         kms key Id selector
-    logging : [RedshiftAwsUpboundIoV1beta1ClusterSpecForProviderLoggingItems0], default is Undefined, optional
-        Logging, documented below.
     maintenanceTrackName : str, default is Undefined, optional
         The name of the maintenance track for the restored cluster. When you take a snapshot, the snapshot inherits the MaintenanceTrack value from the cluster. The snapshot might be on a different track than the cluster that was the source for the snapshot. For example, suppose that you take a snapshot of  a cluster that is on the current track and then change the cluster to be on the trailing track. In this case, the snapshot and the source cluster are on different tracks. Default value is current.
     manageMasterPassword : bool, default is Undefined, optional
         Whether to use AWS SecretsManager to manage the cluster admin credentials.
-        Conflicts with master_password.
+        Conflicts with master_password and master_password_wo.
         One of master_password or manage_master_password is required unless snapshot_identifier is provided.
     manualSnapshotRetentionPeriod : float, default is Undefined, optional
         The default number of days to retain a manual snapshot. If the value is -1, the snapshot is retained indefinitely. This setting doesn't change the retention period of existing snapshots. Valid values are between -1 and 3653. Default value is -1.
@@ -166,6 +155,10 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpecForProvider:
         ID of the KMS key used to encrypt the cluster admin credentials secret.
     masterPasswordSecretRef : RedshiftAwsUpboundIoV1beta1ClusterSpecForProviderMasterPasswordSecretRef, default is Undefined, optional
         master password secret ref
+    masterPasswordWoSecretRef : RedshiftAwsUpboundIoV1beta1ClusterSpecForProviderMasterPasswordWoSecretRef, default is Undefined, optional
+        master password wo secret ref
+    masterPasswordWoVersion : float, default is Undefined, optional
+        Used together with master_password_wo to trigger an update. Increment this value when an update to the master_password_wo is required.
     masterUsername : str, default is Undefined, optional
         Username for the master DB user.
     multiAz : bool, default is Undefined, optional
@@ -185,8 +178,9 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpecForProvider:
         The weekly time range (in UTC) during which automated cluster maintenance can occur.
         Format: ddd:hh24:mi-ddd:hh24:mi
     publiclyAccessible : bool, default is Undefined, optional
-        If true, the cluster can be accessed from a public network. Default is true.
+        If true, the cluster can be accessed from a public network. Default is false.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     skipFinalSnapshot : bool, default is Undefined, optional
         Determines whether a final snapshot of the cluster is created before Amazon Redshift deletes the cluster. If true , a final cluster snapshot is not created. If false , a final cluster snapshot is created before the cluster is deleted. Default is false.
@@ -194,8 +188,6 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpecForProvider:
         The ARN of the snapshot from which to create the new cluster. Conflicts with snapshot_identifier.
     snapshotClusterIdentifier : str, default is Undefined, optional
         The name of the cluster the source snapshot was created from.
-    snapshotCopy : [RedshiftAwsUpboundIoV1beta1ClusterSpecForProviderSnapshotCopyItems0], default is Undefined, optional
-        Configuration of automatic copy of snapshots from one region to another. Documented below.
     snapshotIdentifier : str, default is Undefined, optional
         The name of the snapshot from which to create the new cluster.  Conflicts with snapshot_arn.
     tags : {str:str}, default is Undefined, optional
@@ -223,10 +215,6 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpecForProvider:
 
     clusterParameterGroupName?: str
 
-    clusterPublicKey?: str
-
-    clusterRevisionNumber?: str
-
     clusterSubnetGroupName?: str
 
     clusterType?: str
@@ -243,9 +231,7 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpecForProvider:
 
     elasticIp?: str
 
-    encrypted?: bool
-
-    endpoint?: str
+    encrypted?: str
 
     enhancedVpcRouting?: bool
 
@@ -263,8 +249,6 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpecForProvider:
 
     kmsKeyIdSelector?: RedshiftAwsUpboundIoV1beta1ClusterSpecForProviderKmsKeyIDSelector
 
-    logging?: [RedshiftAwsUpboundIoV1beta1ClusterSpecForProviderLoggingItems0]
-
     maintenanceTrackName?: str
 
     manageMasterPassword?: bool
@@ -274,6 +258,10 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpecForProvider:
     masterPasswordSecretKmsKeyId?: str
 
     masterPasswordSecretRef?: RedshiftAwsUpboundIoV1beta1ClusterSpecForProviderMasterPasswordSecretRef
+
+    masterPasswordWoSecretRef?: RedshiftAwsUpboundIoV1beta1ClusterSpecForProviderMasterPasswordWoSecretRef
+
+    masterPasswordWoVersion?: float
 
     masterUsername?: str
 
@@ -298,8 +286,6 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpecForProvider:
     snapshotArn?: str
 
     snapshotClusterIdentifier?: str
-
-    snapshotCopy?: [RedshiftAwsUpboundIoV1beta1ClusterSpecForProviderSnapshotCopyItems0]
 
     snapshotIdentifier?: str
 
@@ -579,42 +565,11 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpecForProviderKmsKeyIDSelectorPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema RedshiftAwsUpboundIoV1beta1ClusterSpecForProviderLoggingItems0:
-    r"""
-    redshift aws upbound io v1beta1 cluster spec for provider logging items0
-
-    Attributes
-    ----------
-    bucketName : str, default is Undefined, optional
-        The name of an existing S3 bucket where the log files are to be stored. Must be in the same region as the cluster and the cluster must have read bucket and put object permissions.
-        For more information on the permissions required for the bucket, please read the AWS documentation
-    enable : bool, default is Undefined, optional
-        Enables logging information such as queries and connection attempts, for the specified Amazon Redshift cluster.
-    logDestinationType : str, default is Undefined, optional
-        The log destination type. An enum with possible values of s3 and cloudwatch.
-    logExports : [str], default is Undefined, optional
-        The collection of exported log types. Log types include the connection log, user log and user activity log. Required when log_destination_type is cloudwatch. Valid log types are connectionlog, userlog, and useractivitylog.
-    s3KeyPrefix : str, default is Undefined, optional
-        The prefix applied to the log file names.
-    """
-
-
-    bucketName?: str
-
-    enable?: bool
-
-    logDestinationType?: str
-
-    logExports?: [str]
-
-    s3KeyPrefix?: str
-
-
 schema RedshiftAwsUpboundIoV1beta1ClusterSpecForProviderMasterPasswordSecretRef:
     r"""
     Password for the master DB user.
-    Conflicts with manage_master_password.
-    One of master_password or manage_master_password is required unless snapshot_identifier is provided.
+    Conflicts with manage_master_password and master_password_wo.
+    One of master_password, master_password_wo or manage_master_password is required unless snapshot_identifier is provided.
     Note that this may show up in logs, and it will be stored in the state file.
     Password must contain at least 8 characters and contain at least one uppercase letter, one lowercase letter, and one number.
 
@@ -636,26 +591,30 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpecForProviderMasterPasswordSecretRef:
     namespace: str
 
 
-schema RedshiftAwsUpboundIoV1beta1ClusterSpecForProviderSnapshotCopyItems0:
+schema RedshiftAwsUpboundIoV1beta1ClusterSpecForProviderMasterPasswordWoSecretRef:
     r"""
-    redshift aws upbound io v1beta1 cluster spec for provider snapshot copy items0
+    Password for the master DB user.
+    Conflicts with manage_master_password and master_password.
+    One of master_password_wo, master_password or manage_master_password is required unless snapshot_identifier is provided.
+    Note that this may show up in logs.
+    Password must contain at least 8 characters and contain at least one uppercase letter, one lowercase letter, and one number.
 
     Attributes
     ----------
-    destinationRegion : str, default is Undefined, optional
-        The destination region that you want to copy snapshots to.
-    grantName : str, default is Undefined, optional
-        The name of the snapshot copy grant to use when snapshots of an AWS KMS-encrypted cluster are copied to the destination region.
-    retentionPeriod : float, default is Undefined, optional
-        The number of days to retain automated snapshots in the destination region after they are copied from the source region. Defaults to 7.
+    key : str, default is Undefined, required
+        The key to select.
+    name : str, default is Undefined, required
+        Name of the secret.
+    namespace : str, default is Undefined, required
+        Namespace of the secret.
     """
 
 
-    destinationRegion?: str
+    key: str
 
-    grantName?: str
+    name: str
 
-    retentionPeriod?: float
+    namespace: str
 
 
 schema RedshiftAwsUpboundIoV1beta1ClusterSpecForProviderVpcSecurityGroupIDRefsItems0:
@@ -778,10 +737,6 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpecInitProvider:
         If true, the cluster can be relocated to another availabity zone, either automatically by AWS or when requested. Default is false. Available for use on clusters from the RA3 instance family.
     clusterParameterGroupName : str, default is Undefined, optional
         The name of the parameter group to be associated with this cluster.
-    clusterPublicKey : str, default is Undefined, optional
-        The public key for the cluster
-    clusterRevisionNumber : str, default is Undefined, optional
-        The specific revision number of the database in the cluster
     clusterSubnetGroupName : str, default is Undefined, optional
         The name of a cluster subnet group to be associated with this cluster. If this parameter is not provided the resulting cluster will be deployed outside virtual private cloud (VPC).
     clusterType : str, default is Undefined, optional
@@ -800,10 +755,9 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpecInitProvider:
         default iam role arn selector
     elasticIp : str, default is Undefined, optional
         The Elastic IP (EIP) address for the cluster.
-    encrypted : bool, default is Undefined, optional
+    encrypted : str, default is Undefined, optional
         If true , the data in the cluster is encrypted at rest.
-    endpoint : str, default is Undefined, optional
-        The connection endpoint
+        Default is true.
     enhancedVpcRouting : bool, default is Undefined, optional
         If true , enhanced VPC routing is enabled.
     finalSnapshotIdentifier : str, default is Undefined, optional
@@ -820,13 +774,11 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpecInitProvider:
         kms key Id ref
     kmsKeyIdSelector : RedshiftAwsUpboundIoV1beta1ClusterSpecInitProviderKmsKeyIDSelector, default is Undefined, optional
         kms key Id selector
-    logging : [RedshiftAwsUpboundIoV1beta1ClusterSpecInitProviderLoggingItems0], default is Undefined, optional
-        Logging, documented below.
     maintenanceTrackName : str, default is Undefined, optional
         The name of the maintenance track for the restored cluster. When you take a snapshot, the snapshot inherits the MaintenanceTrack value from the cluster. The snapshot might be on a different track than the cluster that was the source for the snapshot. For example, suppose that you take a snapshot of  a cluster that is on the current track and then change the cluster to be on the trailing track. In this case, the snapshot and the source cluster are on different tracks. Default value is current.
     manageMasterPassword : bool, default is Undefined, optional
         Whether to use AWS SecretsManager to manage the cluster admin credentials.
-        Conflicts with master_password.
+        Conflicts with master_password and master_password_wo.
         One of master_password or manage_master_password is required unless snapshot_identifier is provided.
     manualSnapshotRetentionPeriod : float, default is Undefined, optional
         The default number of days to retain a manual snapshot. If the value is -1, the snapshot is retained indefinitely. This setting doesn't change the retention period of existing snapshots. Valid values are between -1 and 3653. Default value is -1.
@@ -834,6 +786,10 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpecInitProvider:
         ID of the KMS key used to encrypt the cluster admin credentials secret.
     masterPasswordSecretRef : RedshiftAwsUpboundIoV1beta1ClusterSpecInitProviderMasterPasswordSecretRef, default is Undefined, optional
         master password secret ref
+    masterPasswordWoSecretRef : RedshiftAwsUpboundIoV1beta1ClusterSpecInitProviderMasterPasswordWoSecretRef, default is Undefined, optional
+        master password wo secret ref
+    masterPasswordWoVersion : float, default is Undefined, optional
+        Used together with master_password_wo to trigger an update. Increment this value when an update to the master_password_wo is required.
     masterUsername : str, default is Undefined, optional
         Username for the master DB user.
     multiAz : bool, default is Undefined, optional
@@ -853,15 +809,13 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpecInitProvider:
         The weekly time range (in UTC) during which automated cluster maintenance can occur.
         Format: ddd:hh24:mi-ddd:hh24:mi
     publiclyAccessible : bool, default is Undefined, optional
-        If true, the cluster can be accessed from a public network. Default is true.
+        If true, the cluster can be accessed from a public network. Default is false.
     skipFinalSnapshot : bool, default is Undefined, optional
         Determines whether a final snapshot of the cluster is created before Amazon Redshift deletes the cluster. If true , a final cluster snapshot is not created. If false , a final cluster snapshot is created before the cluster is deleted. Default is false.
     snapshotArn : str, default is Undefined, optional
         The ARN of the snapshot from which to create the new cluster. Conflicts with snapshot_identifier.
     snapshotClusterIdentifier : str, default is Undefined, optional
         The name of the cluster the source snapshot was created from.
-    snapshotCopy : [RedshiftAwsUpboundIoV1beta1ClusterSpecInitProviderSnapshotCopyItems0], default is Undefined, optional
-        Configuration of automatic copy of snapshots from one region to another. Documented below.
     snapshotIdentifier : str, default is Undefined, optional
         The name of the snapshot from which to create the new cluster.  Conflicts with snapshot_arn.
     tags : {str:str}, default is Undefined, optional
@@ -889,10 +843,6 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpecInitProvider:
 
     clusterParameterGroupName?: str
 
-    clusterPublicKey?: str
-
-    clusterRevisionNumber?: str
-
     clusterSubnetGroupName?: str
 
     clusterType?: str
@@ -909,9 +859,7 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpecInitProvider:
 
     elasticIp?: str
 
-    encrypted?: bool
-
-    endpoint?: str
+    encrypted?: str
 
     enhancedVpcRouting?: bool
 
@@ -929,8 +877,6 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpecInitProvider:
 
     kmsKeyIdSelector?: RedshiftAwsUpboundIoV1beta1ClusterSpecInitProviderKmsKeyIDSelector
 
-    logging?: [RedshiftAwsUpboundIoV1beta1ClusterSpecInitProviderLoggingItems0]
-
     maintenanceTrackName?: str
 
     manageMasterPassword?: bool
@@ -940,6 +886,10 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpecInitProvider:
     masterPasswordSecretKmsKeyId?: str
 
     masterPasswordSecretRef?: RedshiftAwsUpboundIoV1beta1ClusterSpecInitProviderMasterPasswordSecretRef
+
+    masterPasswordWoSecretRef?: RedshiftAwsUpboundIoV1beta1ClusterSpecInitProviderMasterPasswordWoSecretRef
+
+    masterPasswordWoVersion?: float
 
     masterUsername?: str
 
@@ -962,8 +912,6 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpecInitProvider:
     snapshotArn?: str
 
     snapshotClusterIdentifier?: str
-
-    snapshotCopy?: [RedshiftAwsUpboundIoV1beta1ClusterSpecInitProviderSnapshotCopyItems0]
 
     snapshotIdentifier?: str
 
@@ -1243,42 +1191,11 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpecInitProviderKmsKeyIDSelectorPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema RedshiftAwsUpboundIoV1beta1ClusterSpecInitProviderLoggingItems0:
-    r"""
-    redshift aws upbound io v1beta1 cluster spec init provider logging items0
-
-    Attributes
-    ----------
-    bucketName : str, default is Undefined, optional
-        The name of an existing S3 bucket where the log files are to be stored. Must be in the same region as the cluster and the cluster must have read bucket and put object permissions.
-        For more information on the permissions required for the bucket, please read the AWS documentation
-    enable : bool, default is Undefined, optional
-        Enables logging information such as queries and connection attempts, for the specified Amazon Redshift cluster.
-    logDestinationType : str, default is Undefined, optional
-        The log destination type. An enum with possible values of s3 and cloudwatch.
-    logExports : [str], default is Undefined, optional
-        The collection of exported log types. Log types include the connection log, user log and user activity log. Required when log_destination_type is cloudwatch. Valid log types are connectionlog, userlog, and useractivitylog.
-    s3KeyPrefix : str, default is Undefined, optional
-        The prefix applied to the log file names.
-    """
-
-
-    bucketName?: str
-
-    enable?: bool
-
-    logDestinationType?: str
-
-    logExports?: [str]
-
-    s3KeyPrefix?: str
-
-
 schema RedshiftAwsUpboundIoV1beta1ClusterSpecInitProviderMasterPasswordSecretRef:
     r"""
     Password for the master DB user.
-    Conflicts with manage_master_password.
-    One of master_password or manage_master_password is required unless snapshot_identifier is provided.
+    Conflicts with manage_master_password and master_password_wo.
+    One of master_password, master_password_wo or manage_master_password is required unless snapshot_identifier is provided.
     Note that this may show up in logs, and it will be stored in the state file.
     Password must contain at least 8 characters and contain at least one uppercase letter, one lowercase letter, and one number.
 
@@ -1300,26 +1217,30 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpecInitProviderMasterPasswordSecretRef
     namespace: str
 
 
-schema RedshiftAwsUpboundIoV1beta1ClusterSpecInitProviderSnapshotCopyItems0:
+schema RedshiftAwsUpboundIoV1beta1ClusterSpecInitProviderMasterPasswordWoSecretRef:
     r"""
-    redshift aws upbound io v1beta1 cluster spec init provider snapshot copy items0
+    Password for the master DB user.
+    Conflicts with manage_master_password and master_password.
+    One of master_password_wo, master_password or manage_master_password is required unless snapshot_identifier is provided.
+    Note that this may show up in logs.
+    Password must contain at least 8 characters and contain at least one uppercase letter, one lowercase letter, and one number.
 
     Attributes
     ----------
-    destinationRegion : str, default is Undefined, optional
-        The destination region that you want to copy snapshots to.
-    grantName : str, default is Undefined, optional
-        The name of the snapshot copy grant to use when snapshots of an AWS KMS-encrypted cluster are copied to the destination region.
-    retentionPeriod : float, default is Undefined, optional
-        The number of days to retain automated snapshots in the destination region after they are copied from the source region. Defaults to 7.
+    key : str, default is Undefined, required
+        The key to select.
+    name : str, default is Undefined, required
+        Name of the secret.
+    namespace : str, default is Undefined, required
+        Namespace of the secret.
     """
 
 
-    destinationRegion?: str
+    key: str
 
-    grantName?: str
+    name: str
 
-    retentionPeriod?: float
+    namespace: str
 
 
 schema RedshiftAwsUpboundIoV1beta1ClusterSpecInitProviderVpcSecurityGroupIDRefsItems0:
@@ -1455,112 +1376,12 @@ schema RedshiftAwsUpboundIoV1beta1ClusterSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema RedshiftAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : RedshiftAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : RedshiftAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: RedshiftAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: RedshiftAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema RedshiftAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : RedshiftAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: RedshiftAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema RedshiftAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema RedshiftAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema RedshiftAwsUpboundIoV1beta1ClusterSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1648,8 +1469,9 @@ schema RedshiftAwsUpboundIoV1beta1ClusterStatusAtProvider:
         The DNS name of the cluster
     elasticIp : str, default is Undefined, optional
         The Elastic IP (EIP) address for the cluster.
-    encrypted : bool, default is Undefined, optional
+    encrypted : str, default is Undefined, optional
         If true , the data in the cluster is encrypted at rest.
+        Default is true.
     endpoint : str, default is Undefined, optional
         The connection endpoint
     enhancedVpcRouting : bool, default is Undefined, optional
@@ -1662,13 +1484,11 @@ schema RedshiftAwsUpboundIoV1beta1ClusterStatusAtProvider:
         The Redshift Cluster ID.
     kmsKeyId : str, default is Undefined, optional
         The ARN for the KMS encryption key. When specifying kms_key_id, encrypted needs to be set to true.
-    logging : [RedshiftAwsUpboundIoV1beta1ClusterStatusAtProviderLoggingItems0], default is Undefined, optional
-        Logging, documented below.
     maintenanceTrackName : str, default is Undefined, optional
         The name of the maintenance track for the restored cluster. When you take a snapshot, the snapshot inherits the MaintenanceTrack value from the cluster. The snapshot might be on a different track than the cluster that was the source for the snapshot. For example, suppose that you take a snapshot of  a cluster that is on the current track and then change the cluster to be on the trailing track. In this case, the snapshot and the source cluster are on different tracks. Default value is current.
     manageMasterPassword : bool, default is Undefined, optional
         Whether to use AWS SecretsManager to manage the cluster admin credentials.
-        Conflicts with master_password.
+        Conflicts with master_password and master_password_wo.
         One of master_password or manage_master_password is required unless snapshot_identifier is provided.
     manualSnapshotRetentionPeriod : float, default is Undefined, optional
         The default number of days to retain a manual snapshot. If the value is -1, the snapshot is retained indefinitely. This setting doesn't change the retention period of existing snapshots. Valid values are between -1 and 3653. Default value is -1.
@@ -1676,6 +1496,8 @@ schema RedshiftAwsUpboundIoV1beta1ClusterStatusAtProvider:
         ARN of the cluster admin credentials secret
     masterPasswordSecretKmsKeyId : str, default is Undefined, optional
         ID of the KMS key used to encrypt the cluster admin credentials secret.
+    masterPasswordWoVersion : float, default is Undefined, optional
+        Used together with master_password_wo to trigger an update. Increment this value when an update to the master_password_wo is required.
     masterUsername : str, default is Undefined, optional
         Username for the master DB user.
     multiAz : bool, default is Undefined, optional
@@ -1695,15 +1517,16 @@ schema RedshiftAwsUpboundIoV1beta1ClusterStatusAtProvider:
         The weekly time range (in UTC) during which automated cluster maintenance can occur.
         Format: ddd:hh24:mi-ddd:hh24:mi
     publiclyAccessible : bool, default is Undefined, optional
-        If true, the cluster can be accessed from a public network. Default is true.
+        If true, the cluster can be accessed from a public network. Default is false.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     skipFinalSnapshot : bool, default is Undefined, optional
         Determines whether a final snapshot of the cluster is created before Amazon Redshift deletes the cluster. If true , a final cluster snapshot is not created. If false , a final cluster snapshot is created before the cluster is deleted. Default is false.
     snapshotArn : str, default is Undefined, optional
         The ARN of the snapshot from which to create the new cluster. Conflicts with snapshot_identifier.
     snapshotClusterIdentifier : str, default is Undefined, optional
         The name of the cluster the source snapshot was created from.
-    snapshotCopy : [RedshiftAwsUpboundIoV1beta1ClusterStatusAtProviderSnapshotCopyItems0], default is Undefined, optional
-        Configuration of automatic copy of snapshots from one region to another. Documented below.
     snapshotIdentifier : str, default is Undefined, optional
         The name of the snapshot from which to create the new cluster.  Conflicts with snapshot_arn.
     tags : {str:str}, default is Undefined, optional
@@ -1753,7 +1576,7 @@ schema RedshiftAwsUpboundIoV1beta1ClusterStatusAtProvider:
 
     elasticIp?: str
 
-    encrypted?: bool
+    encrypted?: str
 
     endpoint?: str
 
@@ -1767,8 +1590,6 @@ schema RedshiftAwsUpboundIoV1beta1ClusterStatusAtProvider:
 
     kmsKeyId?: str
 
-    logging?: [RedshiftAwsUpboundIoV1beta1ClusterStatusAtProviderLoggingItems0]
-
     maintenanceTrackName?: str
 
     manageMasterPassword?: bool
@@ -1778,6 +1599,8 @@ schema RedshiftAwsUpboundIoV1beta1ClusterStatusAtProvider:
     masterPasswordSecretArn?: str
 
     masterPasswordSecretKmsKeyId?: str
+
+    masterPasswordWoVersion?: float
 
     masterUsername?: str
 
@@ -1795,13 +1618,13 @@ schema RedshiftAwsUpboundIoV1beta1ClusterStatusAtProvider:
 
     publiclyAccessible?: bool
 
+    region?: str
+
     skipFinalSnapshot?: bool
 
     snapshotArn?: str
 
     snapshotClusterIdentifier?: str
-
-    snapshotCopy?: [RedshiftAwsUpboundIoV1beta1ClusterStatusAtProviderSnapshotCopyItems0]
 
     snapshotIdentifier?: str
 
@@ -1832,59 +1655,6 @@ schema RedshiftAwsUpboundIoV1beta1ClusterStatusAtProviderClusterNodesItems0:
     privateIpAddress?: str
 
     publicIpAddress?: str
-
-
-schema RedshiftAwsUpboundIoV1beta1ClusterStatusAtProviderLoggingItems0:
-    r"""
-    redshift aws upbound io v1beta1 cluster status at provider logging items0
-
-    Attributes
-    ----------
-    bucketName : str, default is Undefined, optional
-        The name of an existing S3 bucket where the log files are to be stored. Must be in the same region as the cluster and the cluster must have read bucket and put object permissions.
-        For more information on the permissions required for the bucket, please read the AWS documentation
-    enable : bool, default is Undefined, optional
-        Enables logging information such as queries and connection attempts, for the specified Amazon Redshift cluster.
-    logDestinationType : str, default is Undefined, optional
-        The log destination type. An enum with possible values of s3 and cloudwatch.
-    logExports : [str], default is Undefined, optional
-        The collection of exported log types. Log types include the connection log, user log and user activity log. Required when log_destination_type is cloudwatch. Valid log types are connectionlog, userlog, and useractivitylog.
-    s3KeyPrefix : str, default is Undefined, optional
-        The prefix applied to the log file names.
-    """
-
-
-    bucketName?: str
-
-    enable?: bool
-
-    logDestinationType?: str
-
-    logExports?: [str]
-
-    s3KeyPrefix?: str
-
-
-schema RedshiftAwsUpboundIoV1beta1ClusterStatusAtProviderSnapshotCopyItems0:
-    r"""
-    redshift aws upbound io v1beta1 cluster status at provider snapshot copy items0
-
-    Attributes
-    ----------
-    destinationRegion : str, default is Undefined, optional
-        The destination region that you want to copy snapshots to.
-    grantName : str, default is Undefined, optional
-        The name of the snapshot copy grant to use when snapshots of an AWS KMS-encrypted cluster are copied to the destination region.
-    retentionPeriod : float, default is Undefined, optional
-        The number of days to retain automated snapshots in the destination region after they are copied from the source region. Defaults to 7.
-    """
-
-
-    destinationRegion?: str
-
-    grantName?: str
-
-    retentionPeriod?: float
 
 
 schema RedshiftAwsUpboundIoV1beta1ClusterStatusConditionsItems0:

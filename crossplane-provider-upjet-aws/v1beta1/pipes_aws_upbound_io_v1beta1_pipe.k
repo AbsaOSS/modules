@@ -66,8 +66,6 @@ schema PipesAwsUpboundIoV1beta1PipeSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : PipesAwsUpboundIoV1beta1PipeSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : PipesAwsUpboundIoV1beta1PipeSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : PipesAwsUpboundIoV1beta1PipeSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema PipesAwsUpboundIoV1beta1PipeSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: PipesAwsUpboundIoV1beta1PipeSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: PipesAwsUpboundIoV1beta1PipeSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: PipesAwsUpboundIoV1beta1PipeSpecWriteConnectionSecretToRef
 
@@ -106,9 +102,12 @@ schema PipesAwsUpboundIoV1beta1PipeSpecForProvider:
         enrichment ref
     enrichmentSelector : PipesAwsUpboundIoV1beta1PipeSpecForProviderEnrichmentSelector, default is Undefined, optional
         enrichment selector
+    kmsKeyIdentifier : str, default is Undefined, optional
+        Identifier of the AWS KMS customer managed key for EventBridge to use, if you choose to use a customer managed key to encrypt pipe data. The identifier can be the key Amazon Resource Name (ARN), KeyId, key alias, or key alias ARN. If not set, EventBridge uses an AWS owned key to encrypt pipe data.
     logConfiguration : PipesAwsUpboundIoV1beta1PipeSpecForProviderLogConfiguration, default is Undefined, optional
         log configuration
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     roleArn : str, default is Undefined, optional
         ARN of the role that allows the pipe to send data to the target.
@@ -148,6 +147,8 @@ schema PipesAwsUpboundIoV1beta1PipeSpecForProvider:
     enrichmentRef?: PipesAwsUpboundIoV1beta1PipeSpecForProviderEnrichmentRef
 
     enrichmentSelector?: PipesAwsUpboundIoV1beta1PipeSpecForProviderEnrichmentSelector
+
+    kmsKeyIdentifier?: str
 
     logConfiguration?: PipesAwsUpboundIoV1beta1PipeSpecForProviderLogConfiguration
 
@@ -1764,12 +1765,12 @@ schema PipesAwsUpboundIoV1beta1PipeSpecForProviderTargetParametersRedshiftDataPa
 
 schema PipesAwsUpboundIoV1beta1PipeSpecForProviderTargetParametersSagemakerPipelineParameters:
     r"""
-    The parameters for using a SageMaker pipeline as a target. Detailed below.
+    The parameters for using a SageMaker AI pipeline as a target. Detailed below.
 
     Attributes
     ----------
     pipelineParameter : [PipesAwsUpboundIoV1beta1PipeSpecForProviderTargetParametersSagemakerPipelineParametersPipelineParameterItems0], default is Undefined, optional
-        List of Parameter names and values for SageMaker Model Building Pipeline execution. Detailed below.
+        List of Parameter names and values for SageMaker AI Model Building Pipeline execution. Detailed below.
     """
 
 
@@ -1785,7 +1786,7 @@ schema PipesAwsUpboundIoV1beta1PipeSpecForProviderTargetParametersSagemakerPipel
     name : str, default is Undefined, optional
         The name of the container that receives the override. This parameter is required if any override is specified.
     value : str, default is Undefined, optional
-        Value of parameter to start execution of a SageMaker Model Building Pipeline. Maximum length of 1024.
+        Value of parameter to start execution of a SageMaker AI Model Building Pipeline. Maximum length of 1024.
     """
 
 
@@ -1942,6 +1943,8 @@ schema PipesAwsUpboundIoV1beta1PipeSpecInitProvider:
         enrichment ref
     enrichmentSelector : PipesAwsUpboundIoV1beta1PipeSpecInitProviderEnrichmentSelector, default is Undefined, optional
         enrichment selector
+    kmsKeyIdentifier : str, default is Undefined, optional
+        Identifier of the AWS KMS customer managed key for EventBridge to use, if you choose to use a customer managed key to encrypt pipe data. The identifier can be the key Amazon Resource Name (ARN), KeyId, key alias, or key alias ARN. If not set, EventBridge uses an AWS owned key to encrypt pipe data.
     logConfiguration : PipesAwsUpboundIoV1beta1PipeSpecInitProviderLogConfiguration, default is Undefined, optional
         log configuration
     roleArn : str, default is Undefined, optional
@@ -1982,6 +1985,8 @@ schema PipesAwsUpboundIoV1beta1PipeSpecInitProvider:
     enrichmentRef?: PipesAwsUpboundIoV1beta1PipeSpecInitProviderEnrichmentRef
 
     enrichmentSelector?: PipesAwsUpboundIoV1beta1PipeSpecInitProviderEnrichmentSelector
+
+    kmsKeyIdentifier?: str
 
     logConfiguration?: PipesAwsUpboundIoV1beta1PipeSpecInitProviderLogConfiguration
 
@@ -3596,12 +3601,12 @@ schema PipesAwsUpboundIoV1beta1PipeSpecInitProviderTargetParametersRedshiftDataP
 
 schema PipesAwsUpboundIoV1beta1PipeSpecInitProviderTargetParametersSagemakerPipelineParameters:
     r"""
-    The parameters for using a SageMaker pipeline as a target. Detailed below.
+    The parameters for using a SageMaker AI pipeline as a target. Detailed below.
 
     Attributes
     ----------
     pipelineParameter : [PipesAwsUpboundIoV1beta1PipeSpecInitProviderTargetParametersSagemakerPipelineParametersPipelineParameterItems0], default is Undefined, optional
-        List of Parameter names and values for SageMaker Model Building Pipeline execution. Detailed below.
+        List of Parameter names and values for SageMaker AI Model Building Pipeline execution. Detailed below.
     """
 
 
@@ -3617,7 +3622,7 @@ schema PipesAwsUpboundIoV1beta1PipeSpecInitProviderTargetParametersSagemakerPipe
     name : str, default is Undefined, optional
         The name of the container that receives the override. This parameter is required if any override is specified.
     value : str, default is Undefined, optional
-        Value of parameter to start execution of a SageMaker Model Building Pipeline. Maximum length of 1024.
+        Value of parameter to start execution of a SageMaker AI Model Building Pipeline. Maximum length of 1024.
     """
 
 
@@ -3791,112 +3796,12 @@ schema PipesAwsUpboundIoV1beta1PipeSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema PipesAwsUpboundIoV1beta1PipeSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : PipesAwsUpboundIoV1beta1PipeSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : PipesAwsUpboundIoV1beta1PipeSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: PipesAwsUpboundIoV1beta1PipeSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: PipesAwsUpboundIoV1beta1PipeSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema PipesAwsUpboundIoV1beta1PipeSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : PipesAwsUpboundIoV1beta1PipeSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: PipesAwsUpboundIoV1beta1PipeSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema PipesAwsUpboundIoV1beta1PipeSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema PipesAwsUpboundIoV1beta1PipeSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema PipesAwsUpboundIoV1beta1PipeSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -3954,8 +3859,13 @@ schema PipesAwsUpboundIoV1beta1PipeStatusAtProvider:
         enrichment parameters
     id : str, default is Undefined, optional
         Same as name.
+    kmsKeyIdentifier : str, default is Undefined, optional
+        Identifier of the AWS KMS customer managed key for EventBridge to use, if you choose to use a customer managed key to encrypt pipe data. The identifier can be the key Amazon Resource Name (ARN), KeyId, key alias, or key alias ARN. If not set, EventBridge uses an AWS owned key to encrypt pipe data.
     logConfiguration : PipesAwsUpboundIoV1beta1PipeStatusAtProviderLogConfiguration, default is Undefined, optional
         log configuration
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     roleArn : str, default is Undefined, optional
         ARN of the role that allows the pipe to send data to the target.
     source : str, default is Undefined, optional
@@ -3985,7 +3895,11 @@ schema PipesAwsUpboundIoV1beta1PipeStatusAtProvider:
 
     id?: str
 
+    kmsKeyIdentifier?: str
+
     logConfiguration?: PipesAwsUpboundIoV1beta1PipeStatusAtProviderLogConfiguration
+
+    region?: str
 
     roleArn?: str
 
@@ -5224,12 +5138,12 @@ schema PipesAwsUpboundIoV1beta1PipeStatusAtProviderTargetParametersRedshiftDataP
 
 schema PipesAwsUpboundIoV1beta1PipeStatusAtProviderTargetParametersSagemakerPipelineParameters:
     r"""
-    The parameters for using a SageMaker pipeline as a target. Detailed below.
+    The parameters for using a SageMaker AI pipeline as a target. Detailed below.
 
     Attributes
     ----------
     pipelineParameter : [PipesAwsUpboundIoV1beta1PipeStatusAtProviderTargetParametersSagemakerPipelineParametersPipelineParameterItems0], default is Undefined, optional
-        List of Parameter names and values for SageMaker Model Building Pipeline execution. Detailed below.
+        List of Parameter names and values for SageMaker AI Model Building Pipeline execution. Detailed below.
     """
 
 
@@ -5245,7 +5159,7 @@ schema PipesAwsUpboundIoV1beta1PipeStatusAtProviderTargetParametersSagemakerPipe
     name : str, default is Undefined, optional
         The name of the container that receives the override. This parameter is required if any override is specified.
     value : str, default is Undefined, optional
-        Value of parameter to start execution of a SageMaker Model Building Pipeline. Maximum length of 1024.
+        Value of parameter to start execution of a SageMaker AI Model Building Pipeline. Maximum length of 1024.
     """
 
 

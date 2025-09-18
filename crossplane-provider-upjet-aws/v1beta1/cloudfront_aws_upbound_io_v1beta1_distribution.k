@@ -66,8 +66,6 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : CloudfrontAwsUpboundIoV1beta1DistributionSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : CloudfrontAwsUpboundIoV1beta1DistributionSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : CloudfrontAwsUpboundIoV1beta1DistributionSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionSpec:
 
     providerConfigRef?: CloudfrontAwsUpboundIoV1beta1DistributionSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: CloudfrontAwsUpboundIoV1beta1DistributionSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: CloudfrontAwsUpboundIoV1beta1DistributionSpecWriteConnectionSecretToRef
 
 
@@ -96,6 +92,8 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionSpecForProvider:
     ----------
     aliases : [str], default is Undefined, optional
         Extra CNAMEs (alternate domain names), if any, for this distribution.
+    anycastIpListId : str, default is Undefined, optional
+        ID of the Anycast static IP list that is associated with the distribution.
     comment : str, default is Undefined, optional
         Any comments you want to include about the distribution.
     continuousDeploymentPolicyId : str, default is Undefined, optional
@@ -113,7 +111,7 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionSpecForProvider:
     isIpv6Enabled : bool, default is Undefined, optional
         Whether the IPv6 is enabled for the distribution.
     loggingConfig : [CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderLoggingConfigItems0], default is Undefined, optional
-        The logging configuration that controls how logs are written to your distribution (maximum one).
+        The logging configuration that controls how logs are written to your distribution (maximum one). AWS provides two versions of access logs for CloudFront: Legacy and v2. This argument configures legacy version standard logs.
     orderedCacheBehavior : [CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderOrderedCacheBehaviorItems0], default is Undefined, optional
         Ordered list of cache behaviors resource for this distribution. List from top to bottom in order of precedence. The topmost cache behavior will have precedence 0.
     origin : [CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderOriginItems0], default is Undefined, optional
@@ -122,8 +120,6 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionSpecForProvider:
         One or more origin_group for this distribution (multiples allowed).
     priceClass : str, default is Undefined, optional
         Price class for this distribution. One of PriceClass_All, PriceClass_200, PriceClass_100.
-    region : str, default is Undefined, required
-        Region is the region you'd like your resource to be created in.
     restrictions : [CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderRestrictionsItems0], default is Undefined, optional
         The restriction configuration for this distribution (maximum one).
     retainOnDelete : bool, default is Undefined, optional
@@ -142,6 +138,8 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionSpecForProvider:
 
 
     aliases?: [str]
+
+    anycastIpListId?: str
 
     comment?: str
 
@@ -168,8 +166,6 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionSpecForProvider:
     originGroup?: [CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderOriginGroupItems0]
 
     priceClass?: str
-
-    region: str
 
     restrictions?: [CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderRestrictionsItems0]
 
@@ -227,19 +223,21 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderDefaultCacheBehav
     compress : bool, default is Undefined, optional
         Whether you want CloudFront to automatically compress content for web requests that include Accept-Encoding: gzip in the request header (default: false).
     defaultTtl : float, default is Undefined, optional
-        Default amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request in the absence of an Cache-Control max-age or Expires header.
+        Default amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request in the absence of an Cache-Control max-age or Expires header. The TTL defined in Cache Policy overrides this configuration.
     fieldLevelEncryptionId : str, default is Undefined, optional
         Field level encryption configuration ID.
     forwardedValues : [CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderDefaultCacheBehaviorItems0ForwardedValuesItems0], default is Undefined, optional
         The forwarded values configuration that specifies how CloudFront handles query strings, cookies and headers (maximum one).
     functionAssociation : [CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderDefaultCacheBehaviorItems0FunctionAssociationItems0], default is Undefined, optional
         A config block that triggers a cloudfront function with specific actions (maximum 2).
+    grpcConfig : [CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderDefaultCacheBehaviorItems0GrpcConfigItems0], default is Undefined, optional
+        A config block that sets the grpc config.
     lambdaFunctionAssociation : [CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderDefaultCacheBehaviorItems0LambdaFunctionAssociationItems0], default is Undefined, optional
         A config block that triggers a lambda function with specific actions (maximum 4).
     maxTtl : float, default is Undefined, optional
-        Maximum amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request to your origin to determine whether the object has been updated. Only effective in the presence of Cache-Control max-age, Cache-Control s-maxage, and Expires headers.
+        Maximum amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request to your origin to determine whether the object has been updated. Only effective in the presence of Cache-Control max-age, Cache-Control s-maxage, and Expires headers. The TTL defined in Cache Policy overrides this configuration.
     minTtl : float, default is Undefined, optional
-        Minimum amount of time that you want objects to stay in CloudFront caches before CloudFront queries your origin to see whether the object has been updated. Defaults to 0 seconds.
+        Minimum amount of time that you want objects to stay in CloudFront caches before CloudFront queries your origin to see whether the object has been updated. Defaults to 0 seconds. The TTL defined in Cache Policy overrides this configuration.
     originRequestPolicyId : str, default is Undefined, optional
         Unique identifier of the origin request policy that is attached to the behavior.
     realtimeLogConfigArn : str, default is Undefined, optional
@@ -274,6 +272,8 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderDefaultCacheBehav
     forwardedValues?: [CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderDefaultCacheBehaviorItems0ForwardedValuesItems0]
 
     functionAssociation?: [CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderDefaultCacheBehaviorItems0FunctionAssociationItems0]
+
+    grpcConfig?: [CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderDefaultCacheBehaviorItems0GrpcConfigItems0]
 
     lambdaFunctionAssociation?: [CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderDefaultCacheBehaviorItems0LambdaFunctionAssociationItems0]
 
@@ -360,6 +360,20 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderDefaultCacheBehav
     functionArn?: str
 
 
+schema CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderDefaultCacheBehaviorItems0GrpcConfigItems0:
+    r"""
+    cloudfront aws upbound io v1beta1 distribution spec for provider default cache behavior items0 grpc config items0
+
+    Attributes
+    ----------
+    enabled : bool, default is Undefined, optional
+        Whether the distribution is enabled to accept end user requests for content.
+    """
+
+
+    enabled?: bool
+
+
 schema CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderDefaultCacheBehaviorItems0LambdaFunctionAssociationItems0:
     r"""
     cloudfront aws upbound io v1beta1 distribution spec for provider default cache behavior items0 lambda function association items0
@@ -389,7 +403,7 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderLoggingConfigItem
     Attributes
     ----------
     bucket : str, default is Undefined, optional
-        Amazon S3 bucket to store the access logs in, for example, myawslogbucket.s3.amazonaws.com.
+        Amazon S3 bucket to store the access logs in, for example, myawslogbucket.s3.amazonaws.com. The bucket must have correct ACL attached with "FULL_CONTROL" permission for "awslogsdelivery" account (Canonical ID: "c4c1ede66af53448b93c283ce9448c4ba468c9432aa01d700d3878632f77d2d0") for log transfer to work.
     includeCookies : bool, default is Undefined, optional
         Whether to include cookies in access logs (default: false).
     prefix : str, default is Undefined, optional
@@ -419,19 +433,21 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderOrderedCacheBehav
     compress : bool, default is Undefined, optional
         Whether you want CloudFront to automatically compress content for web requests that include Accept-Encoding: gzip in the request header (default: false).
     defaultTtl : float, default is Undefined, optional
-        Default amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request in the absence of an Cache-Control max-age or Expires header.
+        Default amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request in the absence of an Cache-Control max-age or Expires header. The TTL defined in Cache Policy overrides this configuration.
     fieldLevelEncryptionId : str, default is Undefined, optional
         Field level encryption configuration ID.
     forwardedValues : [CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderOrderedCacheBehaviorItems0ForwardedValuesItems0], default is Undefined, optional
         The forwarded values configuration that specifies how CloudFront handles query strings, cookies and headers (maximum one).
     functionAssociation : [CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderOrderedCacheBehaviorItems0FunctionAssociationItems0], default is Undefined, optional
         A config block that triggers a cloudfront function with specific actions (maximum 2).
+    grpcConfig : [CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderOrderedCacheBehaviorItems0GrpcConfigItems0], default is Undefined, optional
+        A config block that sets the grpc config.
     lambdaFunctionAssociation : [CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderOrderedCacheBehaviorItems0LambdaFunctionAssociationItems0], default is Undefined, optional
         A config block that triggers a lambda function with specific actions (maximum 4).
     maxTtl : float, default is Undefined, optional
-        Maximum amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request to your origin to determine whether the object has been updated. Only effective in the presence of Cache-Control max-age, Cache-Control s-maxage, and Expires headers.
+        Maximum amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request to your origin to determine whether the object has been updated. Only effective in the presence of Cache-Control max-age, Cache-Control s-maxage, and Expires headers. The TTL defined in Cache Policy overrides this configuration.
     minTtl : float, default is Undefined, optional
-        Minimum amount of time that you want objects to stay in CloudFront caches before CloudFront queries your origin to see whether the object has been updated. Defaults to 0 seconds.
+        Minimum amount of time that you want objects to stay in CloudFront caches before CloudFront queries your origin to see whether the object has been updated. Defaults to 0 seconds. The TTL defined in Cache Policy overrides this configuration.
     originRequestPolicyId : str, default is Undefined, optional
         Unique identifier of the origin request policy that is attached to the behavior.
     pathPattern : str, default is Undefined, optional
@@ -468,6 +484,8 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderOrderedCacheBehav
     forwardedValues?: [CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderOrderedCacheBehaviorItems0ForwardedValuesItems0]
 
     functionAssociation?: [CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderOrderedCacheBehaviorItems0FunctionAssociationItems0]
+
+    grpcConfig?: [CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderOrderedCacheBehaviorItems0GrpcConfigItems0]
 
     lambdaFunctionAssociation?: [CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderOrderedCacheBehaviorItems0LambdaFunctionAssociationItems0]
 
@@ -651,6 +669,20 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderOrderedCacheBehav
     resolution?: "Required" | "Optional" = "Required"
 
     resolve?: "Always" | "IfNotPresent"
+
+
+schema CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderOrderedCacheBehaviorItems0GrpcConfigItems0:
+    r"""
+    cloudfront aws upbound io v1beta1 distribution spec for provider ordered cache behavior items0 grpc config items0
+
+    Attributes
+    ----------
+    enabled : bool, default is Undefined, optional
+        Whether the distribution is enabled to accept end user requests for content.
+    """
+
+
+    enabled?: bool
 
 
 schema CloudfrontAwsUpboundIoV1beta1DistributionSpecForProviderOrderedCacheBehaviorItems0LambdaFunctionAssociationItems0:
@@ -1255,6 +1287,8 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProvider:
     ----------
     aliases : [str], default is Undefined, optional
         Extra CNAMEs (alternate domain names), if any, for this distribution.
+    anycastIpListId : str, default is Undefined, optional
+        ID of the Anycast static IP list that is associated with the distribution.
     comment : str, default is Undefined, optional
         Any comments you want to include about the distribution.
     continuousDeploymentPolicyId : str, default is Undefined, optional
@@ -1272,7 +1306,7 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProvider:
     isIpv6Enabled : bool, default is Undefined, optional
         Whether the IPv6 is enabled for the distribution.
     loggingConfig : [CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderLoggingConfigItems0], default is Undefined, optional
-        The logging configuration that controls how logs are written to your distribution (maximum one).
+        The logging configuration that controls how logs are written to your distribution (maximum one). AWS provides two versions of access logs for CloudFront: Legacy and v2. This argument configures legacy version standard logs.
     orderedCacheBehavior : [CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderOrderedCacheBehaviorItems0], default is Undefined, optional
         Ordered list of cache behaviors resource for this distribution. List from top to bottom in order of precedence. The topmost cache behavior will have precedence 0.
     origin : [CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderOriginItems0], default is Undefined, optional
@@ -1299,6 +1333,8 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProvider:
 
 
     aliases?: [str]
+
+    anycastIpListId?: str
 
     comment?: str
 
@@ -1382,19 +1418,21 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderDefaultCacheBeha
     compress : bool, default is Undefined, optional
         Whether you want CloudFront to automatically compress content for web requests that include Accept-Encoding: gzip in the request header (default: false).
     defaultTtl : float, default is Undefined, optional
-        Default amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request in the absence of an Cache-Control max-age or Expires header.
+        Default amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request in the absence of an Cache-Control max-age or Expires header. The TTL defined in Cache Policy overrides this configuration.
     fieldLevelEncryptionId : str, default is Undefined, optional
         Field level encryption configuration ID.
     forwardedValues : [CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderDefaultCacheBehaviorItems0ForwardedValuesItems0], default is Undefined, optional
         The forwarded values configuration that specifies how CloudFront handles query strings, cookies and headers (maximum one).
     functionAssociation : [CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderDefaultCacheBehaviorItems0FunctionAssociationItems0], default is Undefined, optional
         A config block that triggers a cloudfront function with specific actions (maximum 2).
+    grpcConfig : [CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderDefaultCacheBehaviorItems0GrpcConfigItems0], default is Undefined, optional
+        A config block that sets the grpc config.
     lambdaFunctionAssociation : [CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderDefaultCacheBehaviorItems0LambdaFunctionAssociationItems0], default is Undefined, optional
         A config block that triggers a lambda function with specific actions (maximum 4).
     maxTtl : float, default is Undefined, optional
-        Maximum amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request to your origin to determine whether the object has been updated. Only effective in the presence of Cache-Control max-age, Cache-Control s-maxage, and Expires headers.
+        Maximum amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request to your origin to determine whether the object has been updated. Only effective in the presence of Cache-Control max-age, Cache-Control s-maxage, and Expires headers. The TTL defined in Cache Policy overrides this configuration.
     minTtl : float, default is Undefined, optional
-        Minimum amount of time that you want objects to stay in CloudFront caches before CloudFront queries your origin to see whether the object has been updated. Defaults to 0 seconds.
+        Minimum amount of time that you want objects to stay in CloudFront caches before CloudFront queries your origin to see whether the object has been updated. Defaults to 0 seconds. The TTL defined in Cache Policy overrides this configuration.
     originRequestPolicyId : str, default is Undefined, optional
         Unique identifier of the origin request policy that is attached to the behavior.
     realtimeLogConfigArn : str, default is Undefined, optional
@@ -1429,6 +1467,8 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderDefaultCacheBeha
     forwardedValues?: [CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderDefaultCacheBehaviorItems0ForwardedValuesItems0]
 
     functionAssociation?: [CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderDefaultCacheBehaviorItems0FunctionAssociationItems0]
+
+    grpcConfig?: [CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderDefaultCacheBehaviorItems0GrpcConfigItems0]
 
     lambdaFunctionAssociation?: [CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderDefaultCacheBehaviorItems0LambdaFunctionAssociationItems0]
 
@@ -1515,6 +1555,20 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderDefaultCacheBeha
     functionArn?: str
 
 
+schema CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderDefaultCacheBehaviorItems0GrpcConfigItems0:
+    r"""
+    cloudfront aws upbound io v1beta1 distribution spec init provider default cache behavior items0 grpc config items0
+
+    Attributes
+    ----------
+    enabled : bool, default is Undefined, optional
+        Whether the distribution is enabled to accept end user requests for content.
+    """
+
+
+    enabled?: bool
+
+
 schema CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderDefaultCacheBehaviorItems0LambdaFunctionAssociationItems0:
     r"""
     cloudfront aws upbound io v1beta1 distribution spec init provider default cache behavior items0 lambda function association items0
@@ -1544,7 +1598,7 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderLoggingConfigIte
     Attributes
     ----------
     bucket : str, default is Undefined, optional
-        Amazon S3 bucket to store the access logs in, for example, myawslogbucket.s3.amazonaws.com.
+        Amazon S3 bucket to store the access logs in, for example, myawslogbucket.s3.amazonaws.com. The bucket must have correct ACL attached with "FULL_CONTROL" permission for "awslogsdelivery" account (Canonical ID: "c4c1ede66af53448b93c283ce9448c4ba468c9432aa01d700d3878632f77d2d0") for log transfer to work.
     includeCookies : bool, default is Undefined, optional
         Whether to include cookies in access logs (default: false).
     prefix : str, default is Undefined, optional
@@ -1574,19 +1628,21 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderOrderedCacheBeha
     compress : bool, default is Undefined, optional
         Whether you want CloudFront to automatically compress content for web requests that include Accept-Encoding: gzip in the request header (default: false).
     defaultTtl : float, default is Undefined, optional
-        Default amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request in the absence of an Cache-Control max-age or Expires header.
+        Default amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request in the absence of an Cache-Control max-age or Expires header. The TTL defined in Cache Policy overrides this configuration.
     fieldLevelEncryptionId : str, default is Undefined, optional
         Field level encryption configuration ID.
     forwardedValues : [CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderOrderedCacheBehaviorItems0ForwardedValuesItems0], default is Undefined, optional
         The forwarded values configuration that specifies how CloudFront handles query strings, cookies and headers (maximum one).
     functionAssociation : [CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderOrderedCacheBehaviorItems0FunctionAssociationItems0], default is Undefined, optional
         A config block that triggers a cloudfront function with specific actions (maximum 2).
+    grpcConfig : [CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderOrderedCacheBehaviorItems0GrpcConfigItems0], default is Undefined, optional
+        A config block that sets the grpc config.
     lambdaFunctionAssociation : [CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderOrderedCacheBehaviorItems0LambdaFunctionAssociationItems0], default is Undefined, optional
         A config block that triggers a lambda function with specific actions (maximum 4).
     maxTtl : float, default is Undefined, optional
-        Maximum amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request to your origin to determine whether the object has been updated. Only effective in the presence of Cache-Control max-age, Cache-Control s-maxage, and Expires headers.
+        Maximum amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request to your origin to determine whether the object has been updated. Only effective in the presence of Cache-Control max-age, Cache-Control s-maxage, and Expires headers. The TTL defined in Cache Policy overrides this configuration.
     minTtl : float, default is Undefined, optional
-        Minimum amount of time that you want objects to stay in CloudFront caches before CloudFront queries your origin to see whether the object has been updated. Defaults to 0 seconds.
+        Minimum amount of time that you want objects to stay in CloudFront caches before CloudFront queries your origin to see whether the object has been updated. Defaults to 0 seconds. The TTL defined in Cache Policy overrides this configuration.
     originRequestPolicyId : str, default is Undefined, optional
         Unique identifier of the origin request policy that is attached to the behavior.
     pathPattern : str, default is Undefined, optional
@@ -1623,6 +1679,8 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderOrderedCacheBeha
     forwardedValues?: [CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderOrderedCacheBehaviorItems0ForwardedValuesItems0]
 
     functionAssociation?: [CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderOrderedCacheBehaviorItems0FunctionAssociationItems0]
+
+    grpcConfig?: [CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderOrderedCacheBehaviorItems0GrpcConfigItems0]
 
     lambdaFunctionAssociation?: [CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderOrderedCacheBehaviorItems0LambdaFunctionAssociationItems0]
 
@@ -1806,6 +1864,20 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderOrderedCacheBeha
     resolution?: "Required" | "Optional" = "Required"
 
     resolve?: "Always" | "IfNotPresent"
+
+
+schema CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderOrderedCacheBehaviorItems0GrpcConfigItems0:
+    r"""
+    cloudfront aws upbound io v1beta1 distribution spec init provider ordered cache behavior items0 grpc config items0
+
+    Attributes
+    ----------
+    enabled : bool, default is Undefined, optional
+        Whether the distribution is enabled to accept end user requests for content.
+    """
+
+
+    enabled?: bool
 
 
 schema CloudfrontAwsUpboundIoV1beta1DistributionSpecInitProviderOrderedCacheBehaviorItems0LambdaFunctionAssociationItems0:
@@ -2437,112 +2509,12 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema CloudfrontAwsUpboundIoV1beta1DistributionSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : CloudfrontAwsUpboundIoV1beta1DistributionSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : CloudfrontAwsUpboundIoV1beta1DistributionSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: CloudfrontAwsUpboundIoV1beta1DistributionSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: CloudfrontAwsUpboundIoV1beta1DistributionSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema CloudfrontAwsUpboundIoV1beta1DistributionSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : CloudfrontAwsUpboundIoV1beta1DistributionSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: CloudfrontAwsUpboundIoV1beta1DistributionSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema CloudfrontAwsUpboundIoV1beta1DistributionSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema CloudfrontAwsUpboundIoV1beta1DistributionSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema CloudfrontAwsUpboundIoV1beta1DistributionSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -2590,6 +2562,8 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProvider:
     ----------
     aliases : [str], default is Undefined, optional
         Extra CNAMEs (alternate domain names), if any, for this distribution.
+    anycastIpListId : str, default is Undefined, optional
+        ID of the Anycast static IP list that is associated with the distribution.
     arn : str, default is Undefined, optional
         ARN for the distribution. For example: arn:aws:cloudfront::123456789012:distribution/EDFDVBD632BHDS5, where 123456789012 is your AWS account ID.
     callerReference : str, default is Undefined, optional
@@ -2623,7 +2597,7 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProvider:
     lastModifiedTime : str, default is Undefined, optional
         Date and time the distribution was last modified.
     loggingConfig : [CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderLoggingConfigItems0], default is Undefined, optional
-        The logging configuration that controls how logs are written to your distribution (maximum one).
+        The logging configuration that controls how logs are written to your distribution (maximum one). AWS provides two versions of access logs for CloudFront: Legacy and v2. This argument configures legacy version standard logs.
     orderedCacheBehavior : [CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderOrderedCacheBehaviorItems0], default is Undefined, optional
         Ordered list of cache behaviors resource for this distribution. List from top to bottom in order of precedence. The topmost cache behavior will have precedence 0.
     origin : [CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderOriginItems0], default is Undefined, optional
@@ -2658,6 +2632,8 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProvider:
 
 
     aliases?: [str]
+
+    anycastIpListId?: str
 
     arn?: str
 
@@ -2765,19 +2741,21 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderDefaultCacheBeha
     compress : bool, default is Undefined, optional
         Whether you want CloudFront to automatically compress content for web requests that include Accept-Encoding: gzip in the request header (default: false).
     defaultTtl : float, default is Undefined, optional
-        Default amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request in the absence of an Cache-Control max-age or Expires header.
+        Default amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request in the absence of an Cache-Control max-age or Expires header. The TTL defined in Cache Policy overrides this configuration.
     fieldLevelEncryptionId : str, default is Undefined, optional
         Field level encryption configuration ID.
     forwardedValues : [CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderDefaultCacheBehaviorItems0ForwardedValuesItems0], default is Undefined, optional
         The forwarded values configuration that specifies how CloudFront handles query strings, cookies and headers (maximum one).
     functionAssociation : [CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderDefaultCacheBehaviorItems0FunctionAssociationItems0], default is Undefined, optional
         A config block that triggers a cloudfront function with specific actions (maximum 2).
+    grpcConfig : [CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderDefaultCacheBehaviorItems0GrpcConfigItems0], default is Undefined, optional
+        A config block that sets the grpc config.
     lambdaFunctionAssociation : [CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderDefaultCacheBehaviorItems0LambdaFunctionAssociationItems0], default is Undefined, optional
         A config block that triggers a lambda function with specific actions (maximum 4).
     maxTtl : float, default is Undefined, optional
-        Maximum amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request to your origin to determine whether the object has been updated. Only effective in the presence of Cache-Control max-age, Cache-Control s-maxage, and Expires headers.
+        Maximum amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request to your origin to determine whether the object has been updated. Only effective in the presence of Cache-Control max-age, Cache-Control s-maxage, and Expires headers. The TTL defined in Cache Policy overrides this configuration.
     minTtl : float, default is Undefined, optional
-        Minimum amount of time that you want objects to stay in CloudFront caches before CloudFront queries your origin to see whether the object has been updated. Defaults to 0 seconds.
+        Minimum amount of time that you want objects to stay in CloudFront caches before CloudFront queries your origin to see whether the object has been updated. Defaults to 0 seconds. The TTL defined in Cache Policy overrides this configuration.
     originRequestPolicyId : str, default is Undefined, optional
         Unique identifier of the origin request policy that is attached to the behavior.
     realtimeLogConfigArn : str, default is Undefined, optional
@@ -2812,6 +2790,8 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderDefaultCacheBeha
     forwardedValues?: [CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderDefaultCacheBehaviorItems0ForwardedValuesItems0]
 
     functionAssociation?: [CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderDefaultCacheBehaviorItems0FunctionAssociationItems0]
+
+    grpcConfig?: [CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderDefaultCacheBehaviorItems0GrpcConfigItems0]
 
     lambdaFunctionAssociation?: [CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderDefaultCacheBehaviorItems0LambdaFunctionAssociationItems0]
 
@@ -2898,6 +2878,20 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderDefaultCacheBeha
     functionArn?: str
 
 
+schema CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderDefaultCacheBehaviorItems0GrpcConfigItems0:
+    r"""
+    cloudfront aws upbound io v1beta1 distribution status at provider default cache behavior items0 grpc config items0
+
+    Attributes
+    ----------
+    enabled : bool, default is Undefined, optional
+        Whether the distribution is enabled to accept end user requests for content.
+    """
+
+
+    enabled?: bool
+
+
 schema CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderDefaultCacheBehaviorItems0LambdaFunctionAssociationItems0:
     r"""
     cloudfront aws upbound io v1beta1 distribution status at provider default cache behavior items0 lambda function association items0
@@ -2927,7 +2921,7 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderLoggingConfigIte
     Attributes
     ----------
     bucket : str, default is Undefined, optional
-        Amazon S3 bucket to store the access logs in, for example, myawslogbucket.s3.amazonaws.com.
+        Amazon S3 bucket to store the access logs in, for example, myawslogbucket.s3.amazonaws.com. The bucket must have correct ACL attached with "FULL_CONTROL" permission for "awslogsdelivery" account (Canonical ID: "c4c1ede66af53448b93c283ce9448c4ba468c9432aa01d700d3878632f77d2d0") for log transfer to work.
     includeCookies : bool, default is Undefined, optional
         Whether to include cookies in access logs (default: false).
     prefix : str, default is Undefined, optional
@@ -2957,19 +2951,21 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderOrderedCacheBeha
     compress : bool, default is Undefined, optional
         Whether you want CloudFront to automatically compress content for web requests that include Accept-Encoding: gzip in the request header (default: false).
     defaultTtl : float, default is Undefined, optional
-        Default amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request in the absence of an Cache-Control max-age or Expires header.
+        Default amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request in the absence of an Cache-Control max-age or Expires header. The TTL defined in Cache Policy overrides this configuration.
     fieldLevelEncryptionId : str, default is Undefined, optional
         Field level encryption configuration ID.
     forwardedValues : [CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderOrderedCacheBehaviorItems0ForwardedValuesItems0], default is Undefined, optional
         The forwarded values configuration that specifies how CloudFront handles query strings, cookies and headers (maximum one).
     functionAssociation : [CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderOrderedCacheBehaviorItems0FunctionAssociationItems0], default is Undefined, optional
         A config block that triggers a cloudfront function with specific actions (maximum 2).
+    grpcConfig : [CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderOrderedCacheBehaviorItems0GrpcConfigItems0], default is Undefined, optional
+        A config block that sets the grpc config.
     lambdaFunctionAssociation : [CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderOrderedCacheBehaviorItems0LambdaFunctionAssociationItems0], default is Undefined, optional
         A config block that triggers a lambda function with specific actions (maximum 4).
     maxTtl : float, default is Undefined, optional
-        Maximum amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request to your origin to determine whether the object has been updated. Only effective in the presence of Cache-Control max-age, Cache-Control s-maxage, and Expires headers.
+        Maximum amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request to your origin to determine whether the object has been updated. Only effective in the presence of Cache-Control max-age, Cache-Control s-maxage, and Expires headers. The TTL defined in Cache Policy overrides this configuration.
     minTtl : float, default is Undefined, optional
-        Minimum amount of time that you want objects to stay in CloudFront caches before CloudFront queries your origin to see whether the object has been updated. Defaults to 0 seconds.
+        Minimum amount of time that you want objects to stay in CloudFront caches before CloudFront queries your origin to see whether the object has been updated. Defaults to 0 seconds. The TTL defined in Cache Policy overrides this configuration.
     originRequestPolicyId : str, default is Undefined, optional
         Unique identifier of the origin request policy that is attached to the behavior.
     pathPattern : str, default is Undefined, optional
@@ -3006,6 +3002,8 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderOrderedCacheBeha
     forwardedValues?: [CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderOrderedCacheBehaviorItems0ForwardedValuesItems0]
 
     functionAssociation?: [CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderOrderedCacheBehaviorItems0FunctionAssociationItems0]
+
+    grpcConfig?: [CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderOrderedCacheBehaviorItems0GrpcConfigItems0]
 
     lambdaFunctionAssociation?: [CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderOrderedCacheBehaviorItems0LambdaFunctionAssociationItems0]
 
@@ -3092,6 +3090,20 @@ schema CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderOrderedCacheBeha
     eventType?: str
 
     functionArn?: str
+
+
+schema CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderOrderedCacheBehaviorItems0GrpcConfigItems0:
+    r"""
+    cloudfront aws upbound io v1beta1 distribution status at provider ordered cache behavior items0 grpc config items0
+
+    Attributes
+    ----------
+    enabled : bool, default is Undefined, optional
+        Whether the distribution is enabled to accept end user requests for content.
+    """
+
+
+    enabled?: bool
 
 
 schema CloudfrontAwsUpboundIoV1beta1DistributionStatusAtProviderOrderedCacheBehaviorItems0LambdaFunctionAssociationItems0:

@@ -66,8 +66,6 @@ schema RdsAwsUpboundIoV1beta1DBInstanceAutomatedBackupsReplicationSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : RdsAwsUpboundIoV1beta1DBInstanceAutomatedBackupsReplicationSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : RdsAwsUpboundIoV1beta1DBInstanceAutomatedBackupsReplicationSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : RdsAwsUpboundIoV1beta1DBInstanceAutomatedBackupsReplicationSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema RdsAwsUpboundIoV1beta1DBInstanceAutomatedBackupsReplicationSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: RdsAwsUpboundIoV1beta1DBInstanceAutomatedBackupsReplicationSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: RdsAwsUpboundIoV1beta1DBInstanceAutomatedBackupsReplicationSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: RdsAwsUpboundIoV1beta1DBInstanceAutomatedBackupsReplicationSpecWriteConnectionSecretToRef
 
@@ -103,6 +99,7 @@ schema RdsAwsUpboundIoV1beta1DBInstanceAutomatedBackupsReplicationSpecForProvide
     preSignedUrl : str, default is Undefined, optional
         A URL that contains a Signature Version 4 signed request for the StartDBInstanceAutomatedBackupsReplication action to be called in the AWS Region of the source DB instance.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     retentionPeriod : float, default is Undefined, optional
         The retention period for the replicated automated backups, defaults to 7.
@@ -585,112 +582,12 @@ schema RdsAwsUpboundIoV1beta1DBInstanceAutomatedBackupsReplicationSpecProviderCo
     resolve?: "Always" | "IfNotPresent"
 
 
-schema RdsAwsUpboundIoV1beta1DBInstanceAutomatedBackupsReplicationSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : RdsAwsUpboundIoV1beta1DBInstanceAutomatedBackupsReplicationSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : RdsAwsUpboundIoV1beta1DBInstanceAutomatedBackupsReplicationSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: RdsAwsUpboundIoV1beta1DBInstanceAutomatedBackupsReplicationSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: RdsAwsUpboundIoV1beta1DBInstanceAutomatedBackupsReplicationSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema RdsAwsUpboundIoV1beta1DBInstanceAutomatedBackupsReplicationSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : RdsAwsUpboundIoV1beta1DBInstanceAutomatedBackupsReplicationSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: RdsAwsUpboundIoV1beta1DBInstanceAutomatedBackupsReplicationSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema RdsAwsUpboundIoV1beta1DBInstanceAutomatedBackupsReplicationSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema RdsAwsUpboundIoV1beta1DBInstanceAutomatedBackupsReplicationSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema RdsAwsUpboundIoV1beta1DBInstanceAutomatedBackupsReplicationSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -742,6 +639,9 @@ schema RdsAwsUpboundIoV1beta1DBInstanceAutomatedBackupsReplicationStatusAtProvid
         The AWS KMS key identifier for encryption of the replicated automated backups. The KMS key ID is the Amazon Resource Name (ARN) for the KMS encryption key in the destination AWS Region, for example, arn:aws:kms:us-east-1:123456789012:key/AKIAIOSFODNN7EXAMPLE.
     preSignedUrl : str, default is Undefined, optional
         A URL that contains a Signature Version 4 signed request for the StartDBInstanceAutomatedBackupsReplication action to be called in the AWS Region of the source DB instance.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     retentionPeriod : float, default is Undefined, optional
         The retention period for the replicated automated backups, defaults to 7.
     sourceDbInstanceArn : str, default is Undefined, optional
@@ -754,6 +654,8 @@ schema RdsAwsUpboundIoV1beta1DBInstanceAutomatedBackupsReplicationStatusAtProvid
     kmsKeyId?: str
 
     preSignedUrl?: str
+
+    region?: str
 
     retentionPeriod?: float
 

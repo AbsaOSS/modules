@@ -66,8 +66,6 @@ schema ImagebuilderAwsUpboundIoV1beta1ImageRecipeSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : ImagebuilderAwsUpboundIoV1beta1ImageRecipeSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : ImagebuilderAwsUpboundIoV1beta1ImageRecipeSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : ImagebuilderAwsUpboundIoV1beta1ImageRecipeSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema ImagebuilderAwsUpboundIoV1beta1ImageRecipeSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: ImagebuilderAwsUpboundIoV1beta1ImageRecipeSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: ImagebuilderAwsUpboundIoV1beta1ImageRecipeSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: ImagebuilderAwsUpboundIoV1beta1ImageRecipeSpecWriteConnectionSecretToRef
 
@@ -105,6 +101,7 @@ schema ImagebuilderAwsUpboundIoV1beta1ImageRecipeSpecForProvider:
     parentImage : str, default is Undefined, optional
         The image recipe uses this image as a base from which to build your customized image. The value can be the base image ARN or an AMI ID.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     systemsManagerAgent : [ImagebuilderAwsUpboundIoV1beta1ImageRecipeSpecForProviderSystemsManagerAgentItems0], default is Undefined, optional
         Configuration block for the Systems Manager Agent installed by default by Image Builder. Detailed below.
@@ -350,7 +347,7 @@ schema ImagebuilderAwsUpboundIoV1beta1ImageRecipeSpecForProviderSystemsManagerAg
     Attributes
     ----------
     uninstallAfterBuild : bool, default is Undefined, optional
-        Whether to remove the Systems Manager Agent after the image has been built. Defaults to false.
+        Whether to remove the Systems Manager Agent after the image has been built.
     """
 
 
@@ -624,7 +621,7 @@ schema ImagebuilderAwsUpboundIoV1beta1ImageRecipeSpecInitProviderSystemsManagerA
     Attributes
     ----------
     uninstallAfterBuild : bool, default is Undefined, optional
-        Whether to remove the Systems Manager Agent after the image has been built. Defaults to false.
+        Whether to remove the Systems Manager Agent after the image has been built.
     """
 
 
@@ -675,112 +672,12 @@ schema ImagebuilderAwsUpboundIoV1beta1ImageRecipeSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema ImagebuilderAwsUpboundIoV1beta1ImageRecipeSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : ImagebuilderAwsUpboundIoV1beta1ImageRecipeSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : ImagebuilderAwsUpboundIoV1beta1ImageRecipeSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: ImagebuilderAwsUpboundIoV1beta1ImageRecipeSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: ImagebuilderAwsUpboundIoV1beta1ImageRecipeSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema ImagebuilderAwsUpboundIoV1beta1ImageRecipeSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : ImagebuilderAwsUpboundIoV1beta1ImageRecipeSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: ImagebuilderAwsUpboundIoV1beta1ImageRecipeSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema ImagebuilderAwsUpboundIoV1beta1ImageRecipeSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema ImagebuilderAwsUpboundIoV1beta1ImageRecipeSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema ImagebuilderAwsUpboundIoV1beta1ImageRecipeSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -846,6 +743,9 @@ schema ImagebuilderAwsUpboundIoV1beta1ImageRecipeStatusAtProvider:
         The image recipe uses this image as a base from which to build your customized image. The value can be the base image ARN or an AMI ID.
     platform : str, default is Undefined, optional
         Platform of the image recipe.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     systemsManagerAgent : [ImagebuilderAwsUpboundIoV1beta1ImageRecipeStatusAtProviderSystemsManagerAgentItems0], default is Undefined, optional
         Configuration block for the Systems Manager Agent installed by default by Image Builder. Detailed below.
     tags : {str:str}, default is Undefined, optional
@@ -880,6 +780,8 @@ schema ImagebuilderAwsUpboundIoV1beta1ImageRecipeStatusAtProvider:
     parentImage?: str
 
     platform?: str
+
+    region?: str
 
     systemsManagerAgent?: [ImagebuilderAwsUpboundIoV1beta1ImageRecipeStatusAtProviderSystemsManagerAgentItems0]
 
@@ -1005,7 +907,7 @@ schema ImagebuilderAwsUpboundIoV1beta1ImageRecipeStatusAtProviderSystemsManagerA
     Attributes
     ----------
     uninstallAfterBuild : bool, default is Undefined, optional
-        Whether to remove the Systems Manager Agent after the image has been built. Defaults to false.
+        Whether to remove the Systems Manager Agent after the image has been built.
     """
 
 

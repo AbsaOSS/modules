@@ -66,8 +66,6 @@ schema FirehoseAwsUpboundIoV1beta2DeliveryStreamSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema FirehoseAwsUpboundIoV1beta2DeliveryStreamSpec:
 
     providerConfigRef?: FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecWriteConnectionSecretToRef
 
 
@@ -95,7 +91,7 @@ schema FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecForProvider:
     Attributes
     ----------
     destination : str, default is Undefined, optional
-        –  This is the destination to where the data is delivered. The only options are s3 (Deprecated, use extended_s3 instead), extended_s3, redshift, elasticsearch, splunk, http_endpoint, opensearch, opensearchserverless and snowflake.
+        This is the destination to where the data is delivered. The only options are s3 (Deprecated, use extended_s3 instead), extended_s3, redshift, elasticsearch, splunk, http_endpoint, opensearch, opensearchserverless and snowflake.
     destinationId : str, default is Undefined, optional
         destination Id
     elasticsearchConfiguration : FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecForProviderElasticsearchConfiguration, default is Undefined, optional
@@ -119,7 +115,7 @@ schema FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecForProvider:
     redshiftConfiguration : FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecForProviderRedshiftConfiguration, default is Undefined, optional
         redshift configuration
     region : str, default is Undefined, required
-        If you don't specify an AWS Region, the default is the current region.
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     serverSideEncryption : FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecForProviderServerSideEncryption, default is Undefined, optional
         server side encryption
@@ -3266,6 +3262,8 @@ schema FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecForProviderMskSourceConfigur
         authentication configuration
     mskClusterArn : str, default is Undefined, optional
         The ARN of the Amazon MSK cluster.
+    readFromTimestamp : str, default is Undefined, optional
+        The start date and time in UTC for the offset position within your MSK topic from where Firehose begins to read. By default, this is set to timestamp when Firehose becomes Active. If you want to create a Firehose stream with Earliest start position set the read_from_timestamp parameter to Epoch (1970-01-01T00:00:00Z).
     topicName : str, default is Undefined, optional
         The topic name within the Amazon MSK cluster.
     """
@@ -3274,6 +3272,8 @@ schema FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecForProviderMskSourceConfigur
     authenticationConfiguration?: FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecForProviderMskSourceConfigurationAuthenticationConfiguration
 
     mskClusterArn?: str
+
+    readFromTimestamp?: str
 
     topicName?: str
 
@@ -6753,7 +6753,7 @@ schema FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecInitProvider:
     Attributes
     ----------
     destination : str, default is Undefined, optional
-        –  This is the destination to where the data is delivered. The only options are s3 (Deprecated, use extended_s3 instead), extended_s3, redshift, elasticsearch, splunk, http_endpoint, opensearch, opensearchserverless and snowflake.
+        This is the destination to where the data is delivered. The only options are s3 (Deprecated, use extended_s3 instead), extended_s3, redshift, elasticsearch, splunk, http_endpoint, opensearch, opensearchserverless and snowflake.
     destinationId : str, default is Undefined, optional
         destination Id
     elasticsearchConfiguration : FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecInitProviderElasticsearchConfiguration, default is Undefined, optional
@@ -9915,6 +9915,8 @@ schema FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecInitProviderMskSourceConfigu
         authentication configuration
     mskClusterArn : str, default is Undefined, optional
         The ARN of the Amazon MSK cluster.
+    readFromTimestamp : str, default is Undefined, optional
+        The start date and time in UTC for the offset position within your MSK topic from where Firehose begins to read. By default, this is set to timestamp when Firehose becomes Active. If you want to create a Firehose stream with Earliest start position set the read_from_timestamp parameter to Epoch (1970-01-01T00:00:00Z).
     topicName : str, default is Undefined, optional
         The topic name within the Amazon MSK cluster.
     """
@@ -9923,6 +9925,8 @@ schema FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecInitProviderMskSourceConfigu
     authenticationConfiguration?: FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecInitProviderMskSourceConfigurationAuthenticationConfiguration
 
     mskClusterArn?: str
+
+    readFromTimestamp?: str
 
     topicName?: str
 
@@ -13430,112 +13434,12 @@ schema FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema FirehoseAwsUpboundIoV1beta2DeliveryStreamSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -13584,7 +13488,7 @@ schema FirehoseAwsUpboundIoV1beta2DeliveryStreamStatusAtProvider:
     arn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) specifying the Stream
     destination : str, default is Undefined, optional
-        –  This is the destination to where the data is delivered. The only options are s3 (Deprecated, use extended_s3 instead), extended_s3, redshift, elasticsearch, splunk, http_endpoint, opensearch, opensearchserverless and snowflake.
+        This is the destination to where the data is delivered. The only options are s3 (Deprecated, use extended_s3 instead), extended_s3, redshift, elasticsearch, splunk, http_endpoint, opensearch, opensearchserverless and snowflake.
     destinationId : str, default is Undefined, optional
         destination Id
     elasticsearchConfiguration : FirehoseAwsUpboundIoV1beta2DeliveryStreamStatusAtProviderElasticsearchConfiguration, default is Undefined, optional
@@ -13609,6 +13513,9 @@ schema FirehoseAwsUpboundIoV1beta2DeliveryStreamStatusAtProvider:
         opensearchserverless configuration
     redshiftConfiguration : FirehoseAwsUpboundIoV1beta2DeliveryStreamStatusAtProviderRedshiftConfiguration, default is Undefined, optional
         redshift configuration
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     serverSideEncryption : FirehoseAwsUpboundIoV1beta2DeliveryStreamStatusAtProviderServerSideEncryption, default is Undefined, optional
         server side encryption
     snowflakeConfiguration : FirehoseAwsUpboundIoV1beta2DeliveryStreamStatusAtProviderSnowflakeConfiguration, default is Undefined, optional
@@ -13651,6 +13558,8 @@ schema FirehoseAwsUpboundIoV1beta2DeliveryStreamStatusAtProvider:
     opensearchserverlessConfiguration?: FirehoseAwsUpboundIoV1beta2DeliveryStreamStatusAtProviderOpensearchserverlessConfiguration
 
     redshiftConfiguration?: FirehoseAwsUpboundIoV1beta2DeliveryStreamStatusAtProviderRedshiftConfiguration
+
+    region?: str
 
     serverSideEncryption?: FirehoseAwsUpboundIoV1beta2DeliveryStreamStatusAtProviderServerSideEncryption
 
@@ -14895,6 +14804,8 @@ schema FirehoseAwsUpboundIoV1beta2DeliveryStreamStatusAtProviderMskSourceConfigu
         authentication configuration
     mskClusterArn : str, default is Undefined, optional
         The ARN of the Amazon MSK cluster.
+    readFromTimestamp : str, default is Undefined, optional
+        The start date and time in UTC for the offset position within your MSK topic from where Firehose begins to read. By default, this is set to timestamp when Firehose becomes Active. If you want to create a Firehose stream with Earliest start position set the read_from_timestamp parameter to Epoch (1970-01-01T00:00:00Z).
     topicName : str, default is Undefined, optional
         The topic name within the Amazon MSK cluster.
     """
@@ -14903,6 +14814,8 @@ schema FirehoseAwsUpboundIoV1beta2DeliveryStreamStatusAtProviderMskSourceConfigu
     authenticationConfiguration?: FirehoseAwsUpboundIoV1beta2DeliveryStreamStatusAtProviderMskSourceConfigurationAuthenticationConfiguration
 
     mskClusterArn?: str
+
+    readFromTimestamp?: str
 
     topicName?: str
 

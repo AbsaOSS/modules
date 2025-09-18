@@ -66,8 +66,6 @@ schema NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpecWriteConnectionSecretToRef
 
@@ -103,6 +99,7 @@ schema NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpecForProvider:
     loggingConfiguration : [NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpecForProviderLoggingConfigurationItems0], default is Undefined, optional
         A configuration block describing how AWS Network Firewall performs logging for a firewall. See Logging Configuration below for details.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     """
 
@@ -214,7 +211,7 @@ schema NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpecForProviderLogg
     Attributes
     ----------
     logDestinationConfig : [NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpecForProviderLoggingConfigurationItems0LogDestinationConfigItems0], default is Undefined, optional
-        Set of configuration blocks describing the logging details for a firewall. See Log Destination Config below for details. At most, only two blocks can be specified; one for FLOW logs and one for ALERT logs.
+        Set of configuration blocks describing the logging details for a firewall. See Log Destination Config below for details. At most, only Three blocks can be specified; one for FLOW logs and one for ALERT logs and one for TLS logs.
     """
 
 
@@ -232,7 +229,7 @@ schema NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpecForProviderLogg
     logDestinationType : str, default is Undefined, optional
         The location to send logs to. Valid values: S3, CloudWatchLogs, KinesisDataFirehose.
     logType : str, default is Undefined, optional
-        The type of log to send. Valid values: ALERT or FLOW. Alert logs report traffic that matches a StatefulRule with an action setting that sends a log message. Flow logs are standard network traffic flow logs.
+        The type of log to send. Valid values: ALERT or FLOW or TLS. Alert logs report traffic that matches a StatefulRule with an action setting that sends a log message. Flow logs are standard network traffic flow logs.
     """
 
 
@@ -374,7 +371,7 @@ schema NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpecInitProviderLog
     Attributes
     ----------
     logDestinationConfig : [NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpecInitProviderLoggingConfigurationItems0LogDestinationConfigItems0], default is Undefined, optional
-        Set of configuration blocks describing the logging details for a firewall. See Log Destination Config below for details. At most, only two blocks can be specified; one for FLOW logs and one for ALERT logs.
+        Set of configuration blocks describing the logging details for a firewall. See Log Destination Config below for details. At most, only Three blocks can be specified; one for FLOW logs and one for ALERT logs and one for TLS logs.
     """
 
 
@@ -392,7 +389,7 @@ schema NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpecInitProviderLog
     logDestinationType : str, default is Undefined, optional
         The location to send logs to. Valid values: S3, CloudWatchLogs, KinesisDataFirehose.
     logType : str, default is Undefined, optional
-        The type of log to send. Valid values: ALERT or FLOW. Alert logs report traffic that matches a StatefulRule with an action setting that sends a log message. Flow logs are standard network traffic flow logs.
+        The type of log to send. Valid values: ALERT or FLOW or TLS. Alert logs report traffic that matches a StatefulRule with an action setting that sends a log message. Flow logs are standard network traffic flow logs.
     """
 
 
@@ -447,112 +444,12 @@ schema NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpecProviderConfigR
     resolve?: "Always" | "IfNotPresent"
 
 
-schema NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -604,6 +501,9 @@ schema NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationStatusAtProvider:
         The Amazon Resource Name (ARN) of the associated firewall.
     loggingConfiguration : [NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationStatusAtProviderLoggingConfigurationItems0], default is Undefined, optional
         A configuration block describing how AWS Network Firewall performs logging for a firewall. See Logging Configuration below for details.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     """
 
 
@@ -613,6 +513,8 @@ schema NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationStatusAtProvider:
 
     loggingConfiguration?: [NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationStatusAtProviderLoggingConfigurationItems0]
 
+    region?: str
+
 
 schema NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationStatusAtProviderLoggingConfigurationItems0:
     r"""
@@ -621,7 +523,7 @@ schema NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationStatusAtProviderLog
     Attributes
     ----------
     logDestinationConfig : [NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationStatusAtProviderLoggingConfigurationItems0LogDestinationConfigItems0], default is Undefined, optional
-        Set of configuration blocks describing the logging details for a firewall. See Log Destination Config below for details. At most, only two blocks can be specified; one for FLOW logs and one for ALERT logs.
+        Set of configuration blocks describing the logging details for a firewall. See Log Destination Config below for details. At most, only Three blocks can be specified; one for FLOW logs and one for ALERT logs and one for TLS logs.
     """
 
 
@@ -639,7 +541,7 @@ schema NetworkfirewallAwsUpboundIoV1beta1LoggingConfigurationStatusAtProviderLog
     logDestinationType : str, default is Undefined, optional
         The location to send logs to. Valid values: S3, CloudWatchLogs, KinesisDataFirehose.
     logType : str, default is Undefined, optional
-        The type of log to send. Valid values: ALERT or FLOW. Alert logs report traffic that matches a StatefulRule with an action setting that sends a log message. Flow logs are standard network traffic flow logs.
+        The type of log to send. Valid values: ALERT or FLOW or TLS. Alert logs report traffic that matches a StatefulRule with an action setting that sends a log message. Flow logs are standard network traffic flow logs.
     """
 
 

@@ -66,8 +66,6 @@ schema GlueAwsUpboundIoV1beta1ConnectionSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : GlueAwsUpboundIoV1beta1ConnectionSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : GlueAwsUpboundIoV1beta1ConnectionSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : GlueAwsUpboundIoV1beta1ConnectionSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema GlueAwsUpboundIoV1beta1ConnectionSpec:
 
     providerConfigRef?: GlueAwsUpboundIoV1beta1ConnectionSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: GlueAwsUpboundIoV1beta1ConnectionSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: GlueAwsUpboundIoV1beta1ConnectionSpecWriteConnectionSecretToRef
 
 
@@ -94,24 +90,29 @@ schema GlueAwsUpboundIoV1beta1ConnectionSpecForProvider:
 
     Attributes
     ----------
+    athenaPropertiesSecretRef : GlueAwsUpboundIoV1beta1ConnectionSpecForProviderAthenaPropertiesSecretRef, default is Undefined, optional
+        athena properties secret ref
     catalogId : str, default is Undefined, required
-        –  The ID of the Data Catalog in which to create the connection. If none is supplied, the AWS account ID is used by default.
+        ID of the Data Catalog in which to create the connection. If none is supplied, the AWS account ID is used by default.
     connectionPropertiesSecretRef : GlueAwsUpboundIoV1beta1ConnectionSpecForProviderConnectionPropertiesSecretRef, default is Undefined, optional
         connection properties secret ref
     connectionType : str, default is Undefined, optional
-        –  The type of the connection. Supported are: CUSTOM, JDBC, KAFKA, MARKETPLACE, MONGODB, and NETWORK. Defaults to JDBC.
+        Type of the connection. Valid values: AZURECOSMOS, AZURESQL, BIGQUERY, CUSTOM, DYNAMODB, JDBC, KAFKA, MARKETPLACE, MONGODB, NETWORK, OPENSEARCH, SNOWFLAKE. Defaults to JDBC.
     description : str, default is Undefined, optional
-        –  Description of the connection.
+        Description of the connection.
     matchCriteria : [str], default is Undefined, optional
-        –  A list of criteria that can be used in selecting this connection.
+        List of criteria that can be used in selecting this connection.
     physicalConnectionRequirements : [GlueAwsUpboundIoV1beta1ConnectionSpecForProviderPhysicalConnectionRequirementsItems0], default is Undefined, optional
-        A map of physical connection requirements, such as VPC and SecurityGroup. Defined below.
+        Map of physical connection requirements, such as VPC and SecurityGroup. See physical_connection_requirements Block for details.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     """
 
+
+    athenaPropertiesSecretRef?: GlueAwsUpboundIoV1beta1ConnectionSpecForProviderAthenaPropertiesSecretRef
 
     catalogId: str
 
@@ -130,9 +131,27 @@ schema GlueAwsUpboundIoV1beta1ConnectionSpecForProvider:
     tags?: {str:str}
 
 
+schema GlueAwsUpboundIoV1beta1ConnectionSpecForProviderAthenaPropertiesSecretRef:
+    r"""
+    Map of key-value pairs used as connection properties specific to the Athena compute environment.
+
+    Attributes
+    ----------
+    name : str, default is Undefined, required
+        Name of the secret.
+    namespace : str, default is Undefined, required
+        Namespace of the secret.
+    """
+
+
+    name: str
+
+    namespace: str
+
+
 schema GlueAwsUpboundIoV1beta1ConnectionSpecForProviderConnectionPropertiesSecretRef:
     r"""
-    value pairs used as parameters for this connection.
+    Map of key-value pairs used as parameters for this connection. For more information, see the AWS Documentation.
 
     Attributes
     ----------
@@ -476,20 +495,24 @@ schema GlueAwsUpboundIoV1beta1ConnectionSpecInitProvider:
 
     Attributes
     ----------
+    athenaPropertiesSecretRef : {str:str}, default is Undefined, optional
+        athena properties secret ref
     connectionPropertiesSecretRef : {str:str}, default is Undefined, optional
         connection properties secret ref
     connectionType : str, default is Undefined, optional
-        –  The type of the connection. Supported are: CUSTOM, JDBC, KAFKA, MARKETPLACE, MONGODB, and NETWORK. Defaults to JDBC.
+        Type of the connection. Valid values: AZURECOSMOS, AZURESQL, BIGQUERY, CUSTOM, DYNAMODB, JDBC, KAFKA, MARKETPLACE, MONGODB, NETWORK, OPENSEARCH, SNOWFLAKE. Defaults to JDBC.
     description : str, default is Undefined, optional
-        –  Description of the connection.
+        Description of the connection.
     matchCriteria : [str], default is Undefined, optional
-        –  A list of criteria that can be used in selecting this connection.
+        List of criteria that can be used in selecting this connection.
     physicalConnectionRequirements : [GlueAwsUpboundIoV1beta1ConnectionSpecInitProviderPhysicalConnectionRequirementsItems0], default is Undefined, optional
-        A map of physical connection requirements, such as VPC and SecurityGroup. Defined below.
+        Map of physical connection requirements, such as VPC and SecurityGroup. See physical_connection_requirements Block for details.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     """
 
+
+    athenaPropertiesSecretRef?: {str:str}
 
     connectionPropertiesSecretRef?: {str:str}
 
@@ -861,112 +884,12 @@ schema GlueAwsUpboundIoV1beta1ConnectionSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema GlueAwsUpboundIoV1beta1ConnectionSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : GlueAwsUpboundIoV1beta1ConnectionSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : GlueAwsUpboundIoV1beta1ConnectionSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: GlueAwsUpboundIoV1beta1ConnectionSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: GlueAwsUpboundIoV1beta1ConnectionSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema GlueAwsUpboundIoV1beta1ConnectionSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : GlueAwsUpboundIoV1beta1ConnectionSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: GlueAwsUpboundIoV1beta1ConnectionSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema GlueAwsUpboundIoV1beta1ConnectionSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema GlueAwsUpboundIoV1beta1ConnectionSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema GlueAwsUpboundIoV1beta1ConnectionSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1013,19 +936,22 @@ schema GlueAwsUpboundIoV1beta1ConnectionStatusAtProvider:
     Attributes
     ----------
     arn : str, default is Undefined, optional
-        The ARN of the Glue Connection.
+        ARN of the Glue Connection.
     catalogId : str, default is Undefined, optional
-        –  The ID of the Data Catalog in which to create the connection. If none is supplied, the AWS account ID is used by default.
+        ID of the Data Catalog in which to create the connection. If none is supplied, the AWS account ID is used by default.
     connectionType : str, default is Undefined, optional
-        –  The type of the connection. Supported are: CUSTOM, JDBC, KAFKA, MARKETPLACE, MONGODB, and NETWORK. Defaults to JDBC.
+        Type of the connection. Valid values: AZURECOSMOS, AZURESQL, BIGQUERY, CUSTOM, DYNAMODB, JDBC, KAFKA, MARKETPLACE, MONGODB, NETWORK, OPENSEARCH, SNOWFLAKE. Defaults to JDBC.
     description : str, default is Undefined, optional
-        –  Description of the connection.
+        Description of the connection.
     id : str, default is Undefined, optional
-        Catalog ID and name of the connection
+        Catalog ID and name of the connection.
     matchCriteria : [str], default is Undefined, optional
-        –  A list of criteria that can be used in selecting this connection.
+        List of criteria that can be used in selecting this connection.
     physicalConnectionRequirements : [GlueAwsUpboundIoV1beta1ConnectionStatusAtProviderPhysicalConnectionRequirementsItems0], default is Undefined, optional
-        A map of physical connection requirements, such as VPC and SecurityGroup. Defined below.
+        Map of physical connection requirements, such as VPC and SecurityGroup. See physical_connection_requirements Block for details.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
@@ -1046,6 +972,8 @@ schema GlueAwsUpboundIoV1beta1ConnectionStatusAtProvider:
     matchCriteria?: [str]
 
     physicalConnectionRequirements?: [GlueAwsUpboundIoV1beta1ConnectionStatusAtProviderPhysicalConnectionRequirementsItems0]
+
+    region?: str
 
     tags?: {str:str}
 

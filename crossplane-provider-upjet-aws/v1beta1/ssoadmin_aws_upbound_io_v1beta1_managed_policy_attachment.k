@@ -75,8 +75,6 @@ schema SsoadminAwsUpboundIoV1beta1ManagedPolicyAttachmentSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : SsoadminAwsUpboundIoV1beta1ManagedPolicyAttachmentSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : SsoadminAwsUpboundIoV1beta1ManagedPolicyAttachmentSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : SsoadminAwsUpboundIoV1beta1ManagedPolicyAttachmentSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -91,8 +89,6 @@ schema SsoadminAwsUpboundIoV1beta1ManagedPolicyAttachmentSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: SsoadminAwsUpboundIoV1beta1ManagedPolicyAttachmentSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: SsoadminAwsUpboundIoV1beta1ManagedPolicyAttachmentSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: SsoadminAwsUpboundIoV1beta1ManagedPolicyAttachmentSpecWriteConnectionSecretToRef
 
@@ -114,6 +110,7 @@ schema SsoadminAwsUpboundIoV1beta1ManagedPolicyAttachmentSpecForProvider:
     permissionSetArnSelector : SsoadminAwsUpboundIoV1beta1ManagedPolicyAttachmentSpecForProviderPermissionSetArnSelector, default is Undefined, optional
         permission set arn selector
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     """
 
@@ -264,112 +261,12 @@ schema SsoadminAwsUpboundIoV1beta1ManagedPolicyAttachmentSpecProviderConfigRefPo
     resolve?: "Always" | "IfNotPresent"
 
 
-schema SsoadminAwsUpboundIoV1beta1ManagedPolicyAttachmentSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : SsoadminAwsUpboundIoV1beta1ManagedPolicyAttachmentSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : SsoadminAwsUpboundIoV1beta1ManagedPolicyAttachmentSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: SsoadminAwsUpboundIoV1beta1ManagedPolicyAttachmentSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: SsoadminAwsUpboundIoV1beta1ManagedPolicyAttachmentSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema SsoadminAwsUpboundIoV1beta1ManagedPolicyAttachmentSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : SsoadminAwsUpboundIoV1beta1ManagedPolicyAttachmentSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: SsoadminAwsUpboundIoV1beta1ManagedPolicyAttachmentSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema SsoadminAwsUpboundIoV1beta1ManagedPolicyAttachmentSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema SsoadminAwsUpboundIoV1beta1ManagedPolicyAttachmentSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema SsoadminAwsUpboundIoV1beta1ManagedPolicyAttachmentSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -425,6 +322,9 @@ schema SsoadminAwsUpboundIoV1beta1ManagedPolicyAttachmentStatusAtProvider:
         The name of the IAM Managed Policy.
     permissionSetArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the Permission Set.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     """
 
 
@@ -437,6 +337,8 @@ schema SsoadminAwsUpboundIoV1beta1ManagedPolicyAttachmentStatusAtProvider:
     managedPolicyName?: str
 
     permissionSetArn?: str
+
+    region?: str
 
 
 schema SsoadminAwsUpboundIoV1beta1ManagedPolicyAttachmentStatusConditionsItems0:

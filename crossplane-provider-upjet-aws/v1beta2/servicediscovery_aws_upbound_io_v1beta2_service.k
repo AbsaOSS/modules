@@ -66,8 +66,6 @@ schema ServicediscoveryAwsUpboundIoV1beta2ServiceSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : ServicediscoveryAwsUpboundIoV1beta2ServiceSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : ServicediscoveryAwsUpboundIoV1beta2ServiceSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : ServicediscoveryAwsUpboundIoV1beta2ServiceSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema ServicediscoveryAwsUpboundIoV1beta2ServiceSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: ServicediscoveryAwsUpboundIoV1beta2ServiceSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: ServicediscoveryAwsUpboundIoV1beta2ServiceSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: ServicediscoveryAwsUpboundIoV1beta2ServiceSpecWriteConnectionSecretToRef
 
@@ -109,6 +105,7 @@ schema ServicediscoveryAwsUpboundIoV1beta2ServiceSpecForProvider:
     namespaceId : str, default is Undefined, optional
         The ID of the namespace that you want to use to create the service.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
@@ -304,7 +301,7 @@ schema ServicediscoveryAwsUpboundIoV1beta2ServiceSpecForProviderHealthCheckCusto
     Attributes
     ----------
     failureThreshold : float, default is Undefined, optional
-        The number of 30-second intervals that you want service discovery to wait before it changes the health status of a service instance.  Maximum value of 10.
+        The number of 30-second intervals that you want service discovery to wait before it changes the health status of a service instance.  Value is always set to 1.
     """
 
 
@@ -532,7 +529,7 @@ schema ServicediscoveryAwsUpboundIoV1beta2ServiceSpecInitProviderHealthCheckCust
     Attributes
     ----------
     failureThreshold : float, default is Undefined, optional
-        The number of 30-second intervals that you want service discovery to wait before it changes the health status of a service instance.  Maximum value of 10.
+        The number of 30-second intervals that you want service discovery to wait before it changes the health status of a service instance.  Value is always set to 1.
     """
 
 
@@ -583,112 +580,12 @@ schema ServicediscoveryAwsUpboundIoV1beta2ServiceSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema ServicediscoveryAwsUpboundIoV1beta2ServiceSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : ServicediscoveryAwsUpboundIoV1beta2ServiceSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : ServicediscoveryAwsUpboundIoV1beta2ServiceSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: ServicediscoveryAwsUpboundIoV1beta2ServiceSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: ServicediscoveryAwsUpboundIoV1beta2ServiceSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema ServicediscoveryAwsUpboundIoV1beta2ServiceSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : ServicediscoveryAwsUpboundIoV1beta2ServiceSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: ServicediscoveryAwsUpboundIoV1beta2ServiceSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema ServicediscoveryAwsUpboundIoV1beta2ServiceSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema ServicediscoveryAwsUpboundIoV1beta2ServiceSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema ServicediscoveryAwsUpboundIoV1beta2ServiceSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -752,10 +649,13 @@ schema ServicediscoveryAwsUpboundIoV1beta2ServiceStatusAtProvider:
         The name of the service.
     namespaceId : str, default is Undefined, optional
         The ID of the namespace that you want to use to create the service.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
-        A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
+        tags all
     $type : str, default is Undefined, optional
         If present, specifies that the service instances are only discoverable using the DiscoverInstances API operation. No DNS records is registered for the service instances. The only valid value is HTTP.
     """
@@ -778,6 +678,8 @@ schema ServicediscoveryAwsUpboundIoV1beta2ServiceStatusAtProvider:
     name?: str
 
     namespaceId?: str
+
+    region?: str
 
     tags?: {str:str}
 
@@ -855,7 +757,7 @@ schema ServicediscoveryAwsUpboundIoV1beta2ServiceStatusAtProviderHealthCheckCust
     Attributes
     ----------
     failureThreshold : float, default is Undefined, optional
-        The number of 30-second intervals that you want service discovery to wait before it changes the health status of a service instance.  Maximum value of 10.
+        The number of 30-second intervals that you want service discovery to wait before it changes the health status of a service instance.  Value is always set to 1.
     """
 
 

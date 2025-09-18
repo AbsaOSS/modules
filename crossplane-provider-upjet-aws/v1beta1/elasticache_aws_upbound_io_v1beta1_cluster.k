@@ -66,8 +66,6 @@ schema ElasticacheAwsUpboundIoV1beta1ClusterSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : ElasticacheAwsUpboundIoV1beta1ClusterSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : ElasticacheAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : ElasticacheAwsUpboundIoV1beta1ClusterSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema ElasticacheAwsUpboundIoV1beta1ClusterSpec:
 
     providerConfigRef?: ElasticacheAwsUpboundIoV1beta1ClusterSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: ElasticacheAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: ElasticacheAwsUpboundIoV1beta1ClusterSpecWriteConnectionSecretToRef
 
 
@@ -95,7 +91,7 @@ schema ElasticacheAwsUpboundIoV1beta1ClusterSpecForProvider:
     Attributes
     ----------
     applyImmediately : bool, default is Undefined, optional
-        Whether any database modifications are applied immediately, or during the next maintenance window. Default is false. See Amazon ElastiCache Documentation for more information..
+        Whether any database modifications are applied immediately, or during the next maintenance window. Default is false. See Amazon ElastiCache Documentation for more information.
     autoMinorVersionUpgrade : str, default is Undefined, optional
         Specifies whether minor version engine upgrades will be applied automatically to the underlying Cache Cluster instances during the maintenance window.
         Only supported for engine type "redis" and if the engine version is 6 or higher.
@@ -105,9 +101,9 @@ schema ElasticacheAwsUpboundIoV1beta1ClusterSpecForProvider:
     azMode : str, default is Undefined, optional
         Whether the nodes in this Memcached node group are created in a single Availability Zone or created across multiple Availability Zones in the cluster's region. Valid values for this parameter are single-az or cross-az, default is single-az. If you want to choose cross-az, num_cache_nodes must be greater than 1.
     engine : str, default is Undefined, optional
-        –  Name of the cache engine to be used for this cache cluster. Valid values are memcached and redis.
+        Name of the cache engine to be used for this cache cluster. Valid values are memcached, redis and valkey.
     engineVersion : str, default is Undefined, optional
-        –  Version number of the cache engine to be used.
+        Version number of the cache engine to be used.
         If not set, defaults to the latest version.
         See Describe Cache Engine Versions in the AWS Documentation for supported versions.
         When engine is redis and the version is 7 or higher, the major and minor version should be set, e.g., 7.2.
@@ -122,31 +118,36 @@ schema ElasticacheAwsUpboundIoV1beta1ClusterSpecForProvider:
     logDeliveryConfiguration : [ElasticacheAwsUpboundIoV1beta1ClusterSpecForProviderLogDeliveryConfigurationItems0], default is Undefined, optional
         Specifies the destination and format of Redis SLOWLOG or Redis Engine Log. See the documentation on Amazon ElastiCache. See Log Delivery Configuration below for more details.
     maintenanceWindow : str, default is Undefined, optional
-        ddd:hh24:mi (24H Clock UTC).
+        Specifies the weekly time range for when maintenance
+        on the cache cluster is performed. The format is ddd:hh24:mi-ddd:hh24:mi (24H Clock UTC).
         The minimum maintenance window is a 60 minute period. Example: sun:05:00-sun:09:00.
     networkType : str, default is Undefined, optional
         The IP versions for cache cluster connections. IPv6 is supported with Redis engine 6.2 onword or Memcached version 1.6.6 for all Nitro system instances. Valid values are ipv4, ipv6 or dual_stack.
     nodeType : str, default is Undefined, optional
-        create the resource.
+        The instance class used.
+        See AWS documentation for information on supported node types for Valkey or Redis OSS and guidance on selecting node types for Valkey or Redis OSS.
+        See AWS documentation for information on supported node types for Memcached and guidance on selecting node types for Memcached.
+        For Memcached, changing this value will re-create the resource.
     notificationTopicArn : str, default is Undefined, optional
-        east-1:012345678999:my_sns_topic.
+        ARN of an SNS topic to send ElastiCache notifications to. Example: arn:aws:sns:us-east-1:012345678999:my_sns_topic.
     numCacheNodes : float, default is Undefined, optional
-        –  The initial number of cache nodes that the cache cluster will have. For Redis, this value must be 1. For Memcached, this value must be between 1 and 40. If this number is reduced on subsequent runs, the highest numbered nodes will be removed.
+        The initial number of cache nodes that the cache cluster will have. For Redis, this value must be 1. For Memcached, this value must be between 1 and 40. If this number is reduced on subsequent runs, the highest numbered nodes will be removed.
     outpostMode : str, default is Undefined, optional
         Specify the outpost mode that will apply to the cache cluster creation. Valid values are "single-outpost" and "cross-outpost", however AWS currently only supports "single-outpost" mode.
     parameterGroupName : str, default is Undefined, optional
-        –  The name of the parameter group to associate with this cache cluster.
+        The name of the parameter group to associate with this cache cluster.
     parameterGroupNameRef : ElasticacheAwsUpboundIoV1beta1ClusterSpecForProviderParameterGroupNameRef, default is Undefined, optional
         parameter group name ref
     parameterGroupNameSelector : ElasticacheAwsUpboundIoV1beta1ClusterSpecForProviderParameterGroupNameSelector, default is Undefined, optional
         parameter group name selector
     port : float, default is Undefined, optional
-        create the resource.
+        The port number on which each of the cache nodes will accept connections. For Memcached the default is 11211, and for Redis the default port is 6379. Cannot be provided with replication_group_id. Changing this value will re-create the resource.
     preferredAvailabilityZones : [str], default is Undefined, optional
         List of the Availability Zones in which cache nodes are created. If you are creating your cluster in an Amazon VPC you can only locate nodes in Availability Zones that are associated with the subnets in the selected subnet group. The number of Availability Zones listed must equal the value of num_cache_nodes. If you want all the nodes in the same Availability Zone, use availability_zone instead, or repeat the Availability Zone multiple times in the list. Default: System chosen Availability Zones. Detecting drift of existing node availability zone is not currently supported. Updating this argument by itself to migrate existing node availability zones is not currently supported and will show a perpetual difference.
     preferredOutpostArn : str, default is Undefined, optional
         The outpost ARN in which the cache cluster will be created.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     replicationGroupId : str, default is Undefined, optional
         ID of the replication group to which this cluster should belong. If this parameter is specified, the cluster is added to the specified replication group as a read replica; otherwise, the cluster is a standalone primary that is not part of any replication group.
@@ -159,9 +160,9 @@ schema ElasticacheAwsUpboundIoV1beta1ClusterSpecForProvider:
     securityGroupIdSelector : ElasticacheAwsUpboundIoV1beta1ClusterSpecForProviderSecurityGroupIDSelector, default is Undefined, optional
         security group Id selector
     securityGroupIds : [str], default is Undefined, optional
-        –  One or more VPC security groups associated with the cache cluster. Cannot be provided with replication_group_id.
+        One or more VPC security groups associated with the cache cluster. Cannot be provided with replication_group_id.
     snapshotArns : [str], default is Undefined, optional
-        element string list containing an Amazon Resource Name (ARN) of a Redis RDB snapshot file stored in Amazon S3. The object name cannot contain any commas. Changing snapshot_arns forces a new resource.
+        Single-element string list containing an Amazon Resource Name (ARN) of a Redis RDB snapshot file stored in Amazon S3. The object name cannot contain any commas. Changing snapshot_arns forces a new resource.
     snapshotName : str, default is Undefined, optional
         Name of a snapshot from which to restore data into the new node group. Changing snapshot_name forces a new resource.
     snapshotRetentionLimit : float, default is Undefined, optional
@@ -169,7 +170,7 @@ schema ElasticacheAwsUpboundIoV1beta1ClusterSpecForProvider:
     snapshotWindow : str, default is Undefined, optional
         Daily time range (in UTC) during which ElastiCache will begin taking a daily snapshot of your cache cluster. Example: 05:00-09:00
     subnetGroupName : str, default is Undefined, optional
-        create the resource. Cannot be provided with replication_group_id.
+        Name of the subnet group to be used for the cache cluster. Changing this value will re-create the resource. Cannot be provided with replication_group_id.
     subnetGroupNameRef : ElasticacheAwsUpboundIoV1beta1ClusterSpecForProviderSubnetGroupNameRef, default is Undefined, optional
         subnet group name ref
     subnetGroupNameSelector : ElasticacheAwsUpboundIoV1beta1ClusterSpecForProviderSubnetGroupNameSelector, default is Undefined, optional
@@ -177,7 +178,7 @@ schema ElasticacheAwsUpboundIoV1beta1ClusterSpecForProvider:
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     transitEncryptionEnabled : bool, default is Undefined, optional
-        Enable encryption in-transit. Supported only with Memcached versions 1.6.12 and later, running in a VPC. See the ElastiCache in-transit encryption documentation for more details.
+        Enable encryption in-transit. Supported with Memcached versions 1.6.12 and later, Valkey 7.2 and later, Redis OSS versions 3.2.6, 4.0.10 and later, running in a VPC. See the ElastiCache in-transit encryption documentation for more details.
     """
 
 
@@ -654,7 +655,7 @@ schema ElasticacheAwsUpboundIoV1beta1ClusterSpecInitProvider:
     Attributes
     ----------
     applyImmediately : bool, default is Undefined, optional
-        Whether any database modifications are applied immediately, or during the next maintenance window. Default is false. See Amazon ElastiCache Documentation for more information..
+        Whether any database modifications are applied immediately, or during the next maintenance window. Default is false. See Amazon ElastiCache Documentation for more information.
     autoMinorVersionUpgrade : str, default is Undefined, optional
         Specifies whether minor version engine upgrades will be applied automatically to the underlying Cache Cluster instances during the maintenance window.
         Only supported for engine type "redis" and if the engine version is 6 or higher.
@@ -664,9 +665,9 @@ schema ElasticacheAwsUpboundIoV1beta1ClusterSpecInitProvider:
     azMode : str, default is Undefined, optional
         Whether the nodes in this Memcached node group are created in a single Availability Zone or created across multiple Availability Zones in the cluster's region. Valid values for this parameter are single-az or cross-az, default is single-az. If you want to choose cross-az, num_cache_nodes must be greater than 1.
     engine : str, default is Undefined, optional
-        –  Name of the cache engine to be used for this cache cluster. Valid values are memcached and redis.
+        Name of the cache engine to be used for this cache cluster. Valid values are memcached, redis and valkey.
     engineVersion : str, default is Undefined, optional
-        –  Version number of the cache engine to be used.
+        Version number of the cache engine to be used.
         If not set, defaults to the latest version.
         See Describe Cache Engine Versions in the AWS Documentation for supported versions.
         When engine is redis and the version is 7 or higher, the major and minor version should be set, e.g., 7.2.
@@ -681,26 +682,30 @@ schema ElasticacheAwsUpboundIoV1beta1ClusterSpecInitProvider:
     logDeliveryConfiguration : [ElasticacheAwsUpboundIoV1beta1ClusterSpecInitProviderLogDeliveryConfigurationItems0], default is Undefined, optional
         Specifies the destination and format of Redis SLOWLOG or Redis Engine Log. See the documentation on Amazon ElastiCache. See Log Delivery Configuration below for more details.
     maintenanceWindow : str, default is Undefined, optional
-        ddd:hh24:mi (24H Clock UTC).
+        Specifies the weekly time range for when maintenance
+        on the cache cluster is performed. The format is ddd:hh24:mi-ddd:hh24:mi (24H Clock UTC).
         The minimum maintenance window is a 60 minute period. Example: sun:05:00-sun:09:00.
     networkType : str, default is Undefined, optional
         The IP versions for cache cluster connections. IPv6 is supported with Redis engine 6.2 onword or Memcached version 1.6.6 for all Nitro system instances. Valid values are ipv4, ipv6 or dual_stack.
     nodeType : str, default is Undefined, optional
-        create the resource.
+        The instance class used.
+        See AWS documentation for information on supported node types for Valkey or Redis OSS and guidance on selecting node types for Valkey or Redis OSS.
+        See AWS documentation for information on supported node types for Memcached and guidance on selecting node types for Memcached.
+        For Memcached, changing this value will re-create the resource.
     notificationTopicArn : str, default is Undefined, optional
-        east-1:012345678999:my_sns_topic.
+        ARN of an SNS topic to send ElastiCache notifications to. Example: arn:aws:sns:us-east-1:012345678999:my_sns_topic.
     numCacheNodes : float, default is Undefined, optional
-        –  The initial number of cache nodes that the cache cluster will have. For Redis, this value must be 1. For Memcached, this value must be between 1 and 40. If this number is reduced on subsequent runs, the highest numbered nodes will be removed.
+        The initial number of cache nodes that the cache cluster will have. For Redis, this value must be 1. For Memcached, this value must be between 1 and 40. If this number is reduced on subsequent runs, the highest numbered nodes will be removed.
     outpostMode : str, default is Undefined, optional
         Specify the outpost mode that will apply to the cache cluster creation. Valid values are "single-outpost" and "cross-outpost", however AWS currently only supports "single-outpost" mode.
     parameterGroupName : str, default is Undefined, optional
-        –  The name of the parameter group to associate with this cache cluster.
+        The name of the parameter group to associate with this cache cluster.
     parameterGroupNameRef : ElasticacheAwsUpboundIoV1beta1ClusterSpecInitProviderParameterGroupNameRef, default is Undefined, optional
         parameter group name ref
     parameterGroupNameSelector : ElasticacheAwsUpboundIoV1beta1ClusterSpecInitProviderParameterGroupNameSelector, default is Undefined, optional
         parameter group name selector
     port : float, default is Undefined, optional
-        create the resource.
+        The port number on which each of the cache nodes will accept connections. For Memcached the default is 11211, and for Redis the default port is 6379. Cannot be provided with replication_group_id. Changing this value will re-create the resource.
     preferredAvailabilityZones : [str], default is Undefined, optional
         List of the Availability Zones in which cache nodes are created. If you are creating your cluster in an Amazon VPC you can only locate nodes in Availability Zones that are associated with the subnets in the selected subnet group. The number of Availability Zones listed must equal the value of num_cache_nodes. If you want all the nodes in the same Availability Zone, use availability_zone instead, or repeat the Availability Zone multiple times in the list. Default: System chosen Availability Zones. Detecting drift of existing node availability zone is not currently supported. Updating this argument by itself to migrate existing node availability zones is not currently supported and will show a perpetual difference.
     preferredOutpostArn : str, default is Undefined, optional
@@ -716,9 +721,9 @@ schema ElasticacheAwsUpboundIoV1beta1ClusterSpecInitProvider:
     securityGroupIdSelector : ElasticacheAwsUpboundIoV1beta1ClusterSpecInitProviderSecurityGroupIDSelector, default is Undefined, optional
         security group Id selector
     securityGroupIds : [str], default is Undefined, optional
-        –  One or more VPC security groups associated with the cache cluster. Cannot be provided with replication_group_id.
+        One or more VPC security groups associated with the cache cluster. Cannot be provided with replication_group_id.
     snapshotArns : [str], default is Undefined, optional
-        element string list containing an Amazon Resource Name (ARN) of a Redis RDB snapshot file stored in Amazon S3. The object name cannot contain any commas. Changing snapshot_arns forces a new resource.
+        Single-element string list containing an Amazon Resource Name (ARN) of a Redis RDB snapshot file stored in Amazon S3. The object name cannot contain any commas. Changing snapshot_arns forces a new resource.
     snapshotName : str, default is Undefined, optional
         Name of a snapshot from which to restore data into the new node group. Changing snapshot_name forces a new resource.
     snapshotRetentionLimit : float, default is Undefined, optional
@@ -726,7 +731,7 @@ schema ElasticacheAwsUpboundIoV1beta1ClusterSpecInitProvider:
     snapshotWindow : str, default is Undefined, optional
         Daily time range (in UTC) during which ElastiCache will begin taking a daily snapshot of your cache cluster. Example: 05:00-09:00
     subnetGroupName : str, default is Undefined, optional
-        create the resource. Cannot be provided with replication_group_id.
+        Name of the subnet group to be used for the cache cluster. Changing this value will re-create the resource. Cannot be provided with replication_group_id.
     subnetGroupNameRef : ElasticacheAwsUpboundIoV1beta1ClusterSpecInitProviderSubnetGroupNameRef, default is Undefined, optional
         subnet group name ref
     subnetGroupNameSelector : ElasticacheAwsUpboundIoV1beta1ClusterSpecInitProviderSubnetGroupNameSelector, default is Undefined, optional
@@ -734,7 +739,7 @@ schema ElasticacheAwsUpboundIoV1beta1ClusterSpecInitProvider:
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     transitEncryptionEnabled : bool, default is Undefined, optional
-        Enable encryption in-transit. Supported only with Memcached versions 1.6.12 and later, running in a VPC. See the ElastiCache in-transit encryption documentation for more details.
+        Enable encryption in-transit. Supported with Memcached versions 1.6.12 and later, Valkey 7.2 and later, Redis OSS versions 3.2.6, 4.0.10 and later, running in a VPC. See the ElastiCache in-transit encryption documentation for more details.
     """
 
 
@@ -1237,112 +1242,12 @@ schema ElasticacheAwsUpboundIoV1beta1ClusterSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema ElasticacheAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : ElasticacheAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : ElasticacheAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: ElasticacheAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: ElasticacheAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema ElasticacheAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : ElasticacheAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: ElasticacheAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema ElasticacheAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema ElasticacheAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema ElasticacheAwsUpboundIoV1beta1ClusterSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1389,7 +1294,7 @@ schema ElasticacheAwsUpboundIoV1beta1ClusterStatusAtProvider:
     Attributes
     ----------
     applyImmediately : bool, default is Undefined, optional
-        Whether any database modifications are applied immediately, or during the next maintenance window. Default is false. See Amazon ElastiCache Documentation for more information..
+        Whether any database modifications are applied immediately, or during the next maintenance window. Default is false. See Amazon ElastiCache Documentation for more information.
     arn : str, default is Undefined, optional
         The ARN of the created ElastiCache Cluster.
     autoMinorVersionUpgrade : str, default is Undefined, optional
@@ -1407,9 +1312,9 @@ schema ElasticacheAwsUpboundIoV1beta1ClusterStatusAtProvider:
     configurationEndpoint : str, default is Undefined, optional
         (Memcached only) Configuration endpoint to allow host discovery.
     engine : str, default is Undefined, optional
-        –  Name of the cache engine to be used for this cache cluster. Valid values are memcached and redis.
+        Name of the cache engine to be used for this cache cluster. Valid values are memcached, redis and valkey.
     engineVersion : str, default is Undefined, optional
-        –  Version number of the cache engine to be used.
+        Version number of the cache engine to be used.
         If not set, defaults to the latest version.
         See Describe Cache Engine Versions in the AWS Documentation for supported versions.
         When engine is redis and the version is 7 or higher, the major and minor version should be set, e.g., 7.2.
@@ -1428,32 +1333,39 @@ schema ElasticacheAwsUpboundIoV1beta1ClusterStatusAtProvider:
     logDeliveryConfiguration : [ElasticacheAwsUpboundIoV1beta1ClusterStatusAtProviderLogDeliveryConfigurationItems0], default is Undefined, optional
         Specifies the destination and format of Redis SLOWLOG or Redis Engine Log. See the documentation on Amazon ElastiCache. See Log Delivery Configuration below for more details.
     maintenanceWindow : str, default is Undefined, optional
-        ddd:hh24:mi (24H Clock UTC).
+        Specifies the weekly time range for when maintenance
+        on the cache cluster is performed. The format is ddd:hh24:mi-ddd:hh24:mi (24H Clock UTC).
         The minimum maintenance window is a 60 minute period. Example: sun:05:00-sun:09:00.
     networkType : str, default is Undefined, optional
         The IP versions for cache cluster connections. IPv6 is supported with Redis engine 6.2 onword or Memcached version 1.6.6 for all Nitro system instances. Valid values are ipv4, ipv6 or dual_stack.
     nodeType : str, default is Undefined, optional
-        create the resource.
+        The instance class used.
+        See AWS documentation for information on supported node types for Valkey or Redis OSS and guidance on selecting node types for Valkey or Redis OSS.
+        See AWS documentation for information on supported node types for Memcached and guidance on selecting node types for Memcached.
+        For Memcached, changing this value will re-create the resource.
     notificationTopicArn : str, default is Undefined, optional
-        east-1:012345678999:my_sns_topic.
+        ARN of an SNS topic to send ElastiCache notifications to. Example: arn:aws:sns:us-east-1:012345678999:my_sns_topic.
     numCacheNodes : float, default is Undefined, optional
-        –  The initial number of cache nodes that the cache cluster will have. For Redis, this value must be 1. For Memcached, this value must be between 1 and 40. If this number is reduced on subsequent runs, the highest numbered nodes will be removed.
+        The initial number of cache nodes that the cache cluster will have. For Redis, this value must be 1. For Memcached, this value must be between 1 and 40. If this number is reduced on subsequent runs, the highest numbered nodes will be removed.
     outpostMode : str, default is Undefined, optional
         Specify the outpost mode that will apply to the cache cluster creation. Valid values are "single-outpost" and "cross-outpost", however AWS currently only supports "single-outpost" mode.
     parameterGroupName : str, default is Undefined, optional
-        –  The name of the parameter group to associate with this cache cluster.
+        The name of the parameter group to associate with this cache cluster.
     port : float, default is Undefined, optional
-        create the resource.
+        The port number on which each of the cache nodes will accept connections. For Memcached the default is 11211, and for Redis the default port is 6379. Cannot be provided with replication_group_id. Changing this value will re-create the resource.
     preferredAvailabilityZones : [str], default is Undefined, optional
         List of the Availability Zones in which cache nodes are created. If you are creating your cluster in an Amazon VPC you can only locate nodes in Availability Zones that are associated with the subnets in the selected subnet group. The number of Availability Zones listed must equal the value of num_cache_nodes. If you want all the nodes in the same Availability Zone, use availability_zone instead, or repeat the Availability Zone multiple times in the list. Default: System chosen Availability Zones. Detecting drift of existing node availability zone is not currently supported. Updating this argument by itself to migrate existing node availability zones is not currently supported and will show a perpetual difference.
     preferredOutpostArn : str, default is Undefined, optional
         The outpost ARN in which the cache cluster will be created.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     replicationGroupId : str, default is Undefined, optional
         ID of the replication group to which this cluster should belong. If this parameter is specified, the cluster is added to the specified replication group as a read replica; otherwise, the cluster is a standalone primary that is not part of any replication group.
     securityGroupIds : [str], default is Undefined, optional
-        –  One or more VPC security groups associated with the cache cluster. Cannot be provided with replication_group_id.
+        One or more VPC security groups associated with the cache cluster. Cannot be provided with replication_group_id.
     snapshotArns : [str], default is Undefined, optional
-        element string list containing an Amazon Resource Name (ARN) of a Redis RDB snapshot file stored in Amazon S3. The object name cannot contain any commas. Changing snapshot_arns forces a new resource.
+        Single-element string list containing an Amazon Resource Name (ARN) of a Redis RDB snapshot file stored in Amazon S3. The object name cannot contain any commas. Changing snapshot_arns forces a new resource.
     snapshotName : str, default is Undefined, optional
         Name of a snapshot from which to restore data into the new node group. Changing snapshot_name forces a new resource.
     snapshotRetentionLimit : float, default is Undefined, optional
@@ -1461,13 +1373,13 @@ schema ElasticacheAwsUpboundIoV1beta1ClusterStatusAtProvider:
     snapshotWindow : str, default is Undefined, optional
         Daily time range (in UTC) during which ElastiCache will begin taking a daily snapshot of your cache cluster. Example: 05:00-09:00
     subnetGroupName : str, default is Undefined, optional
-        create the resource. Cannot be provided with replication_group_id.
+        Name of the subnet group to be used for the cache cluster. Changing this value will re-create the resource. Cannot be provided with replication_group_id.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
         Map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     transitEncryptionEnabled : bool, default is Undefined, optional
-        Enable encryption in-transit. Supported only with Memcached versions 1.6.12 and later, running in a VPC. See the ElastiCache in-transit encryption documentation for more details.
+        Enable encryption in-transit. Supported with Memcached versions 1.6.12 and later, Valkey 7.2 and later, Redis OSS versions 3.2.6, 4.0.10 and later, running in a VPC. See the ElastiCache in-transit encryption documentation for more details.
     """
 
 
@@ -1521,6 +1433,8 @@ schema ElasticacheAwsUpboundIoV1beta1ClusterStatusAtProvider:
 
     preferredOutpostArn?: str
 
+    region?: str
+
     replicationGroupId?: str
 
     securityGroupIds?: [str]
@@ -1557,7 +1471,7 @@ schema ElasticacheAwsUpboundIoV1beta1ClusterStatusAtProviderCacheNodesItems0:
     outpostArn : str, default is Undefined, optional
         The ARN of the created ElastiCache Cluster.
     port : float, default is Undefined, optional
-        create the resource.
+        The port number on which each of the cache nodes will accept connections. For Memcached the default is 11211, and for Redis the default port is 6379. Cannot be provided with replication_group_id. Changing this value will re-create the resource.
     """
 
 

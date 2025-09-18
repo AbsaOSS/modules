@@ -66,8 +66,6 @@ schema Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecWriteConnectionSecretToRef
 
@@ -103,8 +99,9 @@ schema Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecForProvider:
     eventDestination : [Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecForProviderEventDestinationItems0], default is Undefined, optional
         A name that identifies the event destination within the configuration set.
     eventDestinationName : str, default is Undefined, optional
-        An object that defines the event destination. See event_destination below.
+        An object that defines the event destination. See event_destination Block for details.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     """
 
@@ -218,19 +215,19 @@ schema Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecForProviderEv
     Attributes
     ----------
     cloudWatchDestination : [Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecForProviderEventDestinationItems0CloudWatchDestinationItems0], default is Undefined, optional
-        An object that defines an Amazon CloudWatch destination for email events. See cloud_watch_destination below
+        An object that defines an Amazon CloudWatch destination for email events. See cloud_watch_destination Block for details.
     enabled : bool, default is Undefined, optional
         When the event destination is enabled, the specified event types are sent to the destinations. Default: false.
     eventBridgeDestination : [Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecForProviderEventDestinationItems0EventBridgeDestinationItems0], default is Undefined, optional
         event bridge destination
     kinesisFirehoseDestination : [Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecForProviderEventDestinationItems0KinesisFirehoseDestinationItems0], default is Undefined, optional
-        An object that defines an Amazon Kinesis Data Firehose destination for email events. See kinesis_firehose_destination below.
+        An object that defines an Amazon Kinesis Data Firehose destination for email events. See kinesis_firehose_destination Block for details.
     matchingEventTypes : [str], default is Undefined, optional
         - An array that specifies which events the Amazon SES API v2 should send to the destinations. Valid values: SEND, REJECT, BOUNCE, COMPLAINT, DELIVERY, OPEN, CLICK, RENDERING_FAILURE, DELIVERY_DELAY, SUBSCRIPTION.
     pinpointDestination : [Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecForProviderEventDestinationItems0PinpointDestinationItems0], default is Undefined, optional
-        An object that defines an Amazon Pinpoint project destination for email events. See pinpoint_destination below.
+        An object that defines an Amazon Pinpoint project destination for email events. See pinpoint_destination Block for details.
     snsDestination : [Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecForProviderEventDestinationItems0SnsDestinationItems0], default is Undefined, optional
-        An object that defines an Amazon SNS destination for email events. See sns_destination below.
+        An object that defines an Amazon SNS destination for email events. See sns_destination Block for details.
     """
 
 
@@ -256,7 +253,7 @@ schema Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecForProviderEv
     Attributes
     ----------
     dimensionConfiguration : [Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecForProviderEventDestinationItems0CloudWatchDestinationItems0DimensionConfigurationItems0], default is Undefined, optional
-        An array of objects that define the dimensions to use when you send email events to Amazon CloudWatch. See dimension_configuration below.
+        An array of objects that define the dimensions to use when you send email events to Amazon CloudWatch. See dimension_configuration Block for details.
     """
 
 
@@ -757,7 +754,7 @@ schema Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecInitProvider:
     eventDestination : [Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecInitProviderEventDestinationItems0], default is Undefined, optional
         A name that identifies the event destination within the configuration set.
     eventDestinationName : str, default is Undefined, optional
-        An object that defines the event destination. See event_destination below.
+        An object that defines the event destination. See event_destination Block for details.
     """
 
 
@@ -868,19 +865,19 @@ schema Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecInitProviderE
     Attributes
     ----------
     cloudWatchDestination : [Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecInitProviderEventDestinationItems0CloudWatchDestinationItems0], default is Undefined, optional
-        An object that defines an Amazon CloudWatch destination for email events. See cloud_watch_destination below
+        An object that defines an Amazon CloudWatch destination for email events. See cloud_watch_destination Block for details.
     enabled : bool, default is Undefined, optional
         When the event destination is enabled, the specified event types are sent to the destinations. Default: false.
     eventBridgeDestination : [Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecInitProviderEventDestinationItems0EventBridgeDestinationItems0], default is Undefined, optional
         event bridge destination
     kinesisFirehoseDestination : [Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecInitProviderEventDestinationItems0KinesisFirehoseDestinationItems0], default is Undefined, optional
-        An object that defines an Amazon Kinesis Data Firehose destination for email events. See kinesis_firehose_destination below.
+        An object that defines an Amazon Kinesis Data Firehose destination for email events. See kinesis_firehose_destination Block for details.
     matchingEventTypes : [str], default is Undefined, optional
         - An array that specifies which events the Amazon SES API v2 should send to the destinations. Valid values: SEND, REJECT, BOUNCE, COMPLAINT, DELIVERY, OPEN, CLICK, RENDERING_FAILURE, DELIVERY_DELAY, SUBSCRIPTION.
     pinpointDestination : [Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecInitProviderEventDestinationItems0PinpointDestinationItems0], default is Undefined, optional
-        An object that defines an Amazon Pinpoint project destination for email events. See pinpoint_destination below.
+        An object that defines an Amazon Pinpoint project destination for email events. See pinpoint_destination Block for details.
     snsDestination : [Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecInitProviderEventDestinationItems0SnsDestinationItems0], default is Undefined, optional
-        An object that defines an Amazon SNS destination for email events. See sns_destination below.
+        An object that defines an Amazon SNS destination for email events. See sns_destination Block for details.
     """
 
 
@@ -906,7 +903,7 @@ schema Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecInitProviderE
     Attributes
     ----------
     dimensionConfiguration : [Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecInitProviderEventDestinationItems0CloudWatchDestinationItems0DimensionConfigurationItems0], default is Undefined, optional
-        An array of objects that define the dimensions to use when you send email events to Amazon CloudWatch. See dimension_configuration below.
+        An array of objects that define the dimensions to use when you send email events to Amazon CloudWatch. See dimension_configuration Block for details.
     """
 
 
@@ -1427,112 +1424,12 @@ schema Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecProviderConfi
     resolve?: "Always" | "IfNotPresent"
 
 
-schema Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1583,9 +1480,12 @@ schema Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationStatusAtProvider:
     eventDestination : [Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationStatusAtProviderEventDestinationItems0], default is Undefined, optional
         A name that identifies the event destination within the configuration set.
     eventDestinationName : str, default is Undefined, optional
-        An object that defines the event destination. See event_destination below.
+        An object that defines the event destination. See event_destination Block for details.
     id : str, default is Undefined, optional
         A pipe-delimited string combining configuration_set_name and event_destination_name.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     """
 
 
@@ -1597,6 +1497,8 @@ schema Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationStatusAtProvider:
 
     id?: str
 
+    region?: str
+
 
 schema Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationStatusAtProviderEventDestinationItems0:
     r"""
@@ -1605,19 +1507,19 @@ schema Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationStatusAtProviderE
     Attributes
     ----------
     cloudWatchDestination : [Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationStatusAtProviderEventDestinationItems0CloudWatchDestinationItems0], default is Undefined, optional
-        An object that defines an Amazon CloudWatch destination for email events. See cloud_watch_destination below
+        An object that defines an Amazon CloudWatch destination for email events. See cloud_watch_destination Block for details.
     enabled : bool, default is Undefined, optional
         When the event destination is enabled, the specified event types are sent to the destinations. Default: false.
     eventBridgeDestination : [Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationStatusAtProviderEventDestinationItems0EventBridgeDestinationItems0], default is Undefined, optional
         event bridge destination
     kinesisFirehoseDestination : [Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationStatusAtProviderEventDestinationItems0KinesisFirehoseDestinationItems0], default is Undefined, optional
-        An object that defines an Amazon Kinesis Data Firehose destination for email events. See kinesis_firehose_destination below.
+        An object that defines an Amazon Kinesis Data Firehose destination for email events. See kinesis_firehose_destination Block for details.
     matchingEventTypes : [str], default is Undefined, optional
         - An array that specifies which events the Amazon SES API v2 should send to the destinations. Valid values: SEND, REJECT, BOUNCE, COMPLAINT, DELIVERY, OPEN, CLICK, RENDERING_FAILURE, DELIVERY_DELAY, SUBSCRIPTION.
     pinpointDestination : [Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationStatusAtProviderEventDestinationItems0PinpointDestinationItems0], default is Undefined, optional
-        An object that defines an Amazon Pinpoint project destination for email events. See pinpoint_destination below.
+        An object that defines an Amazon Pinpoint project destination for email events. See pinpoint_destination Block for details.
     snsDestination : [Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationStatusAtProviderEventDestinationItems0SnsDestinationItems0], default is Undefined, optional
-        An object that defines an Amazon SNS destination for email events. See sns_destination below.
+        An object that defines an Amazon SNS destination for email events. See sns_destination Block for details.
     """
 
 
@@ -1643,7 +1545,7 @@ schema Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationStatusAtProviderE
     Attributes
     ----------
     dimensionConfiguration : [Sesv2AwsUpboundIoV1beta1ConfigurationSetEventDestinationStatusAtProviderEventDestinationItems0CloudWatchDestinationItems0DimensionConfigurationItems0], default is Undefined, optional
-        An array of objects that define the dimensions to use when you send email events to Amazon CloudWatch. See dimension_configuration below.
+        An array of objects that define the dimensions to use when you send email events to Amazon CloudWatch. See dimension_configuration Block for details.
     """
 
 

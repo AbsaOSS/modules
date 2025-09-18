@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema Alias:
     r"""
-    Alias is the Schema for the Aliass API. Creates a Lambda function alias.
+    Alias is the Schema for the Aliass API. Manages an AWS Lambda Alias.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema LambdaAwsUpboundIoV1beta1AliasSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : LambdaAwsUpboundIoV1beta1AliasSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : LambdaAwsUpboundIoV1beta1AliasSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : LambdaAwsUpboundIoV1beta1AliasSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema LambdaAwsUpboundIoV1beta1AliasSpec:
 
     providerConfigRef?: LambdaAwsUpboundIoV1beta1AliasSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: LambdaAwsUpboundIoV1beta1AliasSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: LambdaAwsUpboundIoV1beta1AliasSpecWriteConnectionSecretToRef
 
 
@@ -97,7 +93,7 @@ schema LambdaAwsUpboundIoV1beta1AliasSpecForProvider:
     description : str, default is Undefined, optional
         Description of the alias.
     functionName : str, default is Undefined, optional
-        Lambda Function name or ARN.
+        Name or ARN of the Lambda function.
     functionNameRef : LambdaAwsUpboundIoV1beta1AliasSpecForProviderFunctionNameRef, default is Undefined, optional
         function name ref
     functionNameSelector : LambdaAwsUpboundIoV1beta1AliasSpecForProviderFunctionNameSelector, default is Undefined, optional
@@ -105,9 +101,10 @@ schema LambdaAwsUpboundIoV1beta1AliasSpecForProvider:
     functionVersion : str, default is Undefined, optional
         Lambda function version for which you are creating the alias. Pattern: (\$LATEST|[0-9]+).
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     routingConfig : [LambdaAwsUpboundIoV1beta1AliasSpecForProviderRoutingConfigItems0], default is Undefined, optional
-        The Lambda alias' route configuration settings. Fields documented below
+        Lambda alias' route configuration settings. See below.
     """
 
 
@@ -222,7 +219,7 @@ schema LambdaAwsUpboundIoV1beta1AliasSpecForProviderRoutingConfigItems0:
     Attributes
     ----------
     additionalVersionWeights : {str:float}, default is Undefined, optional
-        A map that defines the proportion of events that should be sent to different versions of a lambda function.
+        Map that defines the proportion of events that should be sent to different versions of a Lambda function.
     """
 
 
@@ -249,7 +246,7 @@ schema LambdaAwsUpboundIoV1beta1AliasSpecInitProvider:
     functionVersion : str, default is Undefined, optional
         Lambda function version for which you are creating the alias. Pattern: (\$LATEST|[0-9]+).
     routingConfig : [LambdaAwsUpboundIoV1beta1AliasSpecInitProviderRoutingConfigItems0], default is Undefined, optional
-        The Lambda alias' route configuration settings. Fields documented below
+        Lambda alias' route configuration settings. See below.
     """
 
 
@@ -267,7 +264,7 @@ schema LambdaAwsUpboundIoV1beta1AliasSpecInitProviderRoutingConfigItems0:
     Attributes
     ----------
     additionalVersionWeights : {str:float}, default is Undefined, optional
-        A map that defines the proportion of events that should be sent to different versions of a lambda function.
+        Map that defines the proportion of events that should be sent to different versions of a Lambda function.
     """
 
 
@@ -318,112 +315,12 @@ schema LambdaAwsUpboundIoV1beta1AliasSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema LambdaAwsUpboundIoV1beta1AliasSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : LambdaAwsUpboundIoV1beta1AliasSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : LambdaAwsUpboundIoV1beta1AliasSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: LambdaAwsUpboundIoV1beta1AliasSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: LambdaAwsUpboundIoV1beta1AliasSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema LambdaAwsUpboundIoV1beta1AliasSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : LambdaAwsUpboundIoV1beta1AliasSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: LambdaAwsUpboundIoV1beta1AliasSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema LambdaAwsUpboundIoV1beta1AliasSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema LambdaAwsUpboundIoV1beta1AliasSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema LambdaAwsUpboundIoV1beta1AliasSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -470,19 +367,22 @@ schema LambdaAwsUpboundIoV1beta1AliasStatusAtProvider:
     Attributes
     ----------
     arn : str, default is Undefined, optional
-        The Amazon Resource Name (ARN) identifying your Lambda function alias.
+        ARN identifying your Lambda function alias.
     description : str, default is Undefined, optional
         Description of the alias.
     functionName : str, default is Undefined, optional
-        Lambda Function name or ARN.
+        Name or ARN of the Lambda function.
     functionVersion : str, default is Undefined, optional
         Lambda function version for which you are creating the alias. Pattern: (\$LATEST|[0-9]+).
     id : str, default is Undefined, optional
         id
     invokeArn : str, default is Undefined, optional
-        The ARN to be used for invoking Lambda Function from API Gateway - to be used in aws_api_gateway_integration's uri
+        ARN to be used for invoking Lambda Function from API Gateway - to be used in aws_api_gateway_integration's uri.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     routingConfig : [LambdaAwsUpboundIoV1beta1AliasStatusAtProviderRoutingConfigItems0], default is Undefined, optional
-        The Lambda alias' route configuration settings. Fields documented below
+        Lambda alias' route configuration settings. See below.
     """
 
 
@@ -498,6 +398,8 @@ schema LambdaAwsUpboundIoV1beta1AliasStatusAtProvider:
 
     invokeArn?: str
 
+    region?: str
+
     routingConfig?: [LambdaAwsUpboundIoV1beta1AliasStatusAtProviderRoutingConfigItems0]
 
 
@@ -508,7 +410,7 @@ schema LambdaAwsUpboundIoV1beta1AliasStatusAtProviderRoutingConfigItems0:
     Attributes
     ----------
     additionalVersionWeights : {str:float}, default is Undefined, optional
-        A map that defines the proportion of events that should be sent to different versions of a lambda function.
+        Map that defines the proportion of events that should be sent to different versions of a Lambda function.
     """
 
 

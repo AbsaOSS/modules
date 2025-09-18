@@ -66,8 +66,6 @@ schema Wafv2AwsUpboundIoV1beta1IPSetSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : Wafv2AwsUpboundIoV1beta1IPSetSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : Wafv2AwsUpboundIoV1beta1IPSetSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : Wafv2AwsUpboundIoV1beta1IPSetSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema Wafv2AwsUpboundIoV1beta1IPSetSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: Wafv2AwsUpboundIoV1beta1IPSetSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: Wafv2AwsUpboundIoV1beta1IPSetSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: Wafv2AwsUpboundIoV1beta1IPSetSpecWriteConnectionSecretToRef
 
@@ -101,8 +97,9 @@ schema Wafv2AwsUpboundIoV1beta1IPSetSpecForProvider:
     ipAddressVersion : str, default is Undefined, optional
         Specify IPV4 or IPV6. Valid values are IPV4 or IPV6.
     name : str, default is Undefined, optional
-        A friendly name of the IP set.
+        A friendly name of the IP set. Conflicts with name_prefix.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     scope : str, default is Undefined, optional
         Specifies whether this is for an AWS CloudFront distribution or for a regional application. Valid values are CLOUDFRONT or REGIONAL. To work with CloudFront, you must also specify the Region US East (N. Virginia).
@@ -148,7 +145,7 @@ schema Wafv2AwsUpboundIoV1beta1IPSetSpecInitProvider:
     ipAddressVersion : str, default is Undefined, optional
         Specify IPV4 or IPV6. Valid values are IPV4 or IPV6.
     name : str, default is Undefined, optional
-        A friendly name of the IP set.
+        A friendly name of the IP set. Conflicts with name_prefix.
     scope : str, default is Undefined, optional
         Specifies whether this is for an AWS CloudFront distribution or for a regional application. Valid values are CLOUDFRONT or REGIONAL. To work with CloudFront, you must also specify the Region US East (N. Virginia).
     tags : {str:str}, default is Undefined, optional
@@ -213,112 +210,12 @@ schema Wafv2AwsUpboundIoV1beta1IPSetSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema Wafv2AwsUpboundIoV1beta1IPSetSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : Wafv2AwsUpboundIoV1beta1IPSetSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : Wafv2AwsUpboundIoV1beta1IPSetSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: Wafv2AwsUpboundIoV1beta1IPSetSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: Wafv2AwsUpboundIoV1beta1IPSetSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema Wafv2AwsUpboundIoV1beta1IPSetSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : Wafv2AwsUpboundIoV1beta1IPSetSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: Wafv2AwsUpboundIoV1beta1IPSetSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema Wafv2AwsUpboundIoV1beta1IPSetSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema Wafv2AwsUpboundIoV1beta1IPSetSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema Wafv2AwsUpboundIoV1beta1IPSetSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -377,7 +274,10 @@ schema Wafv2AwsUpboundIoV1beta1IPSetStatusAtProvider:
     lockToken : str, default is Undefined, optional
         lock token
     name : str, default is Undefined, optional
-        A friendly name of the IP set.
+        A friendly name of the IP set. Conflicts with name_prefix.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     scope : str, default is Undefined, optional
         Specifies whether this is for an AWS CloudFront distribution or for a regional application. Valid values are CLOUDFRONT or REGIONAL. To work with CloudFront, you must also specify the Region US East (N. Virginia).
     tags : {str:str}, default is Undefined, optional
@@ -400,6 +300,8 @@ schema Wafv2AwsUpboundIoV1beta1IPSetStatusAtProvider:
     lockToken?: str
 
     name?: str
+
+    region?: str
 
     scope?: str
 

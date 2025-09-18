@@ -66,8 +66,6 @@ schema SfnAwsUpboundIoV1beta1StateMachineSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : SfnAwsUpboundIoV1beta1StateMachineSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : SfnAwsUpboundIoV1beta1StateMachineSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : SfnAwsUpboundIoV1beta1StateMachineSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema SfnAwsUpboundIoV1beta1StateMachineSpec:
 
     providerConfigRef?: SfnAwsUpboundIoV1beta1StateMachineSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: SfnAwsUpboundIoV1beta1StateMachineSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: SfnAwsUpboundIoV1beta1StateMachineSpecWriteConnectionSecretToRef
 
 
@@ -99,10 +95,11 @@ schema SfnAwsUpboundIoV1beta1StateMachineSpecForProvider:
     encryptionConfiguration : [SfnAwsUpboundIoV1beta1StateMachineSpecForProviderEncryptionConfigurationItems0], default is Undefined, optional
         Defines what encryption configuration is used to encrypt data in the State Machine. For more information see [TBD] in the AWS Step Functions User Guide.
     loggingConfiguration : [SfnAwsUpboundIoV1beta1StateMachineSpecForProviderLoggingConfigurationItems0], default is Undefined, optional
-        Defines what execution history events are logged and where they are logged. The logging_configuration parameter is only valid when type is set to EXPRESS. Defaults to OFF. For more information see Logging Express Workflows and Log Levels in the AWS Step Functions User Guide.
+        Defines what execution history events are logged and where they are logged. The logging_configuration parameter is valid when type is set to STANDARD or EXPRESS. Defaults to OFF. For more information see Logging Express Workflows, Log Levels and Logging Configuration in the AWS Step Functions User Guide.
     publish : bool, default is Undefined, optional
         Set to true to publish a version of the state machine during creation. Default: false.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     roleArn : str, default is Undefined, optional
         The Amazon Resource Name (ARN) of the IAM role to use for this state machine.
@@ -406,7 +403,7 @@ schema SfnAwsUpboundIoV1beta1StateMachineSpecInitProvider:
     encryptionConfiguration : [SfnAwsUpboundIoV1beta1StateMachineSpecInitProviderEncryptionConfigurationItems0], default is Undefined, optional
         Defines what encryption configuration is used to encrypt data in the State Machine. For more information see [TBD] in the AWS Step Functions User Guide.
     loggingConfiguration : [SfnAwsUpboundIoV1beta1StateMachineSpecInitProviderLoggingConfigurationItems0], default is Undefined, optional
-        Defines what execution history events are logged and where they are logged. The logging_configuration parameter is only valid when type is set to EXPRESS. Defaults to OFF. For more information see Logging Express Workflows and Log Levels in the AWS Step Functions User Guide.
+        Defines what execution history events are logged and where they are logged. The logging_configuration parameter is valid when type is set to STANDARD or EXPRESS. Defaults to OFF. For more information see Logging Express Workflows, Log Levels and Logging Configuration in the AWS Step Functions User Guide.
     publish : bool, default is Undefined, optional
         Set to true to publish a version of the state machine during creation. Default: false.
     roleArn : str, default is Undefined, optional
@@ -733,112 +730,12 @@ schema SfnAwsUpboundIoV1beta1StateMachineSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema SfnAwsUpboundIoV1beta1StateMachineSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : SfnAwsUpboundIoV1beta1StateMachineSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : SfnAwsUpboundIoV1beta1StateMachineSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: SfnAwsUpboundIoV1beta1StateMachineSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: SfnAwsUpboundIoV1beta1StateMachineSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema SfnAwsUpboundIoV1beta1StateMachineSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : SfnAwsUpboundIoV1beta1StateMachineSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: SfnAwsUpboundIoV1beta1StateMachineSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema SfnAwsUpboundIoV1beta1StateMachineSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema SfnAwsUpboundIoV1beta1StateMachineSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema SfnAwsUpboundIoV1beta1StateMachineSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -897,9 +794,12 @@ schema SfnAwsUpboundIoV1beta1StateMachineStatusAtProvider:
     id : str, default is Undefined, optional
         The ARN of the state machine.
     loggingConfiguration : [SfnAwsUpboundIoV1beta1StateMachineStatusAtProviderLoggingConfigurationItems0], default is Undefined, optional
-        Defines what execution history events are logged and where they are logged. The logging_configuration parameter is only valid when type is set to EXPRESS. Defaults to OFF. For more information see Logging Express Workflows and Log Levels in the AWS Step Functions User Guide.
+        Defines what execution history events are logged and where they are logged. The logging_configuration parameter is valid when type is set to STANDARD or EXPRESS. Defaults to OFF. For more information see Logging Express Workflows, Log Levels and Logging Configuration in the AWS Step Functions User Guide.
     publish : bool, default is Undefined, optional
         Set to true to publish a version of the state machine during creation. Default: false.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     revisionId : str, default is Undefined, optional
         The ARN of the state machine.
     roleArn : str, default is Undefined, optional
@@ -936,6 +836,8 @@ schema SfnAwsUpboundIoV1beta1StateMachineStatusAtProvider:
     loggingConfiguration?: [SfnAwsUpboundIoV1beta1StateMachineStatusAtProviderLoggingConfigurationItems0]
 
     publish?: bool
+
+    region?: str
 
     revisionId?: str
 

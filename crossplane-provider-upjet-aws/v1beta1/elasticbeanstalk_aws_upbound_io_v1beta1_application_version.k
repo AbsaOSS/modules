@@ -66,8 +66,6 @@ schema ElasticbeanstalkAwsUpboundIoV1beta1ApplicationVersionSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : ElasticbeanstalkAwsUpboundIoV1beta1ApplicationVersionSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : ElasticbeanstalkAwsUpboundIoV1beta1ApplicationVersionSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : ElasticbeanstalkAwsUpboundIoV1beta1ApplicationVersionSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema ElasticbeanstalkAwsUpboundIoV1beta1ApplicationVersionSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: ElasticbeanstalkAwsUpboundIoV1beta1ApplicationVersionSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: ElasticbeanstalkAwsUpboundIoV1beta1ApplicationVersionSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: ElasticbeanstalkAwsUpboundIoV1beta1ApplicationVersionSpecWriteConnectionSecretToRef
 
@@ -115,6 +111,7 @@ schema ElasticbeanstalkAwsUpboundIoV1beta1ApplicationVersionSpecForProvider:
     process : bool, default is Undefined, optional
         Pre-processes and validates the environment manifest (env.yaml ) and configuration files (*.config files in the .ebextensions folder) in the source bundle. Validating configuration files can identify issues prior to deploying the application version to an environment. You must turn processing on for application versions that you create using AWS CodeBuild or AWS CodeCommit. For application versions built from a source bundle in Amazon S3, processing is optional. It validates Elastic Beanstalk configuration files. It doesn’t validate your application’s configuration files, like proxy server or Docker configuration.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
@@ -609,112 +606,12 @@ schema ElasticbeanstalkAwsUpboundIoV1beta1ApplicationVersionSpecProviderConfigRe
     resolve?: "Always" | "IfNotPresent"
 
 
-schema ElasticbeanstalkAwsUpboundIoV1beta1ApplicationVersionSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : ElasticbeanstalkAwsUpboundIoV1beta1ApplicationVersionSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : ElasticbeanstalkAwsUpboundIoV1beta1ApplicationVersionSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: ElasticbeanstalkAwsUpboundIoV1beta1ApplicationVersionSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: ElasticbeanstalkAwsUpboundIoV1beta1ApplicationVersionSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema ElasticbeanstalkAwsUpboundIoV1beta1ApplicationVersionSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : ElasticbeanstalkAwsUpboundIoV1beta1ApplicationVersionSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: ElasticbeanstalkAwsUpboundIoV1beta1ApplicationVersionSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema ElasticbeanstalkAwsUpboundIoV1beta1ApplicationVersionSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema ElasticbeanstalkAwsUpboundIoV1beta1ApplicationVersionSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema ElasticbeanstalkAwsUpboundIoV1beta1ApplicationVersionSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -776,6 +673,9 @@ schema ElasticbeanstalkAwsUpboundIoV1beta1ApplicationVersionStatusAtProvider:
         S3 object that is the Application Version source bundle.
     process : bool, default is Undefined, optional
         Pre-processes and validates the environment manifest (env.yaml ) and configuration files (*.config files in the .ebextensions folder) in the source bundle. Validating configuration files can identify issues prior to deploying the application version to an environment. You must turn processing on for application versions that you create using AWS CodeBuild or AWS CodeCommit. For application versions built from a source bundle in Amazon S3, processing is optional. It validates Elastic Beanstalk configuration files. It doesn’t validate your application’s configuration files, like proxy server or Docker configuration.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
@@ -798,6 +698,8 @@ schema ElasticbeanstalkAwsUpboundIoV1beta1ApplicationVersionStatusAtProvider:
     key?: str
 
     process?: bool
+
+    region?: str
 
     tags?: {str:str}
 

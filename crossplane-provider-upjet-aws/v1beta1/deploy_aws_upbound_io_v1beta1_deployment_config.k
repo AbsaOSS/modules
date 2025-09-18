@@ -66,8 +66,6 @@ schema DeployAwsUpboundIoV1beta1DeploymentConfigSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : DeployAwsUpboundIoV1beta1DeploymentConfigSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : DeployAwsUpboundIoV1beta1DeploymentConfigSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : DeployAwsUpboundIoV1beta1DeploymentConfigSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema DeployAwsUpboundIoV1beta1DeploymentConfigSpec:
 
     providerConfigRef?: DeployAwsUpboundIoV1beta1DeploymentConfigSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: DeployAwsUpboundIoV1beta1DeploymentConfigSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: DeployAwsUpboundIoV1beta1DeploymentConfigSpecWriteConnectionSecretToRef
 
 
@@ -99,6 +95,7 @@ schema DeployAwsUpboundIoV1beta1DeploymentConfigSpecForProvider:
     minimumHealthyHosts : [DeployAwsUpboundIoV1beta1DeploymentConfigSpecForProviderMinimumHealthyHostsItems0], default is Undefined, optional
         A minimum_healthy_hosts block. Required for Server compute platform. Minimum Healthy Hosts are documented below.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     trafficRoutingConfig : [DeployAwsUpboundIoV1beta1DeploymentConfigSpecForProviderTrafficRoutingConfigItems0], default is Undefined, optional
         A traffic_routing_config block. Traffic Routing Config is documented below.
@@ -435,112 +432,12 @@ schema DeployAwsUpboundIoV1beta1DeploymentConfigSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema DeployAwsUpboundIoV1beta1DeploymentConfigSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : DeployAwsUpboundIoV1beta1DeploymentConfigSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : DeployAwsUpboundIoV1beta1DeploymentConfigSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: DeployAwsUpboundIoV1beta1DeploymentConfigSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: DeployAwsUpboundIoV1beta1DeploymentConfigSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema DeployAwsUpboundIoV1beta1DeploymentConfigSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : DeployAwsUpboundIoV1beta1DeploymentConfigSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: DeployAwsUpboundIoV1beta1DeploymentConfigSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema DeployAwsUpboundIoV1beta1DeploymentConfigSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema DeployAwsUpboundIoV1beta1DeploymentConfigSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema DeployAwsUpboundIoV1beta1DeploymentConfigSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -596,6 +493,9 @@ schema DeployAwsUpboundIoV1beta1DeploymentConfigStatusAtProvider:
         The deployment group's config name.
     minimumHealthyHosts : [DeployAwsUpboundIoV1beta1DeploymentConfigStatusAtProviderMinimumHealthyHostsItems0], default is Undefined, optional
         A minimum_healthy_hosts block. Required for Server compute platform. Minimum Healthy Hosts are documented below.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     trafficRoutingConfig : [DeployAwsUpboundIoV1beta1DeploymentConfigStatusAtProviderTrafficRoutingConfigItems0], default is Undefined, optional
         A traffic_routing_config block. Traffic Routing Config is documented below.
     zonalConfig : [DeployAwsUpboundIoV1beta1DeploymentConfigStatusAtProviderZonalConfigItems0], default is Undefined, optional
@@ -612,6 +512,8 @@ schema DeployAwsUpboundIoV1beta1DeploymentConfigStatusAtProvider:
     id?: str
 
     minimumHealthyHosts?: [DeployAwsUpboundIoV1beta1DeploymentConfigStatusAtProviderMinimumHealthyHostsItems0]
+
+    region?: str
 
     trafficRoutingConfig?: [DeployAwsUpboundIoV1beta1DeploymentConfigStatusAtProviderTrafficRoutingConfigItems0]
 

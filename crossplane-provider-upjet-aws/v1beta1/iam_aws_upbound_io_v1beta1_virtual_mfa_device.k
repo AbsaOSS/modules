@@ -66,8 +66,6 @@ schema IamAwsUpboundIoV1beta1VirtualMfaDeviceSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : IamAwsUpboundIoV1beta1VirtualMfaDeviceSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : IamAwsUpboundIoV1beta1VirtualMfaDeviceSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : IamAwsUpboundIoV1beta1VirtualMfaDeviceSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema IamAwsUpboundIoV1beta1VirtualMfaDeviceSpec:
 
     providerConfigRef?: IamAwsUpboundIoV1beta1VirtualMfaDeviceSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: IamAwsUpboundIoV1beta1VirtualMfaDeviceSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: IamAwsUpboundIoV1beta1VirtualMfaDeviceSpecWriteConnectionSecretToRef
 
 
@@ -95,7 +91,7 @@ schema IamAwsUpboundIoV1beta1VirtualMfaDeviceSpecForProvider:
     Attributes
     ----------
     path : str, default is Undefined, optional
-        –  The path for the virtual MFA device.
+        The path for the virtual MFA device.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     virtualMfaDeviceName : str, default is Undefined, optional
@@ -126,7 +122,7 @@ schema IamAwsUpboundIoV1beta1VirtualMfaDeviceSpecInitProvider:
     Attributes
     ----------
     path : str, default is Undefined, optional
-        –  The path for the virtual MFA device.
+        The path for the virtual MFA device.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     virtualMfaDeviceName : str, default is Undefined, optional
@@ -185,112 +181,12 @@ schema IamAwsUpboundIoV1beta1VirtualMfaDeviceSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema IamAwsUpboundIoV1beta1VirtualMfaDeviceSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : IamAwsUpboundIoV1beta1VirtualMfaDeviceSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : IamAwsUpboundIoV1beta1VirtualMfaDeviceSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: IamAwsUpboundIoV1beta1VirtualMfaDeviceSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: IamAwsUpboundIoV1beta1VirtualMfaDeviceSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema IamAwsUpboundIoV1beta1VirtualMfaDeviceSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : IamAwsUpboundIoV1beta1VirtualMfaDeviceSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: IamAwsUpboundIoV1beta1VirtualMfaDeviceSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema IamAwsUpboundIoV1beta1VirtualMfaDeviceSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema IamAwsUpboundIoV1beta1VirtualMfaDeviceSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema IamAwsUpboundIoV1beta1VirtualMfaDeviceSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -345,7 +241,7 @@ schema IamAwsUpboundIoV1beta1VirtualMfaDeviceStatusAtProvider:
     id : str, default is Undefined, optional
         id
     path : str, default is Undefined, optional
-        –  The path for the virtual MFA device.
+        The path for the virtual MFA device.
     qrCodePng : str, default is Undefined, optional
         A QR code PNG image that encodes otpauth://totp/$virtualMFADeviceName@$AccountName?secret=$Base32String where $virtualMFADeviceName is one of the create call arguments. AccountName is the user name if set (otherwise, the account ID), and Base32String is the seed in base32 format.
     tags : {str:str}, default is Undefined, optional

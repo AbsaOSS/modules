@@ -66,8 +66,6 @@ schema QuicksightAwsUpboundIoV1beta1GroupSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : QuicksightAwsUpboundIoV1beta1GroupSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : QuicksightAwsUpboundIoV1beta1GroupSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : QuicksightAwsUpboundIoV1beta1GroupSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema QuicksightAwsUpboundIoV1beta1GroupSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: QuicksightAwsUpboundIoV1beta1GroupSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: QuicksightAwsUpboundIoV1beta1GroupSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: QuicksightAwsUpboundIoV1beta1GroupSpecWriteConnectionSecretToRef
 
@@ -103,6 +99,7 @@ schema QuicksightAwsUpboundIoV1beta1GroupSpecForProvider:
     namespace : str, default is Undefined, optional
         The namespace. Currently, you should set this to default.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     """
 
@@ -197,112 +194,12 @@ schema QuicksightAwsUpboundIoV1beta1GroupSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema QuicksightAwsUpboundIoV1beta1GroupSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : QuicksightAwsUpboundIoV1beta1GroupSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : QuicksightAwsUpboundIoV1beta1GroupSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: QuicksightAwsUpboundIoV1beta1GroupSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: QuicksightAwsUpboundIoV1beta1GroupSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema QuicksightAwsUpboundIoV1beta1GroupSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : QuicksightAwsUpboundIoV1beta1GroupSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: QuicksightAwsUpboundIoV1beta1GroupSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema QuicksightAwsUpboundIoV1beta1GroupSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema QuicksightAwsUpboundIoV1beta1GroupSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema QuicksightAwsUpboundIoV1beta1GroupSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -360,6 +257,9 @@ schema QuicksightAwsUpboundIoV1beta1GroupStatusAtProvider:
         id
     namespace : str, default is Undefined, optional
         The namespace. Currently, you should set this to default.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     """
 
 
@@ -374,6 +274,8 @@ schema QuicksightAwsUpboundIoV1beta1GroupStatusAtProvider:
     id?: str
 
     namespace?: str
+
+    region?: str
 
 
 schema QuicksightAwsUpboundIoV1beta1GroupStatusConditionsItems0:

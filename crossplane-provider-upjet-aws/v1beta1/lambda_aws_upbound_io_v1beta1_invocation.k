@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema Invocation:
     r"""
-    Invocation is the Schema for the Invocations API. Invoke AWS Lambda Function
+    Invocation is the Schema for the Invocations API. Manages an AWS Lambda Function invocation.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema LambdaAwsUpboundIoV1beta1InvocationSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : LambdaAwsUpboundIoV1beta1InvocationSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : LambdaAwsUpboundIoV1beta1InvocationSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : LambdaAwsUpboundIoV1beta1InvocationSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema LambdaAwsUpboundIoV1beta1InvocationSpec:
 
     providerConfigRef?: LambdaAwsUpboundIoV1beta1InvocationSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: LambdaAwsUpboundIoV1beta1InvocationSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: LambdaAwsUpboundIoV1beta1InvocationSpecWriteConnectionSecretToRef
 
 
@@ -95,21 +91,22 @@ schema LambdaAwsUpboundIoV1beta1InvocationSpecForProvider:
     Attributes
     ----------
     functionName : str, default is Undefined, optional
-        Name of the lambda function.
+        Name of the Lambda function.
     functionNameRef : LambdaAwsUpboundIoV1beta1InvocationSpecForProviderFunctionNameRef, default is Undefined, optional
         function name ref
     functionNameSelector : LambdaAwsUpboundIoV1beta1InvocationSpecForProviderFunctionNameSelector, default is Undefined, optional
         function name selector
     input : str, default is Undefined, optional
-        JSON payload to the lambda function.
+        JSON payload to the Lambda function.
     lifecycleScope : str, default is Undefined, optional
         Lifecycle scope of the resource to manage. Valid values are CREATE_ONLY and CRUD. Defaults to CREATE_ONLY. CREATE_ONLY will invoke the function only on creation or replacement. CRUD will invoke the function on each lifecycle event, and augment the input JSON payload with additional lifecycle information.
     qualifier : str, default is Undefined, optional
-        Qualifier (i.e., version) of the lambda function. Defaults to $LATEST.
+        Qualifier (i.e., version) of the Lambda function. Defaults to $LATEST.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     terraformKey : str, default is Undefined, optional
-        The JSON key used to store lifecycle information in the input JSON payload. Defaults to tf. This additional key is only included when lifecycle_scope is set to CRUD.
+        JSON key used to store lifecycle information in the input JSON payload. Defaults to tf. This additional key is only included when lifecycle_scope is set to CRUD.
     triggers : {str:str}, default is Undefined, optional
         Map of arbitrary keys and values that, when changed, will trigger a re-invocation.
     """
@@ -239,19 +236,19 @@ schema LambdaAwsUpboundIoV1beta1InvocationSpecInitProvider:
     Attributes
     ----------
     functionName : str, default is Undefined, optional
-        Name of the lambda function.
+        Name of the Lambda function.
     functionNameRef : LambdaAwsUpboundIoV1beta1InvocationSpecInitProviderFunctionNameRef, default is Undefined, optional
         function name ref
     functionNameSelector : LambdaAwsUpboundIoV1beta1InvocationSpecInitProviderFunctionNameSelector, default is Undefined, optional
         function name selector
     input : str, default is Undefined, optional
-        JSON payload to the lambda function.
+        JSON payload to the Lambda function.
     lifecycleScope : str, default is Undefined, optional
         Lifecycle scope of the resource to manage. Valid values are CREATE_ONLY and CRUD. Defaults to CREATE_ONLY. CREATE_ONLY will invoke the function only on creation or replacement. CRUD will invoke the function on each lifecycle event, and augment the input JSON payload with additional lifecycle information.
     qualifier : str, default is Undefined, optional
-        Qualifier (i.e., version) of the lambda function. Defaults to $LATEST.
+        Qualifier (i.e., version) of the Lambda function. Defaults to $LATEST.
     terraformKey : str, default is Undefined, optional
-        The JSON key used to store lifecycle information in the input JSON payload. Defaults to tf. This additional key is only included when lifecycle_scope is set to CRUD.
+        JSON key used to store lifecycle information in the input JSON payload. Defaults to tf. This additional key is only included when lifecycle_scope is set to CRUD.
     triggers : {str:str}, default is Undefined, optional
         Map of arbitrary keys and values that, when changed, will trigger a re-invocation.
     """
@@ -407,112 +404,12 @@ schema LambdaAwsUpboundIoV1beta1InvocationSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema LambdaAwsUpboundIoV1beta1InvocationSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : LambdaAwsUpboundIoV1beta1InvocationSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : LambdaAwsUpboundIoV1beta1InvocationSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: LambdaAwsUpboundIoV1beta1InvocationSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: LambdaAwsUpboundIoV1beta1InvocationSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema LambdaAwsUpboundIoV1beta1InvocationSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : LambdaAwsUpboundIoV1beta1InvocationSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: LambdaAwsUpboundIoV1beta1InvocationSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema LambdaAwsUpboundIoV1beta1InvocationSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema LambdaAwsUpboundIoV1beta1InvocationSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema LambdaAwsUpboundIoV1beta1InvocationSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -559,19 +456,22 @@ schema LambdaAwsUpboundIoV1beta1InvocationStatusAtProvider:
     Attributes
     ----------
     functionName : str, default is Undefined, optional
-        Name of the lambda function.
+        Name of the Lambda function.
     id : str, default is Undefined, optional
         id
     input : str, default is Undefined, optional
-        JSON payload to the lambda function.
+        JSON payload to the Lambda function.
     lifecycleScope : str, default is Undefined, optional
         Lifecycle scope of the resource to manage. Valid values are CREATE_ONLY and CRUD. Defaults to CREATE_ONLY. CREATE_ONLY will invoke the function only on creation or replacement. CRUD will invoke the function on each lifecycle event, and augment the input JSON payload with additional lifecycle information.
     qualifier : str, default is Undefined, optional
-        Qualifier (i.e., version) of the lambda function. Defaults to $LATEST.
+        Qualifier (i.e., version) of the Lambda function. Defaults to $LATEST.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     result : str, default is Undefined, optional
-        String result of the lambda function invocation.
+        String result of the Lambda function invocation.
     terraformKey : str, default is Undefined, optional
-        The JSON key used to store lifecycle information in the input JSON payload. Defaults to tf. This additional key is only included when lifecycle_scope is set to CRUD.
+        JSON key used to store lifecycle information in the input JSON payload. Defaults to tf. This additional key is only included when lifecycle_scope is set to CRUD.
     triggers : {str:str}, default is Undefined, optional
         Map of arbitrary keys and values that, when changed, will trigger a re-invocation.
     """
@@ -586,6 +486,8 @@ schema LambdaAwsUpboundIoV1beta1InvocationStatusAtProvider:
     lifecycleScope?: str
 
     qualifier?: str
+
+    region?: str
 
     result?: str
 

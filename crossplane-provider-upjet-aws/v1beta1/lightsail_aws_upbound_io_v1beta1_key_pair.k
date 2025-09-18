@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema KeyPair:
     r"""
-    KeyPair is the Schema for the KeyPairs API. Provides an Lightsail Key Pair
+    KeyPair is the Schema for the KeyPairs API. Manages a Lightsail Key Pair.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema LightsailAwsUpboundIoV1beta1KeyPairSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : LightsailAwsUpboundIoV1beta1KeyPairSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : LightsailAwsUpboundIoV1beta1KeyPairSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : LightsailAwsUpboundIoV1beta1KeyPairSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema LightsailAwsUpboundIoV1beta1KeyPairSpec:
 
     providerConfigRef?: LightsailAwsUpboundIoV1beta1KeyPairSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: LightsailAwsUpboundIoV1beta1KeyPairSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: LightsailAwsUpboundIoV1beta1KeyPairSpecWriteConnectionSecretToRef
 
 
@@ -95,12 +91,13 @@ schema LightsailAwsUpboundIoV1beta1KeyPairSpecForProvider:
     Attributes
     ----------
     name : str, default is Undefined, optional
-        The name of the Lightsail Key Pair
+        Name of the Lightsail Key Pair. Conflicts with name_prefix.
     pgpKey : str, default is Undefined, optional
-        –  An optional PGP key to encrypt the resulting private key material. Only used when creating a new key pair
+        PGP key to encrypt the resulting private key material. Only used when creating a new key pair.
     publicKey : str, default is Undefined, optional
-        The public key material. This public key will be imported into Lightsail
+        Public key material. This public key will be imported into Lightsail.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
@@ -134,11 +131,11 @@ schema LightsailAwsUpboundIoV1beta1KeyPairSpecInitProvider:
     Attributes
     ----------
     name : str, default is Undefined, optional
-        The name of the Lightsail Key Pair
+        Name of the Lightsail Key Pair. Conflicts with name_prefix.
     pgpKey : str, default is Undefined, optional
-        –  An optional PGP key to encrypt the resulting private key material. Only used when creating a new key pair
+        PGP key to encrypt the resulting private key material. Only used when creating a new key pair.
     publicKey : str, default is Undefined, optional
-        The public key material. This public key will be imported into Lightsail
+        Public key material. This public key will be imported into Lightsail.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     """
@@ -197,112 +194,12 @@ schema LightsailAwsUpboundIoV1beta1KeyPairSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema LightsailAwsUpboundIoV1beta1KeyPairSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : LightsailAwsUpboundIoV1beta1KeyPairSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : LightsailAwsUpboundIoV1beta1KeyPairSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: LightsailAwsUpboundIoV1beta1KeyPairSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: LightsailAwsUpboundIoV1beta1KeyPairSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema LightsailAwsUpboundIoV1beta1KeyPairSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : LightsailAwsUpboundIoV1beta1KeyPairSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: LightsailAwsUpboundIoV1beta1KeyPairSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema LightsailAwsUpboundIoV1beta1KeyPairSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema LightsailAwsUpboundIoV1beta1KeyPairSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema LightsailAwsUpboundIoV1beta1KeyPairSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -349,27 +246,30 @@ schema LightsailAwsUpboundIoV1beta1KeyPairStatusAtProvider:
     Attributes
     ----------
     arn : str, default is Undefined, optional
-        The ARN of the Lightsail key pair.
+        ARN of the Lightsail key pair.
     encryptedFingerprint : str, default is Undefined, optional
-        The MD5 public key fingerprint for the encrypted private key.
+        MD5 public key fingerprint for the encrypted private key.
     encryptedPrivateKey : str, default is Undefined, optional
-        – the private key material, base 64 encoded and encrypted with the given pgp_key. This is only populated when creating a new key and pgp_key is supplied.
+        Private key material, base 64 encoded and encrypted with the given pgp_key. This is only populated when creating a new key and pgp_key is supplied.
     fingerprint : str, default is Undefined, optional
-        The MD5 public key fingerprint as specified in section 4 of RFC 4716.
+        MD5 public key fingerprint as specified in section 4 of RFC 4716.
     id : str, default is Undefined, optional
-        The name used for this key pair.
+        Name used for this key pair.
     name : str, default is Undefined, optional
-        The name of the Lightsail Key Pair
+        Name of the Lightsail Key Pair. Conflicts with name_prefix.
     pgpKey : str, default is Undefined, optional
-        –  An optional PGP key to encrypt the resulting private key material. Only used when creating a new key pair
+        PGP key to encrypt the resulting private key material. Only used when creating a new key pair.
     privateKey : str, default is Undefined, optional
-        the private key, base64 encoded. This is only populated when creating a new key, and when no pgp_key is provided.
+        Private key, base64 encoded. This is only populated when creating a new key, and when no pgp_key is provided.
     publicKey : str, default is Undefined, optional
-        The public key material. This public key will be imported into Lightsail
+        Public key material. This public key will be imported into Lightsail.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
-        tags all
+        Map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     """
 
 
@@ -390,6 +290,8 @@ schema LightsailAwsUpboundIoV1beta1KeyPairStatusAtProvider:
     privateKey?: str
 
     publicKey?: str
+
+    region?: str
 
     tags?: {str:str}
 

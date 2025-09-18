@@ -66,8 +66,6 @@ schema BackupAwsUpboundIoV1beta1SelectionSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : BackupAwsUpboundIoV1beta1SelectionSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : BackupAwsUpboundIoV1beta1SelectionSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : BackupAwsUpboundIoV1beta1SelectionSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema BackupAwsUpboundIoV1beta1SelectionSpec:
 
     providerConfigRef?: BackupAwsUpboundIoV1beta1SelectionSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: BackupAwsUpboundIoV1beta1SelectionSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: BackupAwsUpboundIoV1beta1SelectionSpecWriteConnectionSecretToRef
 
 
@@ -95,7 +91,7 @@ schema BackupAwsUpboundIoV1beta1SelectionSpecForProvider:
     Attributes
     ----------
     condition : [BackupAwsUpboundIoV1beta1SelectionSpecForProviderConditionItems0], default is Undefined, optional
-        A list of conditions that you define to assign resources to your backup plans using tags.
+        Condition-based filters used to specify sets of resources for a backup plan. See below for details.
     iamRoleArn : str, default is Undefined, optional
         The ARN of the IAM role that AWS Backup uses to authenticate when restoring and backing up the target resource. See the AWS Backup Developer Guide for additional information about using AWS managed policies or creating custom policies attached to the IAM role.
     iamRoleArnRef : BackupAwsUpboundIoV1beta1SelectionSpecForProviderIamRoleArnRef, default is Undefined, optional
@@ -117,6 +113,7 @@ schema BackupAwsUpboundIoV1beta1SelectionSpecForProvider:
     planIdSelector : BackupAwsUpboundIoV1beta1SelectionSpecForProviderPlanIDSelector, default is Undefined, optional
         plan Id selector
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     resources : [str], default is Undefined, optional
         An array of strings that either contain Amazon Resource Names (ARNs) or match patterns of resources to assign to a backup plan.
@@ -125,7 +122,7 @@ schema BackupAwsUpboundIoV1beta1SelectionSpecForProvider:
     resourcesSelector : BackupAwsUpboundIoV1beta1SelectionSpecForProviderResourcesSelector, default is Undefined, optional
         resources selector
     selectionTag : [BackupAwsUpboundIoV1beta1SelectionSpecForProviderSelectionTagItems0], default is Undefined, optional
-        Tag-based conditions used to specify a set of resources to assign to a backup plan.
+        Tag-based conditions used to specify a set of resources to assign to a backup plan. See below for details.
     """
 
 
@@ -169,13 +166,13 @@ schema BackupAwsUpboundIoV1beta1SelectionSpecForProviderConditionItems0:
     Attributes
     ----------
     stringEquals : [BackupAwsUpboundIoV1beta1SelectionSpecForProviderConditionItems0StringEqualsItems0], default is Undefined, optional
-        string equals
+        Filters the values of your tagged resources for only those resources that you tagged with the same value. Also called "exact matching". See below for details.
     stringLike : [BackupAwsUpboundIoV1beta1SelectionSpecForProviderConditionItems0StringLikeItems0], default is Undefined, optional
-        string like
+        Filters the values of your tagged resources for matching tag values with the use of a wildcard character (*) anywhere in the string. For example, prod* or *rod* matches the tag value production. See below for details.
     stringNotEquals : [BackupAwsUpboundIoV1beta1SelectionSpecForProviderConditionItems0StringNotEqualsItems0], default is Undefined, optional
-        string not equals
+        Filters the values of your tagged resources for only those resources that you tagged that do not have the same value. Also called "negated matching". See below for details.
     stringNotLike : [BackupAwsUpboundIoV1beta1SelectionSpecForProviderConditionItems0StringNotLikeItems0], default is Undefined, optional
-        string not like
+        Filters the values of your tagged resources for non-matching tag values with the use of a wildcard character (*) anywhere in the string. See below for details.
     """
 
 
@@ -195,9 +192,9 @@ schema BackupAwsUpboundIoV1beta1SelectionSpecForProviderConditionItems0StringEqu
     Attributes
     ----------
     key : str, default is Undefined, optional
-        The key in a key-value pair.
+        Key for the filter.
     value : str, default is Undefined, optional
-        The value in a key-value pair.
+        Value for the filter.
     """
 
 
@@ -213,9 +210,9 @@ schema BackupAwsUpboundIoV1beta1SelectionSpecForProviderConditionItems0StringLik
     Attributes
     ----------
     key : str, default is Undefined, optional
-        The key in a key-value pair.
+        Key for the filter.
     value : str, default is Undefined, optional
-        The value in a key-value pair.
+        Value for the filter.
     """
 
 
@@ -231,9 +228,9 @@ schema BackupAwsUpboundIoV1beta1SelectionSpecForProviderConditionItems0StringNot
     Attributes
     ----------
     key : str, default is Undefined, optional
-        The key in a key-value pair.
+        Key for the filter.
     value : str, default is Undefined, optional
-        The value in a key-value pair.
+        Value for the filter.
     """
 
 
@@ -249,9 +246,9 @@ schema BackupAwsUpboundIoV1beta1SelectionSpecForProviderConditionItems0StringNot
     Attributes
     ----------
     key : str, default is Undefined, optional
-        The key in a key-value pair.
+        Key for the filter.
     value : str, default is Undefined, optional
-        The value in a key-value pair.
+        Value for the filter.
     """
 
 
@@ -623,11 +620,11 @@ schema BackupAwsUpboundIoV1beta1SelectionSpecForProviderSelectionTagItems0:
     Attributes
     ----------
     key : str, default is Undefined, optional
-        The key in a key-value pair.
+        Key for the filter.
     $type : str, default is Undefined, optional
-        An operation, such as StringEquals, that is applied to a key-value pair used to filter resources in a selection.
+        An operation, such as STRINGEQUALS, that is applied to the key-value pair used to filter resources in a selection.
     value : str, default is Undefined, optional
-        The value in a key-value pair.
+        Value for the filter.
     """
 
 
@@ -654,7 +651,7 @@ schema BackupAwsUpboundIoV1beta1SelectionSpecInitProvider:
     Attributes
     ----------
     condition : [BackupAwsUpboundIoV1beta1SelectionSpecInitProviderConditionItems0], default is Undefined, optional
-        A list of conditions that you define to assign resources to your backup plans using tags.
+        Condition-based filters used to specify sets of resources for a backup plan. See below for details.
     iamRoleArn : str, default is Undefined, optional
         The ARN of the IAM role that AWS Backup uses to authenticate when restoring and backing up the target resource. See the AWS Backup Developer Guide for additional information about using AWS managed policies or creating custom policies attached to the IAM role.
     iamRoleArnRef : BackupAwsUpboundIoV1beta1SelectionSpecInitProviderIamRoleArnRef, default is Undefined, optional
@@ -682,7 +679,7 @@ schema BackupAwsUpboundIoV1beta1SelectionSpecInitProvider:
     resourcesSelector : BackupAwsUpboundIoV1beta1SelectionSpecInitProviderResourcesSelector, default is Undefined, optional
         resources selector
     selectionTag : [BackupAwsUpboundIoV1beta1SelectionSpecInitProviderSelectionTagItems0], default is Undefined, optional
-        Tag-based conditions used to specify a set of resources to assign to a backup plan.
+        Tag-based conditions used to specify a set of resources to assign to a backup plan. See below for details.
     """
 
 
@@ -724,13 +721,13 @@ schema BackupAwsUpboundIoV1beta1SelectionSpecInitProviderConditionItems0:
     Attributes
     ----------
     stringEquals : [BackupAwsUpboundIoV1beta1SelectionSpecInitProviderConditionItems0StringEqualsItems0], default is Undefined, optional
-        string equals
+        Filters the values of your tagged resources for only those resources that you tagged with the same value. Also called "exact matching". See below for details.
     stringLike : [BackupAwsUpboundIoV1beta1SelectionSpecInitProviderConditionItems0StringLikeItems0], default is Undefined, optional
-        string like
+        Filters the values of your tagged resources for matching tag values with the use of a wildcard character (*) anywhere in the string. For example, prod* or *rod* matches the tag value production. See below for details.
     stringNotEquals : [BackupAwsUpboundIoV1beta1SelectionSpecInitProviderConditionItems0StringNotEqualsItems0], default is Undefined, optional
-        string not equals
+        Filters the values of your tagged resources for only those resources that you tagged that do not have the same value. Also called "negated matching". See below for details.
     stringNotLike : [BackupAwsUpboundIoV1beta1SelectionSpecInitProviderConditionItems0StringNotLikeItems0], default is Undefined, optional
-        string not like
+        Filters the values of your tagged resources for non-matching tag values with the use of a wildcard character (*) anywhere in the string. See below for details.
     """
 
 
@@ -750,9 +747,9 @@ schema BackupAwsUpboundIoV1beta1SelectionSpecInitProviderConditionItems0StringEq
     Attributes
     ----------
     key : str, default is Undefined, optional
-        The key in a key-value pair.
+        Key for the filter.
     value : str, default is Undefined, optional
-        The value in a key-value pair.
+        Value for the filter.
     """
 
 
@@ -768,9 +765,9 @@ schema BackupAwsUpboundIoV1beta1SelectionSpecInitProviderConditionItems0StringLi
     Attributes
     ----------
     key : str, default is Undefined, optional
-        The key in a key-value pair.
+        Key for the filter.
     value : str, default is Undefined, optional
-        The value in a key-value pair.
+        Value for the filter.
     """
 
 
@@ -786,9 +783,9 @@ schema BackupAwsUpboundIoV1beta1SelectionSpecInitProviderConditionItems0StringNo
     Attributes
     ----------
     key : str, default is Undefined, optional
-        The key in a key-value pair.
+        Key for the filter.
     value : str, default is Undefined, optional
-        The value in a key-value pair.
+        Value for the filter.
     """
 
 
@@ -804,9 +801,9 @@ schema BackupAwsUpboundIoV1beta1SelectionSpecInitProviderConditionItems0StringNo
     Attributes
     ----------
     key : str, default is Undefined, optional
-        The key in a key-value pair.
+        Key for the filter.
     value : str, default is Undefined, optional
-        The value in a key-value pair.
+        Value for the filter.
     """
 
 
@@ -1178,11 +1175,11 @@ schema BackupAwsUpboundIoV1beta1SelectionSpecInitProviderSelectionTagItems0:
     Attributes
     ----------
     key : str, default is Undefined, optional
-        The key in a key-value pair.
+        Key for the filter.
     $type : str, default is Undefined, optional
-        An operation, such as StringEquals, that is applied to a key-value pair used to filter resources in a selection.
+        An operation, such as STRINGEQUALS, that is applied to the key-value pair used to filter resources in a selection.
     value : str, default is Undefined, optional
-        The value in a key-value pair.
+        Value for the filter.
     """
 
 
@@ -1237,112 +1234,12 @@ schema BackupAwsUpboundIoV1beta1SelectionSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema BackupAwsUpboundIoV1beta1SelectionSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : BackupAwsUpboundIoV1beta1SelectionSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : BackupAwsUpboundIoV1beta1SelectionSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: BackupAwsUpboundIoV1beta1SelectionSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: BackupAwsUpboundIoV1beta1SelectionSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema BackupAwsUpboundIoV1beta1SelectionSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : BackupAwsUpboundIoV1beta1SelectionSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: BackupAwsUpboundIoV1beta1SelectionSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema BackupAwsUpboundIoV1beta1SelectionSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema BackupAwsUpboundIoV1beta1SelectionSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema BackupAwsUpboundIoV1beta1SelectionSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1389,7 +1286,7 @@ schema BackupAwsUpboundIoV1beta1SelectionStatusAtProvider:
     Attributes
     ----------
     condition : [BackupAwsUpboundIoV1beta1SelectionStatusAtProviderConditionItems0], default is Undefined, optional
-        A list of conditions that you define to assign resources to your backup plans using tags.
+        Condition-based filters used to specify sets of resources for a backup plan. See below for details.
     iamRoleArn : str, default is Undefined, optional
         The ARN of the IAM role that AWS Backup uses to authenticate when restoring and backing up the target resource. See the AWS Backup Developer Guide for additional information about using AWS managed policies or creating custom policies attached to the IAM role.
     id : str, default is Undefined, optional
@@ -1400,10 +1297,13 @@ schema BackupAwsUpboundIoV1beta1SelectionStatusAtProvider:
         An array of strings that either contain Amazon Resource Names (ARNs) or match patterns of resources to exclude from a backup plan.
     planId : str, default is Undefined, optional
         The backup plan ID to be associated with the selection of resources.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     resources : [str], default is Undefined, optional
         An array of strings that either contain Amazon Resource Names (ARNs) or match patterns of resources to assign to a backup plan.
     selectionTag : [BackupAwsUpboundIoV1beta1SelectionStatusAtProviderSelectionTagItems0], default is Undefined, optional
-        Tag-based conditions used to specify a set of resources to assign to a backup plan.
+        Tag-based conditions used to specify a set of resources to assign to a backup plan. See below for details.
     """
 
 
@@ -1419,6 +1319,8 @@ schema BackupAwsUpboundIoV1beta1SelectionStatusAtProvider:
 
     planId?: str
 
+    region?: str
+
     resources?: [str]
 
     selectionTag?: [BackupAwsUpboundIoV1beta1SelectionStatusAtProviderSelectionTagItems0]
@@ -1431,13 +1333,13 @@ schema BackupAwsUpboundIoV1beta1SelectionStatusAtProviderConditionItems0:
     Attributes
     ----------
     stringEquals : [BackupAwsUpboundIoV1beta1SelectionStatusAtProviderConditionItems0StringEqualsItems0], default is Undefined, optional
-        string equals
+        Filters the values of your tagged resources for only those resources that you tagged with the same value. Also called "exact matching". See below for details.
     stringLike : [BackupAwsUpboundIoV1beta1SelectionStatusAtProviderConditionItems0StringLikeItems0], default is Undefined, optional
-        string like
+        Filters the values of your tagged resources for matching tag values with the use of a wildcard character (*) anywhere in the string. For example, prod* or *rod* matches the tag value production. See below for details.
     stringNotEquals : [BackupAwsUpboundIoV1beta1SelectionStatusAtProviderConditionItems0StringNotEqualsItems0], default is Undefined, optional
-        string not equals
+        Filters the values of your tagged resources for only those resources that you tagged that do not have the same value. Also called "negated matching". See below for details.
     stringNotLike : [BackupAwsUpboundIoV1beta1SelectionStatusAtProviderConditionItems0StringNotLikeItems0], default is Undefined, optional
-        string not like
+        Filters the values of your tagged resources for non-matching tag values with the use of a wildcard character (*) anywhere in the string. See below for details.
     """
 
 
@@ -1457,9 +1359,9 @@ schema BackupAwsUpboundIoV1beta1SelectionStatusAtProviderConditionItems0StringEq
     Attributes
     ----------
     key : str, default is Undefined, optional
-        The key in a key-value pair.
+        Key for the filter.
     value : str, default is Undefined, optional
-        The value in a key-value pair.
+        Value for the filter.
     """
 
 
@@ -1475,9 +1377,9 @@ schema BackupAwsUpboundIoV1beta1SelectionStatusAtProviderConditionItems0StringLi
     Attributes
     ----------
     key : str, default is Undefined, optional
-        The key in a key-value pair.
+        Key for the filter.
     value : str, default is Undefined, optional
-        The value in a key-value pair.
+        Value for the filter.
     """
 
 
@@ -1493,9 +1395,9 @@ schema BackupAwsUpboundIoV1beta1SelectionStatusAtProviderConditionItems0StringNo
     Attributes
     ----------
     key : str, default is Undefined, optional
-        The key in a key-value pair.
+        Key for the filter.
     value : str, default is Undefined, optional
-        The value in a key-value pair.
+        Value for the filter.
     """
 
 
@@ -1511,9 +1413,9 @@ schema BackupAwsUpboundIoV1beta1SelectionStatusAtProviderConditionItems0StringNo
     Attributes
     ----------
     key : str, default is Undefined, optional
-        The key in a key-value pair.
+        Key for the filter.
     value : str, default is Undefined, optional
-        The value in a key-value pair.
+        Value for the filter.
     """
 
 
@@ -1529,11 +1431,11 @@ schema BackupAwsUpboundIoV1beta1SelectionStatusAtProviderSelectionTagItems0:
     Attributes
     ----------
     key : str, default is Undefined, optional
-        The key in a key-value pair.
+        Key for the filter.
     $type : str, default is Undefined, optional
-        An operation, such as StringEquals, that is applied to a key-value pair used to filter resources in a selection.
+        An operation, such as STRINGEQUALS, that is applied to the key-value pair used to filter resources in a selection.
     value : str, default is Undefined, optional
-        The value in a key-value pair.
+        Value for the filter.
     """
 
 

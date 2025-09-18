@@ -66,8 +66,6 @@ schema TransferAwsUpboundIoV1beta1UserSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : TransferAwsUpboundIoV1beta1UserSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : TransferAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : TransferAwsUpboundIoV1beta1UserSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema TransferAwsUpboundIoV1beta1UserSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: TransferAwsUpboundIoV1beta1UserSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: TransferAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: TransferAwsUpboundIoV1beta1UserSpecWriteConnectionSecretToRef
 
@@ -105,6 +101,7 @@ schema TransferAwsUpboundIoV1beta1UserSpecForProvider:
     posixProfile : [TransferAwsUpboundIoV1beta1UserSpecForProviderPosixProfileItems0], default is Undefined, optional
         Specifies the full POSIX identity, including user ID (Uid), group ID (Gid), and any secondary groups IDs (SecondaryGids), that controls your users' access to your Amazon EFS file systems. See Posix Profile below.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     role : str, default is Undefined, optional
         Amazon Resource Name (ARN) of an IAM role that allows the service to control your user’s access to your Amazon S3 bucket.
@@ -697,112 +694,12 @@ schema TransferAwsUpboundIoV1beta1UserSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema TransferAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : TransferAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : TransferAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: TransferAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: TransferAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema TransferAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : TransferAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: TransferAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema TransferAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema TransferAwsUpboundIoV1beta1UserSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema TransferAwsUpboundIoV1beta1UserSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -862,6 +759,9 @@ schema TransferAwsUpboundIoV1beta1UserStatusAtProvider:
         An IAM JSON policy document that scopes down user access to portions of their Amazon S3 bucket. IAM variables you can use inside this policy include ${Transfer:UserName}, ${Transfer:HomeDirectory}, and ${Transfer:HomeBucket}.  These are evaluated on-the-fly when navigating the bucket.
     posixProfile : [TransferAwsUpboundIoV1beta1UserStatusAtProviderPosixProfileItems0], default is Undefined, optional
         Specifies the full POSIX identity, including user ID (Uid), group ID (Gid), and any secondary groups IDs (SecondaryGids), that controls your users' access to your Amazon EFS file systems. See Posix Profile below.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     role : str, default is Undefined, optional
         Amazon Resource Name (ARN) of an IAM role that allows the service to control your user’s access to your Amazon S3 bucket.
     serverId : str, default is Undefined, optional
@@ -886,6 +786,8 @@ schema TransferAwsUpboundIoV1beta1UserStatusAtProvider:
     policy?: str
 
     posixProfile?: [TransferAwsUpboundIoV1beta1UserStatusAtProviderPosixProfileItems0]
+
+    region?: str
 
     role?: str
 

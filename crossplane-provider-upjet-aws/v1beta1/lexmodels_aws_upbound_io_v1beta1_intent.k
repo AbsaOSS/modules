@@ -66,8 +66,6 @@ schema LexmodelsAwsUpboundIoV1beta1IntentSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : LexmodelsAwsUpboundIoV1beta1IntentSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : LexmodelsAwsUpboundIoV1beta1IntentSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : LexmodelsAwsUpboundIoV1beta1IntentSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema LexmodelsAwsUpboundIoV1beta1IntentSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: LexmodelsAwsUpboundIoV1beta1IntentSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: LexmodelsAwsUpboundIoV1beta1IntentSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: LexmodelsAwsUpboundIoV1beta1IntentSpecWriteConnectionSecretToRef
 
@@ -127,6 +123,7 @@ schema LexmodelsAwsUpboundIoV1beta1IntentSpecForProvider:
         Standard Built-in Intents
         in the Alexa Skills Kit.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     rejectionStatement : [LexmodelsAwsUpboundIoV1beta1IntentSpecForProviderRejectionStatementItems0], default is Undefined, optional
         When the user answers "no" to the question defined in
@@ -1131,112 +1128,12 @@ schema LexmodelsAwsUpboundIoV1beta1IntentSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema LexmodelsAwsUpboundIoV1beta1IntentSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : LexmodelsAwsUpboundIoV1beta1IntentSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : LexmodelsAwsUpboundIoV1beta1IntentSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: LexmodelsAwsUpboundIoV1beta1IntentSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: LexmodelsAwsUpboundIoV1beta1IntentSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema LexmodelsAwsUpboundIoV1beta1IntentSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : LexmodelsAwsUpboundIoV1beta1IntentSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: LexmodelsAwsUpboundIoV1beta1IntentSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema LexmodelsAwsUpboundIoV1beta1IntentSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema LexmodelsAwsUpboundIoV1beta1IntentSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema LexmodelsAwsUpboundIoV1beta1IntentSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1325,6 +1222,9 @@ schema LexmodelsAwsUpboundIoV1beta1IntentStatusAtProvider:
         intent on. To find the signature for an intent, see
         Standard Built-in Intents
         in the Alexa Skills Kit.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     rejectionStatement : [LexmodelsAwsUpboundIoV1beta1IntentStatusAtProviderRejectionStatementItems0], default is Undefined, optional
         When the user answers "no" to the question defined in
         confirmation_prompt, Amazon Lex responds with this statement to acknowledge that the intent was
@@ -1367,6 +1267,8 @@ schema LexmodelsAwsUpboundIoV1beta1IntentStatusAtProvider:
     lastUpdatedDate?: str
 
     parentIntentSignature?: str
+
+    region?: str
 
     rejectionStatement?: [LexmodelsAwsUpboundIoV1beta1IntentStatusAtProviderRejectionStatementItems0]
 

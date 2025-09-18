@@ -66,8 +66,6 @@ schema TransferAwsUpboundIoV1beta2ServerSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : TransferAwsUpboundIoV1beta2ServerSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : TransferAwsUpboundIoV1beta2ServerSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : TransferAwsUpboundIoV1beta2ServerSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema TransferAwsUpboundIoV1beta2ServerSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: TransferAwsUpboundIoV1beta2ServerSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: TransferAwsUpboundIoV1beta2ServerSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: TransferAwsUpboundIoV1beta2ServerSpecWriteConnectionSecretToRef
 
@@ -115,7 +111,7 @@ schema TransferAwsUpboundIoV1beta2ServerSpecForProvider:
     forceDestroy : bool, default is Undefined, optional
         A boolean that indicates all users associated with the server should be deleted so that the Server can be destroyed without error. The default value is false. This option only applies to servers configured with a SERVICE_MANAGED identity_provider_type.
     function : str, default is Undefined, optional
-        The ARN for a lambda function to use for the Identity provider.
+        The ARN for a lambda function to use for the Identity provider with an identity_provider_type of AWS_LAMBDA.
     hostKeySecretRef : TransferAwsUpboundIoV1beta2ServerSpecForProviderHostKeySecretRef, default is Undefined, optional
         host key secret ref
     identityProviderType : str, default is Undefined, optional
@@ -137,13 +133,14 @@ schema TransferAwsUpboundIoV1beta2ServerSpecForProvider:
     protocols : [str], default is Undefined, optional
         Specifies the file transfer protocol or protocols over which your file transfer protocol client can connect to your server's endpoint. This defaults to SFTP . The available protocols are:
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     s3StorageOptions : TransferAwsUpboundIoV1beta2ServerSpecForProviderS3StorageOptions, default is Undefined, optional
         s3 storage options
     securityPolicyName : str, default is Undefined, optional
         Specifies the name of the security policy that is attached to the server. Default value is: TransferSecurityPolicy-2018-11. The available values are:
     sftpAuthenticationMethods : str, default is Undefined, optional
-        For SFTP-enabled servers, and for custom identity providers only. Valid values are PASSWORD, PUBLIC_KEY, PUBLIC_KEY_OR_PASSWORD and PUBLIC_KEY_AND_PASSWORD. Default value is: PUBLIC_KEY_OR_PASSWORD.
+        For SFTP-enabled servers with an identity_provider_type of API_GATEWAY or AWS_LAMBDA. Valid values are PASSWORD, PUBLIC_KEY, PUBLIC_KEY_OR_PASSWORD and PUBLIC_KEY_AND_PASSWORD. Default value is: PUBLIC_KEY_OR_PASSWORD.
     structuredLogDestinations : [str], default is Undefined, optional
         A set of ARNs of destinations that will receive structured logs from the transfer server such as CloudWatch Log Group ARNs. If provided this enables the transfer server to emit structured logs to the specified locations.
         This is a set of arns of destinations that will receive structured logs from the transfer server
@@ -999,7 +996,7 @@ schema TransferAwsUpboundIoV1beta2ServerSpecInitProvider:
     forceDestroy : bool, default is Undefined, optional
         A boolean that indicates all users associated with the server should be deleted so that the Server can be destroyed without error. The default value is false. This option only applies to servers configured with a SERVICE_MANAGED identity_provider_type.
     function : str, default is Undefined, optional
-        The ARN for a lambda function to use for the Identity provider.
+        The ARN for a lambda function to use for the Identity provider with an identity_provider_type of AWS_LAMBDA.
     hostKeySecretRef : TransferAwsUpboundIoV1beta2ServerSpecInitProviderHostKeySecretRef, default is Undefined, optional
         host key secret ref
     identityProviderType : str, default is Undefined, optional
@@ -1025,7 +1022,7 @@ schema TransferAwsUpboundIoV1beta2ServerSpecInitProvider:
     securityPolicyName : str, default is Undefined, optional
         Specifies the name of the security policy that is attached to the server. Default value is: TransferSecurityPolicy-2018-11. The available values are:
     sftpAuthenticationMethods : str, default is Undefined, optional
-        For SFTP-enabled servers, and for custom identity providers only. Valid values are PASSWORD, PUBLIC_KEY, PUBLIC_KEY_OR_PASSWORD and PUBLIC_KEY_AND_PASSWORD. Default value is: PUBLIC_KEY_OR_PASSWORD.
+        For SFTP-enabled servers with an identity_provider_type of API_GATEWAY or AWS_LAMBDA. Valid values are PASSWORD, PUBLIC_KEY, PUBLIC_KEY_OR_PASSWORD and PUBLIC_KEY_AND_PASSWORD. Default value is: PUBLIC_KEY_OR_PASSWORD.
     structuredLogDestinations : [str], default is Undefined, optional
         A set of ARNs of destinations that will receive structured logs from the transfer server such as CloudWatch Log Group ARNs. If provided this enables the transfer server to emit structured logs to the specified locations.
         This is a set of arns of destinations that will receive structured logs from the transfer server
@@ -1887,112 +1884,12 @@ schema TransferAwsUpboundIoV1beta2ServerSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema TransferAwsUpboundIoV1beta2ServerSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : TransferAwsUpboundIoV1beta2ServerSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : TransferAwsUpboundIoV1beta2ServerSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: TransferAwsUpboundIoV1beta2ServerSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: TransferAwsUpboundIoV1beta2ServerSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema TransferAwsUpboundIoV1beta2ServerSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : TransferAwsUpboundIoV1beta2ServerSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: TransferAwsUpboundIoV1beta2ServerSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema TransferAwsUpboundIoV1beta2ServerSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema TransferAwsUpboundIoV1beta2ServerSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema TransferAwsUpboundIoV1beta2ServerSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -2055,7 +1952,7 @@ schema TransferAwsUpboundIoV1beta2ServerStatusAtProvider:
     forceDestroy : bool, default is Undefined, optional
         A boolean that indicates all users associated with the server should be deleted so that the Server can be destroyed without error. The default value is false. This option only applies to servers configured with a SERVICE_MANAGED identity_provider_type.
     function : str, default is Undefined, optional
-        The ARN for a lambda function to use for the Identity provider.
+        The ARN for a lambda function to use for the Identity provider with an identity_provider_type of AWS_LAMBDA.
     hostKeyFingerprint : str, default is Undefined, optional
         This value contains the message-digest algorithm (MD5) hash of the server's host key. This value is equivalent to the output of the ssh-keygen -l -E md5 -f my-new-server-key command.
     id : str, default is Undefined, optional
@@ -2070,12 +1967,15 @@ schema TransferAwsUpboundIoV1beta2ServerStatusAtProvider:
         protocol details
     protocols : [str], default is Undefined, optional
         Specifies the file transfer protocol or protocols over which your file transfer protocol client can connect to your server's endpoint. This defaults to SFTP . The available protocols are:
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     s3StorageOptions : TransferAwsUpboundIoV1beta2ServerStatusAtProviderS3StorageOptions, default is Undefined, optional
         s3 storage options
     securityPolicyName : str, default is Undefined, optional
         Specifies the name of the security policy that is attached to the server. Default value is: TransferSecurityPolicy-2018-11. The available values are:
     sftpAuthenticationMethods : str, default is Undefined, optional
-        For SFTP-enabled servers, and for custom identity providers only. Valid values are PASSWORD, PUBLIC_KEY, PUBLIC_KEY_OR_PASSWORD and PUBLIC_KEY_AND_PASSWORD. Default value is: PUBLIC_KEY_OR_PASSWORD.
+        For SFTP-enabled servers with an identity_provider_type of API_GATEWAY or AWS_LAMBDA. Valid values are PASSWORD, PUBLIC_KEY, PUBLIC_KEY_OR_PASSWORD and PUBLIC_KEY_AND_PASSWORD. Default value is: PUBLIC_KEY_OR_PASSWORD.
     structuredLogDestinations : [str], default is Undefined, optional
         A set of ARNs of destinations that will receive structured logs from the transfer server such as CloudWatch Log Group ARNs. If provided this enables the transfer server to emit structured logs to the specified locations.
         This is a set of arns of destinations that will receive structured logs from the transfer server
@@ -2121,6 +2021,8 @@ schema TransferAwsUpboundIoV1beta2ServerStatusAtProvider:
     protocolDetails?: TransferAwsUpboundIoV1beta2ServerStatusAtProviderProtocolDetails
 
     protocols?: [str]
+
+    region?: str
 
     s3StorageOptions?: TransferAwsUpboundIoV1beta2ServerStatusAtProviderS3StorageOptions
 

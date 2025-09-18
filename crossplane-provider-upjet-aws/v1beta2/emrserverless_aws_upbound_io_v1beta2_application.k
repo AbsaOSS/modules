@@ -66,8 +66,6 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : EmrserverlessAwsUpboundIoV1beta2ApplicationSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : EmrserverlessAwsUpboundIoV1beta2ApplicationSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : EmrserverlessAwsUpboundIoV1beta2ApplicationSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpec:
 
     providerConfigRef?: EmrserverlessAwsUpboundIoV1beta2ApplicationSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: EmrserverlessAwsUpboundIoV1beta2ApplicationSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: EmrserverlessAwsUpboundIoV1beta2ApplicationSpecWriteConnectionSecretToRef
 
 
@@ -95,7 +91,7 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecForProvider:
     Attributes
     ----------
     architecture : str, default is Undefined, optional
-        –  The CPU architecture of an application. Valid values are ARM64 or X86_64. Default value is X86_64.
+        The CPU architecture of an application. Valid values are ARM64 or X86_64. Default value is X86_64.
     autoStartConfiguration : EmrserverlessAwsUpboundIoV1beta2ApplicationSpecForProviderAutoStartConfiguration, default is Undefined, optional
         auto start configuration
     autoStopConfiguration : EmrserverlessAwsUpboundIoV1beta2ApplicationSpecForProviderAutoStopConfiguration, default is Undefined, optional
@@ -103,23 +99,24 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecForProvider:
     imageConfiguration : EmrserverlessAwsUpboundIoV1beta2ApplicationSpecForProviderImageConfiguration, default is Undefined, optional
         image configuration
     initialCapacity : [EmrserverlessAwsUpboundIoV1beta2ApplicationSpecForProviderInitialCapacityItems0], default is Undefined, optional
-        –  The capacity to initialize when the application is created.
+        The capacity to initialize when the application is created.
     interactiveConfiguration : EmrserverlessAwsUpboundIoV1beta2ApplicationSpecForProviderInteractiveConfiguration, default is Undefined, optional
         interactive configuration
     maximumCapacity : EmrserverlessAwsUpboundIoV1beta2ApplicationSpecForProviderMaximumCapacity, default is Undefined, optional
         maximum capacity
     name : str, default is Undefined, optional
-        –  The name of the application.
+        The name of the application.
     networkConfiguration : EmrserverlessAwsUpboundIoV1beta2ApplicationSpecForProviderNetworkConfiguration, default is Undefined, optional
         network configuration
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     releaseLabel : str, default is Undefined, optional
-        –  The EMR release version associated with the application.
+        The EMR release version associated with the application.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     $type : str, default is Undefined, optional
-        –  The type of application you want to start, such as spark or hive.
+        The type of application you want to start, such as spark or hive.
     """
 
 
@@ -152,7 +149,7 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecForProvider:
 
 schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecForProviderAutoStartConfiguration:
     r"""
-    –  The configuration for an application to automatically start on job submission.
+    The configuration for an application to automatically start on job submission.
 
     Attributes
     ----------
@@ -166,7 +163,7 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecForProviderAutoStartConfig
 
 schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecForProviderAutoStopConfiguration:
     r"""
-    –  The configuration for an application to automatically stop after a certain amount of time being idle.
+    The configuration for an application to automatically stop after a certain amount of time being idle.
 
     Attributes
     ----------
@@ -184,7 +181,7 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecForProviderAutoStopConfigu
 
 schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecForProviderImageConfiguration:
     r"""
-    –  The image configuration applied to all worker types.
+    The image configuration applied to all worker types.
 
     Attributes
     ----------
@@ -256,7 +253,7 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecForProviderInitialCapacity
 
 schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecForProviderInteractiveConfiguration:
     r"""
-    –  Enables the interactive use cases to use when running an application.
+    Enables the interactive use cases to use when running an application.
 
     Attributes
     ----------
@@ -274,7 +271,7 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecForProviderInteractiveConf
 
 schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecForProviderMaximumCapacity:
     r"""
-    –  The maximum capacity to allocate when the application is created. This is cumulative across all workers at any given point in time, not just when an application is created. No new resources will be created once any one of the defined limits is hit.
+    The maximum capacity to allocate when the application is created. This is cumulative across all workers at any given point in time, not just when an application is created. No new resources will be created once any one of the defined limits is hit.
 
     Attributes
     ----------
@@ -296,7 +293,7 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecForProviderMaximumCapacity
 
 schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecForProviderNetworkConfiguration:
     r"""
-    –  The network configuration for customer VPC connectivity.
+    The network configuration for customer VPC connectivity.
 
     Attributes
     ----------
@@ -328,7 +325,7 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecInitProvider:
     Attributes
     ----------
     architecture : str, default is Undefined, optional
-        –  The CPU architecture of an application. Valid values are ARM64 or X86_64. Default value is X86_64.
+        The CPU architecture of an application. Valid values are ARM64 or X86_64. Default value is X86_64.
     autoStartConfiguration : EmrserverlessAwsUpboundIoV1beta2ApplicationSpecInitProviderAutoStartConfiguration, default is Undefined, optional
         auto start configuration
     autoStopConfiguration : EmrserverlessAwsUpboundIoV1beta2ApplicationSpecInitProviderAutoStopConfiguration, default is Undefined, optional
@@ -336,21 +333,21 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecInitProvider:
     imageConfiguration : EmrserverlessAwsUpboundIoV1beta2ApplicationSpecInitProviderImageConfiguration, default is Undefined, optional
         image configuration
     initialCapacity : [EmrserverlessAwsUpboundIoV1beta2ApplicationSpecInitProviderInitialCapacityItems0], default is Undefined, optional
-        –  The capacity to initialize when the application is created.
+        The capacity to initialize when the application is created.
     interactiveConfiguration : EmrserverlessAwsUpboundIoV1beta2ApplicationSpecInitProviderInteractiveConfiguration, default is Undefined, optional
         interactive configuration
     maximumCapacity : EmrserverlessAwsUpboundIoV1beta2ApplicationSpecInitProviderMaximumCapacity, default is Undefined, optional
         maximum capacity
     name : str, default is Undefined, optional
-        –  The name of the application.
+        The name of the application.
     networkConfiguration : EmrserverlessAwsUpboundIoV1beta2ApplicationSpecInitProviderNetworkConfiguration, default is Undefined, optional
         network configuration
     releaseLabel : str, default is Undefined, optional
-        –  The EMR release version associated with the application.
+        The EMR release version associated with the application.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     $type : str, default is Undefined, optional
-        –  The type of application you want to start, such as spark or hive.
+        The type of application you want to start, such as spark or hive.
     """
 
 
@@ -381,7 +378,7 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecInitProvider:
 
 schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecInitProviderAutoStartConfiguration:
     r"""
-    –  The configuration for an application to automatically start on job submission.
+    The configuration for an application to automatically start on job submission.
 
     Attributes
     ----------
@@ -395,7 +392,7 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecInitProviderAutoStartConfi
 
 schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecInitProviderAutoStopConfiguration:
     r"""
-    –  The configuration for an application to automatically stop after a certain amount of time being idle.
+    The configuration for an application to automatically stop after a certain amount of time being idle.
 
     Attributes
     ----------
@@ -413,7 +410,7 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecInitProviderAutoStopConfig
 
 schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecInitProviderImageConfiguration:
     r"""
-    –  The image configuration applied to all worker types.
+    The image configuration applied to all worker types.
 
     Attributes
     ----------
@@ -485,7 +482,7 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecInitProviderInitialCapacit
 
 schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecInitProviderInteractiveConfiguration:
     r"""
-    –  Enables the interactive use cases to use when running an application.
+    Enables the interactive use cases to use when running an application.
 
     Attributes
     ----------
@@ -503,7 +500,7 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecInitProviderInteractiveCon
 
 schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecInitProviderMaximumCapacity:
     r"""
-    –  The maximum capacity to allocate when the application is created. This is cumulative across all workers at any given point in time, not just when an application is created. No new resources will be created once any one of the defined limits is hit.
+    The maximum capacity to allocate when the application is created. This is cumulative across all workers at any given point in time, not just when an application is created. No new resources will be created once any one of the defined limits is hit.
 
     Attributes
     ----------
@@ -525,7 +522,7 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecInitProviderMaximumCapacit
 
 schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecInitProviderNetworkConfiguration:
     r"""
-    –  The network configuration for customer VPC connectivity.
+    The network configuration for customer VPC connectivity.
 
     Attributes
     ----------
@@ -585,112 +582,12 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : EmrserverlessAwsUpboundIoV1beta2ApplicationSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : EmrserverlessAwsUpboundIoV1beta2ApplicationSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: EmrserverlessAwsUpboundIoV1beta2ApplicationSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: EmrserverlessAwsUpboundIoV1beta2ApplicationSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : EmrserverlessAwsUpboundIoV1beta2ApplicationSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: EmrserverlessAwsUpboundIoV1beta2ApplicationSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema EmrserverlessAwsUpboundIoV1beta2ApplicationSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -737,7 +634,7 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationStatusAtProvider:
     Attributes
     ----------
     architecture : str, default is Undefined, optional
-        –  The CPU architecture of an application. Valid values are ARM64 or X86_64. Default value is X86_64.
+        The CPU architecture of an application. Valid values are ARM64 or X86_64. Default value is X86_64.
     arn : str, default is Undefined, optional
         ARN of the cluster.
     autoStartConfiguration : EmrserverlessAwsUpboundIoV1beta2ApplicationStatusAtProviderAutoStartConfiguration, default is Undefined, optional
@@ -749,23 +646,26 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationStatusAtProvider:
     imageConfiguration : EmrserverlessAwsUpboundIoV1beta2ApplicationStatusAtProviderImageConfiguration, default is Undefined, optional
         image configuration
     initialCapacity : [EmrserverlessAwsUpboundIoV1beta2ApplicationStatusAtProviderInitialCapacityItems0], default is Undefined, optional
-        –  The capacity to initialize when the application is created.
+        The capacity to initialize when the application is created.
     interactiveConfiguration : EmrserverlessAwsUpboundIoV1beta2ApplicationStatusAtProviderInteractiveConfiguration, default is Undefined, optional
         interactive configuration
     maximumCapacity : EmrserverlessAwsUpboundIoV1beta2ApplicationStatusAtProviderMaximumCapacity, default is Undefined, optional
         maximum capacity
     name : str, default is Undefined, optional
-        –  The name of the application.
+        The name of the application.
     networkConfiguration : EmrserverlessAwsUpboundIoV1beta2ApplicationStatusAtProviderNetworkConfiguration, default is Undefined, optional
         network configuration
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     releaseLabel : str, default is Undefined, optional
-        –  The EMR release version associated with the application.
+        The EMR release version associated with the application.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
         Map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
     $type : str, default is Undefined, optional
-        –  The type of application you want to start, such as spark or hive.
+        The type of application you want to start, such as spark or hive.
     """
 
 
@@ -791,6 +691,8 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationStatusAtProvider:
 
     networkConfiguration?: EmrserverlessAwsUpboundIoV1beta2ApplicationStatusAtProviderNetworkConfiguration
 
+    region?: str
+
     releaseLabel?: str
 
     tags?: {str:str}
@@ -802,7 +704,7 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationStatusAtProvider:
 
 schema EmrserverlessAwsUpboundIoV1beta2ApplicationStatusAtProviderAutoStartConfiguration:
     r"""
-    –  The configuration for an application to automatically start on job submission.
+    The configuration for an application to automatically start on job submission.
 
     Attributes
     ----------
@@ -816,7 +718,7 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationStatusAtProviderAutoStartConfi
 
 schema EmrserverlessAwsUpboundIoV1beta2ApplicationStatusAtProviderAutoStopConfiguration:
     r"""
-    –  The configuration for an application to automatically stop after a certain amount of time being idle.
+    The configuration for an application to automatically stop after a certain amount of time being idle.
 
     Attributes
     ----------
@@ -834,7 +736,7 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationStatusAtProviderAutoStopConfig
 
 schema EmrserverlessAwsUpboundIoV1beta2ApplicationStatusAtProviderImageConfiguration:
     r"""
-    –  The image configuration applied to all worker types.
+    The image configuration applied to all worker types.
 
     Attributes
     ----------
@@ -906,7 +808,7 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationStatusAtProviderInitialCapacit
 
 schema EmrserverlessAwsUpboundIoV1beta2ApplicationStatusAtProviderInteractiveConfiguration:
     r"""
-    –  Enables the interactive use cases to use when running an application.
+    Enables the interactive use cases to use when running an application.
 
     Attributes
     ----------
@@ -924,7 +826,7 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationStatusAtProviderInteractiveCon
 
 schema EmrserverlessAwsUpboundIoV1beta2ApplicationStatusAtProviderMaximumCapacity:
     r"""
-    –  The maximum capacity to allocate when the application is created. This is cumulative across all workers at any given point in time, not just when an application is created. No new resources will be created once any one of the defined limits is hit.
+    The maximum capacity to allocate when the application is created. This is cumulative across all workers at any given point in time, not just when an application is created. No new resources will be created once any one of the defined limits is hit.
 
     Attributes
     ----------
@@ -946,7 +848,7 @@ schema EmrserverlessAwsUpboundIoV1beta2ApplicationStatusAtProviderMaximumCapacit
 
 schema EmrserverlessAwsUpboundIoV1beta2ApplicationStatusAtProviderNetworkConfiguration:
     r"""
-    –  The network configuration for customer VPC connectivity.
+    The network configuration for customer VPC connectivity.
 
     Attributes
     ----------

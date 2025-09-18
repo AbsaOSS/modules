@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema EndpointConfiguration:
     r"""
-    EndpointConfiguration is the Schema for the EndpointConfigurations API. Provides a SageMaker Endpoint Configuration resource.
+    EndpointConfiguration is the Schema for the EndpointConfigurations API. Provides a SageMaker AI Endpoint Configuration resource.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpec:
 
     providerConfigRef?: SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecWriteConnectionSecretToRef
 
 
@@ -99,7 +95,7 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecForProvider:
     dataCaptureConfig : SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecForProviderDataCaptureConfig, default is Undefined, optional
         data capture config
     kmsKeyArn : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of a AWS Key Management Service key that Amazon SageMaker uses to encrypt data on the storage volume attached to the ML compute instance that hosts the endpoint.
+        Amazon Resource Name (ARN) of a AWS Key Management Service key that Amazon SageMaker AI uses to encrypt data on the storage volume attached to the ML compute instance that hosts the endpoint.
     kmsKeyArnRef : SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecForProviderKmsKeyArnRef, default is Undefined, optional
         kms key arn ref
     kmsKeyArnSelector : SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecForProviderKmsKeyArnSelector, default is Undefined, optional
@@ -107,6 +103,7 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecForProvider:
     productionVariants : [SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecForProviderProductionVariantsItems0], default is Undefined, optional
         An list of ProductionVariant objects, one for each model that you want to host at this endpoint. Fields are documented below.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     shadowProductionVariants : [SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecForProviderShadowProductionVariantsItems0], default is Undefined, optional
         Array of ProductionVariant objects. There is one for each model that you want to host at this endpoint in shadow mode with production traffic replicated from the model specified on ProductionVariants. If you use this field, you can only specify one variant for ProductionVariants and one variant for ShadowProductionVariants. Fields are documented below.
@@ -154,12 +151,12 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecForProviderAsyncInfe
 
 schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecForProviderAsyncInferenceConfigClientConfig:
     r"""
-    Configures the behavior of the client used by Amazon SageMaker to interact with the model container during asynchronous inference.
+    Configures the behavior of the client used by Amazon SageMaker AI to interact with the model container during asynchronous inference.
 
     Attributes
     ----------
     maxConcurrentInvocationsPerInstance : float, default is Undefined, optional
-        The maximum number of concurrent requests sent by the SageMaker client to the model container. If no value is provided, Amazon SageMaker will choose an optimal value for you.
+        The maximum number of concurrent requests sent by the SageMaker AI client to the model container. If no value is provided, Amazon SageMaker AI will choose an optimal value for you.
     """
 
 
@@ -173,7 +170,7 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecForProviderAsyncInfe
     Attributes
     ----------
     kmsKeyId : str, default is Undefined, optional
-        The Amazon Web Services Key Management Service (Amazon Web Services KMS) key that Amazon SageMaker uses to encrypt the asynchronous inference output in Amazon S3.
+        The Amazon Web Services Key Management Service (Amazon Web Services KMS) key that Amazon SageMaker AI uses to encrypt the asynchronous inference output in Amazon S3.
     notificationConfig : SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecForProviderAsyncInferenceConfigOutputConfigNotificationConfig, default is Undefined, optional
         notification config
     s3FailurePath : str, default is Undefined, optional
@@ -216,7 +213,7 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecForProviderAsyncInfe
 
 schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecForProviderDataCaptureConfig:
     r"""
-    Specifies the parameters to capture input/output of SageMaker models endpoints. Fields are documented below.
+    Specifies the parameters to capture input/output of SageMaker AI models endpoints. Fields are documented below.
 
     Attributes
     ----------
@@ -231,7 +228,7 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecForProviderDataCaptu
     initialSamplingPercentage : float, default is Undefined, optional
         Portion of data to capture. Should be between 0 and 100.
     kmsKeyId : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of a AWS Key Management Service key that Amazon SageMaker uses to encrypt the captured data on Amazon S3.
+        Amazon Resource Name (ARN) of a AWS Key Management Service key that Amazon SageMaker AI uses to encrypt the captured data on Amazon S3.
     """
 
 
@@ -250,14 +247,17 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecForProviderDataCaptu
 
 schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecForProviderDataCaptureConfigCaptureContentTypeHeader:
     r"""
-    The content type headers to capture. Fields are documented below.
+    The content type headers to capture.
+    See capture_content_type_header below.
 
     Attributes
     ----------
     csvContentTypes : [str], default is Undefined, optional
         The CSV content type headers to capture.
+        One of csv_content_types or json_content_types is required.
     jsonContentTypes : [str], default is Undefined, optional
         The JSON content type headers to capture.
+        One of json_content_types or csv_content_types is required.
     """
 
 
@@ -378,7 +378,7 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecForProviderProductio
     acceleratorType : str, default is Undefined, optional
         The size of the Elastic Inference (EI) instance to use for the production variant.
     containerStartupHealthCheckTimeoutInSeconds : float, default is Undefined, optional
-        The timeout value, in seconds, for your inference container to pass health check by SageMaker Hosting. For more information about health check, see How Your Container Should Respond to Health Check (Ping) Requests. Valid values between 60 and 3600.
+        The timeout value, in seconds, for your inference container to pass health check by SageMaker AI Hosting. For more information about health check, see How Your Container Should Respond to Health Check (Ping) Requests. Valid values between 60 and 3600.
     coreDumpConfig : SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecForProviderProductionVariantsItems0CoreDumpConfig, default is Undefined, optional
         core dump config
     enableSsmAccess : bool, default is Undefined, optional
@@ -456,7 +456,7 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecForProviderProductio
     destinationS3Uri : str, default is Undefined, optional
         The Amazon S3 bucket to send the core dump to.
     kmsKeyId : str, default is Undefined, optional
-        The Amazon Web Services Key Management Service (Amazon Web Services KMS) key that SageMaker uses to encrypt the core dump data at rest using Amazon S3 server-side encryption.
+        The Amazon Web Services Key Management Service (Amazon Web Services KMS) key that SageMaker AI uses to encrypt the core dump data at rest using Amazon S3 server-side encryption.
     """
 
 
@@ -621,7 +621,7 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecForProviderShadowPro
     acceleratorType : str, default is Undefined, optional
         The size of the Elastic Inference (EI) instance to use for the production variant.
     containerStartupHealthCheckTimeoutInSeconds : float, default is Undefined, optional
-        The timeout value, in seconds, for your inference container to pass health check by SageMaker Hosting. For more information about health check, see How Your Container Should Respond to Health Check (Ping) Requests. Valid values between 60 and 3600.
+        The timeout value, in seconds, for your inference container to pass health check by SageMaker AI Hosting. For more information about health check, see How Your Container Should Respond to Health Check (Ping) Requests. Valid values between 60 and 3600.
     coreDumpConfig : SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecForProviderShadowProductionVariantsItems0CoreDumpConfig, default is Undefined, optional
         core dump config
     enableSsmAccess : bool, default is Undefined, optional
@@ -691,7 +691,7 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecForProviderShadowPro
     destinationS3Uri : str, default is Undefined, optional
         The Amazon S3 bucket to send the core dump to.
     kmsKeyId : str, default is Undefined, optional
-        The Amazon Web Services Key Management Service (Amazon Web Services KMS) key that SageMaker uses to encrypt the core dump data at rest using Amazon S3 server-side encryption.
+        The Amazon Web Services Key Management Service (Amazon Web Services KMS) key that SageMaker AI uses to encrypt the core dump data at rest using Amazon S3 server-side encryption.
     """
 
 
@@ -778,7 +778,7 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecInitProvider:
     dataCaptureConfig : SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecInitProviderDataCaptureConfig, default is Undefined, optional
         data capture config
     kmsKeyArn : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of a AWS Key Management Service key that Amazon SageMaker uses to encrypt data on the storage volume attached to the ML compute instance that hosts the endpoint.
+        Amazon Resource Name (ARN) of a AWS Key Management Service key that Amazon SageMaker AI uses to encrypt data on the storage volume attached to the ML compute instance that hosts the endpoint.
     kmsKeyArnRef : SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecInitProviderKmsKeyArnRef, default is Undefined, optional
         kms key arn ref
     kmsKeyArnSelector : SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecInitProviderKmsKeyArnSelector, default is Undefined, optional
@@ -829,12 +829,12 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecInitProviderAsyncInf
 
 schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecInitProviderAsyncInferenceConfigClientConfig:
     r"""
-    Configures the behavior of the client used by Amazon SageMaker to interact with the model container during asynchronous inference.
+    Configures the behavior of the client used by Amazon SageMaker AI to interact with the model container during asynchronous inference.
 
     Attributes
     ----------
     maxConcurrentInvocationsPerInstance : float, default is Undefined, optional
-        The maximum number of concurrent requests sent by the SageMaker client to the model container. If no value is provided, Amazon SageMaker will choose an optimal value for you.
+        The maximum number of concurrent requests sent by the SageMaker AI client to the model container. If no value is provided, Amazon SageMaker AI will choose an optimal value for you.
     """
 
 
@@ -848,7 +848,7 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecInitProviderAsyncInf
     Attributes
     ----------
     kmsKeyId : str, default is Undefined, optional
-        The Amazon Web Services Key Management Service (Amazon Web Services KMS) key that Amazon SageMaker uses to encrypt the asynchronous inference output in Amazon S3.
+        The Amazon Web Services Key Management Service (Amazon Web Services KMS) key that Amazon SageMaker AI uses to encrypt the asynchronous inference output in Amazon S3.
     notificationConfig : SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecInitProviderAsyncInferenceConfigOutputConfigNotificationConfig, default is Undefined, optional
         notification config
     s3FailurePath : str, default is Undefined, optional
@@ -891,7 +891,7 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecInitProviderAsyncInf
 
 schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecInitProviderDataCaptureConfig:
     r"""
-    Specifies the parameters to capture input/output of SageMaker models endpoints. Fields are documented below.
+    Specifies the parameters to capture input/output of SageMaker AI models endpoints. Fields are documented below.
 
     Attributes
     ----------
@@ -906,7 +906,7 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecInitProviderDataCapt
     initialSamplingPercentage : float, default is Undefined, optional
         Portion of data to capture. Should be between 0 and 100.
     kmsKeyId : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of a AWS Key Management Service key that Amazon SageMaker uses to encrypt the captured data on Amazon S3.
+        Amazon Resource Name (ARN) of a AWS Key Management Service key that Amazon SageMaker AI uses to encrypt the captured data on Amazon S3.
     """
 
 
@@ -925,14 +925,17 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecInitProviderDataCapt
 
 schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecInitProviderDataCaptureConfigCaptureContentTypeHeader:
     r"""
-    The content type headers to capture. Fields are documented below.
+    The content type headers to capture.
+    See capture_content_type_header below.
 
     Attributes
     ----------
     csvContentTypes : [str], default is Undefined, optional
         The CSV content type headers to capture.
+        One of csv_content_types or json_content_types is required.
     jsonContentTypes : [str], default is Undefined, optional
         The JSON content type headers to capture.
+        One of json_content_types or csv_content_types is required.
     """
 
 
@@ -1053,7 +1056,7 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecInitProviderProducti
     acceleratorType : str, default is Undefined, optional
         The size of the Elastic Inference (EI) instance to use for the production variant.
     containerStartupHealthCheckTimeoutInSeconds : float, default is Undefined, optional
-        The timeout value, in seconds, for your inference container to pass health check by SageMaker Hosting. For more information about health check, see How Your Container Should Respond to Health Check (Ping) Requests. Valid values between 60 and 3600.
+        The timeout value, in seconds, for your inference container to pass health check by SageMaker AI Hosting. For more information about health check, see How Your Container Should Respond to Health Check (Ping) Requests. Valid values between 60 and 3600.
     coreDumpConfig : SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecInitProviderProductionVariantsItems0CoreDumpConfig, default is Undefined, optional
         core dump config
     enableSsmAccess : bool, default is Undefined, optional
@@ -1131,7 +1134,7 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecInitProviderProducti
     destinationS3Uri : str, default is Undefined, optional
         The Amazon S3 bucket to send the core dump to.
     kmsKeyId : str, default is Undefined, optional
-        The Amazon Web Services Key Management Service (Amazon Web Services KMS) key that SageMaker uses to encrypt the core dump data at rest using Amazon S3 server-side encryption.
+        The Amazon Web Services Key Management Service (Amazon Web Services KMS) key that SageMaker AI uses to encrypt the core dump data at rest using Amazon S3 server-side encryption.
     """
 
 
@@ -1296,7 +1299,7 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecInitProviderShadowPr
     acceleratorType : str, default is Undefined, optional
         The size of the Elastic Inference (EI) instance to use for the production variant.
     containerStartupHealthCheckTimeoutInSeconds : float, default is Undefined, optional
-        The timeout value, in seconds, for your inference container to pass health check by SageMaker Hosting. For more information about health check, see How Your Container Should Respond to Health Check (Ping) Requests. Valid values between 60 and 3600.
+        The timeout value, in seconds, for your inference container to pass health check by SageMaker AI Hosting. For more information about health check, see How Your Container Should Respond to Health Check (Ping) Requests. Valid values between 60 and 3600.
     coreDumpConfig : SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecInitProviderShadowProductionVariantsItems0CoreDumpConfig, default is Undefined, optional
         core dump config
     enableSsmAccess : bool, default is Undefined, optional
@@ -1366,7 +1369,7 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecInitProviderShadowPr
     destinationS3Uri : str, default is Undefined, optional
         The Amazon S3 bucket to send the core dump to.
     kmsKeyId : str, default is Undefined, optional
-        The Amazon Web Services Key Management Service (Amazon Web Services KMS) key that SageMaker uses to encrypt the core dump data at rest using Amazon S3 server-side encryption.
+        The Amazon Web Services Key Management Service (Amazon Web Services KMS) key that SageMaker AI uses to encrypt the core dump data at rest using Amazon S3 server-side encryption.
     """
 
 
@@ -1477,112 +1480,12 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecProviderConfigRefPol
     resolve?: "Always" | "IfNotPresent"
 
 
-schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1637,9 +1540,12 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationStatusAtProvider:
     id : str, default is Undefined, optional
         id
     kmsKeyArn : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of a AWS Key Management Service key that Amazon SageMaker uses to encrypt data on the storage volume attached to the ML compute instance that hosts the endpoint.
+        Amazon Resource Name (ARN) of a AWS Key Management Service key that Amazon SageMaker AI uses to encrypt data on the storage volume attached to the ML compute instance that hosts the endpoint.
     productionVariants : [SagemakerAwsUpboundIoV1beta2EndpointConfigurationStatusAtProviderProductionVariantsItems0], default is Undefined, optional
         An list of ProductionVariant objects, one for each model that you want to host at this endpoint. Fields are documented below.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     shadowProductionVariants : [SagemakerAwsUpboundIoV1beta2EndpointConfigurationStatusAtProviderShadowProductionVariantsItems0], default is Undefined, optional
         Array of ProductionVariant objects. There is one for each model that you want to host at this endpoint in shadow mode with production traffic replicated from the model specified on ProductionVariants. If you use this field, you can only specify one variant for ProductionVariants and one variant for ShadowProductionVariants. Fields are documented below.
     tags : {str:str}, default is Undefined, optional
@@ -1660,6 +1566,8 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationStatusAtProvider:
     kmsKeyArn?: str
 
     productionVariants?: [SagemakerAwsUpboundIoV1beta2EndpointConfigurationStatusAtProviderProductionVariantsItems0]
+
+    region?: str
 
     shadowProductionVariants?: [SagemakerAwsUpboundIoV1beta2EndpointConfigurationStatusAtProviderShadowProductionVariantsItems0]
 
@@ -1688,12 +1596,12 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationStatusAtProviderAsyncInf
 
 schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationStatusAtProviderAsyncInferenceConfigClientConfig:
     r"""
-    Configures the behavior of the client used by Amazon SageMaker to interact with the model container during asynchronous inference.
+    Configures the behavior of the client used by Amazon SageMaker AI to interact with the model container during asynchronous inference.
 
     Attributes
     ----------
     maxConcurrentInvocationsPerInstance : float, default is Undefined, optional
-        The maximum number of concurrent requests sent by the SageMaker client to the model container. If no value is provided, Amazon SageMaker will choose an optimal value for you.
+        The maximum number of concurrent requests sent by the SageMaker AI client to the model container. If no value is provided, Amazon SageMaker AI will choose an optimal value for you.
     """
 
 
@@ -1707,7 +1615,7 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationStatusAtProviderAsyncInf
     Attributes
     ----------
     kmsKeyId : str, default is Undefined, optional
-        The Amazon Web Services Key Management Service (Amazon Web Services KMS) key that Amazon SageMaker uses to encrypt the asynchronous inference output in Amazon S3.
+        The Amazon Web Services Key Management Service (Amazon Web Services KMS) key that Amazon SageMaker AI uses to encrypt the asynchronous inference output in Amazon S3.
     notificationConfig : SagemakerAwsUpboundIoV1beta2EndpointConfigurationStatusAtProviderAsyncInferenceConfigOutputConfigNotificationConfig, default is Undefined, optional
         notification config
     s3FailurePath : str, default is Undefined, optional
@@ -1750,7 +1658,7 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationStatusAtProviderAsyncInf
 
 schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationStatusAtProviderDataCaptureConfig:
     r"""
-    Specifies the parameters to capture input/output of SageMaker models endpoints. Fields are documented below.
+    Specifies the parameters to capture input/output of SageMaker AI models endpoints. Fields are documented below.
 
     Attributes
     ----------
@@ -1765,7 +1673,7 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationStatusAtProviderDataCapt
     initialSamplingPercentage : float, default is Undefined, optional
         Portion of data to capture. Should be between 0 and 100.
     kmsKeyId : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of a AWS Key Management Service key that Amazon SageMaker uses to encrypt the captured data on Amazon S3.
+        Amazon Resource Name (ARN) of a AWS Key Management Service key that Amazon SageMaker AI uses to encrypt the captured data on Amazon S3.
     """
 
 
@@ -1784,14 +1692,17 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationStatusAtProviderDataCapt
 
 schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationStatusAtProviderDataCaptureConfigCaptureContentTypeHeader:
     r"""
-    The content type headers to capture. Fields are documented below.
+    The content type headers to capture.
+    See capture_content_type_header below.
 
     Attributes
     ----------
     csvContentTypes : [str], default is Undefined, optional
         The CSV content type headers to capture.
+        One of csv_content_types or json_content_types is required.
     jsonContentTypes : [str], default is Undefined, optional
         The JSON content type headers to capture.
+        One of json_content_types or csv_content_types is required.
     """
 
 
@@ -1823,7 +1734,7 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationStatusAtProviderProducti
     acceleratorType : str, default is Undefined, optional
         The size of the Elastic Inference (EI) instance to use for the production variant.
     containerStartupHealthCheckTimeoutInSeconds : float, default is Undefined, optional
-        The timeout value, in seconds, for your inference container to pass health check by SageMaker Hosting. For more information about health check, see How Your Container Should Respond to Health Check (Ping) Requests. Valid values between 60 and 3600.
+        The timeout value, in seconds, for your inference container to pass health check by SageMaker AI Hosting. For more information about health check, see How Your Container Should Respond to Health Check (Ping) Requests. Valid values between 60 and 3600.
     coreDumpConfig : SagemakerAwsUpboundIoV1beta2EndpointConfigurationStatusAtProviderProductionVariantsItems0CoreDumpConfig, default is Undefined, optional
         core dump config
     enableSsmAccess : bool, default is Undefined, optional
@@ -1893,7 +1804,7 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationStatusAtProviderProducti
     destinationS3Uri : str, default is Undefined, optional
         The Amazon S3 bucket to send the core dump to.
     kmsKeyId : str, default is Undefined, optional
-        The Amazon Web Services Key Management Service (Amazon Web Services KMS) key that SageMaker uses to encrypt the core dump data at rest using Amazon S3 server-side encryption.
+        The Amazon Web Services Key Management Service (Amazon Web Services KMS) key that SageMaker AI uses to encrypt the core dump data at rest using Amazon S3 server-side encryption.
     """
 
 
@@ -1969,7 +1880,7 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationStatusAtProviderShadowPr
     acceleratorType : str, default is Undefined, optional
         The size of the Elastic Inference (EI) instance to use for the production variant.
     containerStartupHealthCheckTimeoutInSeconds : float, default is Undefined, optional
-        The timeout value, in seconds, for your inference container to pass health check by SageMaker Hosting. For more information about health check, see How Your Container Should Respond to Health Check (Ping) Requests. Valid values between 60 and 3600.
+        The timeout value, in seconds, for your inference container to pass health check by SageMaker AI Hosting. For more information about health check, see How Your Container Should Respond to Health Check (Ping) Requests. Valid values between 60 and 3600.
     coreDumpConfig : SagemakerAwsUpboundIoV1beta2EndpointConfigurationStatusAtProviderShadowProductionVariantsItems0CoreDumpConfig, default is Undefined, optional
         core dump config
     enableSsmAccess : bool, default is Undefined, optional
@@ -2039,7 +1950,7 @@ schema SagemakerAwsUpboundIoV1beta2EndpointConfigurationStatusAtProviderShadowPr
     destinationS3Uri : str, default is Undefined, optional
         The Amazon S3 bucket to send the core dump to.
     kmsKeyId : str, default is Undefined, optional
-        The Amazon Web Services Key Management Service (Amazon Web Services KMS) key that SageMaker uses to encrypt the core dump data at rest using Amazon S3 server-side encryption.
+        The Amazon Web Services Key Management Service (Amazon Web Services KMS) key that SageMaker AI uses to encrypt the core dump data at rest using Amazon S3 server-side encryption.
     """
 
 

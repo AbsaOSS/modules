@@ -66,8 +66,6 @@ schema RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpec:
 
     providerConfigRef?: RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecWriteConnectionSecretToRef
 
 
@@ -98,6 +94,11 @@ schema RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecForPr
         ID of the KMS key used to encrypt the namespace's admin credentials secret.
     adminUserPasswordSecretRef : RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecForProviderAdminUserPasswordSecretRef, default is Undefined, optional
         admin user password secret ref
+    adminUserPasswordWo : str, default is Undefined, optional
+        The password of the administrator for the first database created in the namespace.
+        Conflicts with manage_admin_password and admin_user_password.
+    adminUserPasswordWoVersion : float, default is Undefined, optional
+        Used together with admin_user_password_wo to trigger an update. Increment this value when an update to the admin_user_password_wo is required
     adminUsernameSecretRef : RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecForProviderAdminUsernameSecretRef, default is Undefined, optional
         admin username secret ref
     dbName : str, default is Undefined, optional
@@ -124,8 +125,9 @@ schema RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecForPr
         The types of logs the namespace can export. Available export types are userlog, connectionlog, and useractivitylog.
     manageAdminPassword : bool, default is Undefined, optional
         Whether to use AWS SecretManager to manage namespace's admin credentials.
-        Conflicts with admin_user_password.
+        Conflicts with admin_user_password and admin_user_password_wo.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
@@ -135,6 +137,10 @@ schema RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecForPr
     adminPasswordSecretKmsKeyId?: str
 
     adminUserPasswordSecretRef?: RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecForProviderAdminUserPasswordSecretRef
+
+    adminUserPasswordWo?: str
+
+    adminUserPasswordWoVersion?: float
 
     adminUsernameSecretRef?: RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecForProviderAdminUsernameSecretRef
 
@@ -170,7 +176,7 @@ schema RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecForPr
 schema RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecForProviderAdminUserPasswordSecretRef:
     r"""
     The password of the administrator for the first database created in the namespace.
-    Conflicts with manage_admin_password.
+    Conflicts with manage_admin_password and admin_user_password_wo.
 
     Attributes
     ----------
@@ -498,6 +504,11 @@ schema RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecInitP
         ID of the KMS key used to encrypt the namespace's admin credentials secret.
     adminUserPasswordSecretRef : RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecInitProviderAdminUserPasswordSecretRef, default is Undefined, optional
         admin user password secret ref
+    adminUserPasswordWo : str, default is Undefined, optional
+        The password of the administrator for the first database created in the namespace.
+        Conflicts with manage_admin_password and admin_user_password.
+    adminUserPasswordWoVersion : float, default is Undefined, optional
+        Used together with admin_user_password_wo to trigger an update. Increment this value when an update to the admin_user_password_wo is required
     adminUsernameSecretRef : RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecInitProviderAdminUsernameSecretRef, default is Undefined, optional
         admin username secret ref
     dbName : str, default is Undefined, optional
@@ -524,7 +535,7 @@ schema RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecInitP
         The types of logs the namespace can export. Available export types are userlog, connectionlog, and useractivitylog.
     manageAdminPassword : bool, default is Undefined, optional
         Whether to use AWS SecretManager to manage namespace's admin credentials.
-        Conflicts with admin_user_password.
+        Conflicts with admin_user_password and admin_user_password_wo.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     """
@@ -533,6 +544,10 @@ schema RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecInitP
     adminPasswordSecretKmsKeyId?: str
 
     adminUserPasswordSecretRef?: RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecInitProviderAdminUserPasswordSecretRef
+
+    adminUserPasswordWo?: str
+
+    adminUserPasswordWoVersion?: float
 
     adminUsernameSecretRef?: RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecInitProviderAdminUsernameSecretRef
 
@@ -566,7 +581,7 @@ schema RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecInitP
 schema RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecInitProviderAdminUserPasswordSecretRef:
     r"""
     The password of the administrator for the first database created in the namespace.
-    Conflicts with manage_admin_password.
+    Conflicts with manage_admin_password and admin_user_password_wo.
 
     Attributes
     ----------
@@ -919,112 +934,12 @@ schema RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecProvi
     resolve?: "Always" | "IfNotPresent"
 
 
-schema RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1071,9 +986,14 @@ schema RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceStatusAtP
     Attributes
     ----------
     adminPasswordSecretArn : str, default is Undefined, optional
-        Amazon Resource Name (ARN) of the Redshift Serverless Namespace.
+        Amazon Resource Name (ARN) of namespace's admin user credentials secret.
     adminPasswordSecretKmsKeyId : str, default is Undefined, optional
         ID of the KMS key used to encrypt the namespace's admin credentials secret.
+    adminUserPasswordWo : str, default is Undefined, optional
+        The password of the administrator for the first database created in the namespace.
+        Conflicts with manage_admin_password and admin_user_password.
+    adminUserPasswordWoVersion : float, default is Undefined, optional
+        Used together with admin_user_password_wo to trigger an update. Increment this value when an update to the admin_user_password_wo is required
     arn : str, default is Undefined, optional
         Amazon Resource Name (ARN) of the Redshift Serverless Namespace.
     dbName : str, default is Undefined, optional
@@ -1090,9 +1010,12 @@ schema RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceStatusAtP
         The types of logs the namespace can export. Available export types are userlog, connectionlog, and useractivitylog.
     manageAdminPassword : bool, default is Undefined, optional
         Whether to use AWS SecretManager to manage namespace's admin credentials.
-        Conflicts with admin_user_password.
+        Conflicts with admin_user_password and admin_user_password_wo.
     namespaceId : str, default is Undefined, optional
         The Redshift Namespace ID.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
@@ -1103,6 +1026,10 @@ schema RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceStatusAtP
     adminPasswordSecretArn?: str
 
     adminPasswordSecretKmsKeyId?: str
+
+    adminUserPasswordWo?: str
+
+    adminUserPasswordWoVersion?: float
 
     arn?: str
 
@@ -1121,6 +1048,8 @@ schema RedshiftserverlessAwsUpboundIoV1beta1RedshiftServerlessNamespaceStatusAtP
     manageAdminPassword?: bool
 
     namespaceId?: str
+
+    region?: str
 
     tags?: {str:str}
 

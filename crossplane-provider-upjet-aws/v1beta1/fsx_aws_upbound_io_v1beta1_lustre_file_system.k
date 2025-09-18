@@ -66,8 +66,6 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : FsxAwsUpboundIoV1beta1LustreFileSystemSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : FsxAwsUpboundIoV1beta1LustreFileSystemSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : FsxAwsUpboundIoV1beta1LustreFileSystemSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: FsxAwsUpboundIoV1beta1LustreFileSystemSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: FsxAwsUpboundIoV1beta1LustreFileSystemSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: FsxAwsUpboundIoV1beta1LustreFileSystemSpecWriteConnectionSecretToRef
 
@@ -106,6 +102,8 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecForProvider:
         A recurring daily time, in the format HH:MM. HH is the zero-padded hour of the day (0-23), and MM is the zero-padded minute of the hour. For example, 05:00 specifies 5 AM daily. only valid for PERSISTENT_1 and PERSISTENT_2 deployment_type. Requires automatic_backup_retention_days to be set.
     dataCompressionType : str, default is Undefined, optional
         Sets the data compression configuration for the file system. Valid values are LZ4 and NONE. Default value is NONE. Unsetting this value reverts the compression type back to NONE.
+    dataReadCacheConfiguration : [FsxAwsUpboundIoV1beta1LustreFileSystemSpecForProviderDataReadCacheConfigurationItems0], default is Undefined, optional
+        data read cache configuration
     deploymentType : str, default is Undefined, optional
         - The filesystem deployment type. One of: SCRATCH_1, SCRATCH_2, PERSISTENT_1, PERSISTENT_2.
     driveCacheType : str, default is Undefined, optional
@@ -129,15 +127,16 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecForProvider:
     kmsKeyIdSelector : FsxAwsUpboundIoV1beta1LustreFileSystemSpecForProviderKmsKeyIDSelector, default is Undefined, optional
         kms key Id selector
     logConfiguration : [FsxAwsUpboundIoV1beta1LustreFileSystemSpecForProviderLogConfigurationItems0], default is Undefined, optional
-        The Lustre logging configuration used when creating an Amazon FSx for Lustre file system. When logging is enabled, Lustre logs error and warning events for data repositories associated with your file system to Amazon CloudWatch Logs.
-    metadataConfiguration : FsxAwsUpboundIoV1beta1LustreFileSystemSpecForProviderMetadataConfiguration, default is Undefined, optional
-        metadata configuration
+        The Lustre logging configuration used when creating an Amazon FSx for Lustre file system. When logging is enabled, Lustre logs error and warning events for data repositories associated with your file system to Amazon CloudWatch Logs. See log_configuration Block for details.
+    metadataConfiguration : [FsxAwsUpboundIoV1beta1LustreFileSystemSpecForProviderMetadataConfigurationItems0], default is Undefined, optional
+        The Lustre metadata configuration used when creating an Amazon FSx for Lustre file system. This can be used to specify a user provisioned metadata scale. This is only supported when deployment_type is set to PERSISTENT_2. See metadata_configuration Block for details.
     perUnitStorageThroughput : float, default is Undefined, optional
         - Describes the amount of read and write throughput for each 1 tebibyte of storage, in MB/s/TiB, required for the PERSISTENT_1 and PERSISTENT_2 deployment_type. Valid values for PERSISTENT_1 deployment_type and SSD storage_type are 50, 100, 200. Valid values for PERSISTENT_1 deployment_type and HDD storage_type are 12, 40. Valid values for PERSISTENT_2 deployment_type and  SSD storage_type are 125, 250, 500, 1000.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     rootSquashConfiguration : [FsxAwsUpboundIoV1beta1LustreFileSystemSpecForProviderRootSquashConfigurationItems0], default is Undefined, optional
-        The Lustre root squash configuration used when creating an Amazon FSx for Lustre file system. When enabled, root squash restricts root-level access from clients that try to access your file system as a root user.
+        The Lustre root squash configuration used when creating an Amazon FSx for Lustre file system. When enabled, root squash restricts root-level access from clients that try to access your file system as a root user. See root_squash_configuration Block for details.
     securityGroupIdRefs : [FsxAwsUpboundIoV1beta1LustreFileSystemSpecForProviderSecurityGroupIDRefsItems0], default is Undefined, optional
         References to SecurityGroup in ec2 to populate securityGroupIds.
     securityGroupIdSelector : FsxAwsUpboundIoV1beta1LustreFileSystemSpecForProviderSecurityGroupIDSelector, default is Undefined, optional
@@ -149,7 +148,7 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecForProvider:
     storageCapacity : float, default is Undefined, optional
         The storage capacity (GiB) of the file system. Minimum of 1200. See more details at Allowed values for Fsx storage capacity. Update is allowed only for SCRATCH_2, PERSISTENT_1 and PERSISTENT_2 deployment types, See more details at Fsx Storage Capacity Update. Required when not creating filesystem for a backup.
     storageType : str, default is Undefined, optional
-        - The filesystem storage type. Either SSD or HDD, defaults to SSD. HDD is only supported on PERSISTENT_1 deployment types.
+        - The filesystem storage type. One of SSD, HDD or INTELLIGENT_TIERING, defaults to SSD. HDD is only supported on PERSISTENT_1 deployment types. INTELLIGENT_TIERING requires data_read_cache_configuration and metadata_configuration to be set and is only supported for PERSISTENT_2 deployment types.
     subnetIdRefs : [FsxAwsUpboundIoV1beta1LustreFileSystemSpecForProviderSubnetIDRefsItems0], default is Undefined, optional
         References to Subnet in ec2 to populate subnetIds.
     subnetIdSelector : FsxAwsUpboundIoV1beta1LustreFileSystemSpecForProviderSubnetIDSelector, default is Undefined, optional
@@ -158,6 +157,8 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecForProvider:
         A list of IDs for the subnets that the file system will be accessible from. File systems currently support only one subnet. The file server is also launched in that subnet's Availability Zone.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
+    throughputCapacity : float, default is Undefined, optional
+        Throughput in MBps required for the INTELLIGENT_TIERING storage type. Must be 4000 or multiples of 4000.
     weeklyMaintenanceStartTime : str, default is Undefined, optional
         The preferred start time (in d:HH:MM format) to perform weekly maintenance, in the UTC time zone.
     """
@@ -174,6 +175,8 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecForProvider:
     dailyAutomaticBackupStartTime?: str
 
     dataCompressionType?: str
+
+    dataReadCacheConfiguration?: [FsxAwsUpboundIoV1beta1LustreFileSystemSpecForProviderDataReadCacheConfigurationItems0]
 
     deploymentType?: str
 
@@ -199,7 +202,7 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecForProvider:
 
     logConfiguration?: [FsxAwsUpboundIoV1beta1LustreFileSystemSpecForProviderLogConfigurationItems0]
 
-    metadataConfiguration?: FsxAwsUpboundIoV1beta1LustreFileSystemSpecForProviderMetadataConfiguration
+    metadataConfiguration?: [FsxAwsUpboundIoV1beta1LustreFileSystemSpecForProviderMetadataConfigurationItems0]
 
     perUnitStorageThroughput?: float
 
@@ -227,7 +230,27 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecForProvider:
 
     tags?: {str:str}
 
+    throughputCapacity?: float
+
     weeklyMaintenanceStartTime?: str
+
+
+schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecForProviderDataReadCacheConfigurationItems0:
+    r"""
+    fsx aws upbound io v1beta1 lustre file system spec for provider data read cache configuration items0
+
+    Attributes
+    ----------
+    size : float, default is Undefined, optional
+        Size of the file system's SSD read cache, in gibibytes (GiB). Required when the sizing_mode is USER_PROVISIONED.
+    sizingMode : str, default is Undefined, optional
+        Sizing mode for the cache. Valud values are NO_CACHE, USER_PROVISIONED, and PROPORTIONAL_TO_THROUGHPUT_CAPACITY.
+    """
+
+
+    size?: float
+
+    sizingMode?: str
 
 
 schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecForProviderKmsKeyIDRef:
@@ -337,16 +360,16 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecForProviderLogConfigurationItem
     level?: str
 
 
-schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecForProviderMetadataConfiguration:
+schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecForProviderMetadataConfigurationItems0:
     r"""
-    The Lustre metadata configuration used when creating an Amazon FSx for Lustre file system. This can be used to specify a user provisioned metadata scale. This is only supported when deployment_type is set to PERSISTENT_2. See Metadata Configuration below.
+    fsx aws upbound io v1beta1 lustre file system spec for provider metadata configuration items0
 
     Attributes
     ----------
     iops : float, default is Undefined, optional
-        Amount of IOPS provisioned for metadata. This parameter should only be used when the mode is set to USER_PROVISIONED. Valid Values are 1500,3000,6000 and 12000 through 192000 in increments of 12000.
+        Amount of IOPS provisioned for metadata. This parameter should only be used when the mode is set to USER_PROVISIONED. Valid Values are 1500,3000,6000 and 12000 through 192000 in increments of 12000. Valid values for INTELLIGENT_TIERING storage type are 6000 or 12000.
     mode : str, default is Undefined, optional
-        Mode for the metadata configuration of the file system. Valid values are AUTOMATIC, and USER_PROVISIONED.
+        Mode for the metadata configuration of the file system. Valid values are AUTOMATIC, and USER_PROVISIONED. Must be set to USER_PROVISIONED for INTELLIGENT_TIERING storage type.
     """
 
 
@@ -578,6 +601,8 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecInitProvider:
         A recurring daily time, in the format HH:MM. HH is the zero-padded hour of the day (0-23), and MM is the zero-padded minute of the hour. For example, 05:00 specifies 5 AM daily. only valid for PERSISTENT_1 and PERSISTENT_2 deployment_type. Requires automatic_backup_retention_days to be set.
     dataCompressionType : str, default is Undefined, optional
         Sets the data compression configuration for the file system. Valid values are LZ4 and NONE. Default value is NONE. Unsetting this value reverts the compression type back to NONE.
+    dataReadCacheConfiguration : [FsxAwsUpboundIoV1beta1LustreFileSystemSpecInitProviderDataReadCacheConfigurationItems0], default is Undefined, optional
+        data read cache configuration
     deploymentType : str, default is Undefined, optional
         - The filesystem deployment type. One of: SCRATCH_1, SCRATCH_2, PERSISTENT_1, PERSISTENT_2.
     driveCacheType : str, default is Undefined, optional
@@ -601,13 +626,13 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecInitProvider:
     kmsKeyIdSelector : FsxAwsUpboundIoV1beta1LustreFileSystemSpecInitProviderKmsKeyIDSelector, default is Undefined, optional
         kms key Id selector
     logConfiguration : [FsxAwsUpboundIoV1beta1LustreFileSystemSpecInitProviderLogConfigurationItems0], default is Undefined, optional
-        The Lustre logging configuration used when creating an Amazon FSx for Lustre file system. When logging is enabled, Lustre logs error and warning events for data repositories associated with your file system to Amazon CloudWatch Logs.
-    metadataConfiguration : FsxAwsUpboundIoV1beta1LustreFileSystemSpecInitProviderMetadataConfiguration, default is Undefined, optional
-        metadata configuration
+        The Lustre logging configuration used when creating an Amazon FSx for Lustre file system. When logging is enabled, Lustre logs error and warning events for data repositories associated with your file system to Amazon CloudWatch Logs. See log_configuration Block for details.
+    metadataConfiguration : [FsxAwsUpboundIoV1beta1LustreFileSystemSpecInitProviderMetadataConfigurationItems0], default is Undefined, optional
+        The Lustre metadata configuration used when creating an Amazon FSx for Lustre file system. This can be used to specify a user provisioned metadata scale. This is only supported when deployment_type is set to PERSISTENT_2. See metadata_configuration Block for details.
     perUnitStorageThroughput : float, default is Undefined, optional
         - Describes the amount of read and write throughput for each 1 tebibyte of storage, in MB/s/TiB, required for the PERSISTENT_1 and PERSISTENT_2 deployment_type. Valid values for PERSISTENT_1 deployment_type and SSD storage_type are 50, 100, 200. Valid values for PERSISTENT_1 deployment_type and HDD storage_type are 12, 40. Valid values for PERSISTENT_2 deployment_type and  SSD storage_type are 125, 250, 500, 1000.
     rootSquashConfiguration : [FsxAwsUpboundIoV1beta1LustreFileSystemSpecInitProviderRootSquashConfigurationItems0], default is Undefined, optional
-        The Lustre root squash configuration used when creating an Amazon FSx for Lustre file system. When enabled, root squash restricts root-level access from clients that try to access your file system as a root user.
+        The Lustre root squash configuration used when creating an Amazon FSx for Lustre file system. When enabled, root squash restricts root-level access from clients that try to access your file system as a root user. See root_squash_configuration Block for details.
     securityGroupIdRefs : [FsxAwsUpboundIoV1beta1LustreFileSystemSpecInitProviderSecurityGroupIDRefsItems0], default is Undefined, optional
         References to SecurityGroup in ec2 to populate securityGroupIds.
     securityGroupIdSelector : FsxAwsUpboundIoV1beta1LustreFileSystemSpecInitProviderSecurityGroupIDSelector, default is Undefined, optional
@@ -619,7 +644,7 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecInitProvider:
     storageCapacity : float, default is Undefined, optional
         The storage capacity (GiB) of the file system. Minimum of 1200. See more details at Allowed values for Fsx storage capacity. Update is allowed only for SCRATCH_2, PERSISTENT_1 and PERSISTENT_2 deployment types, See more details at Fsx Storage Capacity Update. Required when not creating filesystem for a backup.
     storageType : str, default is Undefined, optional
-        - The filesystem storage type. Either SSD or HDD, defaults to SSD. HDD is only supported on PERSISTENT_1 deployment types.
+        - The filesystem storage type. One of SSD, HDD or INTELLIGENT_TIERING, defaults to SSD. HDD is only supported on PERSISTENT_1 deployment types. INTELLIGENT_TIERING requires data_read_cache_configuration and metadata_configuration to be set and is only supported for PERSISTENT_2 deployment types.
     subnetIdRefs : [FsxAwsUpboundIoV1beta1LustreFileSystemSpecInitProviderSubnetIDRefsItems0], default is Undefined, optional
         References to Subnet in ec2 to populate subnetIds.
     subnetIdSelector : FsxAwsUpboundIoV1beta1LustreFileSystemSpecInitProviderSubnetIDSelector, default is Undefined, optional
@@ -628,6 +653,8 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecInitProvider:
         A list of IDs for the subnets that the file system will be accessible from. File systems currently support only one subnet. The file server is also launched in that subnet's Availability Zone.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
+    throughputCapacity : float, default is Undefined, optional
+        Throughput in MBps required for the INTELLIGENT_TIERING storage type. Must be 4000 or multiples of 4000.
     weeklyMaintenanceStartTime : str, default is Undefined, optional
         The preferred start time (in d:HH:MM format) to perform weekly maintenance, in the UTC time zone.
     """
@@ -644,6 +671,8 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecInitProvider:
     dailyAutomaticBackupStartTime?: str
 
     dataCompressionType?: str
+
+    dataReadCacheConfiguration?: [FsxAwsUpboundIoV1beta1LustreFileSystemSpecInitProviderDataReadCacheConfigurationItems0]
 
     deploymentType?: str
 
@@ -669,7 +698,7 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecInitProvider:
 
     logConfiguration?: [FsxAwsUpboundIoV1beta1LustreFileSystemSpecInitProviderLogConfigurationItems0]
 
-    metadataConfiguration?: FsxAwsUpboundIoV1beta1LustreFileSystemSpecInitProviderMetadataConfiguration
+    metadataConfiguration?: [FsxAwsUpboundIoV1beta1LustreFileSystemSpecInitProviderMetadataConfigurationItems0]
 
     perUnitStorageThroughput?: float
 
@@ -695,7 +724,27 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecInitProvider:
 
     tags?: {str:str}
 
+    throughputCapacity?: float
+
     weeklyMaintenanceStartTime?: str
+
+
+schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecInitProviderDataReadCacheConfigurationItems0:
+    r"""
+    fsx aws upbound io v1beta1 lustre file system spec init provider data read cache configuration items0
+
+    Attributes
+    ----------
+    size : float, default is Undefined, optional
+        Size of the file system's SSD read cache, in gibibytes (GiB). Required when the sizing_mode is USER_PROVISIONED.
+    sizingMode : str, default is Undefined, optional
+        Sizing mode for the cache. Valud values are NO_CACHE, USER_PROVISIONED, and PROPORTIONAL_TO_THROUGHPUT_CAPACITY.
+    """
+
+
+    size?: float
+
+    sizingMode?: str
 
 
 schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecInitProviderKmsKeyIDRef:
@@ -805,16 +854,16 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecInitProviderLogConfigurationIte
     level?: str
 
 
-schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecInitProviderMetadataConfiguration:
+schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecInitProviderMetadataConfigurationItems0:
     r"""
-    The Lustre metadata configuration used when creating an Amazon FSx for Lustre file system. This can be used to specify a user provisioned metadata scale. This is only supported when deployment_type is set to PERSISTENT_2. See Metadata Configuration below.
+    fsx aws upbound io v1beta1 lustre file system spec init provider metadata configuration items0
 
     Attributes
     ----------
     iops : float, default is Undefined, optional
-        Amount of IOPS provisioned for metadata. This parameter should only be used when the mode is set to USER_PROVISIONED. Valid Values are 1500,3000,6000 and 12000 through 192000 in increments of 12000.
+        Amount of IOPS provisioned for metadata. This parameter should only be used when the mode is set to USER_PROVISIONED. Valid Values are 1500,3000,6000 and 12000 through 192000 in increments of 12000. Valid values for INTELLIGENT_TIERING storage type are 6000 or 12000.
     mode : str, default is Undefined, optional
-        Mode for the metadata configuration of the file system. Valid values are AUTOMATIC, and USER_PROVISIONED.
+        Mode for the metadata configuration of the file system. Valid values are AUTOMATIC, and USER_PROVISIONED. Must be set to USER_PROVISIONED for INTELLIGENT_TIERING storage type.
     """
 
 
@@ -1063,112 +1112,12 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : FsxAwsUpboundIoV1beta1LustreFileSystemSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : FsxAwsUpboundIoV1beta1LustreFileSystemSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: FsxAwsUpboundIoV1beta1LustreFileSystemSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: FsxAwsUpboundIoV1beta1LustreFileSystemSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : FsxAwsUpboundIoV1beta1LustreFileSystemSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: FsxAwsUpboundIoV1beta1LustreFileSystemSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema FsxAwsUpboundIoV1beta1LustreFileSystemSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1228,6 +1177,8 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemStatusAtProvider:
         A recurring daily time, in the format HH:MM. HH is the zero-padded hour of the day (0-23), and MM is the zero-padded minute of the hour. For example, 05:00 specifies 5 AM daily. only valid for PERSISTENT_1 and PERSISTENT_2 deployment_type. Requires automatic_backup_retention_days to be set.
     dataCompressionType : str, default is Undefined, optional
         Sets the data compression configuration for the file system. Valid values are LZ4 and NONE. Default value is NONE. Unsetting this value reverts the compression type back to NONE.
+    dataReadCacheConfiguration : [FsxAwsUpboundIoV1beta1LustreFileSystemStatusAtProviderDataReadCacheConfigurationItems0], default is Undefined, optional
+        data read cache configuration
     deploymentType : str, default is Undefined, optional
         - The filesystem deployment type. One of: SCRATCH_1, SCRATCH_2, PERSISTENT_1, PERSISTENT_2.
     dnsName : str, default is Undefined, optional
@@ -1251,9 +1202,9 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemStatusAtProvider:
     kmsKeyId : str, default is Undefined, optional
         ARN for the KMS Key to encrypt the file system at rest, applicable for PERSISTENT_1 and PERSISTENT_2 deployment_type. Defaults to an AWS managed KMS Key.
     logConfiguration : [FsxAwsUpboundIoV1beta1LustreFileSystemStatusAtProviderLogConfigurationItems0], default is Undefined, optional
-        The Lustre logging configuration used when creating an Amazon FSx for Lustre file system. When logging is enabled, Lustre logs error and warning events for data repositories associated with your file system to Amazon CloudWatch Logs.
-    metadataConfiguration : FsxAwsUpboundIoV1beta1LustreFileSystemStatusAtProviderMetadataConfiguration, default is Undefined, optional
-        metadata configuration
+        The Lustre logging configuration used when creating an Amazon FSx for Lustre file system. When logging is enabled, Lustre logs error and warning events for data repositories associated with your file system to Amazon CloudWatch Logs. See log_configuration Block for details.
+    metadataConfiguration : [FsxAwsUpboundIoV1beta1LustreFileSystemStatusAtProviderMetadataConfigurationItems0], default is Undefined, optional
+        The Lustre metadata configuration used when creating an Amazon FSx for Lustre file system. This can be used to specify a user provisioned metadata scale. This is only supported when deployment_type is set to PERSISTENT_2. See metadata_configuration Block for details.
     mountName : str, default is Undefined, optional
         The value to be used when mounting the filesystem.
     networkInterfaceIds : [str], default is Undefined, optional
@@ -1262,8 +1213,11 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemStatusAtProvider:
         AWS account identifier that created the file system.
     perUnitStorageThroughput : float, default is Undefined, optional
         - Describes the amount of read and write throughput for each 1 tebibyte of storage, in MB/s/TiB, required for the PERSISTENT_1 and PERSISTENT_2 deployment_type. Valid values for PERSISTENT_1 deployment_type and SSD storage_type are 50, 100, 200. Valid values for PERSISTENT_1 deployment_type and HDD storage_type are 12, 40. Valid values for PERSISTENT_2 deployment_type and  SSD storage_type are 125, 250, 500, 1000.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     rootSquashConfiguration : [FsxAwsUpboundIoV1beta1LustreFileSystemStatusAtProviderRootSquashConfigurationItems0], default is Undefined, optional
-        The Lustre root squash configuration used when creating an Amazon FSx for Lustre file system. When enabled, root squash restricts root-level access from clients that try to access your file system as a root user.
+        The Lustre root squash configuration used when creating an Amazon FSx for Lustre file system. When enabled, root squash restricts root-level access from clients that try to access your file system as a root user. See root_squash_configuration Block for details.
     securityGroupIds : [str], default is Undefined, optional
         A list of IDs for the security groups that apply to the specified network interfaces created for file system access. These security groups will apply to all network interfaces.
     skipFinalBackup : bool, default is Undefined, optional
@@ -1271,13 +1225,15 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemStatusAtProvider:
     storageCapacity : float, default is Undefined, optional
         The storage capacity (GiB) of the file system. Minimum of 1200. See more details at Allowed values for Fsx storage capacity. Update is allowed only for SCRATCH_2, PERSISTENT_1 and PERSISTENT_2 deployment types, See more details at Fsx Storage Capacity Update. Required when not creating filesystem for a backup.
     storageType : str, default is Undefined, optional
-        - The filesystem storage type. Either SSD or HDD, defaults to SSD. HDD is only supported on PERSISTENT_1 deployment types.
+        - The filesystem storage type. One of SSD, HDD or INTELLIGENT_TIERING, defaults to SSD. HDD is only supported on PERSISTENT_1 deployment types. INTELLIGENT_TIERING requires data_read_cache_configuration and metadata_configuration to be set and is only supported for PERSISTENT_2 deployment types.
     subnetIds : [str], default is Undefined, optional
         A list of IDs for the subnets that the file system will be accessible from. File systems currently support only one subnet. The file server is also launched in that subnet's Availability Zone.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
         A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.
+    throughputCapacity : float, default is Undefined, optional
+        Throughput in MBps required for the INTELLIGENT_TIERING storage type. Must be 4000 or multiples of 4000.
     vpcId : str, default is Undefined, optional
         Identifier of the Virtual Private Cloud for the file system.
     weeklyMaintenanceStartTime : str, default is Undefined, optional
@@ -1298,6 +1254,8 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemStatusAtProvider:
     dailyAutomaticBackupStartTime?: str
 
     dataCompressionType?: str
+
+    dataReadCacheConfiguration?: [FsxAwsUpboundIoV1beta1LustreFileSystemStatusAtProviderDataReadCacheConfigurationItems0]
 
     deploymentType?: str
 
@@ -1323,7 +1281,7 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemStatusAtProvider:
 
     logConfiguration?: [FsxAwsUpboundIoV1beta1LustreFileSystemStatusAtProviderLogConfigurationItems0]
 
-    metadataConfiguration?: FsxAwsUpboundIoV1beta1LustreFileSystemStatusAtProviderMetadataConfiguration
+    metadataConfiguration?: [FsxAwsUpboundIoV1beta1LustreFileSystemStatusAtProviderMetadataConfigurationItems0]
 
     mountName?: str
 
@@ -1332,6 +1290,8 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemStatusAtProvider:
     ownerId?: str
 
     perUnitStorageThroughput?: float
+
+    region?: str
 
     rootSquashConfiguration?: [FsxAwsUpboundIoV1beta1LustreFileSystemStatusAtProviderRootSquashConfigurationItems0]
 
@@ -1349,9 +1309,29 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemStatusAtProvider:
 
     tagsAll?: {str:str}
 
+    throughputCapacity?: float
+
     vpcId?: str
 
     weeklyMaintenanceStartTime?: str
+
+
+schema FsxAwsUpboundIoV1beta1LustreFileSystemStatusAtProviderDataReadCacheConfigurationItems0:
+    r"""
+    fsx aws upbound io v1beta1 lustre file system status at provider data read cache configuration items0
+
+    Attributes
+    ----------
+    size : float, default is Undefined, optional
+        Size of the file system's SSD read cache, in gibibytes (GiB). Required when the sizing_mode is USER_PROVISIONED.
+    sizingMode : str, default is Undefined, optional
+        Sizing mode for the cache. Valud values are NO_CACHE, USER_PROVISIONED, and PROPORTIONAL_TO_THROUGHPUT_CAPACITY.
+    """
+
+
+    size?: float
+
+    sizingMode?: str
 
 
 schema FsxAwsUpboundIoV1beta1LustreFileSystemStatusAtProviderLogConfigurationItems0:
@@ -1372,16 +1352,16 @@ schema FsxAwsUpboundIoV1beta1LustreFileSystemStatusAtProviderLogConfigurationIte
     level?: str
 
 
-schema FsxAwsUpboundIoV1beta1LustreFileSystemStatusAtProviderMetadataConfiguration:
+schema FsxAwsUpboundIoV1beta1LustreFileSystemStatusAtProviderMetadataConfigurationItems0:
     r"""
-    The Lustre metadata configuration used when creating an Amazon FSx for Lustre file system. This can be used to specify a user provisioned metadata scale. This is only supported when deployment_type is set to PERSISTENT_2. See Metadata Configuration below.
+    fsx aws upbound io v1beta1 lustre file system status at provider metadata configuration items0
 
     Attributes
     ----------
     iops : float, default is Undefined, optional
-        Amount of IOPS provisioned for metadata. This parameter should only be used when the mode is set to USER_PROVISIONED. Valid Values are 1500,3000,6000 and 12000 through 192000 in increments of 12000.
+        Amount of IOPS provisioned for metadata. This parameter should only be used when the mode is set to USER_PROVISIONED. Valid Values are 1500,3000,6000 and 12000 through 192000 in increments of 12000. Valid values for INTELLIGENT_TIERING storage type are 6000 or 12000.
     mode : str, default is Undefined, optional
-        Mode for the metadata configuration of the file system. Valid values are AUTOMATIC, and USER_PROVISIONED.
+        Mode for the metadata configuration of the file system. Valid values are AUTOMATIC, and USER_PROVISIONED. Must be set to USER_PROVISIONED for INTELLIGENT_TIERING storage type.
     """
 
 

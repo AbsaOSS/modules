@@ -66,8 +66,6 @@ schema KendraAwsUpboundIoV1beta2IndexSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : KendraAwsUpboundIoV1beta2IndexSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : KendraAwsUpboundIoV1beta2IndexSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : KendraAwsUpboundIoV1beta2IndexSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema KendraAwsUpboundIoV1beta2IndexSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: KendraAwsUpboundIoV1beta2IndexSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: KendraAwsUpboundIoV1beta2IndexSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: KendraAwsUpboundIoV1beta2IndexSpecWriteConnectionSecretToRef
 
@@ -101,10 +97,11 @@ schema KendraAwsUpboundIoV1beta2IndexSpecForProvider:
     documentMetadataConfigurationUpdates : [KendraAwsUpboundIoV1beta2IndexSpecForProviderDocumentMetadataConfigurationUpdatesItems0], default is Undefined, optional
         One or more blocks that specify the configuration settings for any metadata applied to the documents in the index. Minimum number of 0 items. Maximum number of 500 items. If specified, you must define all elements, including those that are provided by default. These index fields are documented at Amazon Kendra Index documentation. For an example resource that defines these default index fields, refer to the default example above. For an example resource that appends additional index fields, refer to the append example above. All arguments for each block must be specified. Note that blocks cannot be removed since index fields cannot be deleted. This argument is detailed below.
     edition : str, default is Undefined, optional
-        The Amazon Kendra edition to use for the index. Choose DEVELOPER_EDITION for indexes intended for development, testing, or proof of concept. Use ENTERPRISE_EDITION for your production databases. Once you set the edition for an index, it can't be changed. Defaults to ENTERPRISE_EDITION
+        The Amazon Kendra edition to use for the index. Choose DEVELOPER_EDITION for indexes intended for development, testing, or proof of concept. Use ENTERPRISE_EDITION for your production databases. Use GEN_AI_ENTERPRISE_EDITION for creating generative AI applications. Once you set the edition for an index, it can't be changed. Defaults to ENTERPRISE_EDITION.
     name : str, default is Undefined, optional
         Specifies the name of the Index.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     roleArn : str, default is Undefined, optional
         An AWS Identity and Access Management (IAM) role that gives Amazon Kendra permissions to access your Amazon CloudWatch logs and metrics. This is also the role you use when you call the BatchPutDocument API to index documents from an Amazon S3 bucket.
@@ -467,7 +464,7 @@ schema KendraAwsUpboundIoV1beta2IndexSpecInitProvider:
     documentMetadataConfigurationUpdates : [KendraAwsUpboundIoV1beta2IndexSpecInitProviderDocumentMetadataConfigurationUpdatesItems0], default is Undefined, optional
         One or more blocks that specify the configuration settings for any metadata applied to the documents in the index. Minimum number of 0 items. Maximum number of 500 items. If specified, you must define all elements, including those that are provided by default. These index fields are documented at Amazon Kendra Index documentation. For an example resource that defines these default index fields, refer to the default example above. For an example resource that appends additional index fields, refer to the append example above. All arguments for each block must be specified. Note that blocks cannot be removed since index fields cannot be deleted. This argument is detailed below.
     edition : str, default is Undefined, optional
-        The Amazon Kendra edition to use for the index. Choose DEVELOPER_EDITION for indexes intended for development, testing, or proof of concept. Use ENTERPRISE_EDITION for your production databases. Once you set the edition for an index, it can't be changed. Defaults to ENTERPRISE_EDITION
+        The Amazon Kendra edition to use for the index. Choose DEVELOPER_EDITION for indexes intended for development, testing, or proof of concept. Use ENTERPRISE_EDITION for your production databases. Use GEN_AI_ENTERPRISE_EDITION for creating generative AI applications. Once you set the edition for an index, it can't be changed. Defaults to ENTERPRISE_EDITION.
     name : str, default is Undefined, optional
         Specifies the name of the Index.
     roleArn : str, default is Undefined, optional
@@ -851,112 +848,12 @@ schema KendraAwsUpboundIoV1beta2IndexSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema KendraAwsUpboundIoV1beta2IndexSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : KendraAwsUpboundIoV1beta2IndexSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : KendraAwsUpboundIoV1beta2IndexSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: KendraAwsUpboundIoV1beta2IndexSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: KendraAwsUpboundIoV1beta2IndexSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema KendraAwsUpboundIoV1beta2IndexSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : KendraAwsUpboundIoV1beta2IndexSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: KendraAwsUpboundIoV1beta2IndexSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema KendraAwsUpboundIoV1beta2IndexSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema KendraAwsUpboundIoV1beta2IndexSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema KendraAwsUpboundIoV1beta2IndexSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1013,7 +910,7 @@ schema KendraAwsUpboundIoV1beta2IndexStatusAtProvider:
     documentMetadataConfigurationUpdates : [KendraAwsUpboundIoV1beta2IndexStatusAtProviderDocumentMetadataConfigurationUpdatesItems0], default is Undefined, optional
         One or more blocks that specify the configuration settings for any metadata applied to the documents in the index. Minimum number of 0 items. Maximum number of 500 items. If specified, you must define all elements, including those that are provided by default. These index fields are documented at Amazon Kendra Index documentation. For an example resource that defines these default index fields, refer to the default example above. For an example resource that appends additional index fields, refer to the append example above. All arguments for each block must be specified. Note that blocks cannot be removed since index fields cannot be deleted. This argument is detailed below.
     edition : str, default is Undefined, optional
-        The Amazon Kendra edition to use for the index. Choose DEVELOPER_EDITION for indexes intended for development, testing, or proof of concept. Use ENTERPRISE_EDITION for your production databases. Once you set the edition for an index, it can't be changed. Defaults to ENTERPRISE_EDITION
+        The Amazon Kendra edition to use for the index. Choose DEVELOPER_EDITION for indexes intended for development, testing, or proof of concept. Use ENTERPRISE_EDITION for your production databases. Use GEN_AI_ENTERPRISE_EDITION for creating generative AI applications. Once you set the edition for an index, it can't be changed. Defaults to ENTERPRISE_EDITION.
     errorMessage : str, default is Undefined, optional
         When the Status field value is FAILED, this contains a message that explains why.
     id : str, default is Undefined, optional
@@ -1022,6 +919,9 @@ schema KendraAwsUpboundIoV1beta2IndexStatusAtProvider:
         A block that provides information about the number of FAQ questions and answers and the number of text documents indexed. Detailed below.
     name : str, default is Undefined, optional
         Specifies the name of the Index.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     roleArn : str, default is Undefined, optional
         An AWS Identity and Access Management (IAM) role that gives Amazon Kendra permissions to access your Amazon CloudWatch logs and metrics. This is also the role you use when you call the BatchPutDocument API to index documents from an Amazon S3 bucket.
     serverSideEncryptionConfiguration : KendraAwsUpboundIoV1beta2IndexStatusAtProviderServerSideEncryptionConfiguration, default is Undefined, optional
@@ -1062,6 +962,8 @@ schema KendraAwsUpboundIoV1beta2IndexStatusAtProvider:
     indexStatistics?: [KendraAwsUpboundIoV1beta2IndexStatusAtProviderIndexStatisticsItems0]
 
     name?: str
+
+    region?: str
 
     roleArn?: str
 

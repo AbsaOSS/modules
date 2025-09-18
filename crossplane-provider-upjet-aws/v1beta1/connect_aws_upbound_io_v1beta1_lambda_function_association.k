@@ -75,8 +75,6 @@ schema ConnectAwsUpboundIoV1beta1LambdaFunctionAssociationSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : ConnectAwsUpboundIoV1beta1LambdaFunctionAssociationSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : ConnectAwsUpboundIoV1beta1LambdaFunctionAssociationSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : ConnectAwsUpboundIoV1beta1LambdaFunctionAssociationSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -91,8 +89,6 @@ schema ConnectAwsUpboundIoV1beta1LambdaFunctionAssociationSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: ConnectAwsUpboundIoV1beta1LambdaFunctionAssociationSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: ConnectAwsUpboundIoV1beta1LambdaFunctionAssociationSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: ConnectAwsUpboundIoV1beta1LambdaFunctionAssociationSpecWriteConnectionSecretToRef
 
@@ -116,6 +112,7 @@ schema ConnectAwsUpboundIoV1beta1LambdaFunctionAssociationSpecForProvider:
     instanceIdSelector : ConnectAwsUpboundIoV1beta1LambdaFunctionAssociationSpecForProviderInstanceIDSelector, default is Undefined, optional
         instance Id selector
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     """
 
@@ -357,112 +354,12 @@ schema ConnectAwsUpboundIoV1beta1LambdaFunctionAssociationSpecProviderConfigRefP
     resolve?: "Always" | "IfNotPresent"
 
 
-schema ConnectAwsUpboundIoV1beta1LambdaFunctionAssociationSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : ConnectAwsUpboundIoV1beta1LambdaFunctionAssociationSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : ConnectAwsUpboundIoV1beta1LambdaFunctionAssociationSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: ConnectAwsUpboundIoV1beta1LambdaFunctionAssociationSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: ConnectAwsUpboundIoV1beta1LambdaFunctionAssociationSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema ConnectAwsUpboundIoV1beta1LambdaFunctionAssociationSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : ConnectAwsUpboundIoV1beta1LambdaFunctionAssociationSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: ConnectAwsUpboundIoV1beta1LambdaFunctionAssociationSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema ConnectAwsUpboundIoV1beta1LambdaFunctionAssociationSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema ConnectAwsUpboundIoV1beta1LambdaFunctionAssociationSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema ConnectAwsUpboundIoV1beta1LambdaFunctionAssociationSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -514,6 +411,9 @@ schema ConnectAwsUpboundIoV1beta1LambdaFunctionAssociationStatusAtProvider:
         The Amazon Connect instance ID and Lambda Function ARN separated by a comma (,).
     instanceId : str, default is Undefined, optional
         The identifier of the Amazon Connect instance. You can find the instanceId in the ARN of the instance.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     """
 
 
@@ -522,6 +422,8 @@ schema ConnectAwsUpboundIoV1beta1LambdaFunctionAssociationStatusAtProvider:
     id?: str
 
     instanceId?: str
+
+    region?: str
 
 
 schema ConnectAwsUpboundIoV1beta1LambdaFunctionAssociationStatusConditionsItems0:

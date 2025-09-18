@@ -66,8 +66,6 @@ schema ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpecWriteConnectionSecretToRef
 
@@ -112,9 +108,9 @@ schema ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpecForProvider:
         or the minor version can be unspecified which will use the latest version at creation time, e.g., 6.x.
         The actual engine version used is returned in the attribute engine_version_actual, see Attribute Reference below.
     globalReplicationGroupDescription : str, default is Undefined, optional
-        created description for the global replication group.
+        A user-created description for the global replication group.
     globalReplicationGroupIdSuffix : str, default is Undefined, optional
-        –  The suffix name of a Global Datastore. If global_replication_group_id_suffix is changed, creates a new resource.
+        The suffix name of a Global Datastore. If global_replication_group_id_suffix is changed, creates a new resource.
     numNodeGroups : float, default is Undefined, optional
         The number of node groups (shards) on the global replication group.
     parameterGroupName : str, default is Undefined, optional
@@ -123,12 +119,13 @@ schema ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpecForProvider:
         Specifying without a major version upgrade will fail.
         Note that ElastiCache creates a copy of this parameter group for each member replication group.
     primaryReplicationGroupId : str, default is Undefined, optional
-        –  The ID of the primary cluster that accepts writes and will replicate updates to the secondary cluster. If primary_replication_group_id is changed, creates a new resource.
+        The ID of the primary cluster that accepts writes and will replicate updates to the secondary cluster. If primary_replication_group_id is changed, creates a new resource.
     primaryReplicationGroupIdRef : ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpecForProviderPrimaryReplicationGroupIDRef, default is Undefined, optional
         primary replication group Id ref
     primaryReplicationGroupIdSelector : ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpecForProviderPrimaryReplicationGroupIDSelector, default is Undefined, optional
         primary replication group Id selector
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     """
 
@@ -278,9 +275,9 @@ schema ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpecInitProvider:
         or the minor version can be unspecified which will use the latest version at creation time, e.g., 6.x.
         The actual engine version used is returned in the attribute engine_version_actual, see Attribute Reference below.
     globalReplicationGroupDescription : str, default is Undefined, optional
-        created description for the global replication group.
+        A user-created description for the global replication group.
     globalReplicationGroupIdSuffix : str, default is Undefined, optional
-        –  The suffix name of a Global Datastore. If global_replication_group_id_suffix is changed, creates a new resource.
+        The suffix name of a Global Datastore. If global_replication_group_id_suffix is changed, creates a new resource.
     numNodeGroups : float, default is Undefined, optional
         The number of node groups (shards) on the global replication group.
     parameterGroupName : str, default is Undefined, optional
@@ -289,7 +286,7 @@ schema ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpecInitProvider:
         Specifying without a major version upgrade will fail.
         Note that ElastiCache creates a copy of this parameter group for each member replication group.
     primaryReplicationGroupId : str, default is Undefined, optional
-        –  The ID of the primary cluster that accepts writes and will replicate updates to the secondary cluster. If primary_replication_group_id is changed, creates a new resource.
+        The ID of the primary cluster that accepts writes and will replicate updates to the secondary cluster. If primary_replication_group_id is changed, creates a new resource.
     primaryReplicationGroupIdRef : ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpecInitProviderPrimaryReplicationGroupIDRef, default is Undefined, optional
         primary replication group Id ref
     primaryReplicationGroupIdSelector : ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpecInitProviderPrimaryReplicationGroupIDSelector, default is Undefined, optional
@@ -451,112 +448,12 @@ schema ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpecProviderConfigRef
     resolve?: "Always" | "IfNotPresent"
 
 
-schema ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -635,11 +532,11 @@ schema ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupStatusAtProvider:
         Set of node groups (shards) on the global replication group.
         Has the values:
     globalReplicationGroupDescription : str, default is Undefined, optional
-        created description for the global replication group.
+        A user-created description for the global replication group.
     globalReplicationGroupId : str, default is Undefined, optional
         The full ID of the global replication group.
     globalReplicationGroupIdSuffix : str, default is Undefined, optional
-        –  The suffix name of a Global Datastore. If global_replication_group_id_suffix is changed, creates a new resource.
+        The suffix name of a Global Datastore. If global_replication_group_id_suffix is changed, creates a new resource.
     id : str, default is Undefined, optional
         The ID of the ElastiCache Global Replication Group.
     numNodeGroups : float, default is Undefined, optional
@@ -650,7 +547,10 @@ schema ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupStatusAtProvider:
         Specifying without a major version upgrade will fail.
         Note that ElastiCache creates a copy of this parameter group for each member replication group.
     primaryReplicationGroupId : str, default is Undefined, optional
-        –  The ID of the primary cluster that accepts writes and will replicate updates to the secondary cluster. If primary_replication_group_id is changed, creates a new resource.
+        The ID of the primary cluster that accepts writes and will replicate updates to the secondary cluster. If primary_replication_group_id is changed, creates a new resource.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     transitEncryptionEnabled : bool, default is Undefined, optional
         A flag that indicates whether the encryption in transit is enabled.
     """
@@ -689,6 +589,8 @@ schema ElasticacheAwsUpboundIoV1beta1GlobalReplicationGroupStatusAtProvider:
     parameterGroupName?: str
 
     primaryReplicationGroupId?: str
+
+    region?: str
 
     transitEncryptionEnabled?: bool
 

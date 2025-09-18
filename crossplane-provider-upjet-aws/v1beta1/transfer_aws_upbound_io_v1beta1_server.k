@@ -66,8 +66,6 @@ schema TransferAwsUpboundIoV1beta1ServerSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : TransferAwsUpboundIoV1beta1ServerSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : TransferAwsUpboundIoV1beta1ServerSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : TransferAwsUpboundIoV1beta1ServerSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema TransferAwsUpboundIoV1beta1ServerSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: TransferAwsUpboundIoV1beta1ServerSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: TransferAwsUpboundIoV1beta1ServerSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: TransferAwsUpboundIoV1beta1ServerSpecWriteConnectionSecretToRef
 
@@ -109,13 +105,13 @@ schema TransferAwsUpboundIoV1beta1ServerSpecForProvider:
     domain : str, default is Undefined, optional
         The domain of the storage system that is used for file transfers. Valid values are: S3 and EFS. The default value is S3.
     endpointDetails : [TransferAwsUpboundIoV1beta1ServerSpecForProviderEndpointDetailsItems0], default is Undefined, optional
-        The virtual private cloud (VPC) endpoint settings that you want to configure for your SFTP server. See endpoint_details block below for details.
+        The virtual private cloud (VPC) endpoint settings that you want to configure for your SFTP server. See endpoint_details Block below for details.
     endpointType : str, default is Undefined, optional
         The type of endpoint that you want your SFTP server connect to. If you connect to a VPC (or VPC_ENDPOINT), your SFTP server isn't accessible over the public internet. If you want to connect your SFTP server via public internet, set PUBLIC.  Defaults to PUBLIC.
     forceDestroy : bool, default is Undefined, optional
         A boolean that indicates all users associated with the server should be deleted so that the Server can be destroyed without error. The default value is false. This option only applies to servers configured with a SERVICE_MANAGED identity_provider_type.
     function : str, default is Undefined, optional
-        The ARN for a lambda function to use for the Identity provider.
+        The ARN for a lambda function to use for the Identity provider with an identity_provider_type of AWS_LAMBDA.
     hostKeySecretRef : TransferAwsUpboundIoV1beta1ServerSpecForProviderHostKeySecretRef, default is Undefined, optional
         host key secret ref
     identityProviderType : str, default is Undefined, optional
@@ -133,17 +129,18 @@ schema TransferAwsUpboundIoV1beta1ServerSpecForProvider:
     preAuthenticationLoginBannerSecretRef : TransferAwsUpboundIoV1beta1ServerSpecForProviderPreAuthenticationLoginBannerSecretRef, default is Undefined, optional
         pre authentication login banner secret ref
     protocolDetails : [TransferAwsUpboundIoV1beta1ServerSpecForProviderProtocolDetailsItems0], default is Undefined, optional
-        The protocol settings that are configured for your server. See protocol_details block below for details.
+        The protocol settings that are configured for your server. See protocol_details Block below for details.
     protocols : [str], default is Undefined, optional
         Specifies the file transfer protocol or protocols over which your file transfer protocol client can connect to your server's endpoint. This defaults to SFTP . The available protocols are:
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     s3StorageOptions : [TransferAwsUpboundIoV1beta1ServerSpecForProviderS3StorageOptionsItems0], default is Undefined, optional
-        Specifies whether or not performance for your Amazon S3 directories is optimized. This is disabled by default. See s3_storage_options block below for details.
+        Specifies whether or not performance for your Amazon S3 directories is optimized. This is disabled by default. See s3_storage_options Block below for details.
     securityPolicyName : str, default is Undefined, optional
         Specifies the name of the security policy that is attached to the server. Default value is: TransferSecurityPolicy-2018-11. The available values are:
     sftpAuthenticationMethods : str, default is Undefined, optional
-        For SFTP-enabled servers, and for custom identity providers only. Valid values are PASSWORD, PUBLIC_KEY, PUBLIC_KEY_OR_PASSWORD and PUBLIC_KEY_AND_PASSWORD. Default value is: PUBLIC_KEY_OR_PASSWORD.
+        For SFTP-enabled servers with an identity_provider_type of API_GATEWAY or AWS_LAMBDA. Valid values are PASSWORD, PUBLIC_KEY, PUBLIC_KEY_OR_PASSWORD and PUBLIC_KEY_AND_PASSWORD. Default value is: PUBLIC_KEY_OR_PASSWORD.
     structuredLogDestinations : [str], default is Undefined, optional
         A set of ARNs of destinations that will receive structured logs from the transfer server such as CloudWatch Log Group ARNs. If provided this enables the transfer server to emit structured logs to the specified locations.
         This is a set of arns of destinations that will receive structured logs from the transfer server
@@ -152,7 +149,7 @@ schema TransferAwsUpboundIoV1beta1ServerSpecForProvider:
     url : str, default is Undefined, optional
         - URL of the service endpoint used to authenticate users with an identity_provider_type of API_GATEWAY.
     workflowDetails : [TransferAwsUpboundIoV1beta1ServerSpecForProviderWorkflowDetailsItems0], default is Undefined, optional
-        Specifies the workflow details. See workflow_details block below for details.
+        Specifies the workflow details. See workflow_details Block below for details.
     """
 
 
@@ -916,9 +913,9 @@ schema TransferAwsUpboundIoV1beta1ServerSpecForProviderWorkflowDetailsItems0:
     Attributes
     ----------
     onPartialUpload : [TransferAwsUpboundIoV1beta1ServerSpecForProviderWorkflowDetailsItems0OnPartialUploadItems0], default is Undefined, optional
-        A trigger that starts a workflow if a file is only partially uploaded. See Workflow Detail below. See on_partial_upload block below for details.
+        A trigger that starts a workflow if a file is only partially uploaded. See Workflow Detail below. See on_partial_upload Block below for details.
     onUpload : [TransferAwsUpboundIoV1beta1ServerSpecForProviderWorkflowDetailsItems0OnUploadItems0], default is Undefined, optional
-        A trigger that starts a workflow: the workflow begins to execute after a file is uploaded. See on_upload block below for details.
+        A trigger that starts a workflow: the workflow begins to execute after a file is uploaded. See on_upload Block below for details.
     """
 
 
@@ -993,13 +990,13 @@ schema TransferAwsUpboundIoV1beta1ServerSpecInitProvider:
     domain : str, default is Undefined, optional
         The domain of the storage system that is used for file transfers. Valid values are: S3 and EFS. The default value is S3.
     endpointDetails : [TransferAwsUpboundIoV1beta1ServerSpecInitProviderEndpointDetailsItems0], default is Undefined, optional
-        The virtual private cloud (VPC) endpoint settings that you want to configure for your SFTP server. See endpoint_details block below for details.
+        The virtual private cloud (VPC) endpoint settings that you want to configure for your SFTP server. See endpoint_details Block below for details.
     endpointType : str, default is Undefined, optional
         The type of endpoint that you want your SFTP server connect to. If you connect to a VPC (or VPC_ENDPOINT), your SFTP server isn't accessible over the public internet. If you want to connect your SFTP server via public internet, set PUBLIC.  Defaults to PUBLIC.
     forceDestroy : bool, default is Undefined, optional
         A boolean that indicates all users associated with the server should be deleted so that the Server can be destroyed without error. The default value is false. This option only applies to servers configured with a SERVICE_MANAGED identity_provider_type.
     function : str, default is Undefined, optional
-        The ARN for a lambda function to use for the Identity provider.
+        The ARN for a lambda function to use for the Identity provider with an identity_provider_type of AWS_LAMBDA.
     hostKeySecretRef : TransferAwsUpboundIoV1beta1ServerSpecInitProviderHostKeySecretRef, default is Undefined, optional
         host key secret ref
     identityProviderType : str, default is Undefined, optional
@@ -1017,15 +1014,15 @@ schema TransferAwsUpboundIoV1beta1ServerSpecInitProvider:
     preAuthenticationLoginBannerSecretRef : TransferAwsUpboundIoV1beta1ServerSpecInitProviderPreAuthenticationLoginBannerSecretRef, default is Undefined, optional
         pre authentication login banner secret ref
     protocolDetails : [TransferAwsUpboundIoV1beta1ServerSpecInitProviderProtocolDetailsItems0], default is Undefined, optional
-        The protocol settings that are configured for your server. See protocol_details block below for details.
+        The protocol settings that are configured for your server. See protocol_details Block below for details.
     protocols : [str], default is Undefined, optional
         Specifies the file transfer protocol or protocols over which your file transfer protocol client can connect to your server's endpoint. This defaults to SFTP . The available protocols are:
     s3StorageOptions : [TransferAwsUpboundIoV1beta1ServerSpecInitProviderS3StorageOptionsItems0], default is Undefined, optional
-        Specifies whether or not performance for your Amazon S3 directories is optimized. This is disabled by default. See s3_storage_options block below for details.
+        Specifies whether or not performance for your Amazon S3 directories is optimized. This is disabled by default. See s3_storage_options Block below for details.
     securityPolicyName : str, default is Undefined, optional
         Specifies the name of the security policy that is attached to the server. Default value is: TransferSecurityPolicy-2018-11. The available values are:
     sftpAuthenticationMethods : str, default is Undefined, optional
-        For SFTP-enabled servers, and for custom identity providers only. Valid values are PASSWORD, PUBLIC_KEY, PUBLIC_KEY_OR_PASSWORD and PUBLIC_KEY_AND_PASSWORD. Default value is: PUBLIC_KEY_OR_PASSWORD.
+        For SFTP-enabled servers with an identity_provider_type of API_GATEWAY or AWS_LAMBDA. Valid values are PASSWORD, PUBLIC_KEY, PUBLIC_KEY_OR_PASSWORD and PUBLIC_KEY_AND_PASSWORD. Default value is: PUBLIC_KEY_OR_PASSWORD.
     structuredLogDestinations : [str], default is Undefined, optional
         A set of ARNs of destinations that will receive structured logs from the transfer server such as CloudWatch Log Group ARNs. If provided this enables the transfer server to emit structured logs to the specified locations.
         This is a set of arns of destinations that will receive structured logs from the transfer server
@@ -1034,7 +1031,7 @@ schema TransferAwsUpboundIoV1beta1ServerSpecInitProvider:
     url : str, default is Undefined, optional
         - URL of the service endpoint used to authenticate users with an identity_provider_type of API_GATEWAY.
     workflowDetails : [TransferAwsUpboundIoV1beta1ServerSpecInitProviderWorkflowDetailsItems0], default is Undefined, optional
-        Specifies the workflow details. See workflow_details block below for details.
+        Specifies the workflow details. See workflow_details Block below for details.
     """
 
 
@@ -1796,9 +1793,9 @@ schema TransferAwsUpboundIoV1beta1ServerSpecInitProviderWorkflowDetailsItems0:
     Attributes
     ----------
     onPartialUpload : [TransferAwsUpboundIoV1beta1ServerSpecInitProviderWorkflowDetailsItems0OnPartialUploadItems0], default is Undefined, optional
-        A trigger that starts a workflow if a file is only partially uploaded. See Workflow Detail below. See on_partial_upload block below for details.
+        A trigger that starts a workflow if a file is only partially uploaded. See Workflow Detail below. See on_partial_upload Block below for details.
     onUpload : [TransferAwsUpboundIoV1beta1ServerSpecInitProviderWorkflowDetailsItems0OnUploadItems0], default is Undefined, optional
-        A trigger that starts a workflow: the workflow begins to execute after a file is uploaded. See on_upload block below for details.
+        A trigger that starts a workflow: the workflow begins to execute after a file is uploaded. See on_upload Block below for details.
     """
 
 
@@ -1887,112 +1884,12 @@ schema TransferAwsUpboundIoV1beta1ServerSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema TransferAwsUpboundIoV1beta1ServerSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : TransferAwsUpboundIoV1beta1ServerSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : TransferAwsUpboundIoV1beta1ServerSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: TransferAwsUpboundIoV1beta1ServerSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: TransferAwsUpboundIoV1beta1ServerSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema TransferAwsUpboundIoV1beta1ServerSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : TransferAwsUpboundIoV1beta1ServerSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: TransferAwsUpboundIoV1beta1ServerSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema TransferAwsUpboundIoV1beta1ServerSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema TransferAwsUpboundIoV1beta1ServerSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema TransferAwsUpboundIoV1beta1ServerSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -2049,13 +1946,13 @@ schema TransferAwsUpboundIoV1beta1ServerStatusAtProvider:
     endpoint : str, default is Undefined, optional
         The endpoint of the Transfer Server (e.g., s-12345678.server.transfer.REGION.amazonaws.com)
     endpointDetails : [TransferAwsUpboundIoV1beta1ServerStatusAtProviderEndpointDetailsItems0], default is Undefined, optional
-        The virtual private cloud (VPC) endpoint settings that you want to configure for your SFTP server. See endpoint_details block below for details.
+        The virtual private cloud (VPC) endpoint settings that you want to configure for your SFTP server. See endpoint_details Block below for details.
     endpointType : str, default is Undefined, optional
         The type of endpoint that you want your SFTP server connect to. If you connect to a VPC (or VPC_ENDPOINT), your SFTP server isn't accessible over the public internet. If you want to connect your SFTP server via public internet, set PUBLIC.  Defaults to PUBLIC.
     forceDestroy : bool, default is Undefined, optional
         A boolean that indicates all users associated with the server should be deleted so that the Server can be destroyed without error. The default value is false. This option only applies to servers configured with a SERVICE_MANAGED identity_provider_type.
     function : str, default is Undefined, optional
-        The ARN for a lambda function to use for the Identity provider.
+        The ARN for a lambda function to use for the Identity provider with an identity_provider_type of AWS_LAMBDA.
     hostKeyFingerprint : str, default is Undefined, optional
         This value contains the message-digest algorithm (MD5) hash of the server's host key. This value is equivalent to the output of the ssh-keygen -l -E md5 -f my-new-server-key command.
     id : str, default is Undefined, optional
@@ -2067,15 +1964,18 @@ schema TransferAwsUpboundIoV1beta1ServerStatusAtProvider:
     loggingRole : str, default is Undefined, optional
         Amazon Resource Name (ARN) of an IAM role that allows the service to write your SFTP users’ activity to your Amazon CloudWatch logs for monitoring and auditing purposes.
     protocolDetails : [TransferAwsUpboundIoV1beta1ServerStatusAtProviderProtocolDetailsItems0], default is Undefined, optional
-        The protocol settings that are configured for your server. See protocol_details block below for details.
+        The protocol settings that are configured for your server. See protocol_details Block below for details.
     protocols : [str], default is Undefined, optional
         Specifies the file transfer protocol or protocols over which your file transfer protocol client can connect to your server's endpoint. This defaults to SFTP . The available protocols are:
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     s3StorageOptions : [TransferAwsUpboundIoV1beta1ServerStatusAtProviderS3StorageOptionsItems0], default is Undefined, optional
-        Specifies whether or not performance for your Amazon S3 directories is optimized. This is disabled by default. See s3_storage_options block below for details.
+        Specifies whether or not performance for your Amazon S3 directories is optimized. This is disabled by default. See s3_storage_options Block below for details.
     securityPolicyName : str, default is Undefined, optional
         Specifies the name of the security policy that is attached to the server. Default value is: TransferSecurityPolicy-2018-11. The available values are:
     sftpAuthenticationMethods : str, default is Undefined, optional
-        For SFTP-enabled servers, and for custom identity providers only. Valid values are PASSWORD, PUBLIC_KEY, PUBLIC_KEY_OR_PASSWORD and PUBLIC_KEY_AND_PASSWORD. Default value is: PUBLIC_KEY_OR_PASSWORD.
+        For SFTP-enabled servers with an identity_provider_type of API_GATEWAY or AWS_LAMBDA. Valid values are PASSWORD, PUBLIC_KEY, PUBLIC_KEY_OR_PASSWORD and PUBLIC_KEY_AND_PASSWORD. Default value is: PUBLIC_KEY_OR_PASSWORD.
     structuredLogDestinations : [str], default is Undefined, optional
         A set of ARNs of destinations that will receive structured logs from the transfer server such as CloudWatch Log Group ARNs. If provided this enables the transfer server to emit structured logs to the specified locations.
         This is a set of arns of destinations that will receive structured logs from the transfer server
@@ -2086,7 +1986,7 @@ schema TransferAwsUpboundIoV1beta1ServerStatusAtProvider:
     url : str, default is Undefined, optional
         - URL of the service endpoint used to authenticate users with an identity_provider_type of API_GATEWAY.
     workflowDetails : [TransferAwsUpboundIoV1beta1ServerStatusAtProviderWorkflowDetailsItems0], default is Undefined, optional
-        Specifies the workflow details. See workflow_details block below for details.
+        Specifies the workflow details. See workflow_details Block below for details.
     """
 
 
@@ -2121,6 +2021,8 @@ schema TransferAwsUpboundIoV1beta1ServerStatusAtProvider:
     protocolDetails?: [TransferAwsUpboundIoV1beta1ServerStatusAtProviderProtocolDetailsItems0]
 
     protocols?: [str]
+
+    region?: str
 
     s3StorageOptions?: [TransferAwsUpboundIoV1beta1ServerStatusAtProviderS3StorageOptionsItems0]
 
@@ -2216,9 +2118,9 @@ schema TransferAwsUpboundIoV1beta1ServerStatusAtProviderWorkflowDetailsItems0:
     Attributes
     ----------
     onPartialUpload : [TransferAwsUpboundIoV1beta1ServerStatusAtProviderWorkflowDetailsItems0OnPartialUploadItems0], default is Undefined, optional
-        A trigger that starts a workflow if a file is only partially uploaded. See Workflow Detail below. See on_partial_upload block below for details.
+        A trigger that starts a workflow if a file is only partially uploaded. See Workflow Detail below. See on_partial_upload Block below for details.
     onUpload : [TransferAwsUpboundIoV1beta1ServerStatusAtProviderWorkflowDetailsItems0OnUploadItems0], default is Undefined, optional
-        A trigger that starts a workflow: the workflow begins to execute after a file is uploaded. See on_upload block below for details.
+        A trigger that starts a workflow: the workflow begins to execute after a file is uploaded. See on_upload Block below for details.
     """
 
 

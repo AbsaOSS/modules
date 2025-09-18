@@ -7,7 +7,7 @@ import k8s.apimachinery.pkg.apis.meta.v1
 
 schema Endpoint:
     r"""
-    Endpoint is the Schema for the Endpoints API. Provides a SageMaker Endpoint resource.
+    Endpoint is the Schema for the Endpoints API. Provides a SageMaker AI Endpoint resource.
 
     Attributes
     ----------
@@ -66,8 +66,6 @@ schema SagemakerAwsUpboundIoV1beta1EndpointSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : SagemakerAwsUpboundIoV1beta1EndpointSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : SagemakerAwsUpboundIoV1beta1EndpointSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : SagemakerAwsUpboundIoV1beta1EndpointSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema SagemakerAwsUpboundIoV1beta1EndpointSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: SagemakerAwsUpboundIoV1beta1EndpointSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: SagemakerAwsUpboundIoV1beta1EndpointSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: SagemakerAwsUpboundIoV1beta1EndpointSpecWriteConnectionSecretToRef
 
@@ -103,6 +99,7 @@ schema SagemakerAwsUpboundIoV1beta1EndpointSpecForProvider:
     endpointConfigNameSelector : SagemakerAwsUpboundIoV1beta1EndpointSpecForProviderEndpointConfigNameSelector, default is Undefined, optional
         endpoint config name selector
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
@@ -131,9 +128,9 @@ schema SagemakerAwsUpboundIoV1beta1EndpointSpecForProviderDeploymentConfigItems0
     autoRollbackConfiguration : [SagemakerAwsUpboundIoV1beta1EndpointSpecForProviderDeploymentConfigItems0AutoRollbackConfigurationItems0], default is Undefined, optional
         Automatic rollback configuration for handling endpoint deployment failures and recovery. See Auto Rollback Configuration.
     blueGreenUpdatePolicy : [SagemakerAwsUpboundIoV1beta1EndpointSpecForProviderDeploymentConfigItems0BlueGreenUpdatePolicyItems0], default is Undefined, optional
-        Update policy for a blue/green deployment. If this update policy is specified, SageMaker creates a new fleet during the deployment while maintaining the old fleet. SageMaker flips traffic to the new fleet according to the specified traffic routing configuration. Only one update policy should be used in the deployment configuration. If no update policy is specified, SageMaker uses a blue/green deployment strategy with all at once traffic shifting by default. See Blue Green Update Config.
+        Update policy for a blue/green deployment. If this update policy is specified, SageMaker AI creates a new fleet during the deployment while maintaining the old fleet. SageMaker AI flips traffic to the new fleet according to the specified traffic routing configuration. Only one update policy should be used in the deployment configuration. If no update policy is specified, SageMaker AI uses a blue/green deployment strategy with all at once traffic shifting by default. See Blue Green Update Config.
     rollingUpdatePolicy : [SagemakerAwsUpboundIoV1beta1EndpointSpecForProviderDeploymentConfigItems0RollingUpdatePolicyItems0], default is Undefined, optional
-        Specifies a rolling deployment strategy for updating a SageMaker endpoint. See Rolling Update Policy.
+        Specifies a rolling deployment strategy for updating a SageMaker AI endpoint. See Rolling Update Policy.
     """
 
 
@@ -151,7 +148,7 @@ schema SagemakerAwsUpboundIoV1beta1EndpointSpecForProviderDeploymentConfigItems0
     Attributes
     ----------
     alarms : [SagemakerAwsUpboundIoV1beta1EndpointSpecForProviderDeploymentConfigItems0AutoRollbackConfigurationItems0AlarmsItems0], default is Undefined, optional
-        List of CloudWatch alarms in your account that are configured to monitor metrics on an endpoint. If any alarms are tripped during a deployment, SageMaker rolls back the deployment. See Alarms.
+        List of CloudWatch alarms in your account that are configured to monitor metrics on an endpoint. If any alarms are tripped during a deployment, SageMaker AI rolls back the deployment. See Alarms.
     """
 
 
@@ -207,7 +204,7 @@ schema SagemakerAwsUpboundIoV1beta1EndpointSpecForProviderDeploymentConfigItems0
     $type : str, default is Undefined, optional
         Traffic routing strategy type. Valid values are: ALL_AT_ONCE, CANARY, and LINEAR.
     waitIntervalInSeconds : float, default is Undefined, optional
-        The length of the baking period, during which SageMaker monitors alarms for each batch on the new fleet. Valid values are between 0 and 3600.
+        The length of the baking period, during which SageMaker AI monitors alarms for each batch on the new fleet. Valid values are between 0 and 3600.
     """
 
 
@@ -269,7 +266,7 @@ schema SagemakerAwsUpboundIoV1beta1EndpointSpecForProviderDeploymentConfigItems0
     rollbackMaximumBatchSize : [SagemakerAwsUpboundIoV1beta1EndpointSpecForProviderDeploymentConfigItems0RollingUpdatePolicyItems0RollbackMaximumBatchSizeItems0], default is Undefined, optional
         Batch size for rollback to the old endpoint fleet. Each rolling step to provision capacity and turn on traffic on the old endpoint fleet, and terminate capacity on the new endpoint fleet. If this field is absent, the default value will be set to 100% of total capacity which means to bring up the whole capacity of the old fleet at once during rollback. See Rollback Maximum Batch Size.
     waitIntervalInSeconds : float, default is Undefined, optional
-        The length of the baking period, during which SageMaker monitors alarms for each batch on the new fleet. Valid values are between 0 and 3600.
+        The length of the baking period, during which SageMaker AI monitors alarms for each batch on the new fleet. Valid values are between 0 and 3600.
     """
 
 
@@ -455,9 +452,9 @@ schema SagemakerAwsUpboundIoV1beta1EndpointSpecInitProviderDeploymentConfigItems
     autoRollbackConfiguration : [SagemakerAwsUpboundIoV1beta1EndpointSpecInitProviderDeploymentConfigItems0AutoRollbackConfigurationItems0], default is Undefined, optional
         Automatic rollback configuration for handling endpoint deployment failures and recovery. See Auto Rollback Configuration.
     blueGreenUpdatePolicy : [SagemakerAwsUpboundIoV1beta1EndpointSpecInitProviderDeploymentConfigItems0BlueGreenUpdatePolicyItems0], default is Undefined, optional
-        Update policy for a blue/green deployment. If this update policy is specified, SageMaker creates a new fleet during the deployment while maintaining the old fleet. SageMaker flips traffic to the new fleet according to the specified traffic routing configuration. Only one update policy should be used in the deployment configuration. If no update policy is specified, SageMaker uses a blue/green deployment strategy with all at once traffic shifting by default. See Blue Green Update Config.
+        Update policy for a blue/green deployment. If this update policy is specified, SageMaker AI creates a new fleet during the deployment while maintaining the old fleet. SageMaker AI flips traffic to the new fleet according to the specified traffic routing configuration. Only one update policy should be used in the deployment configuration. If no update policy is specified, SageMaker AI uses a blue/green deployment strategy with all at once traffic shifting by default. See Blue Green Update Config.
     rollingUpdatePolicy : [SagemakerAwsUpboundIoV1beta1EndpointSpecInitProviderDeploymentConfigItems0RollingUpdatePolicyItems0], default is Undefined, optional
-        Specifies a rolling deployment strategy for updating a SageMaker endpoint. See Rolling Update Policy.
+        Specifies a rolling deployment strategy for updating a SageMaker AI endpoint. See Rolling Update Policy.
     """
 
 
@@ -475,7 +472,7 @@ schema SagemakerAwsUpboundIoV1beta1EndpointSpecInitProviderDeploymentConfigItems
     Attributes
     ----------
     alarms : [SagemakerAwsUpboundIoV1beta1EndpointSpecInitProviderDeploymentConfigItems0AutoRollbackConfigurationItems0AlarmsItems0], default is Undefined, optional
-        List of CloudWatch alarms in your account that are configured to monitor metrics on an endpoint. If any alarms are tripped during a deployment, SageMaker rolls back the deployment. See Alarms.
+        List of CloudWatch alarms in your account that are configured to monitor metrics on an endpoint. If any alarms are tripped during a deployment, SageMaker AI rolls back the deployment. See Alarms.
     """
 
 
@@ -531,7 +528,7 @@ schema SagemakerAwsUpboundIoV1beta1EndpointSpecInitProviderDeploymentConfigItems
     $type : str, default is Undefined, optional
         Traffic routing strategy type. Valid values are: ALL_AT_ONCE, CANARY, and LINEAR.
     waitIntervalInSeconds : float, default is Undefined, optional
-        The length of the baking period, during which SageMaker monitors alarms for each batch on the new fleet. Valid values are between 0 and 3600.
+        The length of the baking period, during which SageMaker AI monitors alarms for each batch on the new fleet. Valid values are between 0 and 3600.
     """
 
 
@@ -593,7 +590,7 @@ schema SagemakerAwsUpboundIoV1beta1EndpointSpecInitProviderDeploymentConfigItems
     rollbackMaximumBatchSize : [SagemakerAwsUpboundIoV1beta1EndpointSpecInitProviderDeploymentConfigItems0RollingUpdatePolicyItems0RollbackMaximumBatchSizeItems0], default is Undefined, optional
         Batch size for rollback to the old endpoint fleet. Each rolling step to provision capacity and turn on traffic on the old endpoint fleet, and terminate capacity on the new endpoint fleet. If this field is absent, the default value will be set to 100% of total capacity which means to bring up the whole capacity of the old fleet at once during rollback. See Rollback Maximum Batch Size.
     waitIntervalInSeconds : float, default is Undefined, optional
-        The length of the baking period, during which SageMaker monitors alarms for each batch on the new fleet. Valid values are between 0 and 3600.
+        The length of the baking period, during which SageMaker AI monitors alarms for each batch on the new fleet. Valid values are between 0 and 3600.
     """
 
 
@@ -775,112 +772,12 @@ schema SagemakerAwsUpboundIoV1beta1EndpointSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema SagemakerAwsUpboundIoV1beta1EndpointSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : SagemakerAwsUpboundIoV1beta1EndpointSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : SagemakerAwsUpboundIoV1beta1EndpointSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: SagemakerAwsUpboundIoV1beta1EndpointSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: SagemakerAwsUpboundIoV1beta1EndpointSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema SagemakerAwsUpboundIoV1beta1EndpointSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : SagemakerAwsUpboundIoV1beta1EndpointSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: SagemakerAwsUpboundIoV1beta1EndpointSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema SagemakerAwsUpboundIoV1beta1EndpointSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema SagemakerAwsUpboundIoV1beta1EndpointSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema SagemakerAwsUpboundIoV1beta1EndpointSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -934,6 +831,9 @@ schema SagemakerAwsUpboundIoV1beta1EndpointStatusAtProvider:
         The name of the endpoint configuration to use.
     id : str, default is Undefined, optional
         id
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
@@ -949,6 +849,8 @@ schema SagemakerAwsUpboundIoV1beta1EndpointStatusAtProvider:
 
     id?: str
 
+    region?: str
+
     tags?: {str:str}
 
     tagsAll?: {str:str}
@@ -963,9 +865,9 @@ schema SagemakerAwsUpboundIoV1beta1EndpointStatusAtProviderDeploymentConfigItems
     autoRollbackConfiguration : [SagemakerAwsUpboundIoV1beta1EndpointStatusAtProviderDeploymentConfigItems0AutoRollbackConfigurationItems0], default is Undefined, optional
         Automatic rollback configuration for handling endpoint deployment failures and recovery. See Auto Rollback Configuration.
     blueGreenUpdatePolicy : [SagemakerAwsUpboundIoV1beta1EndpointStatusAtProviderDeploymentConfigItems0BlueGreenUpdatePolicyItems0], default is Undefined, optional
-        Update policy for a blue/green deployment. If this update policy is specified, SageMaker creates a new fleet during the deployment while maintaining the old fleet. SageMaker flips traffic to the new fleet according to the specified traffic routing configuration. Only one update policy should be used in the deployment configuration. If no update policy is specified, SageMaker uses a blue/green deployment strategy with all at once traffic shifting by default. See Blue Green Update Config.
+        Update policy for a blue/green deployment. If this update policy is specified, SageMaker AI creates a new fleet during the deployment while maintaining the old fleet. SageMaker AI flips traffic to the new fleet according to the specified traffic routing configuration. Only one update policy should be used in the deployment configuration. If no update policy is specified, SageMaker AI uses a blue/green deployment strategy with all at once traffic shifting by default. See Blue Green Update Config.
     rollingUpdatePolicy : [SagemakerAwsUpboundIoV1beta1EndpointStatusAtProviderDeploymentConfigItems0RollingUpdatePolicyItems0], default is Undefined, optional
-        Specifies a rolling deployment strategy for updating a SageMaker endpoint. See Rolling Update Policy.
+        Specifies a rolling deployment strategy for updating a SageMaker AI endpoint. See Rolling Update Policy.
     """
 
 
@@ -983,7 +885,7 @@ schema SagemakerAwsUpboundIoV1beta1EndpointStatusAtProviderDeploymentConfigItems
     Attributes
     ----------
     alarms : [SagemakerAwsUpboundIoV1beta1EndpointStatusAtProviderDeploymentConfigItems0AutoRollbackConfigurationItems0AlarmsItems0], default is Undefined, optional
-        List of CloudWatch alarms in your account that are configured to monitor metrics on an endpoint. If any alarms are tripped during a deployment, SageMaker rolls back the deployment. See Alarms.
+        List of CloudWatch alarms in your account that are configured to monitor metrics on an endpoint. If any alarms are tripped during a deployment, SageMaker AI rolls back the deployment. See Alarms.
     """
 
 
@@ -1039,7 +941,7 @@ schema SagemakerAwsUpboundIoV1beta1EndpointStatusAtProviderDeploymentConfigItems
     $type : str, default is Undefined, optional
         Traffic routing strategy type. Valid values are: ALL_AT_ONCE, CANARY, and LINEAR.
     waitIntervalInSeconds : float, default is Undefined, optional
-        The length of the baking period, during which SageMaker monitors alarms for each batch on the new fleet. Valid values are between 0 and 3600.
+        The length of the baking period, during which SageMaker AI monitors alarms for each batch on the new fleet. Valid values are between 0 and 3600.
     """
 
 
@@ -1101,7 +1003,7 @@ schema SagemakerAwsUpboundIoV1beta1EndpointStatusAtProviderDeploymentConfigItems
     rollbackMaximumBatchSize : [SagemakerAwsUpboundIoV1beta1EndpointStatusAtProviderDeploymentConfigItems0RollingUpdatePolicyItems0RollbackMaximumBatchSizeItems0], default is Undefined, optional
         Batch size for rollback to the old endpoint fleet. Each rolling step to provision capacity and turn on traffic on the old endpoint fleet, and terminate capacity on the new endpoint fleet. If this field is absent, the default value will be set to 100% of total capacity which means to bring up the whole capacity of the old fleet at once during rollback. See Rollback Maximum Batch Size.
     waitIntervalInSeconds : float, default is Undefined, optional
-        The length of the baking period, during which SageMaker monitors alarms for each batch on the new fleet. Valid values are between 0 and 3600.
+        The length of the baking period, during which SageMaker AI monitors alarms for each batch on the new fleet. Valid values are between 0 and 3600.
     """
 
 

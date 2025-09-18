@@ -66,8 +66,6 @@ schema DmsAwsUpboundIoV1beta1EndpointSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : DmsAwsUpboundIoV1beta1EndpointSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : DmsAwsUpboundIoV1beta1EndpointSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : DmsAwsUpboundIoV1beta1EndpointSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema DmsAwsUpboundIoV1beta1EndpointSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: DmsAwsUpboundIoV1beta1EndpointSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: DmsAwsUpboundIoV1beta1EndpointSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: DmsAwsUpboundIoV1beta1EndpointSpecWriteConnectionSecretToRef
 
@@ -103,7 +99,7 @@ schema DmsAwsUpboundIoV1beta1EndpointSpecForProvider:
     endpointType : str, default is Undefined, optional
         Type of endpoint. Valid values are source, target.
     engineName : str, default is Undefined, optional
-        Type of engine for the endpoint. Valid values are aurora, aurora-postgresql, azuredb, azure-sql-managed-instance, babelfish, db2, db2-zos, docdb, dynamodb, elasticsearch, kafka, kinesis, mariadb, mongodb, mysql, opensearch, oracle, postgres, redshift, s3, sqlserver, sybase. Please note that some of engine names are available only for target endpoint type (e.g. redshift).
+        Type of engine for the endpoint. Valid values are aurora, aurora-postgresql, aurora-serverless, aurora-postgresql-serverless,azuredb, azure-sql-managed-instance, babelfish, db2, db2-zos, docdb, dynamodb, elasticsearch, kafka, kinesis, mariadb, mongodb, mysql, opensearch, oracle, postgres, redshift,redshift-serverless, s3, sqlserver, neptune ,sybase. Please note that some of engine names are available only for target endpoint type (e.g. redshift).
     extraConnectionAttributes : str, default is Undefined, optional
         Additional attributes associated with the connection. For available attributes for a source Endpoint, see Sources for data migration. For available attributes for a target Endpoint, see Targets for data migration.
     kafkaSettings : [DmsAwsUpboundIoV1beta1EndpointSpecForProviderKafkaSettingsItems0], default is Undefined, optional
@@ -111,7 +107,7 @@ schema DmsAwsUpboundIoV1beta1EndpointSpecForProvider:
     kinesisSettings : [DmsAwsUpboundIoV1beta1EndpointSpecForProviderKinesisSettingsItems0], default is Undefined, optional
         Configuration block for Kinesis settings. See below.
     kmsKeyArn : str, default is Undefined, optional
-        ARN for the KMS key that will be used to encrypt the connection parameters. If you do not specify a value for kms_key_arn, then AWS DMS will use your default encryption key. AWS KMS creates the default encryption key for your AWS account. Your AWS account has a different default encryption key for each AWS region. To encrypt an S3 target with a KMS Key, use the parameter s3_settings.server_side_encryption_kms_key_id. When engine_name is redshift, kms_key_arn is the KMS Key for the Redshift target and the parameter redshift_settings.server_side_encryption_kms_key_id encrypts the S3 intermediate storage.
+        ARN for the KMS key that will be used to encrypt the connection parameters. If you do not specify a value for kms_key_arn, then AWS DMS will use your default encryption key. AWS KMS creates the default encryption key for your AWS account. Your AWS account has a different default encryption key for each AWS region. When engine_name is redshift, kms_key_arn is the KMS Key for the Redshift target and the parameter redshift_settings.server_side_encryption_kms_key_id encrypts the S3 intermediate storage.
     kmsKeyArnRef : DmsAwsUpboundIoV1beta1EndpointSpecForProviderKmsKeyArnRef, default is Undefined, optional
         kms key arn ref
     kmsKeyArnSelector : DmsAwsUpboundIoV1beta1EndpointSpecForProviderKmsKeyArnSelector, default is Undefined, optional
@@ -131,10 +127,8 @@ schema DmsAwsUpboundIoV1beta1EndpointSpecForProvider:
     redshiftSettings : [DmsAwsUpboundIoV1beta1EndpointSpecForProviderRedshiftSettingsItems0], default is Undefined, optional
         Configuration block for Redshift settings. See below.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
-    s3Settings : [DmsAwsUpboundIoV1beta1EndpointSpecForProviderS3SettingsItems0], default is Undefined, optional
-        (Deprecated, use the aws_dms_s3_endpoint resource instead) Configuration block for S3 settings. See below.
-        This argument is deprecated and will be removed in a future version; use aws_dms_s3_endpoint instead
     secretsManagerAccessRoleArn : str, default is Undefined, optional
         ARN of the IAM role that specifies AWS DMS as the trusted entity and has the required permissions to access the value in the Secrets Manager secret referred to by secrets_manager_arn. The role must allow the iam:PassRole action.
     secretsManagerAccessRoleArnRef : DmsAwsUpboundIoV1beta1EndpointSpecForProviderSecretsManagerAccessRoleArnRef, default is Undefined, optional
@@ -197,8 +191,6 @@ schema DmsAwsUpboundIoV1beta1EndpointSpecForProvider:
     redshiftSettings?: [DmsAwsUpboundIoV1beta1EndpointSpecForProviderRedshiftSettingsItems0]
 
     region: str
-
-    s3Settings?: [DmsAwsUpboundIoV1beta1EndpointSpecForProviderS3SettingsItems0]
 
     secretsManagerAccessRoleArn?: str
 
@@ -279,6 +271,8 @@ schema DmsAwsUpboundIoV1beta1EndpointSpecForProviderKafkaSettingsItems0:
         Set this optional parameter to true to avoid adding a '0x' prefix to raw data in hexadecimal format. For example, by default, AWS DMS adds a '0x' prefix to the LOB column type in hexadecimal format moving from an Oracle source to a Kafka target. Use the no_hex_prefix endpoint setting to enable migration of RAW data type columns without adding the '0x' prefix.
     partitionIncludeSchemaTable : bool, default is Undefined, optional
         Prefixes schema and table names to partition values, when the partition type is primary-key-type. Doing this increases data distribution among Kafka partitions. For example, suppose that a SysBench schema has thousands of tables and each table has only limited range for a primary key. In this case, the same primary key is sent from thousands of tables to the same partition, which causes throttling. Default is false.
+    saslMechanism : str, default is Undefined, optional
+        For SASL/SSL authentication, AWS DMS supports the scram-sha-512 mechanism by default. AWS DMS versions 3.5.0 and later also support the PLAIN mechanism. To use the PLAIN mechanism, set this parameter to plain.
     saslPasswordSecretRef : DmsAwsUpboundIoV1beta1EndpointSpecForProviderKafkaSettingsItems0SaslPasswordSecretRef, default is Undefined, optional
         sasl password secret ref
     saslUsername : str, default is Undefined, optional
@@ -317,6 +311,8 @@ schema DmsAwsUpboundIoV1beta1EndpointSpecForProviderKafkaSettingsItems0:
     noHexPrefix?: bool
 
     partitionIncludeSchemaTable?: bool
+
+    saslMechanism?: str
 
     saslPasswordSecretRef?: DmsAwsUpboundIoV1beta1EndpointSpecForProviderKafkaSettingsItems0SaslPasswordSecretRef
 
@@ -403,6 +399,8 @@ schema DmsAwsUpboundIoV1beta1EndpointSpecForProviderKinesisSettingsItems0:
         ARN of the IAM Role with permissions to write to the Kinesis data stream.
     streamArn : str, default is Undefined, optional
         ARN of the Kinesis data stream.
+    useLargeIntegerValue : bool, default is Undefined, optional
+        Use up to 18 digit int instead of casting ints as doubles, available from AWS DMS version 3.5.4. Default is false.
     """
 
 
@@ -423,6 +421,8 @@ schema DmsAwsUpboundIoV1beta1EndpointSpecForProviderKinesisSettingsItems0:
     serviceAccessRoleArn?: str
 
     streamArn?: str
+
+    useLargeIntegerValue?: bool
 
 
 schema DmsAwsUpboundIoV1beta1EndpointSpecForProviderKmsKeyArnRef:
@@ -734,168 +734,6 @@ schema DmsAwsUpboundIoV1beta1EndpointSpecForProviderRedshiftSettingsItems0:
     serviceAccessRoleArn?: str
 
 
-schema DmsAwsUpboundIoV1beta1EndpointSpecForProviderS3SettingsItems0:
-    r"""
-    dms aws upbound io v1beta1 endpoint spec for provider s3 settings items0
-
-    Attributes
-    ----------
-    addColumnName : bool, default is Undefined, optional
-        Whether to add column name information to the .csv output file. Default is false.
-    bucketFolder : str, default is Undefined, optional
-        S3 object prefix.
-    bucketName : str, default is Undefined, optional
-        S3 bucket name.
-    cannedAclForObjects : str, default is Undefined, optional
-        Predefined (canned) access control list for objects created in an S3 bucket. Valid values include none, private, public-read, public-read-write, authenticated-read, aws-exec-read, bucket-owner-read, and bucket-owner-full-control. Default is none.
-    cdcInsertsAndUpdates : bool, default is Undefined, optional
-        Whether to write insert and update operations to .csv or .parquet output files. Default is false.
-    cdcInsertsOnly : bool, default is Undefined, optional
-        Whether to write insert operations to .csv or .parquet output files. Default is false.
-    cdcMaxBatchInterval : float, default is Undefined, optional
-        Maximum length of the interval, defined in seconds, after which to output a file to Amazon S3. Default is 60.
-    cdcMinFileSize : float, default is Undefined, optional
-        Minimum file size condition as defined in kilobytes to output a file to Amazon S3. Default is 32000. NOTE: Previously, this setting was measured in megabytes but now represents kilobytes. Update configurations accordingly.
-    cdcPath : str, default is Undefined, optional
-        Folder path of CDC files. For an S3 source, this setting is required if a task captures change data; otherwise, it's optional. If cdc_path is set, AWS DMS reads CDC files from this path and replicates the data changes to the target endpoint. Supported in AWS DMS versions 3.4.2 and later.
-    compressionType : str, default is Undefined, optional
-        Set to compress target files. Default is NONE. Valid values are GZIP and NONE.
-    csvDelimiter : str, default is Undefined, optional
-        Delimiter used to separate columns in the source files. Default is ,.
-    csvNoSupValue : str, default is Undefined, optional
-        String to use for all columns not included in the supplemental log.
-    csvNullValue : str, default is Undefined, optional
-        String to as null when writing to the target.
-    csvRowDelimiter : str, default is Undefined, optional
-        Delimiter used to separate rows in the source files. Default is \n.
-    dataFormat : str, default is Undefined, optional
-        Output format for the files that AWS DMS uses to create S3 objects. Valid values are csv and parquet. Default is csv.
-    dataPageSize : float, default is Undefined, optional
-        Size of one data page in bytes. Default is 1048576 (1 MiB).
-    datePartitionDelimiter : str, default is Undefined, optional
-        Date separating delimiter to use during folder partitioning. Valid values are SLASH, UNDERSCORE, DASH, and NONE. Default is SLASH.
-    datePartitionEnabled : bool, default is Undefined, optional
-        Partition S3 bucket folders based on transaction commit dates. Default is false.
-    datePartitionSequence : str, default is Undefined, optional
-        Date format to use during folder partitioning. Use this parameter when date_partition_enabled is set to true. Valid values are YYYYMMDD, YYYYMMDDHH, YYYYMM, MMYYYYDD, and DDMMYYYY. Default is YYYYMMDD.
-    dictPageSizeLimit : float, default is Undefined, optional
-        Maximum size in bytes of an encoded dictionary page of a column. Default is 1048576 (1 MiB).
-    enableStatistics : bool, default is Undefined, optional
-        Whether to enable statistics for Parquet pages and row groups. Default is true.
-    encodingType : str, default is Undefined, optional
-        Type of encoding to use. Value values are rle_dictionary, plain, and plain_dictionary. Default is rle_dictionary.
-    encryptionMode : str, default is Undefined, optional
-        Server-side encryption mode that you want to encrypt your .csv or .parquet object files copied to S3. Valid values are SSE_S3 and SSE_KMS. Default is SSE_S3.
-    externalTableDefinition : str, default is Undefined, optional
-        JSON document that describes how AWS DMS should interpret the data.
-    glueCatalogGeneration : bool, default is Undefined, optional
-        Whether to integrate AWS Glue Data Catalog with an Amazon S3 target. See Using AWS Glue Data Catalog with an Amazon S3 target for AWS DMS for more information. Default is false.
-    ignoreHeaderRows : float, default is Undefined, optional
-        When this value is set to 1, DMS ignores the first row header in a .csv file. Default is 0.
-    includeOpForFullLoad : bool, default is Undefined, optional
-        Whether to enable a full load to write INSERT operations to the .csv output files only to indicate how the rows were added to the source database. Default is false.
-    maxFileSize : float, default is Undefined, optional
-        Maximum size (in KB) of any .csv file to be created while migrating to an S3 target during full load. Valid values are from 1 to 1048576. Default is 1048576 (1 GB).
-    parquetTimestampInMillisecond : bool, default is Undefined, optional
-        - Specifies the precision of any TIMESTAMP column values written to an S3 object file in .parquet format. Default is false.
-    parquetVersion : str, default is Undefined, optional
-        Version of the .parquet file format. Default is parquet-1-0. Valid values are parquet-1-0 and parquet-2-0.
-    preserveTransactions : bool, default is Undefined, optional
-        Whether DMS saves the transaction order for a CDC load on the S3 target specified by cdc_path. Default is false.
-    rfc4180 : bool, default is Undefined, optional
-        For an S3 source, whether each leading double quotation mark has to be followed by an ending double quotation mark. Default is true.
-    rowGroupLength : float, default is Undefined, optional
-        Number of rows in a row group. Default is 10000.
-    serverSideEncryptionKmsKeyId : str, default is Undefined, optional
-        ARN or Id of KMS Key to use when encryption_mode is SSE_KMS.
-    serviceAccessRoleArn : str, default is Undefined, optional
-        ARN of the IAM Role with permissions to read from or write to the S3 Bucket.
-    timestampColumnName : str, default is Undefined, optional
-        Column to add with timestamp information to the endpoint data for an Amazon S3 target.
-    useCsvNoSupValue : bool, default is Undefined, optional
-        Whether to use csv_no_sup_value for columns not included in the supplemental log.
-    useTaskStartTimeForFullLoadTimestamp : bool, default is Undefined, optional
-        When set to true, uses the task start time as the timestamp column value instead of the time data is written to target. For full load, when set to true, each row of the timestamp column contains the task start time. For CDC loads, each row of the timestamp column contains the transaction commit time. When set to false, the full load timestamp in the timestamp column increments with the time data arrives at the target. Default is false.
-    """
-
-
-    addColumnName?: bool
-
-    bucketFolder?: str
-
-    bucketName?: str
-
-    cannedAclForObjects?: str
-
-    cdcInsertsAndUpdates?: bool
-
-    cdcInsertsOnly?: bool
-
-    cdcMaxBatchInterval?: float
-
-    cdcMinFileSize?: float
-
-    cdcPath?: str
-
-    compressionType?: str
-
-    csvDelimiter?: str
-
-    csvNoSupValue?: str
-
-    csvNullValue?: str
-
-    csvRowDelimiter?: str
-
-    dataFormat?: str
-
-    dataPageSize?: float
-
-    datePartitionDelimiter?: str
-
-    datePartitionEnabled?: bool
-
-    datePartitionSequence?: str
-
-    dictPageSizeLimit?: float
-
-    enableStatistics?: bool
-
-    encodingType?: str
-
-    encryptionMode?: str
-
-    externalTableDefinition?: str
-
-    glueCatalogGeneration?: bool
-
-    ignoreHeaderRows?: float
-
-    includeOpForFullLoad?: bool
-
-    maxFileSize?: float
-
-    parquetTimestampInMillisecond?: bool
-
-    parquetVersion?: str
-
-    preserveTransactions?: bool
-
-    rfc4180?: bool
-
-    rowGroupLength?: float
-
-    serverSideEncryptionKmsKeyId?: str
-
-    serviceAccessRoleArn?: str
-
-    timestampColumnName?: str
-
-    useCsvNoSupValue?: bool
-
-    useTaskStartTimeForFullLoadTimestamp?: bool
-
-
 schema DmsAwsUpboundIoV1beta1EndpointSpecForProviderSecretsManagerAccessRoleArnRef:
     r"""
     Reference to a Role in iam to populate secretsManagerAccessRoleArn.
@@ -1098,7 +936,7 @@ schema DmsAwsUpboundIoV1beta1EndpointSpecInitProvider:
     endpointType : str, default is Undefined, optional
         Type of endpoint. Valid values are source, target.
     engineName : str, default is Undefined, optional
-        Type of engine for the endpoint. Valid values are aurora, aurora-postgresql, azuredb, azure-sql-managed-instance, babelfish, db2, db2-zos, docdb, dynamodb, elasticsearch, kafka, kinesis, mariadb, mongodb, mysql, opensearch, oracle, postgres, redshift, s3, sqlserver, sybase. Please note that some of engine names are available only for target endpoint type (e.g. redshift).
+        Type of engine for the endpoint. Valid values are aurora, aurora-postgresql, aurora-serverless, aurora-postgresql-serverless,azuredb, azure-sql-managed-instance, babelfish, db2, db2-zos, docdb, dynamodb, elasticsearch, kafka, kinesis, mariadb, mongodb, mysql, opensearch, oracle, postgres, redshift,redshift-serverless, s3, sqlserver, neptune ,sybase. Please note that some of engine names are available only for target endpoint type (e.g. redshift).
     extraConnectionAttributes : str, default is Undefined, optional
         Additional attributes associated with the connection. For available attributes for a source Endpoint, see Sources for data migration. For available attributes for a target Endpoint, see Targets for data migration.
     kafkaSettings : [DmsAwsUpboundIoV1beta1EndpointSpecInitProviderKafkaSettingsItems0], default is Undefined, optional
@@ -1106,7 +944,7 @@ schema DmsAwsUpboundIoV1beta1EndpointSpecInitProvider:
     kinesisSettings : [DmsAwsUpboundIoV1beta1EndpointSpecInitProviderKinesisSettingsItems0], default is Undefined, optional
         Configuration block for Kinesis settings. See below.
     kmsKeyArn : str, default is Undefined, optional
-        ARN for the KMS key that will be used to encrypt the connection parameters. If you do not specify a value for kms_key_arn, then AWS DMS will use your default encryption key. AWS KMS creates the default encryption key for your AWS account. Your AWS account has a different default encryption key for each AWS region. To encrypt an S3 target with a KMS Key, use the parameter s3_settings.server_side_encryption_kms_key_id. When engine_name is redshift, kms_key_arn is the KMS Key for the Redshift target and the parameter redshift_settings.server_side_encryption_kms_key_id encrypts the S3 intermediate storage.
+        ARN for the KMS key that will be used to encrypt the connection parameters. If you do not specify a value for kms_key_arn, then AWS DMS will use your default encryption key. AWS KMS creates the default encryption key for your AWS account. Your AWS account has a different default encryption key for each AWS region. When engine_name is redshift, kms_key_arn is the KMS Key for the Redshift target and the parameter redshift_settings.server_side_encryption_kms_key_id encrypts the S3 intermediate storage.
     kmsKeyArnRef : DmsAwsUpboundIoV1beta1EndpointSpecInitProviderKmsKeyArnRef, default is Undefined, optional
         kms key arn ref
     kmsKeyArnSelector : DmsAwsUpboundIoV1beta1EndpointSpecInitProviderKmsKeyArnSelector, default is Undefined, optional
@@ -1125,9 +963,6 @@ schema DmsAwsUpboundIoV1beta1EndpointSpecInitProvider:
         redis settings
     redshiftSettings : [DmsAwsUpboundIoV1beta1EndpointSpecInitProviderRedshiftSettingsItems0], default is Undefined, optional
         Configuration block for Redshift settings. See below.
-    s3Settings : [DmsAwsUpboundIoV1beta1EndpointSpecInitProviderS3SettingsItems0], default is Undefined, optional
-        (Deprecated, use the aws_dms_s3_endpoint resource instead) Configuration block for S3 settings. See below.
-        This argument is deprecated and will be removed in a future version; use aws_dms_s3_endpoint instead
     secretsManagerAccessRoleArn : str, default is Undefined, optional
         ARN of the IAM role that specifies AWS DMS as the trusted entity and has the required permissions to access the value in the Secrets Manager secret referred to by secrets_manager_arn. The role must allow the iam:PassRole action.
     secretsManagerAccessRoleArnRef : DmsAwsUpboundIoV1beta1EndpointSpecInitProviderSecretsManagerAccessRoleArnRef, default is Undefined, optional
@@ -1188,8 +1023,6 @@ schema DmsAwsUpboundIoV1beta1EndpointSpecInitProvider:
     redisSettings?: [DmsAwsUpboundIoV1beta1EndpointSpecInitProviderRedisSettingsItems0]
 
     redshiftSettings?: [DmsAwsUpboundIoV1beta1EndpointSpecInitProviderRedshiftSettingsItems0]
-
-    s3Settings?: [DmsAwsUpboundIoV1beta1EndpointSpecInitProviderS3SettingsItems0]
 
     secretsManagerAccessRoleArn?: str
 
@@ -1270,6 +1103,8 @@ schema DmsAwsUpboundIoV1beta1EndpointSpecInitProviderKafkaSettingsItems0:
         Set this optional parameter to true to avoid adding a '0x' prefix to raw data in hexadecimal format. For example, by default, AWS DMS adds a '0x' prefix to the LOB column type in hexadecimal format moving from an Oracle source to a Kafka target. Use the no_hex_prefix endpoint setting to enable migration of RAW data type columns without adding the '0x' prefix.
     partitionIncludeSchemaTable : bool, default is Undefined, optional
         Prefixes schema and table names to partition values, when the partition type is primary-key-type. Doing this increases data distribution among Kafka partitions. For example, suppose that a SysBench schema has thousands of tables and each table has only limited range for a primary key. In this case, the same primary key is sent from thousands of tables to the same partition, which causes throttling. Default is false.
+    saslMechanism : str, default is Undefined, optional
+        For SASL/SSL authentication, AWS DMS supports the scram-sha-512 mechanism by default. AWS DMS versions 3.5.0 and later also support the PLAIN mechanism. To use the PLAIN mechanism, set this parameter to plain.
     saslPasswordSecretRef : DmsAwsUpboundIoV1beta1EndpointSpecInitProviderKafkaSettingsItems0SaslPasswordSecretRef, default is Undefined, optional
         sasl password secret ref
     saslUsername : str, default is Undefined, optional
@@ -1308,6 +1143,8 @@ schema DmsAwsUpboundIoV1beta1EndpointSpecInitProviderKafkaSettingsItems0:
     noHexPrefix?: bool
 
     partitionIncludeSchemaTable?: bool
+
+    saslMechanism?: str
 
     saslPasswordSecretRef?: DmsAwsUpboundIoV1beta1EndpointSpecInitProviderKafkaSettingsItems0SaslPasswordSecretRef
 
@@ -1394,6 +1231,8 @@ schema DmsAwsUpboundIoV1beta1EndpointSpecInitProviderKinesisSettingsItems0:
         ARN of the IAM Role with permissions to write to the Kinesis data stream.
     streamArn : str, default is Undefined, optional
         ARN of the Kinesis data stream.
+    useLargeIntegerValue : bool, default is Undefined, optional
+        Use up to 18 digit int instead of casting ints as doubles, available from AWS DMS version 3.5.4. Default is false.
     """
 
 
@@ -1414,6 +1253,8 @@ schema DmsAwsUpboundIoV1beta1EndpointSpecInitProviderKinesisSettingsItems0:
     serviceAccessRoleArn?: str
 
     streamArn?: str
+
+    useLargeIntegerValue?: bool
 
 
 schema DmsAwsUpboundIoV1beta1EndpointSpecInitProviderKmsKeyArnRef:
@@ -1725,168 +1566,6 @@ schema DmsAwsUpboundIoV1beta1EndpointSpecInitProviderRedshiftSettingsItems0:
     serviceAccessRoleArn?: str
 
 
-schema DmsAwsUpboundIoV1beta1EndpointSpecInitProviderS3SettingsItems0:
-    r"""
-    dms aws upbound io v1beta1 endpoint spec init provider s3 settings items0
-
-    Attributes
-    ----------
-    addColumnName : bool, default is Undefined, optional
-        Whether to add column name information to the .csv output file. Default is false.
-    bucketFolder : str, default is Undefined, optional
-        S3 object prefix.
-    bucketName : str, default is Undefined, optional
-        S3 bucket name.
-    cannedAclForObjects : str, default is Undefined, optional
-        Predefined (canned) access control list for objects created in an S3 bucket. Valid values include none, private, public-read, public-read-write, authenticated-read, aws-exec-read, bucket-owner-read, and bucket-owner-full-control. Default is none.
-    cdcInsertsAndUpdates : bool, default is Undefined, optional
-        Whether to write insert and update operations to .csv or .parquet output files. Default is false.
-    cdcInsertsOnly : bool, default is Undefined, optional
-        Whether to write insert operations to .csv or .parquet output files. Default is false.
-    cdcMaxBatchInterval : float, default is Undefined, optional
-        Maximum length of the interval, defined in seconds, after which to output a file to Amazon S3. Default is 60.
-    cdcMinFileSize : float, default is Undefined, optional
-        Minimum file size condition as defined in kilobytes to output a file to Amazon S3. Default is 32000. NOTE: Previously, this setting was measured in megabytes but now represents kilobytes. Update configurations accordingly.
-    cdcPath : str, default is Undefined, optional
-        Folder path of CDC files. For an S3 source, this setting is required if a task captures change data; otherwise, it's optional. If cdc_path is set, AWS DMS reads CDC files from this path and replicates the data changes to the target endpoint. Supported in AWS DMS versions 3.4.2 and later.
-    compressionType : str, default is Undefined, optional
-        Set to compress target files. Default is NONE. Valid values are GZIP and NONE.
-    csvDelimiter : str, default is Undefined, optional
-        Delimiter used to separate columns in the source files. Default is ,.
-    csvNoSupValue : str, default is Undefined, optional
-        String to use for all columns not included in the supplemental log.
-    csvNullValue : str, default is Undefined, optional
-        String to as null when writing to the target.
-    csvRowDelimiter : str, default is Undefined, optional
-        Delimiter used to separate rows in the source files. Default is \n.
-    dataFormat : str, default is Undefined, optional
-        Output format for the files that AWS DMS uses to create S3 objects. Valid values are csv and parquet. Default is csv.
-    dataPageSize : float, default is Undefined, optional
-        Size of one data page in bytes. Default is 1048576 (1 MiB).
-    datePartitionDelimiter : str, default is Undefined, optional
-        Date separating delimiter to use during folder partitioning. Valid values are SLASH, UNDERSCORE, DASH, and NONE. Default is SLASH.
-    datePartitionEnabled : bool, default is Undefined, optional
-        Partition S3 bucket folders based on transaction commit dates. Default is false.
-    datePartitionSequence : str, default is Undefined, optional
-        Date format to use during folder partitioning. Use this parameter when date_partition_enabled is set to true. Valid values are YYYYMMDD, YYYYMMDDHH, YYYYMM, MMYYYYDD, and DDMMYYYY. Default is YYYYMMDD.
-    dictPageSizeLimit : float, default is Undefined, optional
-        Maximum size in bytes of an encoded dictionary page of a column. Default is 1048576 (1 MiB).
-    enableStatistics : bool, default is Undefined, optional
-        Whether to enable statistics for Parquet pages and row groups. Default is true.
-    encodingType : str, default is Undefined, optional
-        Type of encoding to use. Value values are rle_dictionary, plain, and plain_dictionary. Default is rle_dictionary.
-    encryptionMode : str, default is Undefined, optional
-        Server-side encryption mode that you want to encrypt your .csv or .parquet object files copied to S3. Valid values are SSE_S3 and SSE_KMS. Default is SSE_S3.
-    externalTableDefinition : str, default is Undefined, optional
-        JSON document that describes how AWS DMS should interpret the data.
-    glueCatalogGeneration : bool, default is Undefined, optional
-        Whether to integrate AWS Glue Data Catalog with an Amazon S3 target. See Using AWS Glue Data Catalog with an Amazon S3 target for AWS DMS for more information. Default is false.
-    ignoreHeaderRows : float, default is Undefined, optional
-        When this value is set to 1, DMS ignores the first row header in a .csv file. Default is 0.
-    includeOpForFullLoad : bool, default is Undefined, optional
-        Whether to enable a full load to write INSERT operations to the .csv output files only to indicate how the rows were added to the source database. Default is false.
-    maxFileSize : float, default is Undefined, optional
-        Maximum size (in KB) of any .csv file to be created while migrating to an S3 target during full load. Valid values are from 1 to 1048576. Default is 1048576 (1 GB).
-    parquetTimestampInMillisecond : bool, default is Undefined, optional
-        - Specifies the precision of any TIMESTAMP column values written to an S3 object file in .parquet format. Default is false.
-    parquetVersion : str, default is Undefined, optional
-        Version of the .parquet file format. Default is parquet-1-0. Valid values are parquet-1-0 and parquet-2-0.
-    preserveTransactions : bool, default is Undefined, optional
-        Whether DMS saves the transaction order for a CDC load on the S3 target specified by cdc_path. Default is false.
-    rfc4180 : bool, default is Undefined, optional
-        For an S3 source, whether each leading double quotation mark has to be followed by an ending double quotation mark. Default is true.
-    rowGroupLength : float, default is Undefined, optional
-        Number of rows in a row group. Default is 10000.
-    serverSideEncryptionKmsKeyId : str, default is Undefined, optional
-        ARN or Id of KMS Key to use when encryption_mode is SSE_KMS.
-    serviceAccessRoleArn : str, default is Undefined, optional
-        ARN of the IAM Role with permissions to read from or write to the S3 Bucket.
-    timestampColumnName : str, default is Undefined, optional
-        Column to add with timestamp information to the endpoint data for an Amazon S3 target.
-    useCsvNoSupValue : bool, default is Undefined, optional
-        Whether to use csv_no_sup_value for columns not included in the supplemental log.
-    useTaskStartTimeForFullLoadTimestamp : bool, default is Undefined, optional
-        When set to true, uses the task start time as the timestamp column value instead of the time data is written to target. For full load, when set to true, each row of the timestamp column contains the task start time. For CDC loads, each row of the timestamp column contains the transaction commit time. When set to false, the full load timestamp in the timestamp column increments with the time data arrives at the target. Default is false.
-    """
-
-
-    addColumnName?: bool
-
-    bucketFolder?: str
-
-    bucketName?: str
-
-    cannedAclForObjects?: str
-
-    cdcInsertsAndUpdates?: bool
-
-    cdcInsertsOnly?: bool
-
-    cdcMaxBatchInterval?: float
-
-    cdcMinFileSize?: float
-
-    cdcPath?: str
-
-    compressionType?: str
-
-    csvDelimiter?: str
-
-    csvNoSupValue?: str
-
-    csvNullValue?: str
-
-    csvRowDelimiter?: str
-
-    dataFormat?: str
-
-    dataPageSize?: float
-
-    datePartitionDelimiter?: str
-
-    datePartitionEnabled?: bool
-
-    datePartitionSequence?: str
-
-    dictPageSizeLimit?: float
-
-    enableStatistics?: bool
-
-    encodingType?: str
-
-    encryptionMode?: str
-
-    externalTableDefinition?: str
-
-    glueCatalogGeneration?: bool
-
-    ignoreHeaderRows?: float
-
-    includeOpForFullLoad?: bool
-
-    maxFileSize?: float
-
-    parquetTimestampInMillisecond?: bool
-
-    parquetVersion?: str
-
-    preserveTransactions?: bool
-
-    rfc4180?: bool
-
-    rowGroupLength?: float
-
-    serverSideEncryptionKmsKeyId?: str
-
-    serviceAccessRoleArn?: str
-
-    timestampColumnName?: str
-
-    useCsvNoSupValue?: bool
-
-    useTaskStartTimeForFullLoadTimestamp?: bool
-
-
 schema DmsAwsUpboundIoV1beta1EndpointSpecInitProviderSecretsManagerAccessRoleArnRef:
     r"""
     Reference to a Role in iam to populate secretsManagerAccessRoleArn.
@@ -2109,112 +1788,12 @@ schema DmsAwsUpboundIoV1beta1EndpointSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema DmsAwsUpboundIoV1beta1EndpointSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : DmsAwsUpboundIoV1beta1EndpointSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : DmsAwsUpboundIoV1beta1EndpointSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: DmsAwsUpboundIoV1beta1EndpointSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: DmsAwsUpboundIoV1beta1EndpointSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema DmsAwsUpboundIoV1beta1EndpointSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : DmsAwsUpboundIoV1beta1EndpointSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: DmsAwsUpboundIoV1beta1EndpointSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema DmsAwsUpboundIoV1beta1EndpointSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema DmsAwsUpboundIoV1beta1EndpointSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema DmsAwsUpboundIoV1beta1EndpointSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -2271,7 +1850,7 @@ schema DmsAwsUpboundIoV1beta1EndpointStatusAtProvider:
     endpointType : str, default is Undefined, optional
         Type of endpoint. Valid values are source, target.
     engineName : str, default is Undefined, optional
-        Type of engine for the endpoint. Valid values are aurora, aurora-postgresql, azuredb, azure-sql-managed-instance, babelfish, db2, db2-zos, docdb, dynamodb, elasticsearch, kafka, kinesis, mariadb, mongodb, mysql, opensearch, oracle, postgres, redshift, s3, sqlserver, sybase. Please note that some of engine names are available only for target endpoint type (e.g. redshift).
+        Type of engine for the endpoint. Valid values are aurora, aurora-postgresql, aurora-serverless, aurora-postgresql-serverless,azuredb, azure-sql-managed-instance, babelfish, db2, db2-zos, docdb, dynamodb, elasticsearch, kafka, kinesis, mariadb, mongodb, mysql, opensearch, oracle, postgres, redshift,redshift-serverless, s3, sqlserver, neptune ,sybase. Please note that some of engine names are available only for target endpoint type (e.g. redshift).
     extraConnectionAttributes : str, default is Undefined, optional
         Additional attributes associated with the connection. For available attributes for a source Endpoint, see Sources for data migration. For available attributes for a target Endpoint, see Targets for data migration.
     id : str, default is Undefined, optional
@@ -2281,7 +1860,7 @@ schema DmsAwsUpboundIoV1beta1EndpointStatusAtProvider:
     kinesisSettings : [DmsAwsUpboundIoV1beta1EndpointStatusAtProviderKinesisSettingsItems0], default is Undefined, optional
         Configuration block for Kinesis settings. See below.
     kmsKeyArn : str, default is Undefined, optional
-        ARN for the KMS key that will be used to encrypt the connection parameters. If you do not specify a value for kms_key_arn, then AWS DMS will use your default encryption key. AWS KMS creates the default encryption key for your AWS account. Your AWS account has a different default encryption key for each AWS region. To encrypt an S3 target with a KMS Key, use the parameter s3_settings.server_side_encryption_kms_key_id. When engine_name is redshift, kms_key_arn is the KMS Key for the Redshift target and the parameter redshift_settings.server_side_encryption_kms_key_id encrypts the S3 intermediate storage.
+        ARN for the KMS key that will be used to encrypt the connection parameters. If you do not specify a value for kms_key_arn, then AWS DMS will use your default encryption key. AWS KMS creates the default encryption key for your AWS account. Your AWS account has a different default encryption key for each AWS region. When engine_name is redshift, kms_key_arn is the KMS Key for the Redshift target and the parameter redshift_settings.server_side_encryption_kms_key_id encrypts the S3 intermediate storage.
     mongodbSettings : [DmsAwsUpboundIoV1beta1EndpointStatusAtProviderMongodbSettingsItems0], default is Undefined, optional
         Configuration block for MongoDB settings. See below.
     pauseReplicationTasks : bool, default is Undefined, optional
@@ -2294,9 +1873,9 @@ schema DmsAwsUpboundIoV1beta1EndpointStatusAtProvider:
         redis settings
     redshiftSettings : [DmsAwsUpboundIoV1beta1EndpointStatusAtProviderRedshiftSettingsItems0], default is Undefined, optional
         Configuration block for Redshift settings. See below.
-    s3Settings : [DmsAwsUpboundIoV1beta1EndpointStatusAtProviderS3SettingsItems0], default is Undefined, optional
-        (Deprecated, use the aws_dms_s3_endpoint resource instead) Configuration block for S3 settings. See below.
-        This argument is deprecated and will be removed in a future version; use aws_dms_s3_endpoint instead
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     secretsManagerAccessRoleArn : str, default is Undefined, optional
         ARN of the IAM role that specifies AWS DMS as the trusted entity and has the required permissions to access the value in the Secrets Manager secret referred to by secrets_manager_arn. The role must allow the iam:PassRole action.
     secretsManagerArn : str, default is Undefined, optional
@@ -2350,7 +1929,7 @@ schema DmsAwsUpboundIoV1beta1EndpointStatusAtProvider:
 
     redshiftSettings?: [DmsAwsUpboundIoV1beta1EndpointStatusAtProviderRedshiftSettingsItems0]
 
-    s3Settings?: [DmsAwsUpboundIoV1beta1EndpointStatusAtProviderS3SettingsItems0]
+    region?: str
 
     secretsManagerAccessRoleArn?: str
 
@@ -2425,6 +2004,8 @@ schema DmsAwsUpboundIoV1beta1EndpointStatusAtProviderKafkaSettingsItems0:
         Set this optional parameter to true to avoid adding a '0x' prefix to raw data in hexadecimal format. For example, by default, AWS DMS adds a '0x' prefix to the LOB column type in hexadecimal format moving from an Oracle source to a Kafka target. Use the no_hex_prefix endpoint setting to enable migration of RAW data type columns without adding the '0x' prefix.
     partitionIncludeSchemaTable : bool, default is Undefined, optional
         Prefixes schema and table names to partition values, when the partition type is primary-key-type. Doing this increases data distribution among Kafka partitions. For example, suppose that a SysBench schema has thousands of tables and each table has only limited range for a primary key. In this case, the same primary key is sent from thousands of tables to the same partition, which causes throttling. Default is false.
+    saslMechanism : str, default is Undefined, optional
+        For SASL/SSL authentication, AWS DMS supports the scram-sha-512 mechanism by default. AWS DMS versions 3.5.0 and later also support the PLAIN mechanism. To use the PLAIN mechanism, set this parameter to plain.
     saslUsername : str, default is Undefined, optional
         Secure user name you created when you first set up your MSK cluster to validate a client identity and make an encrypted connection between server and client using SASL-SSL authentication.
     securityProtocol : str, default is Undefined, optional
@@ -2459,6 +2040,8 @@ schema DmsAwsUpboundIoV1beta1EndpointStatusAtProviderKafkaSettingsItems0:
     noHexPrefix?: bool
 
     partitionIncludeSchemaTable?: bool
+
+    saslMechanism?: str
 
     saslUsername?: str
 
@@ -2497,6 +2080,8 @@ schema DmsAwsUpboundIoV1beta1EndpointStatusAtProviderKinesisSettingsItems0:
         ARN of the IAM Role with permissions to write to the Kinesis data stream.
     streamArn : str, default is Undefined, optional
         ARN of the Kinesis data stream.
+    useLargeIntegerValue : bool, default is Undefined, optional
+        Use up to 18 digit int instead of casting ints as doubles, available from AWS DMS version 3.5.4. Default is false.
     """
 
 
@@ -2517,6 +2102,8 @@ schema DmsAwsUpboundIoV1beta1EndpointStatusAtProviderKinesisSettingsItems0:
     serviceAccessRoleArn?: str
 
     streamArn?: str
+
+    useLargeIntegerValue?: bool
 
 
 schema DmsAwsUpboundIoV1beta1EndpointStatusAtProviderMongodbSettingsItems0:
@@ -2689,168 +2276,6 @@ schema DmsAwsUpboundIoV1beta1EndpointStatusAtProviderRedshiftSettingsItems0:
     serverSideEncryptionKmsKeyId?: str
 
     serviceAccessRoleArn?: str
-
-
-schema DmsAwsUpboundIoV1beta1EndpointStatusAtProviderS3SettingsItems0:
-    r"""
-    dms aws upbound io v1beta1 endpoint status at provider s3 settings items0
-
-    Attributes
-    ----------
-    addColumnName : bool, default is Undefined, optional
-        Whether to add column name information to the .csv output file. Default is false.
-    bucketFolder : str, default is Undefined, optional
-        S3 object prefix.
-    bucketName : str, default is Undefined, optional
-        S3 bucket name.
-    cannedAclForObjects : str, default is Undefined, optional
-        Predefined (canned) access control list for objects created in an S3 bucket. Valid values include none, private, public-read, public-read-write, authenticated-read, aws-exec-read, bucket-owner-read, and bucket-owner-full-control. Default is none.
-    cdcInsertsAndUpdates : bool, default is Undefined, optional
-        Whether to write insert and update operations to .csv or .parquet output files. Default is false.
-    cdcInsertsOnly : bool, default is Undefined, optional
-        Whether to write insert operations to .csv or .parquet output files. Default is false.
-    cdcMaxBatchInterval : float, default is Undefined, optional
-        Maximum length of the interval, defined in seconds, after which to output a file to Amazon S3. Default is 60.
-    cdcMinFileSize : float, default is Undefined, optional
-        Minimum file size condition as defined in kilobytes to output a file to Amazon S3. Default is 32000. NOTE: Previously, this setting was measured in megabytes but now represents kilobytes. Update configurations accordingly.
-    cdcPath : str, default is Undefined, optional
-        Folder path of CDC files. For an S3 source, this setting is required if a task captures change data; otherwise, it's optional. If cdc_path is set, AWS DMS reads CDC files from this path and replicates the data changes to the target endpoint. Supported in AWS DMS versions 3.4.2 and later.
-    compressionType : str, default is Undefined, optional
-        Set to compress target files. Default is NONE. Valid values are GZIP and NONE.
-    csvDelimiter : str, default is Undefined, optional
-        Delimiter used to separate columns in the source files. Default is ,.
-    csvNoSupValue : str, default is Undefined, optional
-        String to use for all columns not included in the supplemental log.
-    csvNullValue : str, default is Undefined, optional
-        String to as null when writing to the target.
-    csvRowDelimiter : str, default is Undefined, optional
-        Delimiter used to separate rows in the source files. Default is \n.
-    dataFormat : str, default is Undefined, optional
-        Output format for the files that AWS DMS uses to create S3 objects. Valid values are csv and parquet. Default is csv.
-    dataPageSize : float, default is Undefined, optional
-        Size of one data page in bytes. Default is 1048576 (1 MiB).
-    datePartitionDelimiter : str, default is Undefined, optional
-        Date separating delimiter to use during folder partitioning. Valid values are SLASH, UNDERSCORE, DASH, and NONE. Default is SLASH.
-    datePartitionEnabled : bool, default is Undefined, optional
-        Partition S3 bucket folders based on transaction commit dates. Default is false.
-    datePartitionSequence : str, default is Undefined, optional
-        Date format to use during folder partitioning. Use this parameter when date_partition_enabled is set to true. Valid values are YYYYMMDD, YYYYMMDDHH, YYYYMM, MMYYYYDD, and DDMMYYYY. Default is YYYYMMDD.
-    dictPageSizeLimit : float, default is Undefined, optional
-        Maximum size in bytes of an encoded dictionary page of a column. Default is 1048576 (1 MiB).
-    enableStatistics : bool, default is Undefined, optional
-        Whether to enable statistics for Parquet pages and row groups. Default is true.
-    encodingType : str, default is Undefined, optional
-        Type of encoding to use. Value values are rle_dictionary, plain, and plain_dictionary. Default is rle_dictionary.
-    encryptionMode : str, default is Undefined, optional
-        Server-side encryption mode that you want to encrypt your .csv or .parquet object files copied to S3. Valid values are SSE_S3 and SSE_KMS. Default is SSE_S3.
-    externalTableDefinition : str, default is Undefined, optional
-        JSON document that describes how AWS DMS should interpret the data.
-    glueCatalogGeneration : bool, default is Undefined, optional
-        Whether to integrate AWS Glue Data Catalog with an Amazon S3 target. See Using AWS Glue Data Catalog with an Amazon S3 target for AWS DMS for more information. Default is false.
-    ignoreHeaderRows : float, default is Undefined, optional
-        When this value is set to 1, DMS ignores the first row header in a .csv file. Default is 0.
-    includeOpForFullLoad : bool, default is Undefined, optional
-        Whether to enable a full load to write INSERT operations to the .csv output files only to indicate how the rows were added to the source database. Default is false.
-    maxFileSize : float, default is Undefined, optional
-        Maximum size (in KB) of any .csv file to be created while migrating to an S3 target during full load. Valid values are from 1 to 1048576. Default is 1048576 (1 GB).
-    parquetTimestampInMillisecond : bool, default is Undefined, optional
-        - Specifies the precision of any TIMESTAMP column values written to an S3 object file in .parquet format. Default is false.
-    parquetVersion : str, default is Undefined, optional
-        Version of the .parquet file format. Default is parquet-1-0. Valid values are parquet-1-0 and parquet-2-0.
-    preserveTransactions : bool, default is Undefined, optional
-        Whether DMS saves the transaction order for a CDC load on the S3 target specified by cdc_path. Default is false.
-    rfc4180 : bool, default is Undefined, optional
-        For an S3 source, whether each leading double quotation mark has to be followed by an ending double quotation mark. Default is true.
-    rowGroupLength : float, default is Undefined, optional
-        Number of rows in a row group. Default is 10000.
-    serverSideEncryptionKmsKeyId : str, default is Undefined, optional
-        ARN or Id of KMS Key to use when encryption_mode is SSE_KMS.
-    serviceAccessRoleArn : str, default is Undefined, optional
-        ARN of the IAM Role with permissions to read from or write to the S3 Bucket.
-    timestampColumnName : str, default is Undefined, optional
-        Column to add with timestamp information to the endpoint data for an Amazon S3 target.
-    useCsvNoSupValue : bool, default is Undefined, optional
-        Whether to use csv_no_sup_value for columns not included in the supplemental log.
-    useTaskStartTimeForFullLoadTimestamp : bool, default is Undefined, optional
-        When set to true, uses the task start time as the timestamp column value instead of the time data is written to target. For full load, when set to true, each row of the timestamp column contains the task start time. For CDC loads, each row of the timestamp column contains the transaction commit time. When set to false, the full load timestamp in the timestamp column increments with the time data arrives at the target. Default is false.
-    """
-
-
-    addColumnName?: bool
-
-    bucketFolder?: str
-
-    bucketName?: str
-
-    cannedAclForObjects?: str
-
-    cdcInsertsAndUpdates?: bool
-
-    cdcInsertsOnly?: bool
-
-    cdcMaxBatchInterval?: float
-
-    cdcMinFileSize?: float
-
-    cdcPath?: str
-
-    compressionType?: str
-
-    csvDelimiter?: str
-
-    csvNoSupValue?: str
-
-    csvNullValue?: str
-
-    csvRowDelimiter?: str
-
-    dataFormat?: str
-
-    dataPageSize?: float
-
-    datePartitionDelimiter?: str
-
-    datePartitionEnabled?: bool
-
-    datePartitionSequence?: str
-
-    dictPageSizeLimit?: float
-
-    enableStatistics?: bool
-
-    encodingType?: str
-
-    encryptionMode?: str
-
-    externalTableDefinition?: str
-
-    glueCatalogGeneration?: bool
-
-    ignoreHeaderRows?: float
-
-    includeOpForFullLoad?: bool
-
-    maxFileSize?: float
-
-    parquetTimestampInMillisecond?: bool
-
-    parquetVersion?: str
-
-    preserveTransactions?: bool
-
-    rfc4180?: bool
-
-    rowGroupLength?: float
-
-    serverSideEncryptionKmsKeyId?: str
-
-    serviceAccessRoleArn?: str
-
-    timestampColumnName?: str
-
-    useCsvNoSupValue?: bool
-
-    useTaskStartTimeForFullLoadTimestamp?: bool
 
 
 schema DmsAwsUpboundIoV1beta1EndpointStatusConditionsItems0:

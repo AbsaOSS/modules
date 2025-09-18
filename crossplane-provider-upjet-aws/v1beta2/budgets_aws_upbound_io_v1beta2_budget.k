@@ -66,8 +66,6 @@ schema BudgetsAwsUpboundIoV1beta2BudgetSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : BudgetsAwsUpboundIoV1beta2BudgetSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : BudgetsAwsUpboundIoV1beta2BudgetSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : BudgetsAwsUpboundIoV1beta2BudgetSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema BudgetsAwsUpboundIoV1beta2BudgetSpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: BudgetsAwsUpboundIoV1beta2BudgetSpecProviderConfigRef
-
-    publishConnectionDetailsTo?: BudgetsAwsUpboundIoV1beta2BudgetSpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: BudgetsAwsUpboundIoV1beta2BudgetSpecWriteConnectionSecretToRef
 
@@ -112,8 +108,6 @@ schema BudgetsAwsUpboundIoV1beta2BudgetSpecForProvider:
         Object containing Budget Notifications. Can be used multiple times to define more than one budget notification.
     plannedLimit : [BudgetsAwsUpboundIoV1beta2BudgetSpecForProviderPlannedLimitItems0], default is Undefined, optional
         Object containing Planned Budget Limits. Can be used multiple times to plan more than one budget limit. See PlannedBudgetLimits documentation.
-    region : str, default is Undefined, required
-        Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     timePeriodEnd : str, default is Undefined, optional
@@ -142,8 +136,6 @@ schema BudgetsAwsUpboundIoV1beta2BudgetSpecForProvider:
     notification?: [BudgetsAwsUpboundIoV1beta2BudgetSpecForProviderNotificationItems0]
 
     plannedLimit?: [BudgetsAwsUpboundIoV1beta2BudgetSpecForProviderPlannedLimitItems0]
-
-    region: str
 
     tags?: {str:str}
 
@@ -589,112 +581,12 @@ schema BudgetsAwsUpboundIoV1beta2BudgetSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema BudgetsAwsUpboundIoV1beta2BudgetSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : BudgetsAwsUpboundIoV1beta2BudgetSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : BudgetsAwsUpboundIoV1beta2BudgetSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: BudgetsAwsUpboundIoV1beta2BudgetSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: BudgetsAwsUpboundIoV1beta2BudgetSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema BudgetsAwsUpboundIoV1beta2BudgetSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : BudgetsAwsUpboundIoV1beta2BudgetSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: BudgetsAwsUpboundIoV1beta2BudgetSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema BudgetsAwsUpboundIoV1beta2BudgetSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema BudgetsAwsUpboundIoV1beta2BudgetSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema BudgetsAwsUpboundIoV1beta2BudgetSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------

@@ -66,8 +66,6 @@ schema KmsAwsUpboundIoV1beta1ReplicaKeySpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : KmsAwsUpboundIoV1beta1ReplicaKeySpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : KmsAwsUpboundIoV1beta1ReplicaKeySpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : KmsAwsUpboundIoV1beta1ReplicaKeySpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema KmsAwsUpboundIoV1beta1ReplicaKeySpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: KmsAwsUpboundIoV1beta1ReplicaKeySpecProviderConfigRef
-
-    publishConnectionDetailsTo?: KmsAwsUpboundIoV1beta1ReplicaKeySpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: KmsAwsUpboundIoV1beta1ReplicaKeySpecWriteConnectionSecretToRef
 
@@ -115,6 +111,7 @@ schema KmsAwsUpboundIoV1beta1ReplicaKeySpecForProvider:
     primaryKeyArnSelector : KmsAwsUpboundIoV1beta1ReplicaKeySpecForProviderPrimaryKeyArnSelector, default is Undefined, optional
         primary key arn selector
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
@@ -423,112 +420,12 @@ schema KmsAwsUpboundIoV1beta1ReplicaKeySpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema KmsAwsUpboundIoV1beta1ReplicaKeySpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : KmsAwsUpboundIoV1beta1ReplicaKeySpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : KmsAwsUpboundIoV1beta1ReplicaKeySpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: KmsAwsUpboundIoV1beta1ReplicaKeySpecPublishConnectionDetailsToConfigRef
-
-    metadata?: KmsAwsUpboundIoV1beta1ReplicaKeySpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema KmsAwsUpboundIoV1beta1ReplicaKeySpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : KmsAwsUpboundIoV1beta1ReplicaKeySpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: KmsAwsUpboundIoV1beta1ReplicaKeySpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema KmsAwsUpboundIoV1beta1ReplicaKeySpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema KmsAwsUpboundIoV1beta1ReplicaKeySpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema KmsAwsUpboundIoV1beta1ReplicaKeySpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -602,6 +499,9 @@ schema KmsAwsUpboundIoV1beta1ReplicaKeyStatusAtProvider:
         The key policy to attach to the KMS key. If you do not specify a key policy, AWS KMS attaches the default key policy to the KMS key.
     primaryKeyArn : str, default is Undefined, optional
         The ARN of the multi-Region primary key to replicate. The primary key must be in a different AWS Region of the same AWS Partition. You can create only one replica of a given primary key in each AWS Region.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
     tagsAll : {str:str}, default is Undefined, optional
@@ -632,6 +532,8 @@ schema KmsAwsUpboundIoV1beta1ReplicaKeyStatusAtProvider:
     policy?: str
 
     primaryKeyArn?: str
+
+    region?: str
 
     tags?: {str:str}
 

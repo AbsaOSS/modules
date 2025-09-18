@@ -66,8 +66,6 @@ schema DaxAwsUpboundIoV1beta1ClusterSpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : DaxAwsUpboundIoV1beta1ClusterSpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : DaxAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : DaxAwsUpboundIoV1beta1ClusterSpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -83,8 +81,6 @@ schema DaxAwsUpboundIoV1beta1ClusterSpec:
 
     providerConfigRef?: DaxAwsUpboundIoV1beta1ClusterSpecProviderConfigRef
 
-    publishConnectionDetailsTo?: DaxAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsTo
-
     writeConnectionSecretToRef?: DaxAwsUpboundIoV1beta1ClusterSpecWriteConnectionSecretToRef
 
 
@@ -98,11 +94,11 @@ schema DaxAwsUpboundIoV1beta1ClusterSpecForProvider:
         List of Availability Zones in which the
         nodes will be created
     clusterEndpointEncryptionType : str, default is Undefined, optional
-        –  The type of encryption the
+        The type of encryption the
         cluster's endpoint should support. Valid values are: NONE and TLS.
         Default value is NONE.
     description : str, default is Undefined, optional
-        –  Description for the cluster
+        Description for the cluster
     iamRoleArn : str, default is Undefined, optional
         A valid Amazon Resource Name (ARN) that identifies
         an IAM role. At runtime, DAX will assume this role and use the role's
@@ -112,33 +108,38 @@ schema DaxAwsUpboundIoV1beta1ClusterSpecForProvider:
     iamRoleArnSelector : DaxAwsUpboundIoV1beta1ClusterSpecForProviderIamRoleArnSelector, default is Undefined, optional
         iam role arn selector
     maintenanceWindow : str, default is Undefined, optional
-        ddd:hh24:mi
+        Specifies the weekly time range for when
+        maintenance on the cluster is performed. The format is ddd:hh24:mi-ddd:hh24:mi
         (24H Clock UTC). The minimum maintenance window is a 60 minute period. Example:
         sun:05:00-sun:09:00
     nodeType : str, default is Undefined, optional
-        –  The compute and memory capacity of the nodes. See
+        The compute and memory capacity of the nodes. See
         Nodes for supported node types
     notificationTopicArn : str, default is Undefined, optional
-        east-1:012345678999:my_sns_topic
+        An Amazon Resource Name (ARN) of an
+        SNS topic to send DAX notifications to. Example:
+        arn:aws:sns:us-east-1:012345678999:my_sns_topic
     parameterGroupName : str, default is Undefined, optional
-        –  Name of the parameter group to associate
+        Name of the parameter group to associate
         with this DAX cluster
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     replicationFactor : float, default is Undefined, optional
-        node cluster, without any read
+        The number of nodes in the DAX cluster. A
+        replication factor of 1 will create a single-node cluster, without any read
         replicas
     securityGroupIdRefs : [DaxAwsUpboundIoV1beta1ClusterSpecForProviderSecurityGroupIDRefsItems0], default is Undefined, optional
         References to SecurityGroup in ec2 to populate securityGroupIds.
     securityGroupIdSelector : DaxAwsUpboundIoV1beta1ClusterSpecForProviderSecurityGroupIDSelector, default is Undefined, optional
         security group Id selector
     securityGroupIds : [str], default is Undefined, optional
-        –  One or more VPC security groups associated
+        One or more VPC security groups associated
         with the cluster
     serverSideEncryption : [DaxAwsUpboundIoV1beta1ClusterSpecForProviderServerSideEncryptionItems0], default is Undefined, optional
         Encrypt at rest options
     subnetGroupName : str, default is Undefined, optional
-        –  Name of the subnet group to be used for the
+        Name of the subnet group to be used for the
         cluster
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
@@ -393,11 +394,11 @@ schema DaxAwsUpboundIoV1beta1ClusterSpecInitProvider:
         List of Availability Zones in which the
         nodes will be created
     clusterEndpointEncryptionType : str, default is Undefined, optional
-        –  The type of encryption the
+        The type of encryption the
         cluster's endpoint should support. Valid values are: NONE and TLS.
         Default value is NONE.
     description : str, default is Undefined, optional
-        –  Description for the cluster
+        Description for the cluster
     iamRoleArn : str, default is Undefined, optional
         A valid Amazon Resource Name (ARN) that identifies
         an IAM role. At runtime, DAX will assume this role and use the role's
@@ -407,31 +408,35 @@ schema DaxAwsUpboundIoV1beta1ClusterSpecInitProvider:
     iamRoleArnSelector : DaxAwsUpboundIoV1beta1ClusterSpecInitProviderIamRoleArnSelector, default is Undefined, optional
         iam role arn selector
     maintenanceWindow : str, default is Undefined, optional
-        ddd:hh24:mi
+        Specifies the weekly time range for when
+        maintenance on the cluster is performed. The format is ddd:hh24:mi-ddd:hh24:mi
         (24H Clock UTC). The minimum maintenance window is a 60 minute period. Example:
         sun:05:00-sun:09:00
     nodeType : str, default is Undefined, optional
-        –  The compute and memory capacity of the nodes. See
+        The compute and memory capacity of the nodes. See
         Nodes for supported node types
     notificationTopicArn : str, default is Undefined, optional
-        east-1:012345678999:my_sns_topic
+        An Amazon Resource Name (ARN) of an
+        SNS topic to send DAX notifications to. Example:
+        arn:aws:sns:us-east-1:012345678999:my_sns_topic
     parameterGroupName : str, default is Undefined, optional
-        –  Name of the parameter group to associate
+        Name of the parameter group to associate
         with this DAX cluster
     replicationFactor : float, default is Undefined, optional
-        node cluster, without any read
+        The number of nodes in the DAX cluster. A
+        replication factor of 1 will create a single-node cluster, without any read
         replicas
     securityGroupIdRefs : [DaxAwsUpboundIoV1beta1ClusterSpecInitProviderSecurityGroupIDRefsItems0], default is Undefined, optional
         References to SecurityGroup in ec2 to populate securityGroupIds.
     securityGroupIdSelector : DaxAwsUpboundIoV1beta1ClusterSpecInitProviderSecurityGroupIDSelector, default is Undefined, optional
         security group Id selector
     securityGroupIds : [str], default is Undefined, optional
-        –  One or more VPC security groups associated
+        One or more VPC security groups associated
         with the cluster
     serverSideEncryption : [DaxAwsUpboundIoV1beta1ClusterSpecInitProviderServerSideEncryptionItems0], default is Undefined, optional
         Encrypt at rest options
     subnetGroupName : str, default is Undefined, optional
-        –  Name of the subnet group to be used for the
+        Name of the subnet group to be used for the
         cluster
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
@@ -709,112 +714,12 @@ schema DaxAwsUpboundIoV1beta1ClusterSpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema DaxAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : DaxAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : DaxAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: DaxAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRef
-
-    metadata?: DaxAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema DaxAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : DaxAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: DaxAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema DaxAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema DaxAwsUpboundIoV1beta1ClusterSpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema DaxAwsUpboundIoV1beta1ClusterSpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -868,14 +773,14 @@ schema DaxAwsUpboundIoV1beta1ClusterStatusAtProvider:
     clusterAddress : str, default is Undefined, optional
         The DNS name of the DAX cluster without the port appended
     clusterEndpointEncryptionType : str, default is Undefined, optional
-        –  The type of encryption the
+        The type of encryption the
         cluster's endpoint should support. Valid values are: NONE and TLS.
         Default value is NONE.
     configurationEndpoint : str, default is Undefined, optional
         The configuration endpoint for this DAX cluster,
         consisting of a DNS name and a port number
     description : str, default is Undefined, optional
-        –  Description for the cluster
+        Description for the cluster
     iamRoleArn : str, default is Undefined, optional
         A valid Amazon Resource Name (ARN) that identifies
         an IAM role. At runtime, DAX will assume this role and use the role's
@@ -883,33 +788,40 @@ schema DaxAwsUpboundIoV1beta1ClusterStatusAtProvider:
     id : str, default is Undefined, optional
         id
     maintenanceWindow : str, default is Undefined, optional
-        ddd:hh24:mi
+        Specifies the weekly time range for when
+        maintenance on the cluster is performed. The format is ddd:hh24:mi-ddd:hh24:mi
         (24H Clock UTC). The minimum maintenance window is a 60 minute period. Example:
         sun:05:00-sun:09:00
     nodeType : str, default is Undefined, optional
-        –  The compute and memory capacity of the nodes. See
+        The compute and memory capacity of the nodes. See
         Nodes for supported node types
     nodes : [DaxAwsUpboundIoV1beta1ClusterStatusAtProviderNodesItems0], default is Undefined, optional
         List of node objects including id, address, port and
         availability_zone. Referenceable e.g., as
         ${aws_dax_cluster.test.nodes.0.address}
     notificationTopicArn : str, default is Undefined, optional
-        east-1:012345678999:my_sns_topic
+        An Amazon Resource Name (ARN) of an
+        SNS topic to send DAX notifications to. Example:
+        arn:aws:sns:us-east-1:012345678999:my_sns_topic
     parameterGroupName : str, default is Undefined, optional
-        –  Name of the parameter group to associate
+        Name of the parameter group to associate
         with this DAX cluster
     port : float, default is Undefined, optional
         The port used by the configuration endpoint
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     replicationFactor : float, default is Undefined, optional
-        node cluster, without any read
+        The number of nodes in the DAX cluster. A
+        replication factor of 1 will create a single-node cluster, without any read
         replicas
     securityGroupIds : [str], default is Undefined, optional
-        –  One or more VPC security groups associated
+        One or more VPC security groups associated
         with the cluster
     serverSideEncryption : [DaxAwsUpboundIoV1beta1ClusterStatusAtProviderServerSideEncryptionItems0], default is Undefined, optional
         Encrypt at rest options
     subnetGroupName : str, default is Undefined, optional
-        –  Name of the subnet group to be used for the
+        Name of the subnet group to be used for the
         cluster
     tags : {str:str}, default is Undefined, optional
         Key-value map of resource tags.
@@ -945,6 +857,8 @@ schema DaxAwsUpboundIoV1beta1ClusterStatusAtProvider:
     parameterGroupName?: str
 
     port?: float
+
+    region?: str
 
     replicationFactor?: float
 

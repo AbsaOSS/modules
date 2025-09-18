@@ -66,8 +66,6 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpec:
         and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
     providerConfigRef : AutoscalingAwsUpboundIoV1beta1PolicySpecProviderConfigRef, default is Undefined, optional
         provider config ref
-    publishConnectionDetailsTo : AutoscalingAwsUpboundIoV1beta1PolicySpecPublishConnectionDetailsTo, default is Undefined, optional
-        publish connection details to
     writeConnectionSecretToRef : AutoscalingAwsUpboundIoV1beta1PolicySpecWriteConnectionSecretToRef, default is Undefined, optional
         write connection secret to ref
     """
@@ -82,8 +80,6 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpec:
     managementPolicies?: [str] = ["*"]
 
     providerConfigRef?: AutoscalingAwsUpboundIoV1beta1PolicySpecProviderConfigRef
-
-    publishConnectionDetailsTo?: AutoscalingAwsUpboundIoV1beta1PolicySpecPublishConnectionDetailsTo
 
     writeConnectionSecretToRef?: AutoscalingAwsUpboundIoV1beta1PolicySpecWriteConnectionSecretToRef
 
@@ -117,6 +113,7 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecForProvider:
     predictiveScalingConfiguration : [AutoscalingAwsUpboundIoV1beta1PolicySpecForProviderPredictiveScalingConfigurationItems0], default is Undefined, optional
         Predictive scaling policy configuration to use with Amazon EC2 Auto Scaling.
     region : str, default is Undefined, required
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
         Region is the region you'd like your resource to be created in.
     scalingAdjustment : float, default is Undefined, optional
         Number of instances by which to scale. adjustment_type determines the interpretation of this number (e.g., as an absolute number or as a percentage of the existing Auto Scaling group size). A positive increment adds to the current capacity and a negative value removes from the current capacity.
@@ -323,7 +320,7 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecForProviderPredictiveScalingConfi
     Attributes
     ----------
     metricDataQueries : [AutoscalingAwsUpboundIoV1beta1PolicySpecForProviderPredictiveScalingConfigurationItems0MetricSpecificationItems0CustomizedCapacityMetricSpecificationItems0MetricDataQueriesItems0], default is Undefined, optional
-        List of up to 10 structures that defines custom capacity metric in predictive scaling policy
+        List of up to 10 structures that defines custom scaling metric in predictive scaling policy
     """
 
 
@@ -339,11 +336,11 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecForProviderPredictiveScalingConfi
     expression : str, default is Undefined, optional
         Math expression used on the returned metric. You must specify either expression or metric_stat, but not both.
     id : str, default is Undefined, optional
-        Short name for the metric used in predictive scaling policy.
+        Short name for the metric used in target tracking scaling policy.
     label : str, default is Undefined, optional
         Human-readable label for this metric or expression.
     metricStat : [AutoscalingAwsUpboundIoV1beta1PolicySpecForProviderPredictiveScalingConfigurationItems0MetricSpecificationItems0CustomizedCapacityMetricSpecificationItems0MetricDataQueriesItems0MetricStatItems0], default is Undefined, optional
-        Structure that defines CloudWatch metric to be used in predictive scaling policy. You must specify either expression or metric_stat, but not both.
+        Structure that defines CloudWatch metric to be used in target tracking scaling policy. You must specify either expression or metric_stat, but not both.
     returnData : bool, default is Undefined, optional
         Boolean that indicates whether to return the timestamps and raw data values of this metric, the default is true
     """
@@ -429,7 +426,7 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecForProviderPredictiveScalingConfi
     Attributes
     ----------
     metricDataQueries : [AutoscalingAwsUpboundIoV1beta1PolicySpecForProviderPredictiveScalingConfigurationItems0MetricSpecificationItems0CustomizedLoadMetricSpecificationItems0MetricDataQueriesItems0], default is Undefined, optional
-        List of up to 10 structures that defines custom load metric in predictive scaling policy
+        List of up to 10 structures that defines custom scaling metric in predictive scaling policy
     """
 
 
@@ -445,11 +442,11 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecForProviderPredictiveScalingConfi
     expression : str, default is Undefined, optional
         Math expression used on the returned metric. You must specify either expression or metric_stat, but not both.
     id : str, default is Undefined, optional
-        Short name for the metric used in predictive scaling policy.
+        Short name for the metric used in target tracking scaling policy.
     label : str, default is Undefined, optional
         Human-readable label for this metric or expression.
     metricStat : [AutoscalingAwsUpboundIoV1beta1PolicySpecForProviderPredictiveScalingConfigurationItems0MetricSpecificationItems0CustomizedLoadMetricSpecificationItems0MetricDataQueriesItems0MetricStatItems0], default is Undefined, optional
-        Structure that defines CloudWatch metric to be used in predictive scaling policy. You must specify either expression or metric_stat, but not both.
+        Structure that defines CloudWatch metric to be used in target tracking scaling policy. You must specify either expression or metric_stat, but not both.
     returnData : bool, default is Undefined, optional
         Boolean that indicates whether to return the timestamps and raw data values of this metric, the default is true
     """
@@ -551,11 +548,11 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecForProviderPredictiveScalingConfi
     expression : str, default is Undefined, optional
         Math expression used on the returned metric. You must specify either expression or metric_stat, but not both.
     id : str, default is Undefined, optional
-        Short name for the metric used in predictive scaling policy.
+        Short name for the metric used in target tracking scaling policy.
     label : str, default is Undefined, optional
         Human-readable label for this metric or expression.
     metricStat : [AutoscalingAwsUpboundIoV1beta1PolicySpecForProviderPredictiveScalingConfigurationItems0MetricSpecificationItems0CustomizedScalingMetricSpecificationItems0MetricDataQueriesItems0MetricStatItems0], default is Undefined, optional
-        Structure that defines CloudWatch metric to be used in predictive scaling policy. You must specify either expression or metric_stat, but not both.
+        Structure that defines CloudWatch metric to be used in target tracking scaling policy. You must specify either expression or metric_stat, but not both.
     returnData : bool, default is Undefined, optional
         Boolean that indicates whether to return the timestamps and raw data values of this metric, the default is true
     """
@@ -641,9 +638,9 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecForProviderPredictiveScalingConfi
     Attributes
     ----------
     predefinedMetricType : str, default is Undefined, optional
-        Metric type. Valid values are ASGTotalCPUUtilization, ASGTotalNetworkIn, ASGTotalNetworkOut, or ALBTargetGroupRequestCount.
+        Metric type.
     resourceLabel : str, default is Undefined, optional
-        Label that uniquely identifies a specific Application Load Balancer target group from which to determine the request count served by your Auto Scaling group. You create the resource label by appending the final portion of the load balancer ARN and the final portion of the target group ARN into a single value, separated by a forward slash (/). Refer to PredefinedMetricSpecification for more information.
+        Identifies the resource associated with the metric type.
     """
 
 
@@ -659,9 +656,9 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecForProviderPredictiveScalingConfi
     Attributes
     ----------
     predefinedMetricType : str, default is Undefined, optional
-        Which metrics to use. There are two different types of metrics for each metric type: one is a load metric and one is a scaling metric. For example, if the metric type is ASGCPUUtilization, the Auto Scaling group's total CPU metric is used as the load metric, and the average CPU metric is used for the scaling metric. Valid values are ASGCPUUtilization, ASGNetworkIn, ASGNetworkOut, or ALBRequestCount.
+        Metric type.
     resourceLabel : str, default is Undefined, optional
-        Label that uniquely identifies a specific Application Load Balancer target group from which to determine the request count served by your Auto Scaling group. You create the resource label by appending the final portion of the load balancer ARN and the final portion of the target group ARN into a single value, separated by a forward slash (/). Refer to PredefinedMetricSpecification for more information.
+        Identifies the resource associated with the metric type.
     """
 
 
@@ -677,9 +674,9 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecForProviderPredictiveScalingConfi
     Attributes
     ----------
     predefinedMetricType : str, default is Undefined, optional
-        Describes a scaling metric for a predictive scaling policy. Valid values are ASGAverageCPUUtilization, ASGAverageNetworkIn, ASGAverageNetworkOut, or ALBRequestCountPerTarget.
+        Metric type.
     resourceLabel : str, default is Undefined, optional
-        Label that uniquely identifies a specific Application Load Balancer target group from which to determine the request count served by your Auto Scaling group. You create the resource label by appending the final portion of the load balancer ARN and the final portion of the target group ARN into a single value, separated by a forward slash (/). Refer to PredefinedMetricSpecification for more information.
+        Identifies the resource associated with the metric type.
     """
 
 
@@ -755,6 +752,8 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecForProviderTargetTrackingConfigur
         Metrics to include, as a metric data query.
     namespace : str, default is Undefined, optional
         Namespace of the metric.
+    period : float, default is Undefined, optional
+        The period of the metric in seconds.
     statistic : str, default is Undefined, optional
         Statistic of the metric.
     unit : str, default is Undefined, optional
@@ -769,6 +768,8 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecForProviderTargetTrackingConfigur
     metrics?: [AutoscalingAwsUpboundIoV1beta1PolicySpecForProviderTargetTrackingConfigurationItems0CustomizedMetricSpecificationItems0MetricsItems0]
 
     namespace?: str
+
+    period?: float
 
     statistic?: str
 
@@ -802,11 +803,11 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecForProviderTargetTrackingConfigur
     expression : str, default is Undefined, optional
         Math expression used on the returned metric. You must specify either expression or metric_stat, but not both.
     id : str, default is Undefined, optional
-        Short name for the metric used in predictive scaling policy.
+        Short name for the metric used in target tracking scaling policy.
     label : str, default is Undefined, optional
         Human-readable label for this metric or expression.
     metricStat : [AutoscalingAwsUpboundIoV1beta1PolicySpecForProviderTargetTrackingConfigurationItems0CustomizedMetricSpecificationItems0MetricsItems0MetricStatItems0], default is Undefined, optional
-        Structure that defines CloudWatch metric to be used in predictive scaling policy. You must specify either expression or metric_stat, but not both.
+        Structure that defines CloudWatch metric to be used in target tracking scaling policy. You must specify either expression or metric_stat, but not both.
     returnData : bool, default is Undefined, optional
         Boolean that indicates whether to return the timestamps and raw data values of this metric, the default is true
     """
@@ -831,6 +832,8 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecForProviderTargetTrackingConfigur
     ----------
     metric : [AutoscalingAwsUpboundIoV1beta1PolicySpecForProviderTargetTrackingConfigurationItems0CustomizedMetricSpecificationItems0MetricsItems0MetricStatItems0MetricItems0], default is Undefined, optional
         Structure that defines the CloudWatch metric to return, including the metric name, namespace, and dimensions.
+    period : float, default is Undefined, optional
+        The period of the metric in seconds.
     stat : str, default is Undefined, optional
         Statistic of the metrics to return.
     unit : str, default is Undefined, optional
@@ -839,6 +842,8 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecForProviderTargetTrackingConfigur
 
 
     metric?: [AutoscalingAwsUpboundIoV1beta1PolicySpecForProviderTargetTrackingConfigurationItems0CustomizedMetricSpecificationItems0MetricsItems0MetricStatItems0MetricItems0]
+
+    period?: float
 
     stat?: str
 
@@ -892,9 +897,9 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecForProviderTargetTrackingConfigur
     Attributes
     ----------
     predefinedMetricType : str, default is Undefined, optional
-        Describes a scaling metric for a predictive scaling policy. Valid values are ASGAverageCPUUtilization, ASGAverageNetworkIn, ASGAverageNetworkOut, or ALBRequestCountPerTarget.
+        Metric type.
     resourceLabel : str, default is Undefined, optional
-        Label that uniquely identifies a specific Application Load Balancer target group from which to determine the request count served by your Auto Scaling group. You create the resource label by appending the final portion of the load balancer ARN and the final portion of the target group ARN into a single value, separated by a forward slash (/). Refer to PredefinedMetricSpecification for more information.
+        Identifies the resource associated with the metric type.
     """
 
 
@@ -1042,7 +1047,7 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecInitProviderPredictiveScalingConf
     Attributes
     ----------
     metricDataQueries : [AutoscalingAwsUpboundIoV1beta1PolicySpecInitProviderPredictiveScalingConfigurationItems0MetricSpecificationItems0CustomizedCapacityMetricSpecificationItems0MetricDataQueriesItems0], default is Undefined, optional
-        List of up to 10 structures that defines custom capacity metric in predictive scaling policy
+        List of up to 10 structures that defines custom scaling metric in predictive scaling policy
     """
 
 
@@ -1058,11 +1063,11 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecInitProviderPredictiveScalingConf
     expression : str, default is Undefined, optional
         Math expression used on the returned metric. You must specify either expression or metric_stat, but not both.
     id : str, default is Undefined, optional
-        Short name for the metric used in predictive scaling policy.
+        Short name for the metric used in target tracking scaling policy.
     label : str, default is Undefined, optional
         Human-readable label for this metric or expression.
     metricStat : [AutoscalingAwsUpboundIoV1beta1PolicySpecInitProviderPredictiveScalingConfigurationItems0MetricSpecificationItems0CustomizedCapacityMetricSpecificationItems0MetricDataQueriesItems0MetricStatItems0], default is Undefined, optional
-        Structure that defines CloudWatch metric to be used in predictive scaling policy. You must specify either expression or metric_stat, but not both.
+        Structure that defines CloudWatch metric to be used in target tracking scaling policy. You must specify either expression or metric_stat, but not both.
     returnData : bool, default is Undefined, optional
         Boolean that indicates whether to return the timestamps and raw data values of this metric, the default is true
     """
@@ -1148,7 +1153,7 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecInitProviderPredictiveScalingConf
     Attributes
     ----------
     metricDataQueries : [AutoscalingAwsUpboundIoV1beta1PolicySpecInitProviderPredictiveScalingConfigurationItems0MetricSpecificationItems0CustomizedLoadMetricSpecificationItems0MetricDataQueriesItems0], default is Undefined, optional
-        List of up to 10 structures that defines custom load metric in predictive scaling policy
+        List of up to 10 structures that defines custom scaling metric in predictive scaling policy
     """
 
 
@@ -1164,11 +1169,11 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecInitProviderPredictiveScalingConf
     expression : str, default is Undefined, optional
         Math expression used on the returned metric. You must specify either expression or metric_stat, but not both.
     id : str, default is Undefined, optional
-        Short name for the metric used in predictive scaling policy.
+        Short name for the metric used in target tracking scaling policy.
     label : str, default is Undefined, optional
         Human-readable label for this metric or expression.
     metricStat : [AutoscalingAwsUpboundIoV1beta1PolicySpecInitProviderPredictiveScalingConfigurationItems0MetricSpecificationItems0CustomizedLoadMetricSpecificationItems0MetricDataQueriesItems0MetricStatItems0], default is Undefined, optional
-        Structure that defines CloudWatch metric to be used in predictive scaling policy. You must specify either expression or metric_stat, but not both.
+        Structure that defines CloudWatch metric to be used in target tracking scaling policy. You must specify either expression or metric_stat, but not both.
     returnData : bool, default is Undefined, optional
         Boolean that indicates whether to return the timestamps and raw data values of this metric, the default is true
     """
@@ -1270,11 +1275,11 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecInitProviderPredictiveScalingConf
     expression : str, default is Undefined, optional
         Math expression used on the returned metric. You must specify either expression or metric_stat, but not both.
     id : str, default is Undefined, optional
-        Short name for the metric used in predictive scaling policy.
+        Short name for the metric used in target tracking scaling policy.
     label : str, default is Undefined, optional
         Human-readable label for this metric or expression.
     metricStat : [AutoscalingAwsUpboundIoV1beta1PolicySpecInitProviderPredictiveScalingConfigurationItems0MetricSpecificationItems0CustomizedScalingMetricSpecificationItems0MetricDataQueriesItems0MetricStatItems0], default is Undefined, optional
-        Structure that defines CloudWatch metric to be used in predictive scaling policy. You must specify either expression or metric_stat, but not both.
+        Structure that defines CloudWatch metric to be used in target tracking scaling policy. You must specify either expression or metric_stat, but not both.
     returnData : bool, default is Undefined, optional
         Boolean that indicates whether to return the timestamps and raw data values of this metric, the default is true
     """
@@ -1360,9 +1365,9 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecInitProviderPredictiveScalingConf
     Attributes
     ----------
     predefinedMetricType : str, default is Undefined, optional
-        Metric type. Valid values are ASGTotalCPUUtilization, ASGTotalNetworkIn, ASGTotalNetworkOut, or ALBTargetGroupRequestCount.
+        Metric type.
     resourceLabel : str, default is Undefined, optional
-        Label that uniquely identifies a specific Application Load Balancer target group from which to determine the request count served by your Auto Scaling group. You create the resource label by appending the final portion of the load balancer ARN and the final portion of the target group ARN into a single value, separated by a forward slash (/). Refer to PredefinedMetricSpecification for more information.
+        Identifies the resource associated with the metric type.
     """
 
 
@@ -1378,9 +1383,9 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecInitProviderPredictiveScalingConf
     Attributes
     ----------
     predefinedMetricType : str, default is Undefined, optional
-        Which metrics to use. There are two different types of metrics for each metric type: one is a load metric and one is a scaling metric. For example, if the metric type is ASGCPUUtilization, the Auto Scaling group's total CPU metric is used as the load metric, and the average CPU metric is used for the scaling metric. Valid values are ASGCPUUtilization, ASGNetworkIn, ASGNetworkOut, or ALBRequestCount.
+        Metric type.
     resourceLabel : str, default is Undefined, optional
-        Label that uniquely identifies a specific Application Load Balancer target group from which to determine the request count served by your Auto Scaling group. You create the resource label by appending the final portion of the load balancer ARN and the final portion of the target group ARN into a single value, separated by a forward slash (/). Refer to PredefinedMetricSpecification for more information.
+        Identifies the resource associated with the metric type.
     """
 
 
@@ -1396,9 +1401,9 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecInitProviderPredictiveScalingConf
     Attributes
     ----------
     predefinedMetricType : str, default is Undefined, optional
-        Describes a scaling metric for a predictive scaling policy. Valid values are ASGAverageCPUUtilization, ASGAverageNetworkIn, ASGAverageNetworkOut, or ALBRequestCountPerTarget.
+        Metric type.
     resourceLabel : str, default is Undefined, optional
-        Label that uniquely identifies a specific Application Load Balancer target group from which to determine the request count served by your Auto Scaling group. You create the resource label by appending the final portion of the load balancer ARN and the final portion of the target group ARN into a single value, separated by a forward slash (/). Refer to PredefinedMetricSpecification for more information.
+        Identifies the resource associated with the metric type.
     """
 
 
@@ -1474,6 +1479,8 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecInitProviderTargetTrackingConfigu
         Metrics to include, as a metric data query.
     namespace : str, default is Undefined, optional
         Namespace of the metric.
+    period : float, default is Undefined, optional
+        The period of the metric in seconds.
     statistic : str, default is Undefined, optional
         Statistic of the metric.
     unit : str, default is Undefined, optional
@@ -1488,6 +1495,8 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecInitProviderTargetTrackingConfigu
     metrics?: [AutoscalingAwsUpboundIoV1beta1PolicySpecInitProviderTargetTrackingConfigurationItems0CustomizedMetricSpecificationItems0MetricsItems0]
 
     namespace?: str
+
+    period?: float
 
     statistic?: str
 
@@ -1521,11 +1530,11 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecInitProviderTargetTrackingConfigu
     expression : str, default is Undefined, optional
         Math expression used on the returned metric. You must specify either expression or metric_stat, but not both.
     id : str, default is Undefined, optional
-        Short name for the metric used in predictive scaling policy.
+        Short name for the metric used in target tracking scaling policy.
     label : str, default is Undefined, optional
         Human-readable label for this metric or expression.
     metricStat : [AutoscalingAwsUpboundIoV1beta1PolicySpecInitProviderTargetTrackingConfigurationItems0CustomizedMetricSpecificationItems0MetricsItems0MetricStatItems0], default is Undefined, optional
-        Structure that defines CloudWatch metric to be used in predictive scaling policy. You must specify either expression or metric_stat, but not both.
+        Structure that defines CloudWatch metric to be used in target tracking scaling policy. You must specify either expression or metric_stat, but not both.
     returnData : bool, default is Undefined, optional
         Boolean that indicates whether to return the timestamps and raw data values of this metric, the default is true
     """
@@ -1550,6 +1559,8 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecInitProviderTargetTrackingConfigu
     ----------
     metric : [AutoscalingAwsUpboundIoV1beta1PolicySpecInitProviderTargetTrackingConfigurationItems0CustomizedMetricSpecificationItems0MetricsItems0MetricStatItems0MetricItems0], default is Undefined, optional
         Structure that defines the CloudWatch metric to return, including the metric name, namespace, and dimensions.
+    period : float, default is Undefined, optional
+        The period of the metric in seconds.
     stat : str, default is Undefined, optional
         Statistic of the metrics to return.
     unit : str, default is Undefined, optional
@@ -1558,6 +1569,8 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecInitProviderTargetTrackingConfigu
 
 
     metric?: [AutoscalingAwsUpboundIoV1beta1PolicySpecInitProviderTargetTrackingConfigurationItems0CustomizedMetricSpecificationItems0MetricsItems0MetricStatItems0MetricItems0]
+
+    period?: float
 
     stat?: str
 
@@ -1611,9 +1624,9 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecInitProviderTargetTrackingConfigu
     Attributes
     ----------
     predefinedMetricType : str, default is Undefined, optional
-        Describes a scaling metric for a predictive scaling policy. Valid values are ASGAverageCPUUtilization, ASGAverageNetworkIn, ASGAverageNetworkOut, or ALBRequestCountPerTarget.
+        Metric type.
     resourceLabel : str, default is Undefined, optional
-        Label that uniquely identifies a specific Application Load Balancer target group from which to determine the request count served by your Auto Scaling group. You create the resource label by appending the final portion of the load balancer ARN and the final portion of the target group ARN into a single value, separated by a forward slash (/). Refer to PredefinedMetricSpecification for more information.
+        Identifies the resource associated with the metric type.
     """
 
 
@@ -1666,112 +1679,12 @@ schema AutoscalingAwsUpboundIoV1beta1PolicySpecProviderConfigRefPolicy:
     resolve?: "Always" | "IfNotPresent"
 
 
-schema AutoscalingAwsUpboundIoV1beta1PolicySpecPublishConnectionDetailsTo:
-    r"""
-    PublishConnectionDetailsTo specifies the connection secret config which
-    contains a name, metadata and a reference to secret store config to
-    which any connection details for this managed resource should be written.
-    Connection details frequently include the endpoint, username,
-    and password required to connect to the managed resource.
-
-    Attributes
-    ----------
-    configRef : AutoscalingAwsUpboundIoV1beta1PolicySpecPublishConnectionDetailsToConfigRef, default is Undefined, optional
-        config ref
-    metadata : AutoscalingAwsUpboundIoV1beta1PolicySpecPublishConnectionDetailsToMetadata, default is Undefined, optional
-        metadata
-    name : str, default is Undefined, required
-        Name is the name of the connection secret.
-    """
-
-
-    configRef?: AutoscalingAwsUpboundIoV1beta1PolicySpecPublishConnectionDetailsToConfigRef
-
-    metadata?: AutoscalingAwsUpboundIoV1beta1PolicySpecPublishConnectionDetailsToMetadata
-
-    name: str
-
-
-schema AutoscalingAwsUpboundIoV1beta1PolicySpecPublishConnectionDetailsToConfigRef:
-    r"""
-    SecretStoreConfigRef specifies which secret store config should be used
-    for this ConnectionSecret.
-
-    Attributes
-    ----------
-    name : str, default is Undefined, required
-        Name of the referenced object.
-    policy : AutoscalingAwsUpboundIoV1beta1PolicySpecPublishConnectionDetailsToConfigRefPolicy, default is Undefined, optional
-        policy
-    """
-
-
-    name: str
-
-    policy?: AutoscalingAwsUpboundIoV1beta1PolicySpecPublishConnectionDetailsToConfigRefPolicy
-
-
-schema AutoscalingAwsUpboundIoV1beta1PolicySpecPublishConnectionDetailsToConfigRefPolicy:
-    r"""
-    Policies for referencing.
-
-    Attributes
-    ----------
-    resolution : str, default is "Required", optional
-        Resolution specifies whether resolution of this reference is required.
-        The default is 'Required', which means the reconcile will fail if the
-        reference cannot be resolved. 'Optional' means this reference will be
-        a no-op if it cannot be resolved.
-    resolve : str, default is Undefined, optional
-        Resolve specifies when this reference should be resolved. The default
-        is 'IfNotPresent', which will attempt to resolve the reference only when
-        the corresponding field is not present. Use 'Always' to resolve the
-        reference on every reconcile.
-    """
-
-
-    resolution?: "Required" | "Optional" = "Required"
-
-    resolve?: "Always" | "IfNotPresent"
-
-
-schema AutoscalingAwsUpboundIoV1beta1PolicySpecPublishConnectionDetailsToMetadata:
-    r"""
-    Metadata is the metadata for connection secret.
-
-    Attributes
-    ----------
-    annotations : {str:str}, default is Undefined, optional
-        Annotations are the annotations to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.annotations".
-        - It is up to Secret Store implementation for others store types.
-    labels : {str:str}, default is Undefined, optional
-        Labels are the labels/tags to be added to connection secret.
-        - For Kubernetes secrets, this will be used as "metadata.labels".
-        - It is up to Secret Store implementation for others store types.
-    $type : str, default is Undefined, optional
-        Type is the SecretType for the connection secret.
-        - Only valid for Kubernetes Secret Stores.
-    """
-
-
-    annotations?: {str:str}
-
-    labels?: {str:str}
-
-    $type?: str
-
-
 schema AutoscalingAwsUpboundIoV1beta1PolicySpecWriteConnectionSecretToRef:
     r"""
     WriteConnectionSecretToReference specifies the namespace and name of a
     Secret to which any connection details for this managed resource should
     be written. Connection details frequently include the endpoint, username,
     and password required to connect to the managed resource.
-    This field is planned to be replaced in a future release in favor of
-    PublishConnectionDetailsTo. Currently, both could be set independently
-    and connection details would be published to both without affecting
-    each other.
 
     Attributes
     ----------
@@ -1830,7 +1743,7 @@ schema AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProvider:
     estimatedInstanceWarmup : float, default is Undefined, optional
         Estimated time, in seconds, until a newly launched instance will contribute CloudWatch metrics. Without a value, AWS will default to the group's specified cooldown period.
     id : str, default is Undefined, optional
-        Short name for the metric used in predictive scaling policy.
+        Short name for the metric used in target tracking scaling policy.
     metricAggregationType : str, default is Undefined, optional
         Aggregation type for the policy's metrics. Valid values are "Minimum", "Maximum", and "Average". Without a value, AWS will treat the aggregation type as "Average".
     minAdjustmentMagnitude : float, default is Undefined, optional
@@ -1839,6 +1752,9 @@ schema AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProvider:
         Policy type, either "SimpleScaling", "StepScaling", "TargetTrackingScaling", or "PredictiveScaling". If this value isn't provided, AWS will default to "SimpleScaling."
     predictiveScalingConfiguration : [AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProviderPredictiveScalingConfigurationItems0], default is Undefined, optional
         Predictive scaling policy configuration to use with Amazon EC2 Auto Scaling.
+    region : str, default is Undefined, optional
+        Region where this resource will be managed. Defaults to the Region set in the provider configuration.
+        Region is the region you'd like your resource to be created in.
     scalingAdjustment : float, default is Undefined, optional
         Number of instances by which to scale. adjustment_type determines the interpretation of this number (e.g., as an absolute number or as a percentage of the existing Auto Scaling group size). A positive increment adds to the current capacity and a negative value removes from the current capacity.
     stepAdjustment : [AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProviderStepAdjustmentItems0], default is Undefined, optional
@@ -1870,6 +1786,8 @@ schema AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProvider:
     policyType?: str
 
     predictiveScalingConfiguration?: [AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProviderPredictiveScalingConfigurationItems0]
+
+    region?: str
 
     scalingAdjustment?: float
 
@@ -1953,7 +1871,7 @@ schema AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProviderPredictiveScalingConf
     Attributes
     ----------
     metricDataQueries : [AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProviderPredictiveScalingConfigurationItems0MetricSpecificationItems0CustomizedCapacityMetricSpecificationItems0MetricDataQueriesItems0], default is Undefined, optional
-        List of up to 10 structures that defines custom capacity metric in predictive scaling policy
+        List of up to 10 structures that defines custom scaling metric in predictive scaling policy
     """
 
 
@@ -1969,11 +1887,11 @@ schema AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProviderPredictiveScalingConf
     expression : str, default is Undefined, optional
         Math expression used on the returned metric. You must specify either expression or metric_stat, but not both.
     id : str, default is Undefined, optional
-        Short name for the metric used in predictive scaling policy.
+        Short name for the metric used in target tracking scaling policy.
     label : str, default is Undefined, optional
         Human-readable label for this metric or expression.
     metricStat : [AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProviderPredictiveScalingConfigurationItems0MetricSpecificationItems0CustomizedCapacityMetricSpecificationItems0MetricDataQueriesItems0MetricStatItems0], default is Undefined, optional
-        Structure that defines CloudWatch metric to be used in predictive scaling policy. You must specify either expression or metric_stat, but not both.
+        Structure that defines CloudWatch metric to be used in target tracking scaling policy. You must specify either expression or metric_stat, but not both.
     returnData : bool, default is Undefined, optional
         Boolean that indicates whether to return the timestamps and raw data values of this metric, the default is true
     """
@@ -2059,7 +1977,7 @@ schema AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProviderPredictiveScalingConf
     Attributes
     ----------
     metricDataQueries : [AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProviderPredictiveScalingConfigurationItems0MetricSpecificationItems0CustomizedLoadMetricSpecificationItems0MetricDataQueriesItems0], default is Undefined, optional
-        List of up to 10 structures that defines custom load metric in predictive scaling policy
+        List of up to 10 structures that defines custom scaling metric in predictive scaling policy
     """
 
 
@@ -2075,11 +1993,11 @@ schema AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProviderPredictiveScalingConf
     expression : str, default is Undefined, optional
         Math expression used on the returned metric. You must specify either expression or metric_stat, but not both.
     id : str, default is Undefined, optional
-        Short name for the metric used in predictive scaling policy.
+        Short name for the metric used in target tracking scaling policy.
     label : str, default is Undefined, optional
         Human-readable label for this metric or expression.
     metricStat : [AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProviderPredictiveScalingConfigurationItems0MetricSpecificationItems0CustomizedLoadMetricSpecificationItems0MetricDataQueriesItems0MetricStatItems0], default is Undefined, optional
-        Structure that defines CloudWatch metric to be used in predictive scaling policy. You must specify either expression or metric_stat, but not both.
+        Structure that defines CloudWatch metric to be used in target tracking scaling policy. You must specify either expression or metric_stat, but not both.
     returnData : bool, default is Undefined, optional
         Boolean that indicates whether to return the timestamps and raw data values of this metric, the default is true
     """
@@ -2181,11 +2099,11 @@ schema AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProviderPredictiveScalingConf
     expression : str, default is Undefined, optional
         Math expression used on the returned metric. You must specify either expression or metric_stat, but not both.
     id : str, default is Undefined, optional
-        Short name for the metric used in predictive scaling policy.
+        Short name for the metric used in target tracking scaling policy.
     label : str, default is Undefined, optional
         Human-readable label for this metric or expression.
     metricStat : [AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProviderPredictiveScalingConfigurationItems0MetricSpecificationItems0CustomizedScalingMetricSpecificationItems0MetricDataQueriesItems0MetricStatItems0], default is Undefined, optional
-        Structure that defines CloudWatch metric to be used in predictive scaling policy. You must specify either expression or metric_stat, but not both.
+        Structure that defines CloudWatch metric to be used in target tracking scaling policy. You must specify either expression or metric_stat, but not both.
     returnData : bool, default is Undefined, optional
         Boolean that indicates whether to return the timestamps and raw data values of this metric, the default is true
     """
@@ -2271,9 +2189,9 @@ schema AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProviderPredictiveScalingConf
     Attributes
     ----------
     predefinedMetricType : str, default is Undefined, optional
-        Metric type. Valid values are ASGTotalCPUUtilization, ASGTotalNetworkIn, ASGTotalNetworkOut, or ALBTargetGroupRequestCount.
+        Metric type.
     resourceLabel : str, default is Undefined, optional
-        Label that uniquely identifies a specific Application Load Balancer target group from which to determine the request count served by your Auto Scaling group. You create the resource label by appending the final portion of the load balancer ARN and the final portion of the target group ARN into a single value, separated by a forward slash (/). Refer to PredefinedMetricSpecification for more information.
+        Identifies the resource associated with the metric type.
     """
 
 
@@ -2289,9 +2207,9 @@ schema AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProviderPredictiveScalingConf
     Attributes
     ----------
     predefinedMetricType : str, default is Undefined, optional
-        Which metrics to use. There are two different types of metrics for each metric type: one is a load metric and one is a scaling metric. For example, if the metric type is ASGCPUUtilization, the Auto Scaling group's total CPU metric is used as the load metric, and the average CPU metric is used for the scaling metric. Valid values are ASGCPUUtilization, ASGNetworkIn, ASGNetworkOut, or ALBRequestCount.
+        Metric type.
     resourceLabel : str, default is Undefined, optional
-        Label that uniquely identifies a specific Application Load Balancer target group from which to determine the request count served by your Auto Scaling group. You create the resource label by appending the final portion of the load balancer ARN and the final portion of the target group ARN into a single value, separated by a forward slash (/). Refer to PredefinedMetricSpecification for more information.
+        Identifies the resource associated with the metric type.
     """
 
 
@@ -2307,9 +2225,9 @@ schema AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProviderPredictiveScalingConf
     Attributes
     ----------
     predefinedMetricType : str, default is Undefined, optional
-        Describes a scaling metric for a predictive scaling policy. Valid values are ASGAverageCPUUtilization, ASGAverageNetworkIn, ASGAverageNetworkOut, or ALBRequestCountPerTarget.
+        Metric type.
     resourceLabel : str, default is Undefined, optional
-        Label that uniquely identifies a specific Application Load Balancer target group from which to determine the request count served by your Auto Scaling group. You create the resource label by appending the final portion of the load balancer ARN and the final portion of the target group ARN into a single value, separated by a forward slash (/). Refer to PredefinedMetricSpecification for more information.
+        Identifies the resource associated with the metric type.
     """
 
 
@@ -2385,6 +2303,8 @@ schema AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProviderTargetTrackingConfigu
         Metrics to include, as a metric data query.
     namespace : str, default is Undefined, optional
         Namespace of the metric.
+    period : float, default is Undefined, optional
+        The period of the metric in seconds.
     statistic : str, default is Undefined, optional
         Statistic of the metric.
     unit : str, default is Undefined, optional
@@ -2399,6 +2319,8 @@ schema AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProviderTargetTrackingConfigu
     metrics?: [AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProviderTargetTrackingConfigurationItems0CustomizedMetricSpecificationItems0MetricsItems0]
 
     namespace?: str
+
+    period?: float
 
     statistic?: str
 
@@ -2432,11 +2354,11 @@ schema AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProviderTargetTrackingConfigu
     expression : str, default is Undefined, optional
         Math expression used on the returned metric. You must specify either expression or metric_stat, but not both.
     id : str, default is Undefined, optional
-        Short name for the metric used in predictive scaling policy.
+        Short name for the metric used in target tracking scaling policy.
     label : str, default is Undefined, optional
         Human-readable label for this metric or expression.
     metricStat : [AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProviderTargetTrackingConfigurationItems0CustomizedMetricSpecificationItems0MetricsItems0MetricStatItems0], default is Undefined, optional
-        Structure that defines CloudWatch metric to be used in predictive scaling policy. You must specify either expression or metric_stat, but not both.
+        Structure that defines CloudWatch metric to be used in target tracking scaling policy. You must specify either expression or metric_stat, but not both.
     returnData : bool, default is Undefined, optional
         Boolean that indicates whether to return the timestamps and raw data values of this metric, the default is true
     """
@@ -2461,6 +2383,8 @@ schema AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProviderTargetTrackingConfigu
     ----------
     metric : [AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProviderTargetTrackingConfigurationItems0CustomizedMetricSpecificationItems0MetricsItems0MetricStatItems0MetricItems0], default is Undefined, optional
         Structure that defines the CloudWatch metric to return, including the metric name, namespace, and dimensions.
+    period : float, default is Undefined, optional
+        The period of the metric in seconds.
     stat : str, default is Undefined, optional
         Statistic of the metrics to return.
     unit : str, default is Undefined, optional
@@ -2469,6 +2393,8 @@ schema AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProviderTargetTrackingConfigu
 
 
     metric?: [AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProviderTargetTrackingConfigurationItems0CustomizedMetricSpecificationItems0MetricsItems0MetricStatItems0MetricItems0]
+
+    period?: float
 
     stat?: str
 
@@ -2522,9 +2448,9 @@ schema AutoscalingAwsUpboundIoV1beta1PolicyStatusAtProviderTargetTrackingConfigu
     Attributes
     ----------
     predefinedMetricType : str, default is Undefined, optional
-        Describes a scaling metric for a predictive scaling policy. Valid values are ASGAverageCPUUtilization, ASGAverageNetworkIn, ASGAverageNetworkOut, or ALBRequestCountPerTarget.
+        Metric type.
     resourceLabel : str, default is Undefined, optional
-        Label that uniquely identifies a specific Application Load Balancer target group from which to determine the request count served by your Auto Scaling group. You create the resource label by appending the final portion of the load balancer ARN and the final portion of the target group ARN into a single value, separated by a forward slash (/). Refer to PredefinedMetricSpecification for more information.
+        Identifies the resource associated with the metric type.
     """
 
 
